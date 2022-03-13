@@ -1,0 +1,135 @@
+package com.paragon.client.systems.ui.panel;
+
+import com.paragon.Paragon;
+import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.TextRenderer;
+import com.paragon.client.systems.ui.panel.impl.Panel;
+import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.impl.client.ClientFont;
+import com.paragon.client.systems.module.impl.client.GUI;
+import net.minecraft.client.gui.GuiScreen;
+import org.lwjgl.input.Mouse;
+import java.io.IOException;
+import java.util.ArrayList;
+
+/**
+ * @author Wolfsurge
+ */
+public class PanelGUI extends GuiScreen implements TextRenderer {
+
+    // List of panels
+    private ArrayList<Panel> panels = new ArrayList<>();
+
+    // The tooltip being rendered
+    public static String tooltip = "";
+
+    public PanelGUI() {
+        // X position of panel
+        float x = 5;
+
+        // Add a panel for every category
+        for (ModuleCategory category : ModuleCategory.values()) {
+            // Add panel
+            panels.add(new Panel(x, 5, 95
+                    , 16, category));
+
+            // Increase X
+            x += 100 ;
+        }
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        // Reset tooltip
+        tooltip = "";
+
+        // Make the background darker
+        if (GUI.darkenBackground.isEnabled()) {
+            drawDefaultBackground();
+        }
+
+        scrollPanels();
+
+        // Render panels
+        panels.forEach(panel -> {
+            panel.renderPanel(mouseX, mouseY);
+        });
+
+        Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
+
+        if (!tooltip.isEmpty() && GUI.tooltips.isEnabled()) {
+            RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
+            renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
+        }
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+
+        // Clicks
+        panels.forEach(panel -> {
+            panel.mouseClicked(mouseX, mouseY, mouseButton);
+        });
+
+        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
+
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+
+        // Click releases
+        panels.forEach(panel -> {
+            panel.mouseReleased(mouseX, mouseY, state);
+        });
+
+        super.mouseReleased(mouseX, mouseY, state);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+
+        // Keys typed
+        panels.forEach(panel -> {
+            panel.keyTyped(typedChar, keyCode);
+        });
+
+        super.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        Paragon.INSTANCE.getModuleManager().getModules().forEach(module -> {
+            Paragon.INSTANCE.getStorageManager().saveModuleConfiguration(module);
+        });
+    }
+
+    public void scrollPanels() {
+        int dWheel = Mouse.getDWheel();
+
+        for (Panel panel : panels) {
+            if (dWheel > 0) {
+                panel.setY(panel.getY() - GUI.scrollSpeed.getValue());
+            } else if (dWheel < 0) {
+                panel.setY(panel.getY() + GUI.scrollSpeed.getValue());
+            }
+        }
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        // Pause the game if pause is enabled in the GUI settings
+        return GUI.pause.isEnabled();
+    }
+
+    /**
+     * Gets the panels
+     * @return The panels
+     */
+    public ArrayList<Panel> getPanels() {
+        return panels;
+    }
+}

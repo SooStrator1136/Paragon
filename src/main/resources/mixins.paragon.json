@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "com.paragon.asm.mixins",
+  "refmap": "mixins.paragon.refmap.json",
+  "minVersion": "0.7.4",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "network.MixinNetworkManager",
+    "player.MixinEntityPlayer",
+
+    "render.entity.MixinItemRenderer",
+    "render.entity.MixinRenderLivingBase",
+
+    "render.gui.MixinGuiMainMenu",
+    "render.gui.MixinGuiMultiplayer",
+
+    "render.world.MixinRenderGlobal"
+  ]
+}
