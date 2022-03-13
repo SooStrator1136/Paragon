@@ -23,5 +23,5 @@ Linux/Mac:
 # Credits
 - Tigermouthbear, linustouchtips - Animation
 - Font Renderer - Cosmos
-- Crystal damage calculations - GameSense <br>
+- Crystal damage calculations - GameSense <br><br>
 All files should have an @author tag at the top so you can see who wrote the file. (It's mostly Wolfsurge)
