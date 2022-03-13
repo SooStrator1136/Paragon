@@ -42,12 +42,13 @@ import java.awt.*;
 import java.util.*;
 
 /**
+ * This is not really that good. Go skid a different client for combat modules
  * @author Wolfsurge, with damage calculation utils from GameSense
  */
 @SuppressWarnings("unchecked")
 public class AutoCrystal extends Module {
 
-    private final ModeSetting<ActionPriority> actionPriority = new ModeSetting<>("Action Priority", "Whether to place or explode first", ActionPriority.PLACE_EXPLODE);
+    private final ModeSetting<Order> order = new ModeSetting<>("Order", "Whether to place or explode first", Order.PLACE_EXPLODE);
 
     /* Targeting Settings */
     private final BooleanSetting targeting = new BooleanSetting("Targeting", "Settings for targeting players", true);
@@ -60,16 +61,16 @@ public class AutoCrystal extends Module {
     private final ModeSetting<PlaceWhen> placeWhen = (ModeSetting<PlaceWhen>) new ModeSetting<>("When", "When to place crystals", PlaceWhen.HOLDING).setParentSetting(place);
     private final NumberSetting placeRange = (NumberSetting) new NumberSetting("Range", "The maximum range to place crystals", 5, 1, 7, 1).setParentSetting(place);
     private final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the position", Rotate.PACKET).setParentSetting(place);
-    private final BooleanSetting packetPlace = (BooleanSetting) new BooleanSetting("Packet Place", "Place by sending a packet", false).setParentSetting(place);
+    private final BooleanSetting packetPlace = (BooleanSetting) new BooleanSetting("Packet Place", "Place by sending a packet", true).setParentSetting(place);
 
     /* Explode Settings */
     private final BooleanSetting explode = new BooleanSetting("Explode", "Automatically explode crystals", true);
-    private final ModeSetting<ExplodeSwing> explodeSwing = (ModeSetting<ExplodeSwing>) new ModeSetting<>("Swing", "How to swing your arm when breaking the crystal", ExplodeSwing.PACKET).setParentSetting(explode);
-    private final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystal filter to apply", ExplodeFilter.SMART).setParentSetting(explode);
+    private final ModeSetting<ExplodeSwing> explodeSwing = (ModeSetting<ExplodeSwing>) new ModeSetting<>("Swing", "How to swing your arm when breaking the crystal", ExplodeSwing.MAIN).setParentSetting(explode);
+    private final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystal filter to apply", ExplodeFilter.ALL).setParentSetting(explode);
     private final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The maximum range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
     private final ModeSetting<Rotate> explodeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the crystal", Rotate.PACKET).setParentSetting(explode);
     private final ModeSetting<AntiWeakness> antiWeakness = (ModeSetting<AntiWeakness>) new ModeSetting<>("Anti Weakness", "Attack crystals whilst having the weakness effect", AntiWeakness.SWITCH).setParentSetting(explode);
-    private final BooleanSetting setDead = (BooleanSetting) new BooleanSetting("Set Dead", "Instantly set the crystal's alive state to dead when you attack it", true).setParentSetting(explode);
+    private final BooleanSetting setDead = (BooleanSetting) new BooleanSetting("Set Dead", "Instantly set the crystal's alive state to dead when you attack it", false).setParentSetting(explode);
 
     /* Parameters */
     private final BooleanSetting parameters = new BooleanSetting("Parameters", "Parameter preferences", true);
@@ -92,7 +93,6 @@ public class AutoCrystal extends Module {
     private EntityPlayer target;
 
     // The current position we are placing at
-    private BlockPos placePosition;
     private CrystalPosition crystalPosition;
 
     // A list of self placed crystals. Only initialised to prevent possible NullPointerException crashes
@@ -100,7 +100,7 @@ public class AutoCrystal extends Module {
 
     public AutoCrystal() {
         super("AutoCrystal", ModuleCategory.COMBAT, "Automatically explodes and places crystals");
-        this.addSettings(actionPriority, targeting, place, explode, parameters, render);
+        this.addSettings(order, targeting, place, explode, parameters, render);
     }
 
     @Override
@@ -125,12 +125,12 @@ public class AutoCrystal extends Module {
 
         // If it's null, we don't want to do anything except set the place position to null
         if (this.target == null) {
-            placePosition = null;
+            crystalPosition = null;
             return;
         }
 
         try {
-            switch (actionPriority.getCurrentMode()) {
+            switch (order.getCurrentMode()) {
                 case PLACE_EXPLODE:
                     // Place
                     if (place.isEnabled()) {
@@ -218,10 +218,11 @@ public class AutoCrystal extends Module {
                         continue;
                     }
 
+                    float local = calculateCrystalDamage(new Vec3d(entity.posX, entity.posY, entity.posZ), mc.player);
+                    float targetDamage = calculateCrystalDamage(new Vec3d(entity.posX, entity.posY, entity.posZ), target);
+
                     // If the crystal will kill us, don't explode
                     if (antiSuicide.isEnabled()) {
-                        float local = calculateCrystalDamage(new Vec3d(entity.posX, entity.posY, entity.posZ), mc.player);
-
                         if (local >= mc.player.getHealth()) {
                             continue;
                         }
@@ -232,6 +233,16 @@ public class AutoCrystal extends Module {
                         if (!selfPlacedCrystals.contains(entity.getPosition())) {
                             continue;
                         }
+                    }
+
+                    // Make sure the target damage is bigger than the minimum
+                    if (!(targetDamage > minimumDamage.getValue())) {
+                        continue;
+                    }
+
+                    // Make sure it doesn't do too much damage to us
+                    if (local > maximumLocal.getValue()) {
+                        continue;
                     }
 
                     // Explode the crystal
@@ -408,7 +419,7 @@ public class AutoCrystal extends Module {
         }
 
         // Rotate towards the crystal
-        Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(entityEnderCrystal.posX, entityEnderCrystal.posY, entityEnderCrystal.posZ));
+        Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(entityEnderCrystal.posX, entityEnderCrystal.posY + 0.5f, entityEnderCrystal.posZ));
         explodeRotate.getCurrentMode().doRotate(explodeRotate.getCurrentMode(), rotationVec.x, rotationVec.y);
 
         // Attack the crystal
@@ -490,6 +501,16 @@ public class AutoCrystal extends Module {
             }
 
             float targetDamage = calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), playerTarget);
+
+            // Make sure the target damage is bigger than the minimum
+            if (!(targetDamage > minimumDamage.getValue())) {
+                continue;
+            }
+
+            // Make sure it doesn't do too much damage to u
+            if (selfDamage > maximumLocal.getValue()) {
+                continue;
+            }
 
             // Set best position A. if the previous position is null or B. the damage is higher than that of the previous position
             if (bestPosition == null || calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), playerTarget) > calculateCrystalDamage(new Vec3d(bestPosition.getPosition().getX() + 0.5f, bestPosition.getPosition().getY() + 1, bestPosition.getPosition().getZ()), playerTarget)) {
@@ -581,14 +602,6 @@ public class AutoCrystal extends Module {
         return damage;
     }
 
-    public boolean isPositionWithinDamageParameters(BlockPos position, EntityPlayer playerTarget) {
-        Vec3d vec = new Vec3d(position.getX() + 0.5f, position.getY() + 1f, position.getZ() + 0.5f);
-        float targetDamage = calculateCrystalDamage(vec, playerTarget);
-        float playerDamage = calculateCrystalDamage(vec, mc.player);
-
-        return targetDamage >= minimumDamage.getValue() && playerDamage <= maximumLocal.getValue();
-    }
-
     /** Other Stuff */
     public String getModuleInfo() {
         String moduleInfo = " ";
@@ -605,7 +618,7 @@ public class AutoCrystal extends Module {
         return moduleInfo;
     }
 
-    public enum ActionPriority {
+    public enum Order {
         /**
          * Place then explode
          */

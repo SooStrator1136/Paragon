@@ -26,12 +26,12 @@ public class SliderComponent extends SettingComponent {
         float renderWidth;
 
         // Set values
-        float diff = Math.min(84, Math.max(0, mouseX - (getModuleButton().getPanel().getX() + 6)));
+        float diff = Math.min(88, Math.max(0, mouseX - (getModuleButton().getPanel().getX() + 6)));
 
         float min = ((NumberSetting) getSetting()).getMin();
         float max = ((NumberSetting) getSetting()).getMax();
 
-        renderWidth = 84 * (((NumberSetting) getSetting()).getValue() - min) / (max - min);
+        renderWidth = 88 * (((NumberSetting) getSetting()).getValue() - min) / (max - min);
 
         if (!Mouse.isButtonDown(0))
             dragging = false;
@@ -40,7 +40,7 @@ public class SliderComponent extends SettingComponent {
             if (diff == 0) {
                 ((NumberSetting) getSetting()).setValue(((NumberSetting) getSetting()).getMin());
             } else {
-                float newValue = (float) MathUtil.roundDouble(((diff / 84) * (max - min) + min), 2);
+                float newValue = (float) MathUtil.roundDouble(((diff / 88) * (max - min) + min), 2);
                 ((NumberSetting) getSetting()).setValue(newValue);
             }
         }
@@ -51,7 +51,7 @@ public class SliderComponent extends SettingComponent {
         renderText(getSetting().getName() + formatCode(TextFormatting.GRAY) + " " + ((NumberSetting) getSetting()).getValue(), (getModuleButton().getPanel().getX() + 4) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
         GL11.glPopMatrix();
 
-        RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, 84, 1, new Color(30, 30, 30).getRGB());
+        RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, 88, 1, new Color(30, 30, 30).getRGB());
         RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, renderWidth, 1, Colours.mainColour.getColour().getRGB());
         RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4 + renderWidth - 0.5f, getModuleButton().getOffset() + getOffset() + 9.5f, 2, 2, -1);
 

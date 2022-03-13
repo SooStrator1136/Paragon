@@ -10,6 +10,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * @author Wolfsurge
+ */
 public class OnDeath extends Module {
 
     private final BooleanSetting printCoords = new BooleanSetting("Print Coords", "Prints your death coordinates in chat (client-side only)", true);
@@ -22,18 +25,24 @@ public class OnDeath extends Module {
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
+        // Check that the entity that died has the same ID that the player does
         if (event.getEntity().getEntityId() == mc.player.getEntityId()) {
             Entity entity = event.getEntity();
             if (printCoords.isEnabled()) {
                 BlockPos pos = entity.getPosition();
-                String stringBuilder = TextFormatting.RED + "You died at" +
+
+                // Build the death coord string
+                String string = TextFormatting.RED + "You died at" +
                         TextFormatting.WHITE + " X " + TextFormatting.GRAY + pos.getX() +
                         TextFormatting.WHITE + " Y " + TextFormatting.GRAY + pos.getY() +
                         TextFormatting.WHITE + " Z " + TextFormatting.GRAY + pos.getZ();
-                CommandManager.sendClientMessage(stringBuilder, false);
+
+                // Display the client message
+                CommandManager.sendClientMessage(string, false);
             }
 
             if (respawn.isEnabled()) {
+                // Respawn the player
                 mc.player.respawnPlayer();
             }
         }

@@ -19,6 +19,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 
+/**
+ * @author Wolfsurge
+ */
 public class ESP extends Module {
 
     /* Entity settings */
@@ -38,7 +41,7 @@ public class ESP extends Module {
 
     /* Mode and line width */
     private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.OUTLINE);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 1, 0.1f, 2, 0.1f);
+    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 2, 0.1f);
 
     public ESP() {
         super("ESP", ModuleCategory.RENDER, "Highlights entities in the world");

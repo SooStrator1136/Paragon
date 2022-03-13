@@ -5,6 +5,7 @@ import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
+import com.paragon.client.systems.module.impl.client.ClientFont;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -36,7 +37,7 @@ public class Icon implements Wrapper, TextRenderer {
             RenderUtil.drawRect(x, y, getStringWidth(name) + 6, 16, new Color(23, 23, 23).getRGB());
         }
 
-        renderCenteredString(name, x + ((getStringWidth(name) + 6) / 2), y + 4, -1, false);
+        renderCenteredString(name, x + ((getStringWidth(name) + 6) / 2), y + (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1, false);
     }
 
     public void whenClicked(int mouseX, int mouseY) {

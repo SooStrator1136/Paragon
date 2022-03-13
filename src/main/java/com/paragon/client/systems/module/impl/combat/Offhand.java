@@ -25,6 +25,8 @@ public class Offhand extends Module {
     private BooleanSetting lowHealth = (BooleanSetting) new BooleanSetting("Low Health", "Switch to a totem when on low health", true).setParentSetting(safety);
     private NumberSetting lowHealthValue = (NumberSetting) new NumberSetting("Health", "The health to switch to totems", 10, 1, 20, 1).setParentSetting(safety).setVisiblity(lowHealth::isEnabled);
 
+    private boolean hasJustPausedMotion = false;
+
     public Offhand() {
         super("Offhand", ModuleCategory.COMBAT, "Automatically manages the items in your offhand");
         this.addSettings(main, fallback, strictInv, pauseMotion, safety);
@@ -49,6 +51,7 @@ public class Offhand extends Module {
             return;
         }
 
+        // Get item slot
         int slot = InventoryUtil.getItemSlot(itemToSwitch);
 
         // Return if we couldn't find an item
@@ -62,10 +65,11 @@ public class Offhand extends Module {
         }
 
         // Pause movement
-        if (pauseMotion.isEnabled()) {
+        if (pauseMotion.isEnabled() && !hasJustPausedMotion) {
             mc.player.motionX = 0;
             mc.player.motionZ = 0;
             mc.player.setVelocity(0, mc.player.motionY, 0);
+            hasJustPausedMotion = true;
             return;
         }
 
@@ -99,6 +103,7 @@ public class Offhand extends Module {
             }
 
             if (elytra.isEnabled()) {
+                // We are flying with an elytra
                 if (mc.player.isElytraFlying()) {
                     return Items.TOTEM_OF_UNDYING;
                 }

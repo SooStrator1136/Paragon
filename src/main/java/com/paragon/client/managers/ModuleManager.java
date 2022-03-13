@@ -37,7 +37,9 @@ public class ModuleManager {
                 new Offhand(),
 
                 new ElytraFlight(),
-                new Speed(),
+                new NoSlow(),
+                new ReverseStep(),
+                new Sprint(),
                 new Step(),
                 new Velocity(),
 
@@ -49,10 +51,12 @@ public class ModuleManager {
                 new Tracers(),
                 new ViewModel(),
 
+                new AutoLog(),
                 new ChatModifications(),
                 new FakePlayer(),
                 new FastUse(),
                 new MiddleClick(),
+                new NoRotate(),
                 new OnDeath(),
 
                 new ClientFont(),

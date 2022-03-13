@@ -1,8 +1,10 @@
 package com.paragon.client.systems.module.impl.render;
 
+import com.paragon.api.event.render.entity.RenderEatingEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.SoundEvents;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
@@ -19,10 +21,11 @@ public class NoRender extends Module {
     private final BooleanSetting potions = new BooleanSetting("Potion Icons", "Cancel rendering the potion icons", false);
     private final BooleanSetting portal = new BooleanSetting("Portal", "Cancel rendering the portal effect", true);
     private final BooleanSetting bats = new BooleanSetting("Bats", "Cancel rendering bats", true);
+    private final BooleanSetting eatingAnimation = new BooleanSetting("Eating animation", "Stops rendering the eating animation", false);
 
     public NoRender() {
         super("NoRender", ModuleCategory.RENDER, "Cancels rendering certain things");
-        this.addSettings(fire, water, bossInfo, potions, portal, bats);
+        this.addSettings(fire, water, bossInfo, potions, portal, bats, eatingAnimation);
     }
 
     @SubscribeEvent
@@ -73,6 +76,13 @@ public class NoRender extends Module {
 
         if (water.isEnabled() && event.getOverlayType() == RenderBlockOverlayEvent.OverlayType.WATER) {
             event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void onRenderEating(RenderEatingEvent event) {
+        if (eatingAnimation.isEnabled()) {
+            event.cancel();
         }
     }
 

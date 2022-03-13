@@ -54,9 +54,14 @@ public class Paragon {
 
         // Set up managers
         storageManager = new StorageManager();
+
         moduleManager = new ModuleManager();
+
         commandManager = new CommandManager();
+
         socialManager = new SocialManager();
+        Paragon.INSTANCE.getStorageManager().loadSocial();
+
         altManager = new AltManager();
 
         // Set up GUIs and elements

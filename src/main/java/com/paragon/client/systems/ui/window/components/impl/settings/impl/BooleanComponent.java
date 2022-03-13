@@ -73,8 +73,9 @@ public class BooleanComponent extends SettingComponent implements TextRenderer {
         renderText(booleanSetting.getName(), getX() + 3, getY() + 3, booleanSetting.isEnabled() ? Colours.mainColour.getColour().getRGB() : -1);
 
         GL11.glPushMatrix();
-        GL11.glScalef(.5f, .5f, 0); // Shrink scale
-        renderText(booleanSetting.getDescription(), (getX() + 3) * 2, (getY() + 13) * 2, -1);
+        GL11.glScalef(0.55f, 0.55f, 0); // Shrink scale
+        float scaleFactor = 1 / 0.55f;
+        renderText(getSetting().getDescription(), (getX() + 3) * scaleFactor, (getY() + 13) * scaleFactor, -1);
         GL11.glPopMatrix();
 
         if (expanded) {

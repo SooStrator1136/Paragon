@@ -13,7 +13,6 @@ public class SocialManager {
     public final List<Player> players = new ArrayList<>();
 
     public SocialManager() {
-        Paragon.INSTANCE.getStorageManager().loadSocial();
         Paragon.INSTANCE.getLogger().info("Loaded Social Manager");
     }
 

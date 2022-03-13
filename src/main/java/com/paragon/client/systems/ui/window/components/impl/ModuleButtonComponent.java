@@ -77,8 +77,9 @@ public class ModuleButtonComponent implements TextRenderer {
         renderText(getModule().getName(), getX() + 3, getY() + 3, getModule().isEnabled() ? Colours.mainColour.getColour().getRGB() : -1);
 
         GL11.glPushMatrix();
-        GL11.glScalef(.5f, .5f, 0); // Shrink scale
-        renderText(getModule().getDescription(), (getX() + 3) * 2, (getY() + 13) * 2, -1);
+        GL11.glScalef(0.55f, 0.55f, 0); // Shrink scale
+        float scaleFactor = 1 / 0.55f;
+        renderText(getModule().getDescription(), (getX() + 3) * scaleFactor, (getY() + 13) * scaleFactor, -1);
         GL11.glPopMatrix();
 
         renderText("Visible", getX() + getWidth() - getStringWidth("Visible") - 2, getY() + 6, getModule().isVisible() ? Colours.mainColour.getColour().getRGB() : -1);

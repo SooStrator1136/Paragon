@@ -57,10 +57,10 @@ public class KeybindComponent extends SettingComponent implements TextRenderer {
         // Render text
         renderText(keybindSetting.getName() + formatCode(TextFormatting.GRAY) + " " + (isListening ? "..." : Keyboard.getKeyName(keybindSetting.getKeyCode())), getX() + 3, getY() + 3, -1);
 
-        // Render description
         GL11.glPushMatrix();
-        GL11.glScalef(.5f, .5f, 0); // Shrink scale
-        renderText(keybindSetting.getDescription(), (getX() + 3) * 2, (getY() + 13) * 2, -1);
+        GL11.glScalef(0.55f, 0.55f, 0); // Shrink scale
+        float scaleFactor = 1 / 0.55f;
+        renderText(getSetting().getDescription(), (getX() + 3) * scaleFactor, (getY() + 13) * scaleFactor, -1);
         GL11.glPopMatrix();
 
         // Render reset text

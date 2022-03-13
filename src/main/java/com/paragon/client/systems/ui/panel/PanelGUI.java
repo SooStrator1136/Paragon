@@ -3,6 +3,7 @@ package com.paragon.client.systems.ui.panel;
 import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
+import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.ui.panel.impl.Panel;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.ClientFont;
@@ -30,8 +31,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         // Add a panel for every category
         for (ModuleCategory category : ModuleCategory.values()) {
             // Add panel
-            panels.add(new Panel(x, 5, 95
-                    , 16, category));
+            panels.add(new Panel(x, 5, 95, 16, category));
 
             // Increase X
             x += 100 ;
@@ -59,6 +59,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
         if (!tooltip.isEmpty() && GUI.tooltips.isEnabled()) {
             RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
+            RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getColour().getRGB());
             renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
         }
 

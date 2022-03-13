@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
+import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.Module;
@@ -67,7 +68,7 @@ public class Panel implements TextRenderer {
 
         // Header
         RenderUtil.drawRect(getX(), getY(), getWidth(), barHeight, new Color(23, 23, 23).darker().getRGB());
-        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f), -1, true);
+        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
 
         float height = 0;
         for (ModuleButton moduleButton : moduleButtons) {
@@ -87,11 +88,11 @@ public class Panel implements TextRenderer {
             RenderUtil.endGlScissor();
         }
 
-        if (GUI.outline.isEnabled()) {
-            if (isExpanded() && GUI.panelHeaderSeparator.isEnabled()) {
-                RenderUtil.drawRect(getX(), getY() + barHeight, getWidth(), 0.5f, Colours.mainColour.getColour().getRGB());
-            }
+        if (GUI.panelHeaderSeparator.isEnabled()) {
+            RenderUtil.drawRect(getX(), getY() + barHeight, getWidth(), 0.5f, Colours.mainColour.getColour().getRGB());
+        }
 
+        if (GUI.outline.isEnabled()) {
             RenderUtil.drawBorder(getX(), getY(), getWidth(), barHeight + height * animation.getAnimationFactor(), 0.5f, Colours.mainColour.getColour().getRGB());
         }
     }

@@ -11,6 +11,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 
+/**
+ * @author Wolfsurge
+ */
 public class FastUse extends Module {
 
     // Options

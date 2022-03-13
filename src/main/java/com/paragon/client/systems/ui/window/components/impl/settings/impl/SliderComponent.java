@@ -82,8 +82,9 @@ public class SliderComponent extends SettingComponent implements TextRenderer {
         renderText(numberSetting.getName() + formatCode(TextFormatting.GRAY) + " " + numberSetting.getValue(), getX() + 3, getY() + 3, -1);
 
         GL11.glPushMatrix();
-        GL11.glScalef(.5f, .5f, 0); // Shrink scale
-        renderText(numberSetting.getDescription(), (getX() + 3) * 2, (getY() + 13) * 2, -1);
+        GL11.glScalef(0.55f, 0.55f, 0); // Shrink scale
+        float scaleFactor = 1 / 0.55f;
+        renderText(getSetting().getDescription(), (getX() + 3) * scaleFactor, (getY() + 13) * scaleFactor, -1);
         GL11.glPopMatrix();
 
         RenderUtil.drawRect(getX(), getY() + getHeight() - 1, renderWidth, 1, Colours.mainColour.getColour().getRGB());

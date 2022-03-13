@@ -10,16 +10,20 @@ import com.paragon.client.systems.module.settings.impl.ColourSetting;
 import com.paragon.client.systems.module.settings.impl.ModeSetting;
 import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import me.wolfsurge.cerauno.listener.Listener;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 
 import java.awt.*;
 
+/**
+ * @author Wolfsurge
+ */
 public class BlockHighlight extends Module {
 
-    private ModeSetting<RenderMode> renderMode = new ModeSetting<>("Render Mode", "How to highlight the block", RenderMode.BOTH);
-    private NumberSetting lineWidth = (NumberSetting) new NumberSetting("Line Width", "The width of the outline", 1, 0.1f, 1.5f, 0.1f).setVisiblity(() -> renderMode.getCurrentMode() == RenderMode.OUTLINE || renderMode.getCurrentMode() == RenderMode.BOTH);
-    private ColourSetting colour = new ColourSetting("Colour", "What colour to render the block", new Color(185, 19, 211));
+    private final ModeSetting<RenderMode> renderMode = new ModeSetting<>("Render Mode", "How to highlight the block", RenderMode.BOTH);
+    private final NumberSetting lineWidth = (NumberSetting) new NumberSetting("Line Width", "The width of the outline", 1, 0.1f, 1.5f, 0.1f).setVisiblity(() -> renderMode.getCurrentMode() == RenderMode.OUTLINE || renderMode.getCurrentMode() == RenderMode.BOTH);
+    private final ColourSetting colour = new ColourSetting("Colour", "What colour to render the block", new Color(185, 19, 211));
 
     public BlockHighlight() {
         super("BlockHighlight", ModuleCategory.RENDER, "Highlights the block you are looking at");

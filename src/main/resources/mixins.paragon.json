@@ -5,6 +5,10 @@
   "minVersion": "0.7.4",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "accessor.ISPacketEntityVelocity",
+    "accessor.ISPacketExplosion",
+    "accessor.ITimer",
+
     "network.MixinNetworkManager",
     "player.MixinEntityPlayer",
 
@@ -14,6 +18,8 @@
     "render.gui.MixinGuiMainMenu",
     "render.gui.MixinGuiMultiplayer",
 
-    "render.world.MixinRenderGlobal"
+    "render.world.MixinRenderGlobal",
+
+    "world.block.MixinBlockSoulSand"
   ]
 }
