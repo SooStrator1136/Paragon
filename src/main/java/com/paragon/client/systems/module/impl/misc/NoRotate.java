@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.asm.mixins.accessor.ISPacketPlayerPosLook;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import me.wolfsurge.cerauno.listener.Listener;
@@ -19,10 +20,10 @@ public class NoRotate extends Module {
     public void onPacketReceive(PacketEvent.PreReceive event) {
         if (event.getPacket() instanceof SPacketPlayerPosLook) {
             // Set packet yaw
-            ((SPacketPlayerPosLook) event.getPacket()).yaw = mc.player.rotationYaw;
+            ((ISPacketPlayerPosLook) event.getPacket()).setYaw(mc.player.rotationYaw);
 
             // Set packet pitch
-            ((SPacketPlayerPosLook) event.getPacket()).pitch = mc.player.rotationPitch;
+            ((ISPacketPlayerPosLook) event.getPacket()).setPitch(mc.player.rotationPitch);
         }
     }
 

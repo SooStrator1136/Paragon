@@ -2,6 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -35,7 +36,7 @@ public class FastUse extends Module {
 
         // Check we want to set the delay timer to 0
         if (xp.isEnabled() && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) || blocks.isEnabled() && (mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock || mc.player.getHeldItemOffhand().getItem() instanceof ItemBlock) || crystals.isEnabled() && InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-            mc.rightClickDelayTimer = 0;
+            ((IMinecraft) mc).setRightClickDelayTimer(0);
         }
     }
 

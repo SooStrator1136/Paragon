@@ -3,6 +3,8 @@ package com.paragon.client.managers;
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.hud.HUDModule;
+import com.paragon.client.systems.module.hud.impl.*;
 import com.paragon.client.systems.module.impl.client.*;
 import com.paragon.client.systems.module.impl.combat.*;
 import com.paragon.client.systems.module.impl.misc.*;
@@ -61,11 +63,14 @@ public class ModuleManager {
                 new NoRotate(),
                 new Notifier(),
                 new OnDeath(),
+                new XCarry(),
 
                 new ClientFont(),
                 new Colours(),
                 new GUI(),
-                new HUD()
+                new HUD(),
+
+                new Coordinates()
         );
 
         modules.forEach(module -> {
@@ -112,6 +117,22 @@ public class ModuleManager {
         });
 
         return modulesInCategory;
+    }
+
+    /**
+     * Gets all the HUD modules
+     * @return The HUD modules
+     */
+    public List<HUDModule> getHUDModules() {
+        List<HUDModule> hudModules = new ArrayList<>();
+
+        getModules().forEach(module -> {
+            if (module instanceof HUDModule) {
+                hudModules.add((HUDModule) module);
+            }
+        });
+
+        return hudModules;
     }
 
     @SubscribeEvent

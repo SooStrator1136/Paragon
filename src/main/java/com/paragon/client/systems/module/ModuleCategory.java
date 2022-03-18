@@ -25,7 +25,12 @@ public enum ModuleCategory {
     /**
      * Client related modules, e.g. GUI, Colours
      */
-    CLIENT("Client");
+    CLIENT("Client"),
+
+    /**
+     * HUD modules
+     */
+    HUD("HUD");
 
     private String name;
 

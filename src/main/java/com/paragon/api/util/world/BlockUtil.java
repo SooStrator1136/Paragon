@@ -17,24 +17,6 @@ import java.util.List;
 
 public class BlockUtil implements Wrapper {
 
-    /**
-     * Gets blocks around the entity
-     * @param entity The entity
-     * @param blockRange The range to get blocks
-     * @return A list of blocks
-     */
-    public static List<BlockPos> getBlocksAroundPlayer(Entity entity, double blockRange) {
-        List<BlockPos> nearbyBlocks = new ArrayList<>();
-        int range = (int) MathUtil.roundDouble(blockRange, 0);
-
-        for (int x = -range; x <= range; x++)
-            for (int y = -range; y <= range - (range / 2); y++)
-                for (int z = -range; z <= range; z++)
-                    nearbyBlocks.add(entity.getPosition().add(x, y, z));
-
-        return nearbyBlocks;
-    }
-
     public static List<BlockPos> getSphere(float radius, boolean ignoreAir) {
         ArrayList<BlockPos> sphere = new ArrayList<>();
         BlockPos pos = new BlockPos(BlockUtil.mc.player.getPositionVector());

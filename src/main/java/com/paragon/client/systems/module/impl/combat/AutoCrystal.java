@@ -2,6 +2,7 @@ package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.player.InventoryUtil;
@@ -58,6 +59,8 @@ public class AutoCrystal extends Module {
 
     /* Place Settings */
     private final BooleanSetting place = new BooleanSetting("Place", "Automatically place crystals", true);
+    private final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals (in ms)", 30, 0, 100, 1).setParentSetting(place);
+    private final ModeSetting<TimerType> placeTimerType = (ModeSetting<TimerType>) new ModeSetting<>("Type", "When to check if the timer has passed", TimerType.PER_CRYSTAL).setParentSetting(place);
     private final ModeSetting<PlaceWhen> placeWhen = (ModeSetting<PlaceWhen>) new ModeSetting<>("When", "When to place crystals", PlaceWhen.HOLDING).setParentSetting(place);
     private final NumberSetting placeRange = (NumberSetting) new NumberSetting("Range", "The maximum range to place crystals", 5, 1, 7, 1).setParentSetting(place);
     private final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the position", Rotate.PACKET).setParentSetting(place);
@@ -65,6 +68,8 @@ public class AutoCrystal extends Module {
 
     /* Explode Settings */
     private final BooleanSetting explode = new BooleanSetting("Explode", "Automatically explode crystals", true);
+    private final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals (in ms)", 30, 0, 100, 1).setParentSetting(explode);
+    private final ModeSetting<TimerType> explodeTimerType = (ModeSetting<TimerType>) new ModeSetting<>("Type", "When to check if the timer has passed", TimerType.PER_CRYSTAL).setParentSetting(explode);
     private final ModeSetting<ExplodeSwing> explodeSwing = (ModeSetting<ExplodeSwing>) new ModeSetting<>("Swing", "How to swing your arm when breaking the crystal", ExplodeSwing.MAIN).setParentSetting(explode);
     private final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystal filter to apply", ExplodeFilter.ALL).setParentSetting(explode);
     private final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The maximum range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
@@ -97,6 +102,12 @@ public class AutoCrystal extends Module {
 
     // A list of self placed crystals. Only initialised to prevent possible NullPointerException crashes
     private final ArrayList<BlockPos> selfPlacedCrystals = new ArrayList<>();
+
+    // Explode timer
+    private final Timer explodeTimer = new Timer();
+
+    // Place timer
+    private final Timer placeTimer = new Timer();
 
     public AutoCrystal() {
         super("AutoCrystal", ModuleCategory.COMBAT, "Automatically explodes and places crystals");
@@ -134,11 +145,23 @@ public class AutoCrystal extends Module {
                 case PLACE_EXPLODE:
                     // Place
                     if (place.isEnabled()) {
-                        placeCrystals();
+                        if (placeTimerType.getCurrentMode().equals(TimerType.TICK)) {
+                            if (placeTimer.hasTimePassed((long) placeDelay.getValue())) {
+                                placeCrystals();
+                            }
+                        } else {
+                            placeCrystals();
+                        }
                     }
 
                     // Explode
                     if (explode.isEnabled()) {
+                        if (explodeTimerType.getCurrentMode().equals(TimerType.TICK)) {
+                            if (!explodeTimer.hasTimePassed((long) explodeDelay.getValue())) {
+                                return;
+                            }
+                        }
+
                         explodeCrystals();
                     }
 
@@ -146,11 +169,23 @@ public class AutoCrystal extends Module {
                 case EXPLODE_PLACE:
                     // Explode
                     if (explode.isEnabled()) {
-                        explodeCrystals();
+                        if (explodeTimerType.getCurrentMode().equals(TimerType.TICK)) {
+                            if (explodeTimer.hasTimePassed((long) explodeDelay.getValue())) {
+                                explodeCrystals();
+                            }
+                        } else {
+                            explodeCrystals();
+                        }
                     }
 
                     // Place
                     if (place.isEnabled()) {
+                        if (placeTimerType.getCurrentMode().equals(TimerType.TICK)) {
+                            if (!placeTimer.hasTimePassed((long) explodeDelay.getValue())) {
+                                return;
+                            }
+                        }
+
                         placeCrystals();
                     }
 
@@ -211,6 +246,13 @@ public class AutoCrystal extends Module {
         for (Entity entity : mc.world.loadedEntityList) {
             // Make sure it's a crystal
             if (entity instanceof EntityEnderCrystal) {
+                // Check we want to explode
+                if (explodeTimerType.getCurrentMode() == TimerType.PER_CRYSTAL) {
+                    if (!explodeTimer.hasTimePassed((long) explodeDelay.getValue())) {
+                        continue;
+                    }
+                }
+
                 // Make sure it is close enough
                 if (!EntityUtil.isTooFarAwayFromSelf(entity, explodeRange.getValue())) {
                     // Check it isn't dead
@@ -479,17 +521,21 @@ public class AutoCrystal extends Module {
         CrystalPosition bestPosition = null;
 
         for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
+            if (placeTimerType.getCurrentMode().equals(TimerType.PER_CRYSTAL)) {
+                if (!placeTimer.hasTimePassed((long) placeDelay.getValue())) {
+                    continue;
+                }
+            }
+
             // Check we can place the crystal
             if (!canPlaceCrystal(pos)) {
                 continue;
             }
 
-            float selfDamage = 9999f;
+            float selfDamage = calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), mc.player);
 
             // If the crystal will kill us, don't place
             if (antiSuicide.isEnabled()) {
-                selfDamage = calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), mc.player);
-
                 if (selfDamage >= mc.player.getHealth()) {
                     continue;
                 }
@@ -507,13 +553,14 @@ public class AutoCrystal extends Module {
                 continue;
             }
 
-            // Make sure it doesn't do too much damage to u
+            // Make sure it doesn't do too much damage to us
             if (selfDamage > maximumLocal.getValue()) {
                 continue;
             }
 
             // Set best position A. if the previous position is null or B. the damage is higher than that of the previous position
-            if (bestPosition == null || calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), playerTarget) > calculateCrystalDamage(new Vec3d(bestPosition.getPosition().getX() + 0.5f, bestPosition.getPosition().getY() + 1, bestPosition.getPosition().getZ()), playerTarget)) {
+            if (bestPosition == null || calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), playerTarget) >
+                    calculateCrystalDamage(new Vec3d(bestPosition.getPosition().getX() + 0.5f, bestPosition.getPosition().getY() + 1, bestPosition.getPosition().getZ()), playerTarget)) {
                 bestPosition = new CrystalPosition(pos, targetDamage, selfDamage);
             }
         }
@@ -763,6 +810,18 @@ public class AutoCrystal extends Module {
          * Show crystal count
          */
         CRYSTAL_COUNT
+    }
+
+    public enum TimerType {
+        /**
+         * Check if the timer has passed for each crystal
+         */
+        PER_CRYSTAL,
+
+        /**
+         * Only check once per tick
+         */
+        TICK
     }
 
     class CrystalPosition {

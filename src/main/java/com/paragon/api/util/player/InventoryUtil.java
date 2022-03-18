@@ -1,6 +1,7 @@
 package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
+import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -69,7 +70,7 @@ public class InventoryUtil implements Wrapper {
         if (silent) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(slot));
             // Sync item
-            mc.playerController.syncCurrentPlayItem();
+            ((IPlayerControllerMP) mc.player).hookSyncCurrentPlayItem();
         } else {
             mc.player.inventory.currentItem = slot;
         }

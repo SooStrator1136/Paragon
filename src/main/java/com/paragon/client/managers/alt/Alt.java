@@ -1,5 +1,6 @@
 package com.paragon.client.managers.alt;
 
+import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.client.systems.ui.alt.AltManagerGUI;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
@@ -60,7 +61,7 @@ public class Alt {
         }
 
         // Set Minecraft session
-        Minecraft.getMinecraft().session = this.session;
+        ((IMinecraft) Minecraft.getMinecraft()).setSession(this.session);
         AltManagerGUI.renderString = TextFormatting.GREEN + "Successful Login!";
 
         return true;

@@ -114,7 +114,7 @@ jar {
 				'FMLCorePluginContainsFMLMod': 'true',
 				'FMLCorePlugin': 'com.paragon.asm.MixinLoader',
 				'ForceLoadAsMod': 'true',
-				'FMLAT': 'paragon_at.cfg'
+				'FMLAT': ''
 		)
 	}
 }

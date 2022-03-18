@@ -9,7 +9,13 @@ public class Timer {
     }
 
     public boolean hasTimePassed(long time) {
-        return System.currentTimeMillis() - lastMS > time;
+        if ((System.currentTimeMillis() - lastMS) > time) {
+            reset();
+
+            return true;
+        }
+
+        return false;
     }
 
     public Timer() {

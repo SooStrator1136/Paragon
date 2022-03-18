@@ -61,7 +61,7 @@ public class HoleESP extends Module {
 
         holes.clear();
 
-        BlockUtil.getBlocksAroundPlayer(mc.player, range.getValue()).forEach(blockPos -> {
+        BlockUtil.getSphere(range.getValue(), false).forEach(blockPos -> {
             if (isSurroundedByBlock(blockPos, Blocks.OBSIDIAN) && obsidian.isEnabled()) {
                 holes.add(new Hole(blockPos, HoleType.OBSIDIAN));
             } else if (isSurroundedByBlock(blockPos, Blocks.BEDROCK) && bedrock.isEnabled()) {

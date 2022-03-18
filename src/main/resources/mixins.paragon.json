@@ -5,8 +5,12 @@
   "minVersion": "0.7.4",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "accessor.ICPacketCloseWindow",
+    "accessor.IMinecraft",
+    "accessor.IPlayerControllerMP",
     "accessor.ISPacketEntityVelocity",
     "accessor.ISPacketExplosion",
+    "accessor.ISPacketPlayerPosLook",
     "accessor.ITimer",
 
     "network.MixinNetworkManager",

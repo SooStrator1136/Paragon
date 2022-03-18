@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.movement;
 import com.paragon.api.event.player.TravelEvent;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
@@ -55,7 +56,7 @@ public class ElytraFlight extends Module {
             // Make sure we aren't elytra flying
             if (!mc.player.isElytraFlying()) {
                 // Make the game slower
-                ((ITimer) mc.timer).setTickLength(50 / takeOffTimer.getValue());
+                ((ITimer) ((IMinecraft) mc).getTimer()).setTickLength(50 / takeOffTimer.getValue());
 
                 if (mc.player.onGround) {
                     // Jump if we're on the ground
@@ -71,7 +72,7 @@ public class ElytraFlight extends Module {
     @Override
     public void onDisable() {
         // Set us back to normal speed
-        ((ITimer) mc.timer).setTickLength(50);
+        ((ITimer) ((IMinecraft) mc).getTimer()).setTickLength(50);
     }
 
     @Listener
@@ -82,7 +83,7 @@ public class ElytraFlight extends Module {
 
         if (mc.player.isElytraFlying()) {
             // Set us to normal speed if we are flying
-            ((ITimer) mc.timer).setTickLength(50);
+            ((ITimer) ((IMinecraft) mc).getTimer()).setTickLength(50);
 
             if (mode.getCurrentMode() != Mode.BOOST) {
                 // Cancel motion

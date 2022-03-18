@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
+import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.client.managers.alt.Alt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -56,7 +57,7 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        renderText("Logged in as " + TextFormatting.GRAY + Minecraft.getMinecraft().session.getUsername(), 5, 30, -1);
+        renderText("Logged in as " + TextFormatting.GRAY + ((IMinecraft) Minecraft.getMinecraft()).getSession().getUsername(), 5, 30, -1);
         renderCenteredString("Paragon Alt Manager", width / 2f, 75, -1, false);
         renderCenteredString(renderString, width / 2f, 100, -1, false);
 
