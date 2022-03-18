@@ -1,6 +1,7 @@
 package com.paragon.client.systems.ui.alt;
 
 import com.paragon.Paragon;
+import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.managers.alt.Alt;
@@ -16,10 +17,14 @@ import java.util.ArrayList;
 
 public class AltManagerGUI extends GuiScreen implements TextRenderer {
 
-    private ArrayList<AltEntry> altEntries = new ArrayList<>();
+    private final ArrayList<AltEntry> altEntries = new ArrayList<>();
+    public static AltEntry selectedAltEntry;
+    public static String renderString = TextFormatting.GRAY + "Idle";
 
     @Override
     public void initGui() {
+        renderString = TextFormatting.GRAY + "Idle";
+
         altEntries.clear();
 
         float offset = 150;
@@ -30,13 +35,16 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
         }
 
         this.buttonList.add(new GuiButton(0, 5, 5, 75, 20, "Back"));
+        this.buttonList.add(new GuiButton(1, width / 2 - 80, height - 25, 75, 20, "Add Alt"));
+        this.buttonList.add(new GuiButton(2, width / 2 + 5, height - 25, 75, 20, "Delete"));
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
 
-        // refreshOffsets();
+        this.buttonList.get(2).enabled = selectedAltEntry != null;
+
         scroll();
 
         RenderUtil.drawRect(0, 150, width, 200, 0x90000000);
@@ -49,21 +57,10 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
         RenderUtil.endGlScissor();
 
         renderText("Logged in as " + TextFormatting.GRAY + Minecraft.getMinecraft().session.getUsername(), 5, 30, -1);
+        renderCenteredString("Paragon Alt Manager", width / 2f, 75, -1, false);
+        renderCenteredString(renderString, width / 2f, 100, -1, false);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
-    public void refreshOffsets() {
-        if (altEntries.isEmpty()) {
-            return;
-        }
-
-        float offset = altEntries.get(0).getOffset();
-
-        for (AltEntry altEntry : altEntries) {
-            altEntry.setOffset(offset);
-            offset += 20;
-        }
     }
 
     public void scroll() {
@@ -89,10 +86,18 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         altEntries.forEach(altEntry -> {
-            if (altEntry.getOffset() > 150 && altEntry.getOffset() < 350) {
-                altEntry.clicked(mouseX, mouseY, width);
+            if (GuiUtil.mouseOver(0, 150, width, 350, mouseX, mouseY)) {
+                if (GuiUtil.mouseOver(0, altEntry.getOffset(), width, altEntry.getOffset() + 20, mouseX, mouseY)) {
+                    if (selectedAltEntry == altEntry) {
+                        renderString = "Logging in with the email: " + altEntry.getAlt().getEmail();
+                        altEntry.clicked(mouseX, mouseY, width);
+                    } else {
+                        selectedAltEntry = altEntry;
+                    }
+                }
             }
         });
+
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
@@ -102,6 +107,18 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
             case 0:
                 mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
                 break;
+            case 1:
+                mc.displayGuiScreen(new AddAltGUI());
+                break;
+            case 2:
+                Paragon.INSTANCE.getAltManager().getAlts().removeIf(alt -> alt.getEmail().equals(selectedAltEntry.getAlt().getEmail()) && alt.getPassword().equals(selectedAltEntry.getAlt().getPassword()));
+                altEntries.remove(selectedAltEntry);
+                break;
         }
+    }
+
+    @Override
+    public void onGuiClosed() {
+        Paragon.INSTANCE.getStorageManager().saveAlts();
     }
 }

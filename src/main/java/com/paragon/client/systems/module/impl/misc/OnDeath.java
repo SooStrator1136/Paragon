@@ -25,6 +25,10 @@ public class OnDeath extends Module {
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
+        if (nullCheck()) {
+            return;
+        }
+
         // Check that the entity that died has the same ID that the player does
         if (event.getEntity().getEntityId() == mc.player.getEntityId()) {
             Entity entity = event.getEntity();

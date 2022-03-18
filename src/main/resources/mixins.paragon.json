@@ -14,12 +14,15 @@
 
     "render.entity.MixinItemRenderer",
     "render.entity.MixinRenderLivingBase",
+    "render.entity.MixinRenderPlayer",
 
     "render.gui.MixinGuiMainMenu",
     "render.gui.MixinGuiMultiplayer",
 
     "render.world.MixinRenderGlobal",
 
-    "world.block.MixinBlockSoulSand"
+    "world.block.MixinBlockSoulSand",
+    "world.block.MixinBlockSlime",
+    "world.MixinWorld"
   ]
 }

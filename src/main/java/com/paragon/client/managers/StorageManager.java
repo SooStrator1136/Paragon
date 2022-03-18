@@ -1,6 +1,7 @@
 package com.paragon.client.managers;
 
 import com.paragon.Paragon;
+import com.paragon.client.managers.alt.Alt;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
 import com.paragon.client.systems.module.Module;
@@ -21,6 +22,7 @@ import java.io.*;
 @SuppressWarnings("all") // FUCK warnings
 public class StorageManager {
 
+    public File mainFolder = new File("paragon");
     public File modulesFolder = new File("paragon/modules/");
     public File socialFolder = new File("paragon/social");
 
@@ -217,6 +219,78 @@ public class StorageManager {
                 String[] info = String.valueOf(acquaintances.get(i)).split(":");
                 Player player = new Player(info[0], Relationship.valueOf(info[1]));
                 Paragon.INSTANCE.getSocialManager().addPlayer(player);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveAlts() {
+        // Create main folder if it doesn't already exist
+        if (!mainFolder.exists()) {
+            mainFolder.mkdirs();
+        }
+
+        try {
+            // Create new friends json
+            File file = new File("paragon/alts.json");
+
+            // Create file
+            file.createNewFile();
+
+            // Create new JSON object
+            JSONObject jsonObject = new JSONObject();
+
+            // Create file writer
+            FileWriter fileWriter = new FileWriter(file);
+
+            try {
+                // Create a new array (for alt info)
+                JSONArray array = new JSONArray();
+
+                for (Alt alt : Paragon.INSTANCE.getAltManager().getAlts()) {
+                    // Put the player's info in the array - email:password
+                    array.put(alt.getEmail() + ":" + alt.getPassword());
+                }
+
+                // Add array to json object
+                jsonObject.putOpt("alts", array);
+
+                // Write JSON to file
+                fileWriter.write(jsonObject.toString(4));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Flush file writer
+            fileWriter.flush();
+
+            // Close file writer
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadAlts() {
+        // Create friends folder if it doesn't already exist
+        if (!mainFolder.exists()) {
+            mainFolder.mkdirs();
+        }
+
+        try {
+            // Load JSON
+            JSONObject jsonObject = loadExistingConfiguration(new File("paragon/alts.json"));
+
+            // Load array
+            JSONArray alts = jsonObject.getJSONArray("alts");
+
+            // For every value in array, create a new player
+            for (int i = 0; i < alts.length(); i++) {
+                String[] info = String.valueOf(alts.get(i)).split(":");
+                Alt alt = new Alt(info[0], info[1]);
+                Paragon.INSTANCE.getAltManager().addAlt(alt);
             }
 
         } catch (Exception e) {

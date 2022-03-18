@@ -17,7 +17,7 @@ public class AltEntry implements TextRenderer {
     }
 
     public void drawAlt(int mouseX, int mouseY, int screenWidth) {
-        RenderUtil.drawRect(0, offset, screenWidth, 20, 0x95000000);
+        RenderUtil.drawRect(0, offset, screenWidth, 20, AltManagerGUI.selectedAltEntry == this ? 0x95111111 : 0x95000000);
         renderCenteredString(alt.getEmail(), screenWidth / 2f, offset + 10, -1, true);
     }
 
@@ -33,6 +33,10 @@ public class AltEntry implements TextRenderer {
 
     public void setOffset(float newOffset) {
         this.offset = newOffset;
+    }
+
+    public Alt getAlt() {
+        return alt;
     }
 
 }

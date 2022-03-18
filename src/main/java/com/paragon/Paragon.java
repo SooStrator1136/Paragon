@@ -1,7 +1,9 @@
 package com.paragon;
 
+import com.paragon.api.event.EventParser;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.ModuleManager;
+import com.paragon.client.managers.PopManager;
 import com.paragon.client.managers.StorageManager;
 import com.paragon.client.managers.alt.AltManager;
 import com.paragon.client.managers.social.SocialManager;
@@ -34,6 +36,8 @@ public class Paragon {
     private StorageManager storageManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
+    private EventParser eventParser;
+    private PopManager popManager;
     private SocialManager socialManager;
     private AltManager altManager;
 
@@ -56,13 +60,16 @@ public class Paragon {
         storageManager = new StorageManager();
 
         moduleManager = new ModuleManager();
-
         commandManager = new CommandManager();
 
+        eventParser = new EventParser();
+        popManager = new PopManager();
+
         socialManager = new SocialManager();
-        Paragon.INSTANCE.getStorageManager().loadSocial();
+        getStorageManager().loadSocial();
 
         altManager = new AltManager();
+        getStorageManager().loadAlts();
 
         // Set up GUIs and elements
         taskbar = new Taskbar();
@@ -111,6 +118,22 @@ public class Paragon {
      */
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    /**
+     * Gets the event parser
+     * @return The event parser
+     */
+    public EventParser getEventParser() {
+        return eventParser;
+    }
+
+    /**
+     * Gets the pop manager
+     * @return The pop manager
+     */
+    public PopManager getPopManager() {
+        return popManager;
     }
 
     /**

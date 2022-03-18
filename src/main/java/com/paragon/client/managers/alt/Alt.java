@@ -1,10 +1,12 @@
 package com.paragon.client.managers.alt;
 
+import com.paragon.client.systems.ui.alt.AltManagerGUI;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
+import net.minecraft.util.text.TextFormatting;
 
 public class Alt {
 
@@ -53,11 +55,13 @@ public class Alt {
 
         // Return false if the session is null
         if (this.session == null) {
+            AltManagerGUI.renderString = TextFormatting.RED + "Unsuccessful Login!";
             return false;
         }
 
         // Set Minecraft session
         Minecraft.getMinecraft().session = this.session;
+        AltManagerGUI.renderString = TextFormatting.GREEN + "Successful Login!";
 
         return true;
     }

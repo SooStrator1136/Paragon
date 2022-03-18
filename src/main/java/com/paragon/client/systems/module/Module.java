@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module;
 
 import com.paragon.Paragon;
+import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.feature.Feature;
 import com.paragon.client.systems.ui.animation.Animation;
@@ -66,6 +67,13 @@ public class Module extends Feature implements Wrapper {
      */
     public void toggle() {
         this.enabled = !enabled;
+
+        ModuleToggleEvent moduleToggleEvent = new ModuleToggleEvent(this);
+        Paragon.INSTANCE.getEventBus().post(moduleToggleEvent);
+
+        if (moduleToggleEvent.isCancelled()) {
+            return;
+        }
 
         if (enabled) {
             // Register events

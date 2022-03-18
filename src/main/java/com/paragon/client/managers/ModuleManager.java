@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +33,7 @@ public class ModuleManager {
 
         modules = Arrays.asList(
                 new AutoCrystal(),
+                new Blink(),
                 new Offhand(),
 
                 new ElytraFlight(),
@@ -51,12 +51,15 @@ public class ModuleManager {
                 new Tracers(),
                 new ViewModel(),
 
+                new AutoEZ(),
                 new AutoLog(),
                 new ChatModifications(),
+                new CustomWorld(),
                 new FakePlayer(),
                 new FastUse(),
                 new MiddleClick(),
                 new NoRotate(),
+                new Notifier(),
                 new OnDeath(),
 
                 new ClientFont(),
