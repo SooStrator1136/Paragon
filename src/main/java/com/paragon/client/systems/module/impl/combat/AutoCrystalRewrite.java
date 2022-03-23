@@ -12,6 +12,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.impl.misc.AutoEZ;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import com.paragon.client.systems.module.settings.impl.ColourSetting;
 import com.paragon.client.systems.module.settings.impl.ModeSetting;
@@ -29,6 +30,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.*;
@@ -67,6 +69,7 @@ public class AutoCrystalRewrite extends Module {
     public final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "Rotate to the position you are placing at", Rotate.PACKET).setParentSetting(place);
     public final BooleanSetting placeRotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(place).setVisiblity(() -> !placeRotate.getCurrentMode().equals(Rotate.NONE));
     public final BooleanSetting raytracePosition = (BooleanSetting) new BooleanSetting("Raytrace Position", "Checks if you can see the position", true).setParentSetting(place);
+    public final BooleanSetting multiplace = (BooleanSetting) new BooleanSetting("Multiplace", "Place multiple crystals", false).setParentSetting(place);
     public final NumberSetting placeMinDamage = (NumberSetting) new NumberSetting("Min Damage", "The minimum amount of damage to do to the target", 4, 0, 36, 1).setParentSetting(place);
     public final NumberSetting placeMaxLocal = (NumberSetting) new NumberSetting("Max Local Damage", "The minimum amount of damage to inflict upon yourself", 8, 0, 36, 1).setParentSetting(place);
     public final BooleanSetting placePacket = (BooleanSetting) new BooleanSetting("Packet", "Place with only a packet", false).setParentSetting(place);
@@ -91,6 +94,8 @@ public class AutoCrystalRewrite extends Module {
     public final BooleanSetting override = new BooleanSetting("Override", "Override minimum damage when certain things happen", true);
     public final BooleanSetting overrideHealth = (BooleanSetting) new BooleanSetting("Health", "Override if the target's health is below a value", true).setParentSetting(override);
     public final NumberSetting overrideHealthValue = (NumberSetting) new NumberSetting("Override Health", "If the targets health is this value or below, ignore minimum damage", 10, 0, 36, 1).setParentSetting(override).setVisiblity(() -> override.isEnabled());
+    public final BooleanSetting overrideTotalArmour = (BooleanSetting) new BooleanSetting("Armour", "Override if the target's total armour durability is below a certain value", true).setParentSetting(override);
+    public final NumberSetting overrideTotalArmourValue = (NumberSetting) new NumberSetting("Armour Value", "The value which we will start to override at (in %)", 10, 0, 100, 1).setParentSetting(override);
 
     // Pause settings
     public final BooleanSetting pause = new BooleanSetting("Pause", "Pause if certain things are happening", true);
@@ -169,6 +174,9 @@ public class AutoCrystalRewrite extends Module {
         if (currentTarget == null) {
             return;
         }
+
+        // Add target to AutoEZ list
+        AutoEZ.addTarget(currentTarget.getName());
 
         switch (order.getCurrentMode()) {
             case PLACE_EXPLODE:
@@ -295,6 +303,10 @@ public class AutoCrystalRewrite extends Module {
         }
     }
 
+    /**
+     * Gets the best player to target
+     * @return The best player to target
+     */
     public EntityPlayer getCurrentTarget() {
         // The best target (we will return this)
         EntityPlayer target = null;
@@ -304,7 +316,7 @@ public class AutoCrystalRewrite extends Module {
             // Check it's a player that isn't us
             if (entity instanceof EntityOtherPlayerMP) {
                 // If the player is dead, ignore
-                if (entity.isDead) {
+                if (entity.isDead || ((EntityOtherPlayerMP) entity).getHealth() <= 0) {
                     continue;
                 }
 
@@ -333,6 +345,9 @@ public class AutoCrystalRewrite extends Module {
         return target;
     }
 
+    /**
+     * Explodes the searched crystal
+     */
     public void explodeSearchedCrystal() {
         // Check we want to explode
         if (explode.isEnabled()) {
@@ -415,6 +430,9 @@ public class AutoCrystalRewrite extends Module {
         }
     }
 
+    /**
+     * Places a crystal at the searched position
+     */
     public void placeSearchedPosition() {
         // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
         if (currentPlacement != null && InventoryUtil.getHandHolding(Items.END_CRYSTAL) != null && placeTimer.hasTimePassed((long) placeDelay.getValue())) {
@@ -452,6 +470,10 @@ public class AutoCrystalRewrite extends Module {
         }
     }
 
+    /**
+     * Finds the best crystal to attack
+     * @return The best crystal to attack
+     */
     public Crystal findBestCrystal() {
         // The best crystal (we will return this)
         Crystal crystal = null;
@@ -531,6 +553,10 @@ public class AutoCrystalRewrite extends Module {
         return crystal;
     }
 
+    /**
+     * Finds the best position to place at
+     * @return The best position to place at
+     */
     public CrystalPosition findBestPosition() {
         // The best placement (we will return this)
         CrystalPosition bestPlacement = null;
@@ -630,10 +656,52 @@ public class AutoCrystalRewrite extends Module {
         return bestPlacement;
     }
 
+    /**
+     * Checks if we are overriding the minimum damage
+     * @param entity The entity to check
+     * @return Whether we are not overriding
+     */
     public boolean isNotOverriding(EntityLivingBase entity) {
-        return !(entity.getHealth() <= overrideHealthValue.getValue()) || !override.isEnabled() || !overrideHealth.isEnabled();
+        if (override.isEnabled()) {
+            if (overrideHealth.isEnabled()) {
+                if (entity.getHealth() + entity.getAbsorptionAmount() <= overrideHealthValue.getValue()) {
+                    return false;
+                }
+            }
+
+            if (overrideTotalArmour.isEnabled()) {
+                // Pretty much from Cosmos, so thanks, just wanted to make sure I was doing this right :')
+
+                float lowest = 100;
+
+                // Iterate through target's armour
+                for (ItemStack armourPiece : entity.getArmorInventoryList()) {
+                    // If it is an actual piece of armour
+                    if (armourPiece != null && armourPiece.getItem() != Items.AIR) {
+                        // Get durability
+                        float durability = (armourPiece.getMaxDamage() - armourPiece.getItemDamage()) / (float) armourPiece.getMaxDamage() * 100;
+
+                        // If it is less than the last lowest, set the lowest to this durability
+                        if (durability < lowest) {
+                            lowest = durability;
+                        }
+                    }
+                }
+
+                // We are overriding if the lowest durability is less or equal to the total armour value setting
+                if (lowest <= overrideTotalArmourValue.getValue()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
+    /**
+     * Swings our hands
+     * @param swing The hand to swing
+     */
     public void swing(Swing swing) {
         switch (swing) {
             case MAIN_HAND:
@@ -656,6 +724,14 @@ public class AutoCrystalRewrite extends Module {
         }
     }
 
+    /**
+     * Calculates the heuristic
+     * @param self The damage done to us
+     * @param target The damage done to the target
+     * @param distance The distance from the crystal
+     * @param heuristic The heuristic type
+     * @return The damage heuristic
+     */
     public float calculateHeuristic(float self, float target, float distance, Heuristic heuristic) {
         switch (heuristic) {
             case DAMAGE:
@@ -672,6 +748,12 @@ public class AutoCrystalRewrite extends Module {
         return target;
     }
 
+    /**
+     * Calculates the heuristic based on a crystal position
+     * @param crystal The crystal to calculate heuristic for
+     * @param heuristic The heuristic type
+     * @return The damage heuristic
+     */
     public float calculateHeuristic(CrystalPosition crystal, Heuristic heuristic) {
         // Prevent NPE
         if (crystal == null) {
@@ -682,6 +764,11 @@ public class AutoCrystalRewrite extends Module {
         return calculateHeuristic(crystal.getSelfDamage(), crystal.getTargetDamage(), (float) mc.player.getDistanceSq(crystal.getPosition()), heuristic);
     }
 
+    /**
+     * Checks if we can place a crystal on a block
+     * @param pos The pos to check
+     * @return Whether we can place a crystal on that block or not
+     */
     public boolean canPlaceCrystal(BlockPos pos) {
         // Get block
         Block block = BlockUtil.getBlockAtPos(pos);
@@ -701,15 +788,10 @@ public class AutoCrystalRewrite extends Module {
             return false;
         }
 
-        // Check no entities are colliding with the position
-        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, BlockUtil.getBlockBox(pos.up()))) {
-            // Check the entity isn't an end crystal
-            if (entity instanceof EntityEnderCrystal && entity.getPosition().equals(pos.up()) && entity.ticksExisted < 20) {
-                continue;
-            }
-
-            // If the entity is dead, we can still place here
-            if (entity.isDead) {
+        // Iterate through entities in the block above
+        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(0, 1, 0)))) {
+            // If the entity is dead, or we are multiplacing, continue
+            if (entity.isDead || multiplace.isEnabled() && entity instanceof EntityEnderCrystal) {
                 continue;
             }
 
@@ -719,6 +801,12 @@ public class AutoCrystalRewrite extends Module {
         return true;
     }
 
+    /**
+     * Calculates the explosion damage based on a Vec3D
+     * @param vec The vector to calculate damage from
+     * @param entity The target
+     * @return The damage done to the target
+     */
     public float calculateDamage(Vec3d vec, EntityLivingBase entity) {
         // Distanced size
         double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) 12;
@@ -738,6 +826,13 @@ public class AutoCrystalRewrite extends Module {
         return getBlastReduction(entity, damageMultiplied, new Explosion(mc.world, entity, vec.x, vec.y, vec.z, 6F, false, true));
     }
 
+    /**
+     * Gets the blast reduction
+     * @param entity The entity to calculate damage for
+     * @param damage The original damage
+     * @param explosion The explosion
+     * @return The blast reduction
+     */
     public float getBlastReduction(EntityLivingBase entity, float damage, Explosion explosion) {
         // Get damage source
         DamageSource source = DamageSource.causeExplosionDamage(explosion);
@@ -758,6 +853,9 @@ public class AutoCrystalRewrite extends Module {
         return Math.max(damage, 0);
     }
 
+    /**
+     * Resets the process
+     */
     public void reset() {
         this.currentTarget = null;
         this.currentCrystal = null;
@@ -767,7 +865,7 @@ public class AutoCrystalRewrite extends Module {
 
     @Override
     public String getModuleInfo() {
-        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() + EntityUtil.getTextColourFromEntityHealth(currentTarget) + " " + currentTarget.getHealth() + TextFormatting.GRAY + " DMG " + (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));
+        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() + EntityUtil.getTextColourFromEntityHealth(currentTarget) + " " + Math.round(currentTarget.getHealth() + currentTarget.getAbsorptionAmount()) + TextFormatting.GRAY + " DMG " + (isNotOverriding(currentTarget) ? "" : "[OVERRIDING] ") + (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));
     }
 
     public enum Order {

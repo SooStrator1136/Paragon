@@ -31,8 +31,7 @@ public class AutoEZ extends Module {
             if (entity instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) entity;
 
-                if (player.isDead && players.contains(player.getName())) {
-                    // mc.player.sendChatMessage(player.getName() + ", imagine getting killed by the worst client");
+                if (player.isDead) {
                     players.remove(player.getName());
                 }
             }
@@ -67,7 +66,7 @@ public class AutoEZ extends Module {
     }
 
     public static void addTarget(String name) {
-        if (!name.equals(mc.player.getName())) {
+        if (!name.equals(mc.player.getName()) && !players.contains(name)) {
             players.add(name);
         }
     }
