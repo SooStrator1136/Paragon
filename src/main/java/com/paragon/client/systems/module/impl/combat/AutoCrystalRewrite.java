@@ -476,7 +476,7 @@ public class AutoCrystalRewrite extends Module {
                     // Position of crystal
                     CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
 
-                    if (isOverriding(currentTarget)) {
+                    if (isNotOverriding(currentTarget)) {
                         // Check it meets our filter
                         switch (explodeFilter.getCurrentMode()) {
                             case SELF:
@@ -595,7 +595,7 @@ public class AutoCrystalRewrite extends Module {
                 CrystalPosition crystalPosition = new CrystalPosition(pos, facing, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
 
                 // Check we aren't overriding
-                if (isOverriding(currentTarget)) {
+                if (isNotOverriding(currentTarget)) {
                     // Check it's above or equal to our minimum damage requirement
                     if (crystalPosition.getTargetDamage() <= placeMinDamage.getValue()) {
                         continue;
@@ -630,7 +630,7 @@ public class AutoCrystalRewrite extends Module {
         return bestPlacement;
     }
 
-    public boolean isOverriding(EntityLivingBase entity) {
+    public boolean isNotOverriding(EntityLivingBase entity) {
         return !(entity.getHealth() <= overrideHealthValue.getValue()) || !override.isEnabled() || !overrideHealth.isEnabled();
     }
 
@@ -720,30 +720,41 @@ public class AutoCrystalRewrite extends Module {
     }
 
     public float calculateDamage(Vec3d vec, EntityLivingBase entity) {
-        float doubleExplosionSize = 12.0F;
-        double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) doubleExplosionSize;
-        Vec3d vec3d = new Vec3d(vec.x, vec.y, vec.z);
-        double blockDensity = entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
-        double v = (1.0D - distancedSize) * blockDensity;
-        float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * (double) doubleExplosionSize + 1.0D));
-        double finald;
+        // Distanced size
+        double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) 12;
 
+        // Get block density
+        double blockDensity = mc.world.getBlockDensity(vec, entity.getEntityBoundingBox());
+
+        double v = (1.0D - distancedSize) * blockDensity;
+
+        // Get damage
+        float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * 12 + 1.0D));
+
+        // Multiply damage by difficulty
         float damageMultiplied = damage * (mc.world.getDifficulty().getDifficultyId() == 0 ? 0 : (mc.world.getDifficulty().getDifficultyId() == 2 ? 1 : (mc.world.getDifficulty().getDifficultyId() == 1 ? 0.5f : 1.5f)));
-        finald = getBlastReduction(entity, damageMultiplied, new Explosion(mc.world, entity, vec.x, vec.y, vec.z, 6F, false, true));
-        return (float) finald;
+
+        // Apply blast reduction and return
+        return getBlastReduction(entity, damageMultiplied, new Explosion(mc.world, entity, vec.x, vec.y, vec.z, 6F, false, true));
     }
 
     public float getBlastReduction(EntityLivingBase entity, float damage, Explosion explosion) {
+        // Get damage source
         DamageSource source = DamageSource.causeExplosionDamage(explosion);
+        // Get damage after absorption
         damage = CombatRules.getDamageAfterAbsorb(damage, entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+        // Enchantment modifier
         float enchantModifier = MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), source), 0, 20);
 
+        // Modify damage
         damage *= 1 - enchantModifier / 25;
 
+        // Decrease damage if they have resistance
         if (entity.isPotionActive(MobEffects.RESISTANCE)) {
             damage -= damage / 4;
         }
 
+        // Return damage
         return Math.max(damage, 0);
     }
 
