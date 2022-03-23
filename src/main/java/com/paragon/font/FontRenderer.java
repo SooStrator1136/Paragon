@@ -36,23 +36,23 @@ public class FontRenderer implements Wrapper {
     }
 
     public int drawString(String text, float x, float y, int color, boolean dropShadow) {
-        float currY = y;
         if (text.contains("\n")) {
             String[] parts = text.split("\n");
             float newY = 0.0f;
 
             for (String s : parts) {
-                drawText(s, x, currY + newY, color, dropShadow);
+                drawText(s, x, y + newY, color, dropShadow);
                 newY += getHeight();
             }
 
             return 0;
         }
 
-        if (dropShadow)
-            drawText(text, x + 0.9f, currY + 0.9f, new Color(0, 0, 0, 150).getRGB(), true);
+        if (dropShadow) {
+            drawText(text, x + 0.9f, y + 0.9f, new Color(0, 0, 0, 150).getRGB(), true);
+        }
 
-        return drawText(text, x, currY, color, false);
+        return drawText(text, x, y, color, false);
     }
 
     private int drawText(String text, float x, float y, int color, boolean ignoreColor) {

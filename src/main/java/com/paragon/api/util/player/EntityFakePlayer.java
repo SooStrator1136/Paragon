@@ -9,11 +9,11 @@ public class EntityFakePlayer extends EntityOtherPlayerMP implements Wrapper {
         super(mc.world, mc.player.getGameProfile());
         this.copyLocationAndAnglesFrom(mc.player);
         this.inventory.copyInventory(mc.player.inventory);
-        mc.world.addEntityToWorld(Integer.MAX_VALUE, this);
+        mc.world.addEntityToWorld(-Integer.MAX_VALUE, this);
     }
 
     public void despawn() {
-        mc.world.removeEntity(mc.world.getEntityByID(Integer.MAX_VALUE));
+        mc.world.removeEntity(mc.world.getEntityByID(-Integer.MAX_VALUE));
     }
 
 }

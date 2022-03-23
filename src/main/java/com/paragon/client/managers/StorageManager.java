@@ -5,6 +5,7 @@ import com.paragon.client.managers.alt.Alt;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
 import com.paragon.client.systems.module.Module;
+import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.settings.Setting;
 import com.paragon.client.systems.module.settings.impl.*;
 import org.apache.commons.io.Charsets;
@@ -44,6 +45,11 @@ public class StorageManager {
             try {
                 jsonObject.put("enabled", moduleIn.isEnabled());
                 jsonObject.put("visible", moduleIn.isVisible());
+
+                if (moduleIn instanceof HUDModule) {
+                    jsonObject.put("x position", ((HUDModule) moduleIn).getX());
+                    jsonObject.put("y position", ((HUDModule) moduleIn).getY());
+                }
 
                 for (Setting setting : moduleIn.getSettings()) {
                     if (setting instanceof BooleanSetting) {
@@ -111,35 +117,48 @@ public class StorageManager {
 
             moduleIn.setVisible(jsonObject.getBoolean("visible"));
 
+            if (moduleIn instanceof HUDModule) {
+                ((HUDModule) moduleIn).setX(jsonObject.getFloat("x position"));
+                ((HUDModule) moduleIn).setY(jsonObject.getFloat("y position"));
+            }
+
             for (Setting setting : moduleIn.getSettings()) {
-                if (setting instanceof BooleanSetting) {
-                    ((BooleanSetting) setting).setEnabled(jsonObject.getBoolean(setting.getName()));
-                } else if (setting instanceof NumberSetting) {
-                    ((NumberSetting) setting).setValue(jsonObject.getFloat(setting.getName()));
-                } else if (setting instanceof ModeSetting<?>) {
-                    Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) setting).getCurrentMode()).getClass(), jsonObject.getString(setting.getName()));
-                    ((ModeSetting<Enum<?>>) setting).setCurrentMode(newValue);
-                } else if (setting instanceof ColourSetting) {
-                    ((ColourSetting) setting).setColour(new Color(jsonObject.getInt(setting.getName())));
-                } else if (setting instanceof KeybindSetting) {
-                    ((KeybindSetting) setting).setKeyCode(jsonObject.getInt(setting.getName()));
+                try {
+                    if (setting instanceof BooleanSetting) {
+                        ((BooleanSetting) setting).setEnabled(jsonObject.getBoolean(setting.getName()));
+                    } else if (setting instanceof NumberSetting) {
+                        ((NumberSetting) setting).setValue(jsonObject.getFloat(setting.getName()));
+                    } else if (setting instanceof ModeSetting<?>) {
+                        Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) setting).getCurrentMode()).getClass(), jsonObject.getString(setting.getName()));
+                        ((ModeSetting<Enum<?>>) setting).setCurrentMode(newValue);
+                    } else if (setting instanceof ColourSetting) {
+                        ((ColourSetting) setting).setColour(new Color(jsonObject.getInt(setting.getName())));
+                    } else if (setting instanceof KeybindSetting) {
+                        ((KeybindSetting) setting).setKeyCode(jsonObject.getInt(setting.getName()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-                for (Setting subSetting : setting.getSubsettings()) {
-                    String settingName = subSetting.getParentSetting().getName() + "-" + subSetting.getName();
+                try {
+                    for (Setting subSetting : setting.getSubsettings()) {
+                        String settingName = subSetting.getParentSetting().getName() + "-" + subSetting.getName();
 
-                    if (subSetting instanceof BooleanSetting) {
-                        ((BooleanSetting) subSetting).setEnabled(jsonObject.getBoolean(settingName));
-                    } else if (subSetting instanceof NumberSetting) {
-                        ((NumberSetting) subSetting).setValue(jsonObject.getFloat(settingName));
-                    } else if (subSetting instanceof ModeSetting<?>) {
-                        Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) subSetting).getCurrentMode()).getClass(), jsonObject.getString(settingName));
-                        ((ModeSetting<Enum<?>>) subSetting).setCurrentMode(newValue);
-                    } else if (subSetting instanceof ColourSetting) {
-                        ((ColourSetting) subSetting).setColour(new Color(jsonObject.getInt(settingName)));
-                    } else if (subSetting instanceof KeybindSetting) {
-                        ((KeybindSetting) subSetting).setKeyCode(jsonObject.getInt(settingName));
+                        if (subSetting instanceof BooleanSetting) {
+                            ((BooleanSetting) subSetting).setEnabled(jsonObject.getBoolean(settingName));
+                        } else if (subSetting instanceof NumberSetting) {
+                            ((NumberSetting) subSetting).setValue(jsonObject.getFloat(settingName));
+                        } else if (subSetting instanceof ModeSetting<?>) {
+                            Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) subSetting).getCurrentMode()).getClass(), jsonObject.getString(settingName));
+                            ((ModeSetting<Enum<?>>) subSetting).setCurrentMode(newValue);
+                        } else if (subSetting instanceof ColourSetting) {
+                            ((ColourSetting) subSetting).setColour(new Color(jsonObject.getInt(settingName)));
+                        } else if (subSetting instanceof KeybindSetting) {
+                            ((KeybindSetting) subSetting).setKeyCode(jsonObject.getInt(settingName));
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

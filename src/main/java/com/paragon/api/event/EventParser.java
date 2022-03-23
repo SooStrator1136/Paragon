@@ -16,12 +16,4 @@ public class EventParser implements Wrapper {
         Paragon.INSTANCE.getEventBus().register(this);
     }
 
-    @Listener
-    public void onPacketReceive(PacketEvent.PreReceive event) {
-        if (event.getPacket() instanceof SPacketEntityStatus && ((SPacketEntityStatus) event.getPacket()).getOpCode() == 35 && ((SPacketEntityStatus) event.getPacket()).getEntity(mc.world) instanceof EntityPlayer) {
-            TotemPopEvent totemPopEvent = new TotemPopEvent((EntityPlayer) ((SPacketEntityStatus) event.getPacket()).getEntity(mc.world));
-            Paragon.INSTANCE.getEventBus().post(totemPopEvent);
-        }
-    }
-
 }

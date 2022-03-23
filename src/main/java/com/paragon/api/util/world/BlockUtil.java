@@ -58,11 +58,7 @@ public class BlockUtil implements Wrapper {
      * @return The bounding box of the entity
      */
     public static AxisAlignedBB getBlockBox(BlockPos blockPos) {
-        double x = blockPos.getX() - mc.getRenderManager().viewerPosX;
-        double y = blockPos.getY() - mc.getRenderManager().viewerPosY;
-        double z = blockPos.getZ() - mc.getRenderManager().viewerPosZ;
-
-        return new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1);
+        return new AxisAlignedBB(blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1).offset(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY, -mc.getRenderManager().viewerPosZ);
     }
 
     /**

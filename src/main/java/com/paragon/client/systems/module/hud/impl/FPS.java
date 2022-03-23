@@ -2,12 +2,13 @@ package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
-public class Coordinates extends HUDModule {
+public class FPS extends HUDModule {
 
-    public Coordinates() {
-        super("Coordinates", "Displays your coordinates");
+    public FPS() {
+        super("FPS", "Renders your FPS on screen");
     }
 
     @Override
@@ -26,6 +27,6 @@ public class Coordinates extends HUDModule {
     }
 
     public String getText() {
-        return "X " + TextFormatting.WHITE + Math.round(mc.player.posX) + TextFormatting.RESET + " Y " + TextFormatting.WHITE + Math.round(mc.player.posY) + TextFormatting.RESET + " Z " + TextFormatting.WHITE + Math.round(mc.player.posZ);
+        return "FPS " + TextFormatting.WHITE + Minecraft.getDebugFPS();
     }
 }

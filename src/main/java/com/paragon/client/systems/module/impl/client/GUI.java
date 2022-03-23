@@ -6,6 +6,7 @@ import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import com.paragon.client.systems.module.settings.impl.ModeSetting;
 import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.ui.panel.PanelGUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 

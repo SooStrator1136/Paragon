@@ -32,7 +32,7 @@ public class AutoEZ extends Module {
                 EntityPlayer player = (EntityPlayer) entity;
 
                 if (player.isDead && players.contains(player.getName())) {
-                    CommandManager.sendClientMessage("imagine getting killed by the worst client", false);
+                    // mc.player.sendChatMessage(player.getName() + ", imagine getting killed by the worst client");
                     players.remove(player.getName());
                 }
             }
@@ -60,7 +60,7 @@ public class AutoEZ extends Module {
             EntityPlayer player = (EntityPlayer) event.getEntity();
 
             if (player.getHealth() <= 0 && players.contains(player.getName())) {
-                CommandManager.sendClientMessage(player.getName() + " - imagine getting killed by the worst client", false);
+                mc.player.sendChatMessage(player.getName() + ", imagine getting killed by the worst client");
                 players.remove(player.getName());
             }
         }

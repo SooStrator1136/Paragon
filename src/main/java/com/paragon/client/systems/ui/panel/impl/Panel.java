@@ -75,25 +75,28 @@ public class Panel implements TextRenderer {
             height += moduleButton.getAbsoluteHeight();
         }
 
+        refreshOffsets();
+
+        RenderUtil.startGlScissor(getX() - 0.5f, getY(), getWidth() + 1, barHeight + (height * animation.getAnimationFactor()) + 0.5f);
+
         if (isExpanded()) {
-            refreshOffsets();
-
-            RenderUtil.startGlScissor(getX() - 0.5f, getY() + barHeight, getWidth() + 1,height * animation.getAnimationFactor() + 0.5f);
-
             // Draw modules
             moduleButtons.forEach(moduleButton -> {
                 moduleButton.renderModuleButton(mouseX, mouseY);
             });
-
-            RenderUtil.endGlScissor();
         }
+
+        RenderUtil.endGlScissor();
+
+        // animation.getAnimationFactor() new Color(23, 23, 23).darker().getRGB()
+        RenderUtil.drawRect(getX(), getY() + barHeight + (height * animation.getAnimationFactor()), getWidth(), 3, new Color(23, 23, 23).darker().getRGB());
 
         if (GUI.panelHeaderSeparator.isEnabled()) {
             RenderUtil.drawRect(getX(), getY() + barHeight, getWidth(), 0.5f, Colours.mainColour.getColour().getRGB());
         }
 
         if (GUI.outline.isEnabled()) {
-            RenderUtil.drawBorder(getX(), getY(), getWidth(), barHeight + height * animation.getAnimationFactor(), 0.5f, Colours.mainColour.getColour().getRGB());
+            RenderUtil.drawBorder(getX(), getY(), getWidth(), barHeight + (3 * animation.getAnimationFactor()) + height * animation.getAnimationFactor(), 0.5f, Colours.mainColour.getColour().getRGB());
         }
     }
 

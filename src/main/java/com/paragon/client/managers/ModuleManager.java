@@ -35,6 +35,7 @@ public class ModuleManager {
 
         modules = Arrays.asList(
                 new AutoCrystal(),
+                new AutoCrystalRewrite(),
                 new Blink(),
                 new Offhand(),
 
@@ -70,7 +71,12 @@ public class ModuleManager {
                 new GUI(),
                 new HUD(),
 
-                new Coordinates()
+                new Armour(),
+                new HArrayList(),
+                new Coordinates(),
+                new FPS(),
+                new Totems(),
+                new Watermark()
         );
 
         modules.forEach(module -> {

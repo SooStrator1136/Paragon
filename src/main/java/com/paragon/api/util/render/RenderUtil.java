@@ -5,12 +5,10 @@ import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
@@ -201,17 +199,17 @@ public class RenderUtil implements Wrapper {
      * @param colour The colour of the outline
      */
     public static void drawBoundingBox(AxisAlignedBB axisAlignedBB, float lineThickness, Color colour) {
-        GL11.glBlendFunc(770, 771);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glLineWidth(lineThickness);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        glBlendFunc(770, 771);
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(false);
+        glLineWidth(lineThickness);
         RenderGlobal.drawSelectionBoundingBox(axisAlignedBB, colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue() / 255f, colour.getAlpha() / 255f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
-        GL11.glDisable(GL11.GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glDisable(GL_BLEND);
     }
 
     /**
@@ -253,6 +251,33 @@ public class RenderUtil implements Wrapper {
 
         GlStateManager.enableDepth();
         GlStateManager.popMatrix();
+    }
+
+    public static void renderItemStack(ItemStack itemStack, float x, float y, boolean durability) {
+        RenderItem renderItem = mc.getRenderItem();
+
+        GlStateManager.enableDepth();
+
+        renderItem.zLevel = 200;
+        renderItem.renderItemAndEffectIntoGUI(itemStack, (int) x, (int) y);
+
+        if (durability) {
+            renderItem.renderItemOverlays(mc.fontRenderer, itemStack, (int) x, (int) y);
+        }
+
+        renderItem.zLevel = 0;
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableLighting();
+        GlStateManager.enableDepth();
+    }
+
+    public static float getScreenWidth() {
+        return Toolkit.getDefaultToolkit().getScreenSize().width / 2f;
+    }
+
+    public static float getScreenHeight() {
+        return Toolkit.getDefaultToolkit().getScreenSize().height / 2f;
     }
 
     static void renderText(String text, float x, float y, int colour) {

@@ -521,15 +521,15 @@ public class AutoCrystal extends Module {
         CrystalPosition bestPosition = null;
 
         for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
+            // Check we can place the crystal
+            if (!canPlaceCrystal(pos)) {
+                continue;
+            }
+
             if (placeTimerType.getCurrentMode().equals(TimerType.PER_CRYSTAL)) {
                 if (!placeTimer.hasTimePassed((long) placeDelay.getValue())) {
                     continue;
                 }
-            }
-
-            // Check we can place the crystal
-            if (!canPlaceCrystal(pos)) {
-                continue;
             }
 
             float selfDamage = calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), mc.player);

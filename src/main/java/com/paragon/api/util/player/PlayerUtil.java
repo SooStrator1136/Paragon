@@ -2,6 +2,7 @@ package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.EnumAction;
 
 public class PlayerUtil implements Wrapper {
 
@@ -72,6 +73,18 @@ public class PlayerUtil implements Wrapper {
         mc.player.motionX -= Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * speed;
         mc.player.motionZ += Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * speed;
         mc.player.motionY += -(Math.sin(Math.toRadians(pitch))) * speed;
+    }
+
+    public static boolean isPlayerEating() {
+        return mc.player.isHandActive() && mc.player.getActiveItemStack().getItemUseAction().equals(EnumAction.EAT);
+    }
+
+    public static boolean isPlayerDrinking() {
+        return mc.player.isHandActive() && mc.player.getActiveItemStack().getItemUseAction().equals(EnumAction.DRINK);
+    }
+
+    public static boolean isPlayerConsuming() {
+        return mc.player.isHandActive() && (mc.player.getActiveItemStack().getItemUseAction().equals(EnumAction.EAT) || mc.player.getActiveItemStack().getItemUseAction().equals(EnumAction.DRINK));
     }
 
 }

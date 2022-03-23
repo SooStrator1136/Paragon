@@ -6,6 +6,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
+import net.minecraft.util.EnumHand;
 
 public class InventoryUtil implements Wrapper {
 
@@ -13,15 +14,14 @@ public class InventoryUtil implements Wrapper {
         return mc.player.getHeldItemMainhand().getItem().equals(item) || mc.player.getHeldItemOffhand().getItem().equals(item);
     }
 
-    public static boolean hasItem(Item item) {
-        for (int i = 0; i < 36; i++) {
-            Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
-            if (itemInInv == item) {
-                return true;
-            }
+    public static EnumHand getHandHolding(Item item) {
+        if (mc.player.getHeldItemMainhand().getItem() == item) {
+            return EnumHand.MAIN_HAND;
+        } else if (mc.player.getHeldItemOffhand().getItem() == item) {
+            return EnumHand.OFF_HAND;
         }
 
-        return false;
+        return null;
     }
 
     public static int getItemSlot(Item itemIn) {
@@ -70,7 +70,7 @@ public class InventoryUtil implements Wrapper {
         if (silent) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(slot));
             // Sync item
-            ((IPlayerControllerMP) mc.player).hookSyncCurrentPlayItem();
+            ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
         } else {
             mc.player.inventory.currentItem = slot;
         }

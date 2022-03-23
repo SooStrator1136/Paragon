@@ -10,6 +10,8 @@ import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.GUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -26,15 +28,15 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     public PanelGUI() {
         // X position of panel
-        float x = 5;
+        float x = (RenderUtil.getScreenWidth() / 2) - ((ModuleCategory.values().length * 100) / 2f);
 
         // Add a panel for every category
         for (ModuleCategory category : ModuleCategory.values()) {
             // Add panel
-            panels.add(new Panel(x, 5, 95, 16, category));
+            panels.add(new Panel(x, 30, 95, 16, category));
 
             // Increase X
-            x += 100 ;
+            x += 100;
         }
     }
 
@@ -47,6 +49,14 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         if (GUI.darkenBackground.isEnabled()) {
             drawDefaultBackground();
         }
+
+        // Render HUD modules
+        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+            if (hudModule.isEnabled()) {
+                hudModule.updateComponent(mouseX, mouseY);
+                hudModule.render();
+            }
+        });
 
         scrollPanels();
 
@@ -74,6 +84,12 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
             panel.mouseClicked(mouseX, mouseY, mouseButton);
         });
 
+        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+            if (hudModule.isEnabled()) {
+                hudModule.mouseClicked(mouseX, mouseY, mouseButton);
+            }
+        });
+
         Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -85,6 +101,12 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         // Click releases
         panels.forEach(panel -> {
             panel.mouseReleased(mouseX, mouseY, state);
+        });
+
+        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+            if (hudModule.isEnabled()) {
+                hudModule.mouseReleased(mouseX, mouseY, state);
+            }
         });
 
         super.mouseReleased(mouseX, mouseY, state);

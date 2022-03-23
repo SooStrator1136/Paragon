@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinRenderGlobal {
 
     @Inject(method = "drawSelectionBox", at = @At("HEAD"), cancellable = true)
-    public void onDrawBox(EntityPlayer player, RayTraceResult result, int blockpos, float iblockstate, CallbackInfo ci) {
+    public void onDrawBox(EntityPlayer player, RayTraceResult result, int execute, float partialTicks, CallbackInfo ci) {
         BlockHighlightEvent blockHighlightEvent = new BlockHighlightEvent();
         Paragon.INSTANCE.getEventBus().post(blockHighlightEvent);
 

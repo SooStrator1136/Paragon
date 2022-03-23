@@ -1,10 +1,7 @@
 package com.paragon;
 
 import com.paragon.api.event.EventParser;
-import com.paragon.client.managers.CommandManager;
-import com.paragon.client.managers.ModuleManager;
-import com.paragon.client.managers.PopManager;
-import com.paragon.client.managers.StorageManager;
+import com.paragon.client.managers.*;
 import com.paragon.client.managers.alt.AltManager;
 import com.paragon.client.managers.social.SocialManager;
 import com.paragon.client.systems.ui.console.Console;
