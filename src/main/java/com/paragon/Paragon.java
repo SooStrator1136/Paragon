@@ -3,6 +3,7 @@ package com.paragon;
 import com.paragon.api.event.EventParser;
 import com.paragon.client.managers.*;
 import com.paragon.client.managers.alt.AltManager;
+import com.paragon.client.managers.rotation.RotationManager;
 import com.paragon.client.managers.social.SocialManager;
 import com.paragon.client.systems.ui.console.Console;
 import com.paragon.client.systems.ui.panel.PanelGUI;
@@ -37,6 +38,7 @@ public class Paragon {
     private PopManager popManager;
     private SocialManager socialManager;
     private AltManager altManager;
+    private RotationManager rotationManager;
 
     // GUIs
     private Taskbar taskbar;
@@ -67,6 +69,8 @@ public class Paragon {
 
         altManager = new AltManager();
         getStorageManager().loadAlts();
+
+        rotationManager = new RotationManager();
 
         // Set up GUIs and elements
         taskbar = new Taskbar();
@@ -147,6 +151,14 @@ public class Paragon {
      */
     public AltManager getAltManager() {
         return altManager;
+    }
+
+    /**
+     * Gets the rotation manager
+     * @return The rotation manager
+     */
+    public RotationManager getRotationManager() {
+        return rotationManager;
     }
 
     /**

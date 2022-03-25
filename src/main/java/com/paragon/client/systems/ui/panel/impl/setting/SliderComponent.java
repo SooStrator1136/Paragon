@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.panel.impl.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.calculations.MathUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
@@ -64,6 +66,9 @@ public class SliderComponent extends SettingComponent {
             if (isMouseOver(mouseX, mouseY)) {
                 // Set dragging state
                 dragging = true;
+
+                SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+                Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
             }
         }
 

@@ -1,8 +1,12 @@
 package com.paragon.client.systems.module.impl.misc;
 
+import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -44,7 +48,7 @@ public class FastUse extends Module {
     public void onPacketSend(PacketEvent.PreSend event) {
         if (event.getPacket() instanceof CPacketPlayerTryUseItem && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) && xp.isEnabled() && rotate.isEnabled()) {
             // Send rotation packet
-            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, 90f, mc.player.onGround));
+            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(mc.player.rotationYaw, 90f, Rotate.PACKET, RotationPriority.NORMAL));
         }
     }
 }

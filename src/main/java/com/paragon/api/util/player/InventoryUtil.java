@@ -2,6 +2,7 @@ package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -107,5 +108,11 @@ public class InventoryUtil implements Wrapper {
             mc.playerController.windowClick(0, returnSlot, 0, ClickType.PICKUP, mc.player);
             mc.playerController.updateController();
         }
+    }
+
+    public static boolean isHoldingSword() {
+        Item heldItem = mc.player.getHeldItemMainhand().getItem();
+
+        return heldItem == Items.WOODEN_SWORD || heldItem == Items.STONE_SWORD || heldItem == Items.IRON_SWORD || heldItem == Items.GOLDEN_SWORD || heldItem == Items.DIAMOND_SWORD;
     }
 }

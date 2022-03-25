@@ -34,6 +34,7 @@ public class ModuleManager {
         Paragon.INSTANCE.getLogger().info("Initialising Module Manager");
 
         modules = Arrays.asList(
+                new Aura(),
                 new AutoCrystal(),
                 new AutoCrystalRewrite(),
                 new Blink(),

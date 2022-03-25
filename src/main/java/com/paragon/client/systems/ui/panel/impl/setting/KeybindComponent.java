@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.panel.impl.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.settings.impl.KeybindSetting;
@@ -37,6 +39,8 @@ public class KeybindComponent extends SettingComponent {
             if (isMouseOver(mouseX, mouseY)) {
                 // Set listening
                 isListening = !isListening;
+                SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+                Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
             }
         }
 

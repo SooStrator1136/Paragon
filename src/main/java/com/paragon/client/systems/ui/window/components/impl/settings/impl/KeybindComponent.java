@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.window.components.impl.settings.impl;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
@@ -75,11 +77,19 @@ public class KeybindComponent extends SettingComponent implements TextRenderer {
      */
     @Override
     public void whenClicked(int mouseX, int mouseY, int mouseButton) {
-        if(GuiUtil.mouseOver(getX(), getY(), getX() + getWidth() - 45, getY() + getHeight(), mouseX, mouseY)) isListening = !isListening;
+        if (GuiUtil.mouseOver(getX(), getY(), getX() + getWidth() - 45, getY() + getHeight(), mouseX, mouseY)) {
+            isListening = !isListening;
 
+            SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+            Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
+        }
         // If the user presses the reset text, set the bind to 0 (none)
         else if(GuiUtil.mouseOver(getX() + getWidth() - 44, getY(), getX() + getWidth(), getY() + getHeight(), mouseX, mouseY)) {
             keybindSetting.setKeyCode(0);
+
+            SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+            Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
+
             isListening = false;
         }
     }

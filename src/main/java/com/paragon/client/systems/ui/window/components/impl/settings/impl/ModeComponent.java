@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.window.components.impl.settings.impl;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.api.util.string.EnumFormatter;
@@ -105,6 +107,9 @@ public class ModeComponent extends SettingComponent implements TextRenderer {
     @Override public void whenClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
             modeSetting.cycleMode();
+
+            SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+            Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
         } else if (mouseButton == 1) {
             this.expanded = !expanded;
         }

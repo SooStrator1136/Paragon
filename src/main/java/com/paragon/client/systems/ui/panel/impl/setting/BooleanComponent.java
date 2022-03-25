@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.panel.impl.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.impl.client.Colours;
@@ -35,6 +37,9 @@ public class BooleanComponent extends SettingComponent {
             if (isMouseOver(mouseX, mouseY)) {
                 // Toggle setting
                 ((BooleanSetting) getSetting()).setEnabled(!((BooleanSetting) getSetting()).isEnabled());
+
+                SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+                Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
             }
         }
 

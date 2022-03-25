@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.panel.impl.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.ui.animation.Animation;
@@ -94,6 +96,9 @@ public class ColourComponent extends SettingComponent {
         if (isExpanded()) {
             sliders.forEach(sliderComponent -> {
                 sliderComponent.mouseClicked(mouseX, mouseY, mouseButton);
+
+                SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+                Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
             });
         }
     }

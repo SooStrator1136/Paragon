@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
@@ -10,6 +11,9 @@ import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
@@ -142,6 +146,13 @@ public class AutoCrystalRewrite extends Module {
     @Override
     public void onDisable() {
         reset();
+    }
+
+    @Listener
+    public void onSettingUpdate(SettingUpdateEvent event) {
+        if (event.getSetting() == explodeFilter || event.getSetting() == explodeRotate || event.getSetting() == placeRotate) {
+            reset();
+        }
     }
 
     @Override
@@ -381,10 +392,12 @@ public class AutoCrystalRewrite extends Module {
                 // Check we want to rotate
                 if (!explodeRotate.getCurrentMode().equals(Rotate.NONE)) {
                     // Get rotation
-                    Vec2f rotation = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
+                    Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
 
-                    // Rotate to crystal
-                    RotationUtil.rotate(rotation, explodeRotate.getCurrentMode().equals(Rotate.PACKET));
+                    Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, explodeRotate.getCurrentMode(), RotationPriority.HIGHEST);
+
+                    // Send rotation
+                    Paragon.INSTANCE.getRotationManager().addRotation(rotation);
                 }
 
                 if (packetExplode.isEnabled()) {
@@ -408,7 +421,10 @@ public class AutoCrystalRewrite extends Module {
 
                 // Rotate back to our original rotation
                 if (!explodeRotate.getCurrentMode().equals(Rotate.NONE) && explodeRotateBack.isEnabled()) {
-                    RotationUtil.rotate(originalPlayerRotation, explodeRotate.getCurrentMode().equals(Rotate.PACKET));
+                    Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getCurrentMode(), RotationPriority.HIGH);
+
+                    // Send rotation
+                    Paragon.INSTANCE.getRotationManager().addRotation(rotation);
                 }
 
                 // Check we want to switch
@@ -444,8 +460,8 @@ public class AutoCrystalRewrite extends Module {
                 // Get rotation
                 Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
 
-                // Rotate to position
-                RotationUtil.rotate(placeRotation, placeRotate.getCurrentMode().equals(Rotate.PACKET));
+                Rotation rotation = new Rotation(placeRotation.x, placeRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGHEST);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
             }
 
             if (placePacket.isEnabled()) {
@@ -465,7 +481,8 @@ public class AutoCrystalRewrite extends Module {
             // Check we want to rotate back
             if (!placeRotate.getCurrentMode().equals(Rotate.NONE) && placeRotateBack.isEnabled()) {
                 // Rotate back
-                RotationUtil.rotate(originalRotation, placeRotate.getCurrentMode().equals(Rotate.PACKET));
+                Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGH);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
             }
         }
     }
@@ -790,8 +807,8 @@ public class AutoCrystalRewrite extends Module {
 
         // Iterate through entities in the block above
         for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(0, 1, 0)))) {
-            // If the entity is dead, or we are multiplacing, continue
-            if (entity.isDead || multiplace.isEnabled() && entity instanceof EntityEnderCrystal) {
+            // If the entity is dead, or we aren't multiplacing, continue
+            if (entity.isDead || !multiplace.isEnabled() && entity instanceof EntityEnderCrystal) {
                 continue;
             }
 
@@ -968,23 +985,6 @@ public class AutoCrystalRewrite extends Module {
          * Don't modify when we set it's alive status
          */
         OFF
-    }
-
-    public enum Rotate {
-        /**
-         * Don't rotate
-         */
-        NONE,
-
-        /**
-         * Rotate player's rotation angles
-         */
-        LEGIT,
-
-        /**
-         * Send rotate packet
-         */
-        PACKET
     }
 
     public enum Swing {

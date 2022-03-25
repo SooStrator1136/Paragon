@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.panel.impl.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
@@ -36,6 +38,8 @@ public class ModeComponent extends SettingComponent {
             if (isMouseOver(mouseX, mouseY)) {
                 // Cycle mode
                 ((ModeSetting<?>) getSetting()).cycleMode();
+                SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+                Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
             }
         }
 

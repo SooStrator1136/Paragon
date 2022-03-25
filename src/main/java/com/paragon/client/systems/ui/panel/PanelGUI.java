@@ -9,7 +9,9 @@ import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.GUI;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
@@ -78,7 +80,6 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-
         // Clicks
         panels.forEach(panel -> {
             panel.mouseClicked(mouseX, mouseY, mouseButton);
@@ -97,7 +98,6 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-
         // Click releases
         panels.forEach(panel -> {
             panel.mouseReleased(mouseX, mouseY, state);

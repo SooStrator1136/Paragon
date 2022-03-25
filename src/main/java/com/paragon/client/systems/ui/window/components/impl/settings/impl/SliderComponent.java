@@ -1,5 +1,7 @@
 package com.paragon.client.systems.ui.window.components.impl.settings.impl;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.calculations.MathUtil;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
@@ -76,7 +78,24 @@ public class SliderComponent extends SettingComponent implements TextRenderer {
      */
     @Override
     public void render(int mouseX, int mouseY) {
-        update(mouseX, mouseY);
+        float diff = Math.min(getWidth(), Math.max(0, mouseX - getX()));
+
+        float min = numberSetting.getMin();
+        float max = numberSetting.getMax();
+
+        renderWidth = (getWidth()) * (numberSetting.getValue() - min) / (max - min);
+
+        if (!Mouse.isButtonDown(0))
+            dragging = false;
+
+        if (dragging) {
+            if (diff == 0) {
+                numberSetting.setValue(numberSetting.getMin());
+            } else {
+                float newValue = (float) MathUtil.roundDouble(((diff / getWidth()) * (max - min) + min), 2);
+                numberSetting.setValue(newValue);
+            }
+        }
 
         RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), isMouseOnButton(mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
         renderText(numberSetting.getName() + formatCode(TextFormatting.GRAY) + " " + numberSetting.getValue(), getX() + 3, getY() + 3, -1);
@@ -100,27 +119,6 @@ public class SliderComponent extends SettingComponent implements TextRenderer {
         refreshOffsets();
     }
 
-    public void update(int mouseX, int mouseY) {
-        float diff = Math.min(getWidth(), Math.max(0, mouseX - getX()));
-
-        float min = numberSetting.getMin();
-        float max = numberSetting.getMax();
-
-        renderWidth = (getWidth()) * (numberSetting.getValue() - min) / (max - min);
-
-        if (!Mouse.isButtonDown(0))
-            dragging = false;
-
-        if (dragging) {
-            if (diff == 0) {
-                numberSetting.setValue(numberSetting.getMin());
-            } else {
-                float newValue = (float) MathUtil.roundDouble(((diff / getWidth()) * (max - min) + min), 2);
-                numberSetting.setValue(newValue);
-            }
-        }
-    }
-
     /**
      * Called when the mouse is clicked
      * @param mouseX The mouse's X
@@ -129,10 +127,14 @@ public class SliderComponent extends SettingComponent implements TextRenderer {
      */
     @Override
     public void whenClicked(int mouseX, int mouseY, int mouseButton) {
-        if(isMouseOnButton(mouseX, mouseY) && mouseButton == 0)
+        if (isMouseOnButton(mouseX, mouseY) && mouseButton == 0) {
             dragging = true;
-        else if (mouseButton == 1)
+
+            SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+            Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
+        } else if (mouseButton == 1) {
             this.expanded = !this.expanded;
+        }
     }
 
     @Override
