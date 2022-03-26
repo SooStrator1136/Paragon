@@ -6,15 +6,23 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "accessor.ICPacketCloseWindow",
+    "accessor.IEntity",
     "accessor.IMinecraft",
     "accessor.IPlayerControllerMP",
+    "accessor.IRenderGlobal",
+    "accessor.IRenderManager",
+    "accessor.IShaderGroup",
     "accessor.ISPacketEntityVelocity",
     "accessor.ISPacketExplosion",
     "accessor.ISPacketPlayerPosLook",
     "accessor.ITimer",
 
     "network.MixinNetworkManager",
+
     "player.MixinEntityPlayer",
+    "player.MixinEntityPlayerSP",
+
+    "render.MixinRender",
 
     "render.entity.MixinItemRenderer",
     "render.entity.MixinRenderLivingBase",

@@ -81,9 +81,7 @@ public class SettingComponent implements TextRenderer {
 
             for (SettingComponent settingComponent : settingComponents) {
                 if (settingComponent.getSetting().isVisible()) {
-                    RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + settingComponent.getOffset(), 1,
-                            settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight()
-                            , Colours.mainColour.getColour().getRGB());
+                    RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + settingComponent.getOffset(), 2, settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight(), Colours.mainColour.getColour().getRGB());
                 }
             }
         }

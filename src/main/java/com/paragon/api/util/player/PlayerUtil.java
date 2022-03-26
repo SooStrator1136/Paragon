@@ -45,11 +45,11 @@ public class PlayerUtil implements Wrapper {
                     strafe = 0;
                 }
 
-                if (forward > 0)
+                if (forward > 0) {
                     forward = 1;
-
-                else if (forward < 0)
+                } else if (forward < 0) {
                     forward = -1;
+                }
             }
 
             double sin = Math.sin(Math.toRadians(playerYaw + 90));

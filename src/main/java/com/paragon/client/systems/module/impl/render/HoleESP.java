@@ -99,7 +99,7 @@ public class HoleESP extends Module {
                 if (BlockUtil.getBlockAtPos(pos.east()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.east()) == Blocks.BEDROCK) {
                     if (BlockUtil.getBlockAtPos(pos.south()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.south()) == Blocks.BEDROCK) {
                         if (BlockUtil.getBlockAtPos(pos.down()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.down()) == Blocks.BEDROCK) {
-                            return BlockUtil.getBlockAtPos(pos) == Blocks.AIR;
+                            return BlockUtil.getBlockAtPos(pos) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.up()) == Blocks.AIR;
                         }
                     }
                 }

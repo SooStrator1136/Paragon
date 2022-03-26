@@ -100,7 +100,7 @@ public class ModuleButton implements TextRenderer {
             settingComponents.forEach(settingComponent -> {
                 if (settingComponent.getSetting().isVisible()) {
                     settingComponent.renderSetting(mouseX, mouseY);
-                    RenderUtil.drawRect(getPanel().getX(), getOffset() + settingComponent.getOffset(), 0.5f, (settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight()), Colours.mainColour.getColour().getRGB());
+                    RenderUtil.drawRect(getPanel().getX(), getOffset() + settingComponent.getOffset(), 1, (settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight()), Colours.mainColour.getColour().getRGB());
                 }
             });
         }

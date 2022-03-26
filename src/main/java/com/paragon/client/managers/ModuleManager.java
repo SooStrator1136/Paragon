@@ -51,6 +51,7 @@ public class ModuleManager {
                 new ESP(),
                 new Fullbright(),
                 new HoleESP(),
+                new Nametags(),
                 new NoRender(),
                 new Tracers(),
                 new ViewModel(),

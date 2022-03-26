@@ -84,6 +84,8 @@ public class AutoCrystalRewrite extends Module {
     public final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
     public final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals", 10, 0, 100, 1).setParentSetting(explode);
     public final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystals to explode", ExplodeFilter.SMART).setParentSetting(explode);
+    public final NumberSetting explodeTicksExisted = (NumberSetting) new NumberSetting("Ticks Existed", "Check the amount of ticks the crystal has existed before exploding", 0, 0, 5, 1).setParentSetting(explode);
+    public final BooleanSetting explodeRaytrace = (BooleanSetting) new BooleanSetting("Raytrace", "Checks that you can raytrace to the crystal", false).setParentSetting(explode);
     public final ModeSetting<Rotate> explodeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the crystal", Rotate.PACKET).setParentSetting(explode);
     public final BooleanSetting explodeRotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(explode).setVisiblity(() -> !explodeRotate.getCurrentMode().equals(Rotate.NONE));
     public final ModeSetting<AntiWeakness> antiWeakness = (ModeSetting<AntiWeakness>) new ModeSetting<>("Anti Weakness", "If you have the weakness effect, you will still be able to explode crystals", AntiWeakness.SWITCH).setParentSetting(explode);
@@ -132,6 +134,9 @@ public class AutoCrystalRewrite extends Module {
 
     // List of crystals we have placed
     private final List<BlockPos> selfPlacedCrystals = new ArrayList<>();
+
+    // List of crystals we have attempted to explode
+    private final List<BlockPos> selfExplodedCrystals = new ArrayList<>();
 
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", ModuleCategory.COMBAT, "Automatically places and explodes crystals");
@@ -451,7 +456,42 @@ public class AutoCrystalRewrite extends Module {
      */
     public void placeSearchedPosition() {
         // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
-        if (currentPlacement != null && InventoryUtil.getHandHolding(Items.END_CRYSTAL) != null && placeTimer.hasTimePassed((long) placeDelay.getValue())) {
+        if (currentPlacement != null && placeTimer.hasTimePassed((long) placeDelay.getValue())) {
+            boolean hasSwitched = false;
+            int oldSlot = mc.player.inventory.currentItem;
+
+            switch (placeWhen.getCurrentMode()) {
+                case HOLDING:
+                    hasSwitched = InventoryUtil.isHolding(Items.END_CRYSTAL);
+                    break;
+                case SWITCH:
+                    int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
+
+                    if (crystalSlot == -1) {
+                        break;
+                    } else {
+                        InventoryUtil.switchToSlot(crystalSlot, false);
+                        hasSwitched = true;
+                    }
+
+                    break;
+                case SILENT_SWITCH:
+                    int silentCrystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
+
+                    if (silentCrystalSlot == -1) {
+                        break;
+                    } else {
+                        InventoryUtil.switchToSlot(silentCrystalSlot, true);
+                        hasSwitched = true;
+                    }
+
+                    break;
+            }
+
+            if (!hasSwitched) {
+                return;
+            }
+
             // Get our current rotation
             Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
@@ -464,12 +504,22 @@ public class AutoCrystalRewrite extends Module {
                 Paragon.INSTANCE.getRotationManager().addRotation(rotation);
             }
 
-            if (placePacket.isEnabled()) {
-                // Send place packet
-                mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), InventoryUtil.getHandHolding(Items.END_CRYSTAL), 0, 0, 0));
-            } else {
-                // Place crystal
-                mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), InventoryUtil.getHandHolding(Items.END_CRYSTAL));
+            // The hand we will place with
+            EnumHand placeHand = EnumHand.MAIN_HAND;
+
+            // If we want to place when holding, get the hand that is holding crystals
+            if (placeWhen.getCurrentMode().equals(When.HOLDING)) {
+                placeHand = InventoryUtil.getHandHolding(Items.END_CRYSTAL);
+            }
+
+            if (placeHand != null) {
+                if (placePacket.isEnabled()) {
+                    // Send place packet
+                    mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeHand, 0, 0, 0));
+                } else {
+                    // Place crystal
+                    mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeHand);
+                }
             }
 
             // Swing arm
@@ -483,6 +533,17 @@ public class AutoCrystalRewrite extends Module {
                 // Rotate back
                 Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGH);
                 Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            }
+
+            if (placeWhenSwitchBack.isEnabled()) {
+                switch (placeWhen.getCurrentMode()) {
+                    case SWITCH:
+                        InventoryUtil.switchToSlot(oldSlot, false);
+                        break;
+                    case SILENT_SWITCH:
+                        InventoryUtil.switchToSlot(oldSlot, true);
+                        break;
+                }
             }
         }
     }
@@ -500,10 +561,27 @@ public class AutoCrystalRewrite extends Module {
             // Iterate through loaded entities
             for (Entity entity : mc.world.loadedEntityList) {
                 // Check the entity is a crystal
-                if (entity instanceof EntityEnderCrystal) {
+                if (entity instanceof EntityEnderCrystal && !entity.isDead) {
+                    // Check the crystal is old enough
+                    if (entity.ticksExisted < explodeTicksExisted.getValue()) {
+                        continue;
+                    }
+
+                    // We have already tried to explode this crystal
+                    if (selfExplodedCrystals.contains(entity.getPosition())) {
+                        continue;
+                    }
+
                     // If it's too far away, ignore
                     if (EntityUtil.isTooFarAwayFromSelf(entity, explodeRange.getValue())) {
                         continue;
+                    }
+
+                    // Check we can see the crystal
+                    if (explodeRaytrace.isEnabled()) {
+                        if (!mc.player.canEntityBeSeen(entity)) {
+                            continue;
+                        }
                     }
 
                     // Get the crystals position as a vector
@@ -580,33 +658,6 @@ public class AutoCrystalRewrite extends Module {
 
         // Check we want to place
         if (place.isEnabled()) {
-            // Get our current slot
-            int oldSlot = mc.player.inventory.currentItem;
-
-            // Check we want to place
-            switch (placeWhen.getCurrentMode()) {
-                case HOLDING:
-                    // Check we are holding crystals
-                    if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-                        return null;
-                    }
-
-                case SILENT_SWITCH:
-                case SWITCH:
-                    // If we aren't holding crystals
-                    if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-                        // Get crystals in our hotbar
-                        int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
-
-                        // Return null if we couldn't find crystals
-                        if (crystalSlot == -1) {
-                            return null;
-                        } else {
-                            // Switch to crystal slot
-                            InventoryUtil.switchToSlot(crystalSlot, placeWhen.getCurrentMode().equals(When.SILENT_SWITCH));
-                        }
-                    }
-            }
 
             // Iterate through blocks around us
             for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
@@ -631,6 +682,8 @@ public class AutoCrystalRewrite extends Module {
                     // Check we hit a block
                     if (result != null && result.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
                         facing = result.sideHit;
+                    } else {
+                        continue;
                     }
                 }
 
@@ -653,15 +706,6 @@ public class AutoCrystalRewrite extends Module {
                 // Set it to our best placement if it does more damage to the target than our last position
                 if (bestPlacement == null || calculateHeuristic(crystalPosition, heuristic.getCurrentMode()) > calculateHeuristic(bestPlacement, heuristic.getCurrentMode())) {
                     bestPlacement = crystalPosition;
-                }
-            }
-
-            // If the 'When' setting wasn't 'Holding'
-            if (!placeWhen.getCurrentMode().equals(When.HOLDING)) {
-                // If we want to switch back
-                if (placeWhenSwitchBack.isEnabled()) {
-                    // Switch back
-                    InventoryUtil.switchToSlot(oldSlot, placeWhen.getCurrentMode().equals(When.SILENT_SWITCH));
                 }
             }
         }
@@ -878,6 +922,7 @@ public class AutoCrystalRewrite extends Module {
         this.currentCrystal = null;
         this.currentPlacement = null;
         this.selfPlacedCrystals.clear();
+        this.selfExplodedCrystals.clear();
     }
 
     @Override
