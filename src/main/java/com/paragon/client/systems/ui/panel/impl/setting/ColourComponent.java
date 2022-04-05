@@ -58,11 +58,14 @@ public class ColourComponent extends SettingComponent {
         GL11.glPushMatrix();
         GL11.glScalef(0.7f, 0.7f, 0.7f);
         float scaleFactor = 1 / 0.7f;
-        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4) * scaleFactor, ((ColourSetting) getSetting()).getColour().getRGB());
+        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4) * scaleFactor, -1);
         GL11.glScalef(scaleFactor, scaleFactor, scaleFactor);
         GL11.glScalef(0.5f, 0.5f, 0.5f);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 3.5f) * 2, -1);
         GL11.glPopMatrix();
+
+        RenderUtil.drawBorder(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, 0.5f, -1);
+        RenderUtil.drawRect(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, ((ColourSetting) getSetting()).getColour().getRGB());
 
         float off = getOffset() + 12;
         for (SliderComponent sliderComponent : sliders) {
@@ -155,6 +158,7 @@ public class ColourComponent extends SettingComponent {
             float pickerY = y + (1 - (finHSB[2])) * height;
 
             // Draw picker highlight
+
             RenderUtil.drawRect(pickerX - 1.5f, pickerY - 1.5f, 3, 3, -1);
             RenderUtil.drawRect(pickerX - 1, pickerY - 1, 2, 2, finalColour.getRGB());
         }

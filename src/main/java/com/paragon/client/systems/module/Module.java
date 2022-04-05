@@ -20,13 +20,16 @@ import java.util.List;
 public class Module extends Feature implements Wrapper {
 
     // The category the module is in
-    private ModuleCategory category;
+    private final ModuleCategory category;
 
     // Whether the module is enabled
     private boolean enabled;
 
     // Whether the module is visible in the Array List or not
-    private BooleanSetting visible = new BooleanSetting("Visible", "Whether the module is visible in the array list or not", true);
+    private final BooleanSetting visible = new BooleanSetting("Visible", "Whether the module is visible in the array list or not", true);
+
+    // Whether the module is constantly enabled or not
+    private final boolean constant = getClass().isAnnotationPresent(Constant.class);
 
     // Module Settings
     private final List<Setting> settings = new ArrayList<>();
@@ -38,6 +41,11 @@ public class Module extends Feature implements Wrapper {
     public Module(String name, ModuleCategory category, String description) {
         super(name, description);
         this.category = category;
+
+        if (constant) {
+            this.enabled = true;
+        }
+
         addSettings(keyCode);
         addSettings(visible);
     }
@@ -45,6 +53,11 @@ public class Module extends Feature implements Wrapper {
     public Module(String name, ModuleCategory category, String description, int keyBind) {
         super(name, description);
         this.category = category;
+
+        if (constant) {
+            this.enabled = true;
+        }
+
         this.keyCode.setKeyCode(keyBind);
         addSettings(keyCode);
         addSettings(visible);
@@ -71,6 +84,11 @@ public class Module extends Feature implements Wrapper {
      * Toggles the module
      */
     public void toggle() {
+        // We don't want to toggle if the module is constant
+        if (constant) {
+            return;
+        }
+
         this.enabled = !enabled;
 
         ModuleToggleEvent moduleToggleEvent = new ModuleToggleEvent(this);
@@ -142,6 +160,14 @@ public class Module extends Feature implements Wrapper {
      */
     public void setVisible(boolean visible) {
         this.visible.setEnabled(visible);
+    }
+
+    /**
+     * Checks if the module is constantly enabled
+     * @return Whether the module is constantly enabled
+     */
+    public boolean isConstant() {
+        return constant;
     }
 
     /**

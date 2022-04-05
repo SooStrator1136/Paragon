@@ -111,7 +111,7 @@ public class StorageManager {
             JSONObject jsonObject = loadExistingConfiguration(new File("paragon/modules/" + moduleIn.getName() + ".json"));
 
             // Toggle module if it's enabled
-            if (jsonObject.getBoolean("enabled")) {
+            if (jsonObject.getBoolean("enabled") && !moduleIn.isConstant()) {
                 moduleIn.toggle();
             }
 
