@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 public class HArrayList extends Module implements TextRenderer {
 
@@ -57,34 +58,31 @@ public class HArrayList extends Module implements TextRenderer {
         /**
          * The colour is slightly different for each module in the array list
          */
-        RAINBOW_WAVE,
+        RAINBOW_WAVE((addition) -> ColourUtil.getRainbow(4, 1, addition)),
 
         /**
          * All modules are rainbow
          */
-        RAINBOW,
+        RAINBOW((addition) -> ColourUtil.getRainbow(4, 1, 0)),
 
         /**
          * Permanent static colour
          */
-        STATIC;
+        STATIC((addition) -> Colours.mainColour.getColour().getRGB());
+
+        private Function<Integer, Integer> colour;
+
+        ArrayListColour(Function<Integer, Integer> colour) {
+            this.colour = colour;
+        }
 
         /**
-         * Get the module colour
-         * @param addition The added colour addition
-         * @return The module colour
+         * Gets the colour
+         * @param addition The addition to the colour
+         * @return The colour
          */
         public int getColour(int addition) {
-            switch (arrayListColour.getCurrentMode()) {
-                case RAINBOW_WAVE:
-                    return ColourUtil.getRainbow(4, 1, addition);
-                case RAINBOW:
-                    return ColourUtil.getRainbow(4, 1, 0);
-                case STATIC:
-                    return Colours.mainColour.getColour().getRGB();
-            }
-
-            return -1;
+            return colour.apply(addition);
         }
     }
 }

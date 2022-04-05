@@ -88,7 +88,6 @@ public class Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        // animation.getAnimationFactor() new Color(23, 23, 23).darker().getRGB()
         RenderUtil.drawRect(getX(), getY() + barHeight + (height * animation.getAnimationFactor()), getWidth(), 3, new Color(23, 23, 23).darker().getRGB());
 
         if (GUI.panelHeaderSeparator.isEnabled()) {

@@ -102,4 +102,8 @@ public class SliderComponent extends SettingComponent {
 
         return isExpanded() ? getHeight() + subsettingHeight : getHeight();
     }
+
+    public boolean isDragging() {
+        return dragging;
+    }
 }

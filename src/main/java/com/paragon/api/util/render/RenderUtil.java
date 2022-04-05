@@ -68,12 +68,6 @@ public class RenderUtil implements Wrapper {
 
         // Bottom
         drawRect(x - border, y + height, width + (border * 2), border, colour);
-
-        /* drawRect(x - border, y - border, width + (border * 2), border, colour);
-
-        drawRect(x + width, y, border, height, colour);
-
-        drawRect(x - border, y + height, width + (border * 2), border, colour); */
     }
 
     /**

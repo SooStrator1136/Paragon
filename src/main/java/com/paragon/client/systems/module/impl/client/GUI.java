@@ -52,7 +52,7 @@ public class GUI extends Module {
     public static GuiScreen getGUI() {
         switch (style.getCurrentMode()) {
             case PANEL:
-                return Paragon.INSTANCE.getPanelGUI();
+                return new PanelGUI();
             case WINDOW:
                 return Paragon.INSTANCE.getWindowGUI();
         }

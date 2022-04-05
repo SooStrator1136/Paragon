@@ -1,60 +1,84 @@
 package com.paragon.client.systems.module.impl.render;
 
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.event.render.ShaderColourEvent;
 import com.paragon.api.event.render.entity.RenderEntityEvent;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.asm.mixins.accessor.IShaderGroup;
+import com.paragon.client.shader.shaders.OutlineShader;
+import com.paragon.client.shader.shaders.SmoothShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.*;
 import me.wolfsurge.cerauno.listener.Listener;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.Shader;
-import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.client.shader.ShaderUniform;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+
 /**
- * @author Wolfsurge
+ * @author Wolfsurge, with shader stuff from Cosmos (first time using shaders / glsl lel)
  */
+@SuppressWarnings("unchecked")
 public class ESP extends Module {
 
     /* Entity settings */
     private final BooleanSetting passive = new BooleanSetting("Passives", "Highlight passive entities", true);
-    private final ColourSetting passiveColour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight passive entities in", Color.GREEN).setParentSetting(passive);
-
     private final BooleanSetting mobs = new BooleanSetting("Mobs", "Highlight mobs", true);
-    private final ColourSetting mobColour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight mobs in", Color.RED).setParentSetting(mobs);
-
     private final BooleanSetting players = new BooleanSetting("Players", "Highlight player entities", true);
-    private final ColourSetting playerColour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight player entities in", new Color(255, 255, 255)).setParentSetting(players);
-
     private final BooleanSetting items = new BooleanSetting("Items", "Highlight items", true);
-    private final ColourSetting itemColour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255)).setParentSetting(items);
-
     private final BooleanSetting crystals = new BooleanSetting("Crystals", "Highlight end crystals", true);
-    private final ColourSetting crystalColour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight end crystals in", new Color(185, 17, 255)).setParentSetting(crystals);
 
-    /* Mode and line width */
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.OUTLINE);
+    // Render settings
+    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.SHADER);
     private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 2, 0.1f);
+    private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
+
+    // Shader settings
+    private final ModeSetting<FragShader> shader = (ModeSetting<FragShader>) new ModeSetting<>("Shader", "The shader to use", FragShader.OUTLINE)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
+
+    // Outline shader
+    private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the fill", true)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
+
+    // Smooth shader
+    private final ModeSetting<SmoothShaderColour> smoothShaderColour = (ModeSetting<SmoothShaderColour>) new ModeSetting<>("Smooth Colour", "The colour to use for the smooth shader", SmoothShaderColour.POSITION)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
+
+    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && !shader.getCurrentMode().equals(FragShader.SMOOTH));
+
+    private Framebuffer framebuffer;
+    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
+
+    // Shaders
+    private final OutlineShader outlineShader = new OutlineShader();
+    private final SmoothShader smoothShader = new SmoothShader();
 
     public ESP() {
         super("ESP", ModuleCategory.RENDER, "Highlights entities in the world");
-        this.addSettings(passive, mobs, players, items, crystals, mode, lineWidth);
+        this.addSettings(passive, mobs, players, items, crystals, mode, lineWidth, colour);
     }
 
     @Override
@@ -68,6 +92,94 @@ public class ESP extends Module {
         }
     }
 
+    @SubscribeEvent
+    public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
+        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getCurrentMode().equals(Mode.SHADER)) {
+            // Pretty much just taken from Cosmos, all credit goes to them
+            // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
+
+            GlStateManager.enableAlpha();
+            GlStateManager.pushMatrix();
+            GlStateManager.pushAttrib();
+
+            // Delete old framebuffer
+            if (framebuffer != null) {
+                framebuffer.framebufferClear();
+
+                if (lastScaleFactor != event.getResolution().getScaleFactor()|| lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
+                    framebuffer.deleteFramebuffer();
+                    framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+                    framebuffer.framebufferClear();
+                }
+
+                lastScaleFactor = event.getResolution().getScaleFactor();
+                lastScaleWidth = event.getResolution().getScaledWidth();
+                lastScaleHeight = event.getResolution().getScaledHeight();
+            } else {
+                framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            }
+
+            framebuffer.bindFramebuffer(false);
+            boolean previousShadows = mc.gameSettings.entityShadows;
+            mc.gameSettings.entityShadows = false;
+
+            ((IEntityRenderer) mc.entityRenderer).setupCamera(event.getPartialTicks(), 0);
+            for (Entity entity : mc.world.loadedEntityList) {
+                if (entity != null && entity != mc.player && isEntityValid(entity)) {
+                    mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), true);
+                }
+            }
+
+            mc.gameSettings.entityShadows = previousShadows;
+            GlStateManager.enableBlend();
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            framebuffer.unbindFramebuffer();
+            mc.getFramebuffer().bindFramebuffer(true);
+            mc.entityRenderer.disableLightmap();
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.pushMatrix();
+
+            // Render shaders
+            switch (shader.getCurrentMode()) {
+                case OUTLINE:
+                    outlineShader.setColor(colour.getColour());
+                    outlineShader.setWidth(lineWidth.getValue());
+                    outlineShader.setFill(fill.isEnabled() ? 1 : 0);
+                    outlineShader.startShader();
+                    break;
+                case SMOOTH:
+                    smoothShader.setColor(smoothShaderColour.getCurrentMode().getType());
+                    smoothShader.setWidth(lineWidth.getValue());
+                    smoothShader.setOutline(outline.isEnabled() ? 1 : 0);
+                    smoothShader.startShader();
+                    break;
+            }
+
+            mc.entityRenderer.setupOverlayRendering();
+
+            glBindTexture(GL_TEXTURE_2D, framebuffer.framebufferTexture);
+            glBegin(GL_QUADS);
+            glTexCoord2d(0, 1);
+            glVertex2d(0, 0);
+            glTexCoord2d(0, 0);
+            glVertex2d(0, event.getResolution().getScaledHeight());
+            glTexCoord2d(1, 0);
+            glVertex2d(event.getResolution().getScaledWidth(), event.getResolution().getScaledHeight());
+            glTexCoord2d(1, 1);
+            glVertex2d(event.getResolution().getScaledWidth(), 0);
+            glEnd();
+
+            // Stop drawing shader
+            glUseProgram(0);
+            glPopMatrix();
+
+            mc.entityRenderer.enableLightmap();
+
+            GlStateManager.popMatrix();
+            GlStateManager.popAttrib();
+        }
+    }
+
     @Listener
     public void onRenderEntity(RenderEntityEvent event) {
         if(isEntityValid(event.getEntity()) && mode.getCurrentMode() == Mode.OUTLINE) {
@@ -77,7 +189,7 @@ public class ESP extends Module {
             event.renderModel();
             OutlineUtil.renderThree();
             event.renderModel();
-            OutlineUtil.renderFour(getColourByEntity(event.getEntity()));
+            OutlineUtil.renderFour(colour.getColour());
             event.renderModel();
             OutlineUtil.renderFive();
             event.renderModel();
@@ -112,8 +224,17 @@ public class ESP extends Module {
     @Listener
     public void onShaderColour(ShaderColourEvent event) {
         if (mode.getCurrentMode().equals(Mode.GLOW)) {
-            event.setColour(getColourByEntity(event.getEntity()));
+            event.setColour(colour.getColour());
             event.cancel();
+        }
+    }
+
+    @Listener
+    public void onSettingUpdate(SettingUpdateEvent event) {
+        if (event.getSetting() == mode) {
+            for (Entity entity : mc.world.loadedEntityList) {
+                entity.setGlowing(false);
+            }
         }
     }
 
@@ -122,24 +243,10 @@ public class ESP extends Module {
      * @param entityIn The entity to highlight
      */
     public void espEntity(Entity entityIn) {
-        if (!((entityIn instanceof EntityItem) || (entityIn instanceof EntityEnderCrystal)) && mode.getCurrentMode() == Mode.OUTLINE) {
-            return;
-        }
-
-        // Set it glowing if it's an item
-        if (entityIn instanceof EntityItem) {
-            entityIn.setGlowing(true);
-            return;
-        }
-
         if (mode.getCurrentMode() == Mode.BOX) {
-            RenderUtil.drawBoundingBox(EntityUtil.getEntityBox(entityIn), lineWidth.getValue(), getColourByEntity(entityIn));
+            RenderUtil.drawBoundingBox(EntityUtil.getEntityBox(entityIn), lineWidth.getValue(), colour.getColour());
         } else if (mode.getCurrentMode() == Mode.GLOW) {
             entityIn.setGlowing(true);
-        }
-
-        if (mode.getCurrentMode() != Mode.GLOW) {
-            entityIn.setGlowing(false);
         }
     }
 
@@ -149,25 +256,7 @@ public class ESP extends Module {
      * @return Is the entity valid
      */
     private boolean isEntityValid(Entity entityIn) {
-        if(entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled()) return true;
-        else if(entityIn instanceof EntityMob && mobs.isEnabled()) return true;
-        else if(entityIn instanceof EntityPlayer && entityIn != mc.player && players.isEnabled()) return true;
-        else if(entityIn instanceof EntityItem && items.isEnabled()) return true;
-        else return entityIn instanceof EntityEnderCrystal && crystals.isEnabled();
-    }
-
-    /**
-     * Gets the entity's colour
-     * @param entityIn The entity
-     * @return The entity's colour
-     */
-    private Color getColourByEntity(Entity entityIn) {
-        if(entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob)) return passiveColour.getColour();
-        else if(entityIn instanceof EntityMob) return mobColour.getColour();
-        else if(entityIn instanceof EntityPlayer && entityIn != mc.player) return playerColour.getColour();
-        else if(entityIn instanceof EntityEnderCrystal) return crystalColour.getColour();
-        else if (entityIn instanceof EntityItem) return itemColour.getColour();
-        else return new Color(0);
+        return entityIn instanceof EntityOtherPlayerMP && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
     }
 
     public enum Mode {
@@ -184,6 +273,50 @@ public class ESP extends Module {
         /**
          * Draw a box
          */
-        BOX
+        BOX,
+
+        /**
+         * Draw with shader
+         */
+        SHADER
+    }
+
+    public enum FragShader {
+        /**
+         * Outline the entity
+         */
+        OUTLINE,
+
+        /**
+         * Draw a smooth fill and optional outline with colour based on the entity's position on the screen
+         */
+        SMOOTH
+    }
+
+    public enum SmoothShaderColour {
+        /**
+         * Sets colour based on entity's position on the screen
+         */
+        POSITION(1),
+
+        /**
+         * Sets colour based on player's yaw
+         */
+        YAW(2),
+
+        /**
+         * Sets colour based on player's pitch
+         */
+        PITCH(3);
+
+        private int type;
+
+        SmoothShaderColour(int type) {
+            this.type = type;
+        }
+
+        public int getType() {
+            return type;
+        }
     }
 }

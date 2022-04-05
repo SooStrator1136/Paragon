@@ -48,6 +48,7 @@ public class ModuleManager {
                 new Velocity(),
 
                 new BlockHighlight(),
+                new Breadcrumbs(),
                 new ESP(),
                 new Fullbright(),
                 new HoleESP(),
