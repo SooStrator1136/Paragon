@@ -18,6 +18,18 @@ public class Timer {
         return false;
     }
 
+    public boolean hasTimePassed(long time, boolean reset) {
+        if ((System.currentTimeMillis() - lastMS) > time) {
+            if (reset) {
+                reset();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public Timer() {
         this.lastMS = 0L;
     }

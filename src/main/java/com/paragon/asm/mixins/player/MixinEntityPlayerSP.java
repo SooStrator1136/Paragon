@@ -8,6 +8,7 @@ import net.minecraft.entity.MoverType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityPlayerSP.class)
@@ -17,16 +18,11 @@ public class MixinEntityPlayerSP extends AbstractClientPlayer {
         super(null, null);
     }
 
-    @Inject(method = "move", at = @At("HEAD"), cancellable = true)
-    public void onMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
-        PlayerMotionEvent playerMotionEvent = new PlayerMotionEvent(type, x, y, z);
+    @Redirect(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;move(Lnet/minecraft/entity/MoverType;DDD)V"))
+    public void move(AbstractClientPlayer instance, MoverType moverType, double x, double y, double z) {
+        PlayerMotionEvent playerMotionEvent = new PlayerMotionEvent(moverType, x, y, z);
         Paragon.INSTANCE.getEventBus().post(playerMotionEvent);
-
-        if (playerMotionEvent.isCancelled()) {
-            ci.cancel();
-
-            super.move(type, playerMotionEvent.getX(), playerMotionEvent.getY(), playerMotionEvent.getZ());
-        }
+        super.move(moverType, playerMotionEvent.getX(), playerMotionEvent.getY(), playerMotionEvent.getZ());
     }
 
 }

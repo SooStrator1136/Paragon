@@ -15,6 +15,7 @@ public abstract class HUDModule extends Module implements TextRenderer {
 
     public HUDModule(String name, String description) {
         super(name, ModuleCategory.HUD, description);
+        this.setVisible(false);
     }
 
     public abstract void render();

@@ -10,7 +10,7 @@ public class ColourSetting extends Setting {
     private Color colour;
     private boolean rainbow;
     private float rainbowSpeed = 4;
-    private float rainbowSaturation = 1;
+    private float rainbowSaturation = 100;
 
     /**
      * Creates a new colour setting
@@ -29,7 +29,7 @@ public class ColourSetting extends Setting {
      */
     public Color getColour() {
         if (rainbow) {
-            return new Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation, 0));
+            return ColourUtil.integrateAlpha(new Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)), colour.getAlpha());
         }
 
         return colour;
@@ -44,8 +44,32 @@ public class ColourSetting extends Setting {
     }
 
     /**
+     * Gets whether the colour is rainbow
+     * @return Whether the colour is rainbow
+     */
+    public boolean isRainbow() {
+        return rainbow;
+    }
+
+    /**
+     * Gets the rainbow's saturation
+     * @return The rainbow's saturation
+     */
+    public float getRainbowSaturation() {
+        return rainbowSaturation;
+    }
+
+    /**
+     * Gets the rainbow's speed
+     * @return Gets the rainbow's speed
+     */
+    public float getRainbowSpeed() {
+        return rainbowSpeed;
+    }
+
+    /**
      * Sets the current colour to rainbow
-     * @param rainbow Whether or not the colour is rainbow
+     * @param rainbow Whether the colour is a rainbow
      */
     public void setRainbow(boolean rainbow) {
         this.rainbow = rainbow;

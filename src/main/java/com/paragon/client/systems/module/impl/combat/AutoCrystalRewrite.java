@@ -43,7 +43,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -61,6 +61,7 @@ public class AutoCrystalRewrite extends Module {
 
     // Targeting settings
     public final BooleanSetting targeting = new BooleanSetting("Targeting" , "Settings for targeting players", true);
+    public final ModeSetting<TargetPriority> targetPriority = (ModeSetting<TargetPriority>) new ModeSetting<>("Priority", "The way to sort possible targets", TargetPriority.DISTANCE).setParentSetting(targeting);
     public final BooleanSetting targetFriends = (BooleanSetting) new BooleanSetting("Friends", "Target friends", false).setParentSetting(targeting);
     public final NumberSetting targetRange = (NumberSetting) new NumberSetting("Range", "The range to target players", 10, 1, 15, 1).setParentSetting(targeting);
 
@@ -141,11 +142,6 @@ public class AutoCrystalRewrite extends Module {
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", ModuleCategory.COMBAT, "Automatically places and explodes crystals");
         this.addSettings(order, heuristic, place, explode, targeting, override, pause, render);
-    }
-
-    @Override
-    public void onEnable() {
-        reset();
     }
 
     @Override
@@ -285,9 +281,7 @@ public class AutoCrystalRewrite extends Module {
             // Check we are holding end crystals
             if (mc.player.getHeldItem(packet.getHand()).getItem() == Items.END_CRYSTAL) {
                 // If we can place a crystal on that block, add it to our self placed crystals list
-                if (canPlaceCrystal(packet.getPos()) && currentTarget != null) {
-                    selfPlacedCrystals.add(packet.getPos());
-                }
+                selfPlacedCrystals.add(packet.getPos());
             }
         }
 
@@ -324,8 +318,8 @@ public class AutoCrystalRewrite extends Module {
      * @return The best player to target
      */
     public EntityPlayer getCurrentTarget() {
-        // The best target (we will return this)
-        EntityPlayer target = null;
+        // All valid targets
+        List<EntityPlayer> validTargets = new ArrayList<>();
 
         // Iterate through loaded entities
         for (Entity entity : mc.world.loadedEntityList) {
@@ -351,14 +345,51 @@ public class AutoCrystalRewrite extends Module {
                     }
                 }
 
-                // If the current best target is null, or this target is closer to the player, set the best target to this player
-                if (target == null || mc.player.getDistance(entityPlayer) < mc.player.getDistance(target)) {
-                    target = entityPlayer;
-                }
+                // Add to valid targets list
+                validTargets.add(entityPlayer);
             }
         }
 
-        return target;
+        // Return null if there are no valid targets
+        if (validTargets.isEmpty()) {
+            return null;
+        }
+
+        // Sort by priority
+        switch (targetPriority.getCurrentMode()) {
+            // Sort by distance
+            case DISTANCE:
+                validTargets.sort(Comparator.comparingDouble(target -> mc.player.getDistance(target)));
+                break;
+
+            // Sort by health
+            case HEALTH:
+                validTargets.sort(Comparator.comparingDouble(EntityLivingBase::getHealth));
+                break;
+
+            // Sort by total armour value
+            case ARMOUR:
+                validTargets.sort(Comparator.comparingDouble(target -> {
+                    float totalArmour = 0;
+
+                    // Iterate through target's armour slots
+                    for (ItemStack armour : target.getArmorInventoryList()) {
+                        // Don't do anything if they don't have an item in the slot
+                        if (armour.isEmpty()) {
+                            continue;
+                        }
+
+                        // Add item damage to total
+                        totalArmour += armour.getItemDamage();
+                    }
+
+                    return totalArmour;
+                }));
+
+                break;
+        }
+
+        return validTargets.get(0);
     }
 
     /**
@@ -957,6 +988,23 @@ public class AutoCrystalRewrite extends Module {
          * Target damage minus self damage minus distance
          */
         UNIFORM
+    }
+
+    public enum TargetPriority {
+        /**
+         * Target closest to us
+         */
+        DISTANCE,
+
+        /**
+         * Target with the lowest health
+         */
+        HEALTH,
+
+        /**
+         * Target with the lowest total armour value
+         */
+        ARMOUR
     }
 
     public enum When {

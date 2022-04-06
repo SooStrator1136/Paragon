@@ -60,6 +60,9 @@ public class StorageManager {
                         jsonObject.put(setting.getName(), ((ModeSetting) setting).getCurrentMode());
                     } else if (setting instanceof ColourSetting) {
                         jsonObject.put(setting.getName(), ((ColourSetting) setting).getColour().getRGB());
+                        jsonObject.put(setting.getName() + "-rainbow", ((ColourSetting) setting).isRainbow());
+                        jsonObject.put(setting.getName() + "-rainbow-speed", ((ColourSetting) setting).getRainbowSpeed());
+                        jsonObject.put(setting.getName() + "-rainbow-saturation", ((ColourSetting) setting).getRainbowSaturation());
                     } else if (setting instanceof KeybindSetting) {
                         jsonObject.put(setting.getName(), ((KeybindSetting) setting).getKeyCode());
                     }
@@ -133,6 +136,9 @@ public class StorageManager {
                         ((ModeSetting<Enum<?>>) setting).setCurrentMode(newValue);
                     } else if (setting instanceof ColourSetting) {
                         ((ColourSetting) setting).setColour(new Color(jsonObject.getInt(setting.getName())));
+                        ((ColourSetting) setting).setRainbow(jsonObject.getBoolean(setting.getName() + "-rainbow"));
+                        ((ColourSetting) setting).setRainbowSpeed(jsonObject.getFloat(setting.getName() + "-rainbow-speed"));
+                        ((ColourSetting) setting).setRainbowSaturation(jsonObject.getFloat(setting.getName() + "-rainbow-saturation"));
                     } else if (setting instanceof KeybindSetting) {
                         ((KeybindSetting) setting).setKeyCode(jsonObject.getInt(setting.getName()));
                     }
@@ -153,6 +159,9 @@ public class StorageManager {
                             ((ModeSetting<Enum<?>>) subSetting).setCurrentMode(newValue);
                         } else if (subSetting instanceof ColourSetting) {
                             ((ColourSetting) subSetting).setColour(new Color(jsonObject.getInt(settingName)));
+                            ((ColourSetting) setting).setRainbow(jsonObject.getBoolean(settingName + "-rainbow"));
+                            ((ColourSetting) setting).setRainbowSpeed(jsonObject.getFloat(settingName + "-rainbow-speed"));
+                            ((ColourSetting) setting).setRainbowSaturation(jsonObject.getFloat(settingName + "-rainbow-saturation"));
                         } else if (subSetting instanceof KeybindSetting) {
                             ((KeybindSetting) subSetting).setKeyCode(jsonObject.getInt(settingName));
                         }
