@@ -56,6 +56,7 @@ public class AutoCrystalRewrite extends Module {
     // Order of operations
     public final ModeSetting<Order> order = new ModeSetting<>("Order", "The order of operations", Order.PLACE_EXPLODE);
     public final BooleanSetting grouped = (BooleanSetting) new BooleanSetting("Grouped", "Immediately attack or place the crystal after calculating", true).setParentSetting(order);
+    public final ModeSetting<Timing> timing = new ModeSetting<>("Timing", "When to perform actions", Timing.LINEAR);
 
     public final ModeSetting<Heuristic> heuristic = new ModeSetting<>("Heuristic", "The way to calculate damage", Heuristic.MINIMAX);
 
@@ -139,9 +140,12 @@ public class AutoCrystalRewrite extends Module {
     // List of crystals we have attempted to explode
     private final List<BlockPos> selfExplodedCrystals = new ArrayList<>();
 
+    // The current action we are performing
+    private ActionState currentActionState = ActionState.PLACING;
+
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", ModuleCategory.COMBAT, "Automatically places and explodes crystals");
-        this.addSettings(order, heuristic, place, explode, targeting, override, pause, render);
+        this.addSettings(order, heuristic, timing, place, explode, targeting, override, pause, render);
     }
 
     @Override
@@ -192,39 +196,47 @@ public class AutoCrystalRewrite extends Module {
 
         switch (order.getCurrentMode()) {
             case PLACE_EXPLODE:
-                // Find placement
-                currentPlacement = findBestPosition();
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.PLACING)) {
+                    // Find placement
+                    currentPlacement = findBestPosition();
 
-                // Immediately place if we have found a position and grouped is enabled
-                if (grouped.isEnabled()) {
-                    placeSearchedPosition();
+                    // Immediately place if we have found a position and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        placeSearchedPosition();
+                    }
                 }
 
-                // Find crystal
-                currentCrystal = findBestCrystal();
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.EXPLODING)) {
+                    // Find crystal
+                    currentCrystal = findBestCrystal();
 
-                // Immediately explode if we have found a crystal and grouped is enabled
-                if (grouped.isEnabled()) {
-                    explodeSearchedCrystal();
+                    // Immediately explode if we have found a crystal and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        explodeSearchedCrystal();
+                    }
                 }
 
                 break;
 
             case EXPLODE_PLACE:
-                // Find crystal
-                currentCrystal = findBestCrystal();
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.EXPLODING)) {
+                    // Find crystal
+                    currentCrystal = findBestCrystal();
 
-                // Immediately explode if we have found a crystal and grouped is enabled
-                if (grouped.isEnabled()) {
-                    explodeSearchedCrystal();
+                    // Immediately explode if we have found a crystal and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        explodeSearchedCrystal();
+                    }
                 }
 
-                // Find placement
-                currentPlacement = findBestPosition();
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.PLACING)) {
+                    // Find placement
+                    currentPlacement = findBestPosition();
 
-                // Immediately place if we have found a position and grouped is enabled
-                if (grouped.isEnabled()) {
-                    placeSearchedPosition();
+                    // Immediately place if we have found a position and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        placeSearchedPosition();
+                    }
                 }
 
                 break;
@@ -233,6 +245,7 @@ public class AutoCrystalRewrite extends Module {
 
         // If we haven't grouped them
         if (!grouped.isEnabled()) {
+            // We don't need to put timing logic here as exploding and placing are ignored if there isn't a crystal or placement
             switch (order.getCurrentMode()) {
                 case PLACE_EXPLODE:
                     // Place crystal at position
@@ -250,6 +263,8 @@ public class AutoCrystalRewrite extends Module {
                     break;
             }
         }
+
+        currentActionState = currentActionState.equals(ActionState.PLACING) ? ActionState.EXPLODING : ActionState.PLACING;
     }
 
     @Override
@@ -987,6 +1002,30 @@ public class AutoCrystalRewrite extends Module {
          * Explode then place
          */
         EXPLODE_PLACE
+    }
+
+    public enum Timing {
+        /**
+         * Run actions one after another
+         */
+        LINEAR,
+
+        /**
+         * Run actions on different ticks
+         */
+        SEQUENTIAL
+    }
+
+    public enum ActionState {
+        /**
+         * About to explode crystals
+         */
+        EXPLODING,
+
+        /**
+         * About to place crystals
+         */
+        PLACING
     }
 
     public enum Heuristic {

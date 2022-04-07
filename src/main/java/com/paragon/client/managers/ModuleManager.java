@@ -34,12 +34,14 @@ public class ModuleManager {
         Paragon.INSTANCE.getLogger().info("Initialising Module Manager");
 
         modules = Arrays.asList(
+                // Combat
                 new Aura(),
                 new AutoCrystal(),
                 new AutoCrystalRewrite(),
                 new Blink(),
                 new Offhand(),
 
+                // Movement
                 new ElytraFlight(),
                 new NoSlow(),
                 new ReverseStep(),
@@ -47,6 +49,7 @@ public class ModuleManager {
                 new Step(),
                 new Velocity(),
 
+                // Render
                 new BlockHighlight(),
                 new Breadcrumbs(),
                 new ESP(),
@@ -57,6 +60,7 @@ public class ModuleManager {
                 new Tracers(),
                 new ViewModel(),
 
+                // Misc
                 new AutoEZ(),
                 new AutoLog(),
                 new ChatModifications(),
@@ -69,11 +73,13 @@ public class ModuleManager {
                 new OnDeath(),
                 new XCarry(),
 
+                // Client
                 new ClientFont(),
                 new Colours(),
                 new GUI(),
                 new HUD(),
 
+                // HUD
                 new Armour(),
                 new HArrayList(),
                 new Coordinates(),
