@@ -1,7 +1,7 @@
 package com.paragon.client.systems.ui.console;
 
 import com.paragon.Paragon;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class ConsoleGUI extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // Make the background darker
-        if (GUI.darkenBackground.isEnabled()) {
+        if (ClickGUI.darkenBackground.isEnabled()) {
             drawDefaultBackground();
         }
 
@@ -46,6 +46,6 @@ public class ConsoleGUI extends GuiScreen {
 
     @Override
     public boolean doesGuiPauseGame() {
-        return GUI.pause.isEnabled();
+        return ClickGUI.pause.isEnabled();
     }
 }

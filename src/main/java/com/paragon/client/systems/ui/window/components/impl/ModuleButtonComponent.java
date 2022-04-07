@@ -7,7 +7,7 @@ import com.paragon.client.systems.ui.window.components.impl.settings.*;
 import com.paragon.client.systems.ui.window.components.impl.settings.impl.*;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.settings.Setting;
 import com.paragon.client.systems.module.settings.impl.*;
 import org.lwjgl.input.Mouse;
@@ -70,7 +70,7 @@ public class ModuleButtonComponent implements TextRenderer {
         RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), isMouseOnButton(mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
         // Module outline
-        if (getModule().isEnabled() || getParentCategory().getSelectedModule() == getModule() && GUI.settingOutline.isEnabled()) {
+        if (getModule().isEnabled() || getParentCategory().getSelectedModule() == getModule() && ClickGUI.settingOutline.isEnabled()) {
             RenderUtil.drawRect(getX() - 1, getY(), 1, getHeight(), Colours.mainColour.getColour().getRGB());
         }
 
@@ -96,7 +96,7 @@ public class ModuleButtonComponent implements TextRenderer {
         }
 
         // Setting Outline
-        if(getParentCategory().getSelectedModule() == getModule() && GUI.settingOutline.isEnabled()) {
+        if(getParentCategory().getSelectedModule() == getModule() && ClickGUI.settingOutline.isEnabled()) {
             // Module
             RenderUtil.drawRect(getX(), getY(), getWidth() + 4, 1, Colours.mainColour.getColour().getRGB());
             RenderUtil.drawRect(getX(), getY() + getHeight() - 1, getWidth() + 4, 1, Colours.mainColour.getColour().getRGB());

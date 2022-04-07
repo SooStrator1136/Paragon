@@ -7,7 +7,7 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.ui.console.ConsoleGUI;
 import com.paragon.client.systems.ui.taskbar.icons.Icon;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
@@ -24,7 +24,7 @@ public class Taskbar implements Wrapper, TextRenderer {
     public Taskbar() {
         int x = (int) getStringWidth("Paragon") + 10;
 
-        icons.add(new Icon("GUI", x, GUI::getGUI));
+        icons.add(new Icon("GUI", x, ClickGUI::getGUI));
         x += getStringWidth("GUI") + 7;
         icons.add(new Icon("Console", x, ConsoleGUI::new));
     }

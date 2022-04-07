@@ -57,6 +57,58 @@ public class RenderUtil implements Wrapper {
         GlStateManager.popMatrix();
     }
 
+    public static void drawRoundedRect(float x, float y, float width, float height, float tLeft, float tRight, float bLeft, float bRight, int colour) {
+        glPushAttrib(0);
+        glScaled(0.5D, 0.5D, 0.5D);
+        x *= 2.0D;
+        y *= 2.0D;
+        width *= 2.0D;
+        height *= 2.0D;
+
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(true);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        glBegin(GL_POLYGON);
+        ColourUtil.setColour(colour);
+        int i;
+
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + tLeft + Math.sin(i * Math.PI / 180.0D) * tLeft * -1.0D, y + tLeft + Math.cos(i * Math.PI / 180.0D) * tLeft * -1.0D);
+        }
+
+        for (i = 90; i <= 180; i += 3) {
+            glVertex2d(x + bLeft + Math.sin(i * Math.PI / 180.0D) * bLeft * -1.0D, y + height - bLeft + Math.cos(i * Math.PI / 180.0D) * bLeft * -1.0D);
+        }
+
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + width - bRight + Math.sin(i * Math.PI / 180.0D) * bRight, y + height - bRight + Math.cos(i * Math.PI / 180.0D) * bRight);
+        }
+
+        for (i = 90; i <= 180; i += 3) {
+            glVertex2d(x + width - tRight + Math.sin(i * Math.PI / 180.0D) * tRight, y + tRight + Math.cos(i * Math.PI / 180.0D) * tRight);
+        }
+
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+
+        glScaled(2.0D, 2.0D, 2.0D);
+        glPopAttrib();
+        glLineWidth(1);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
     public static void drawBorder(float x, float y, float width, float height, float border, int colour) {
         // Left
         drawRect(x - border, y, border, height, colour);
@@ -275,7 +327,7 @@ public class RenderUtil implements Wrapper {
         return Toolkit.getDefaultToolkit().getScreenSize().height / 2f;
     }
 
-    static void renderText(String text, float x, float y, int colour) {
+    public static void renderText(String text, float x, float y, int colour) {
         if (ClientFont.INSTANCE.isEnabled()) {
             Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x, y - 3.5f, colour);
             return;
@@ -284,7 +336,7 @@ public class RenderUtil implements Wrapper {
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, colour);
     }
 
-    static float getStringWidth(String text) {
+    public static float getStringWidth(String text) {
         if (ClientFont.INSTANCE.isEnabled()) {
             return Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(text);
         }

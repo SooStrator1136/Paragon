@@ -9,7 +9,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.settings.impl.ColourSetting;
 import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import net.minecraft.client.Minecraft;
@@ -65,7 +65,7 @@ public class ColourComponent extends SettingComponent {
 
     @Override
     public void renderSetting(int mouseX, int mouseY) {
-        this.animation.time = GUI.animationSpeed.getValue();
+        this.animation.time = ClickGUI.animationSpeed.getValue();
 
         RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 12, mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
@@ -107,7 +107,7 @@ public class ColourComponent extends SettingComponent {
             float x = getModuleButton().getPanel().getX() + 4;
             float y = getModuleButton().getOffset() + getOffset() + (components.size() * 12) + 15.5f;
             float dimension = 87;
-            float height = dimension * GUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
+            float height = dimension * ClickGUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
 
             Color colour = Color.getHSBColor(hue / 360, 1, 1);
 

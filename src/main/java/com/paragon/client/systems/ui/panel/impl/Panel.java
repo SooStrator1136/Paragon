@@ -10,7 +10,8 @@ import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
+import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,16 +22,19 @@ import java.util.ArrayList;
 public class Panel implements TextRenderer {
 
     // X, Y, Width, and Bar Height
-    private float x, y, width, barHeight;
+    private float x;
+    private float y;
+    private final float width;
+    private final float barHeight;
 
     // The panel's category
-    private ModuleCategory category;
+    private final ModuleCategory category;
 
     // List of module buttons
-    private ArrayList<ModuleButton> moduleButtons = new ArrayList<>();
+    private final ArrayList<ModuleButton> moduleButtons = new ArrayList<>();
 
     // Opening / Closing animation
-    private Animation animation;
+    private final Animation animation;
 
     // Variables
     private boolean dragging = false;
@@ -58,7 +62,7 @@ public class Panel implements TextRenderer {
 
     public void renderPanel(int mouseX, int mouseY) {
         // Set animation speed
-        animation.time = GUI.animationSpeed.getValue();
+        animation.time = ClickGUI.animationSpeed.getValue();
 
         // Set X and Y
         if (dragging) {
@@ -66,14 +70,15 @@ public class Panel implements TextRenderer {
             this.y = mouseY - lastY;
         }
 
-        // Header
-        RenderUtil.drawRect(getX(), getY(), getWidth(), barHeight, new Color(23, 23, 23).darker().getRGB());
-        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
-
         float height = 0;
         for (ModuleButton moduleButton : moduleButtons) {
             height += moduleButton.getAbsoluteHeight();
         }
+
+        // Header
+        RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight + (6 * animation.getAnimationFactor()) + (height * animation.getAnimationFactor()), ClickGUI.cornerRadius.getValue(), ClickGUI.cornerRadius.getValue(),
+                (ClickGUI.cornerRadius.getValue() + (1 * (1 - animation.getAnimationFactor()))) * animation.getAnimationFactor(), (ClickGUI.cornerRadius.getValue() +  + (1 * (1 - animation.getAnimationFactor()))) * animation.getAnimationFactor(), new Color(23, 23, 23).darker().getRGB());
+        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
 
         refreshOffsets();
 
@@ -88,14 +93,10 @@ public class Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        RenderUtil.drawRect(getX(), getY() + barHeight + (height * animation.getAnimationFactor()), getWidth(), 3, new Color(23, 23, 23).darker().getRGB());
+        RenderUtil.drawRect(getX(), getY() + barHeight + (height * animation.getAnimationFactor()), getWidth(), 1, new Color(23, 23, 23, (int) (255 * animation.getAnimationFactor())).darker().getRGB());
 
-        if (GUI.panelHeaderSeparator.isEnabled()) {
+        if (ClickGUI.panelHeaderSeparator.isEnabled()) {
             RenderUtil.drawRect(getX(), getY() + barHeight, getWidth(), 0.5f, Colours.mainColour.getColour().getRGB());
-        }
-
-        if (GUI.outline.isEnabled()) {
-            RenderUtil.drawBorder(getX(), getY(), getWidth(), barHeight + (3 * animation.getAnimationFactor()) + height * animation.getAnimationFactor(), 0.5f, Colours.mainColour.getColour().getRGB());
         }
     }
 
@@ -153,7 +154,7 @@ public class Panel implements TextRenderer {
 
         for (ModuleButton moduleButton : moduleButtons) {
             moduleButton.offset = y;
-            y += moduleButton.getAbsoluteHeight() * GUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
+            y += moduleButton.getAbsoluteHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
         }
     }
 

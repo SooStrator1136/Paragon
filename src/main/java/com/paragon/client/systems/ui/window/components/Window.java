@@ -7,7 +7,7 @@ import com.paragon.client.systems.ui.window.components.impl.CategoryComponent;
 import com.paragon.client.systems.ui.window.components.impl.ModuleButtonComponent;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -84,11 +84,11 @@ public class Window implements TextRenderer {
             categoryComponent.renderCategory(mouseX, mouseY);
 
         // Separator
-        if(GUI.separator.isEnabled())
+        if(ClickGUI.separator.isEnabled())
             RenderUtil.drawRect(getX(), getY() + 32, getWidth(), 1, Colours.mainColour.getColour().getRGB());
 
         // Window outline
-        if(GUI.windowOutline.isEnabled()) {
+        if(ClickGUI.windowOutline.isEnabled()) {
             RenderUtil.drawRect(getX(), getY(), 1, getHeight(), Colours.mainColour.getColour().getRGB());
             RenderUtil.drawRect(getX() + getWidth() - 1, getY(), 1, getHeight(), Colours.mainColour.getColour().getRGB());
 

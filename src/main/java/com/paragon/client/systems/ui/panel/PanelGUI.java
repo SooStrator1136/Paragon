@@ -7,13 +7,10 @@ import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.ui.panel.impl.Panel;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.ClientFont;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -48,7 +45,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         tooltip = "";
 
         // Make the background darker
-        if (GUI.darkenBackground.isEnabled()) {
+        if (ClickGUI.darkenBackground.isEnabled()) {
             drawDefaultBackground();
         }
 
@@ -69,7 +66,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
         Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
 
-        if (!tooltip.isEmpty() && GUI.tooltips.isEnabled()) {
+        if (!tooltip.isEmpty() && ClickGUI.tooltips.isEnabled()) {
             RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
             RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getColour().getRGB());
             renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
@@ -135,9 +132,9 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
         for (Panel panel : panels) {
             if (dWheel > 0) {
-                panel.setY(panel.getY() - GUI.scrollSpeed.getValue());
+                panel.setY(panel.getY() - ClickGUI.scrollSpeed.getValue());
             } else if (dWheel < 0) {
-                panel.setY(panel.getY() + GUI.scrollSpeed.getValue());
+                panel.setY(panel.getY() + ClickGUI.scrollSpeed.getValue());
             }
         }
     }
@@ -145,7 +142,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
     @Override
     public boolean doesGuiPauseGame() {
         // Pause the game if pause is enabled in the GUI settings
-        return GUI.pause.isEnabled();
+        return ClickGUI.pause.isEnabled();
     }
 
     /**

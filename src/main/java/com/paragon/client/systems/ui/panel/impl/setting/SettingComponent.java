@@ -7,7 +7,7 @@ import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.PanelGUI;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.settings.Setting;
 import com.paragon.client.systems.module.settings.impl.*;
 import net.minecraft.client.Minecraft;
@@ -63,7 +63,7 @@ public class SettingComponent implements TextRenderer {
 
     public void renderSetting(int mouseX, int mouseY) {
         // Set animation speed
-        animation.time = GUI.animationSpeed.getValue();
+        animation.time = ClickGUI.animationSpeed.getValue();
 
         if (!getSettingComponents().isEmpty() && hasVisibleSubsettings()) {
             GL11.glPushMatrix();
@@ -88,6 +88,10 @@ public class SettingComponent implements TextRenderer {
 
         if (isMouseOver(mouseX, mouseY) && !(this instanceof ColourComponent)) {
             PanelGUI.tooltip = setting.getDescription();
+
+            if (this instanceof ModeComponent) {
+                PanelGUI.tooltip = setting.getDescription() + "\n" + ((ModeSetting<?>) setting).getModeDescription().get();
+            }
         }
         // If it's a colour component, we only want to render if the mouse is over the actual button, not the pickers
         else if (this instanceof ColourComponent) {

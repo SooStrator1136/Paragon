@@ -13,17 +13,17 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 
 public class Offhand extends Module {
 
-    private ModeSetting<Main> main = new ModeSetting<>("Main", "The item you want to prioritise the most", Main.TOTEM);
-    private ModeSetting<Fallback> fallback = new ModeSetting<>("Fallback", "The item you want to switch to if you don't have the main item", Fallback.GAPPLE);
+    private final ModeSetting<Main> main = new ModeSetting<>("Main", "The item you want to prioritise the most", Main.TOTEM);
+    private final ModeSetting<Fallback> fallback = new ModeSetting<>("Fallback", "The item you want to switch to if you don't have the main item", Fallback.GAPPLE);
 
-    private BooleanSetting strictInv = new BooleanSetting("Strict Inventory", "Fake opening your inventory", true);
-    private BooleanSetting pauseMotion = new BooleanSetting("Pause motion", "Stop moving when swapping items", true);
+    private final BooleanSetting strictInv = new BooleanSetting("Strict Inventory", "Fake opening your inventory", true);
+    private final BooleanSetting pauseMotion = new BooleanSetting("Pause motion", "Stop moving when swapping items", true);
 
-    private BooleanSetting safety = new BooleanSetting("Safety", "Switch to totems when certain things happen", true);
-    private BooleanSetting elytra = (BooleanSetting) new BooleanSetting("Elytra", "Switch to a totem when flying with an elytra", false).setParentSetting(safety);
-    private BooleanSetting fall = (BooleanSetting) new BooleanSetting("Falling", "Switch to a totem when falling", true).setParentSetting(safety);
-    private BooleanSetting lowHealth = (BooleanSetting) new BooleanSetting("Low Health", "Switch to a totem when on low health", true).setParentSetting(safety);
-    private NumberSetting lowHealthValue = (NumberSetting) new NumberSetting("Health", "The health to switch to totems", 10, 1, 20, 1).setParentSetting(safety).setVisiblity(lowHealth::isEnabled);
+    private final BooleanSetting safety = new BooleanSetting("Safety", "Switch to totems when certain things happen", true);
+    private final BooleanSetting elytra = (BooleanSetting) new BooleanSetting("Elytra", "Switch to a totem when flying with an elytra", false).setParentSetting(safety);
+    private final BooleanSetting fall = (BooleanSetting) new BooleanSetting("Falling", "Switch to a totem when falling", true).setParentSetting(safety);
+    private final BooleanSetting lowHealth = (BooleanSetting) new BooleanSetting("Low Health", "Switch to a totem when on low health", true).setParentSetting(safety);
+    private final NumberSetting lowHealthValue = (NumberSetting) new NumberSetting("Health", "The health to switch to totems", 10, 1, 20, 1).setParentSetting(safety).setVisiblity(lowHealth::isEnabled);
 
     private boolean hasJustPausedMotion = false;
 
@@ -34,7 +34,7 @@ public class Offhand extends Module {
 
     @Override
     public void onTick() {
-        if (nullCheck()) {
+        if (nullCheck() || mc.currentScreen != null) {
             return;
         }
 

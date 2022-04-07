@@ -9,7 +9,7 @@ import com.paragon.client.systems.ui.panel.impl.Panel;
 import com.paragon.client.systems.ui.panel.impl.setting.*;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.settings.Setting;
 import com.paragon.client.systems.module.settings.impl.*;
 import net.minecraft.client.Minecraft;
@@ -71,7 +71,7 @@ public class ModuleButton implements TextRenderer {
 
     public void renderModuleButton(int mouseX, int mouseY) {
         // Set animation speed
-        animation.time = GUI.animationSpeed.getValue();
+        animation.time = ClickGUI.animationSpeed.getValue();
 
         // Header
         RenderUtil.drawRect(getPanel().getX(), getOffset(), getPanel().getWidth(), getHeight(), isMouseOver(mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
@@ -165,14 +165,14 @@ public class ModuleButton implements TextRenderer {
         for (SettingComponent settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.setOffset(settingOffset);
-                settingOffset += settingComponent.getHeight() * GUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
+                settingOffset += settingComponent.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
 
                 if (settingComponent.animation.getAnimationFactor() > 0) {
                     float subsettingOffset = settingComponent.getOffset() + settingComponent.getHeight();
                     for (SettingComponent settingComponent1 : settingComponent.getSettingComponents()) {
                         if (settingComponent1.getSetting().isVisible()) {
                             settingComponent1.setOffset(subsettingOffset);
-                            subsettingOffset += settingComponent1.getHeight() * GUI.animation.getCurrentMode().getAnimationFactor(settingComponent.animation.getAnimationFactor());
+                            subsettingOffset += settingComponent1.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor(settingComponent.animation.getAnimationFactor());
                             settingOffset += settingComponent1.getHeight() * settingComponent.animation.getAnimationFactor();
                         }
                     }

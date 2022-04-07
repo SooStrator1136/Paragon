@@ -76,7 +76,7 @@ public class ModuleManager {
                 // Client
                 new ClientFont(),
                 new Colours(),
-                new GUI(),
+                new ClickGUI(),
                 new HUD(),
 
                 // HUD

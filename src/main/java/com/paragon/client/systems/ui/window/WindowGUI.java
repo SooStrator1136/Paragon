@@ -3,7 +3,7 @@ package com.paragon.client.systems.ui.window;
 import com.paragon.Paragon;
 import com.paragon.client.systems.ui.window.components.Window;
 import com.paragon.client.systems.ui.window.components.impl.CategoryComponent;
-import com.paragon.client.systems.module.impl.client.GUI;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -41,7 +41,7 @@ public class WindowGUI extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         // Make the background darker
-        if (GUI.darkenBackground.isEnabled()) {
+        if (ClickGUI.darkenBackground.isEnabled()) {
             drawDefaultBackground();
         }
 
@@ -91,7 +91,7 @@ public class WindowGUI extends GuiScreen {
      * @return Is the game paused whilst in the screen
      */
     public boolean doesGuiPauseGame() {
-        return GUI.pause.isEnabled();
+        return ClickGUI.pause.isEnabled();
     }
 
 }
