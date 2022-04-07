@@ -73,7 +73,7 @@ public class AutoCrystalRewrite extends Module {
     public final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals", 10, 0, 100, 1).setParentSetting(place);
     public final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "Rotate to the position you are placing at", Rotate.PACKET).setParentSetting(place);
     public final BooleanSetting placeRotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(place).setVisiblity(() -> !placeRotate.getCurrentMode().equals(Rotate.NONE));
-    public final BooleanSetting raytracePosition = (BooleanSetting) new BooleanSetting("Raytrace Position", "Checks if you can see the position", true).setParentSetting(place);
+    public final BooleanSetting placeRaytrace = (BooleanSetting) new BooleanSetting("Raytrace", "Checks if you can raytrace to the position", true).setParentSetting(place);
     public final BooleanSetting multiplace = (BooleanSetting) new BooleanSetting("Multiplace", "Place multiple crystals", false).setParentSetting(place);
     public final NumberSetting placeMinDamage = (NumberSetting) new NumberSetting("Min Damage", "The minimum amount of damage to do to the target", 4, 0, 36, 1).setParentSetting(place);
     public final NumberSetting placeMaxLocal = (NumberSetting) new NumberSetting("Max Local Damage", "The minimum amount of damage to inflict upon yourself", 8, 0, 36, 1).setParentSetting(place);
@@ -622,7 +622,7 @@ public class AutoCrystalRewrite extends Module {
                     Crystal calculatedCrystal = new Crystal((EntityEnderCrystal) entity, calculateDamage(vec, currentTarget), calculateDamage(vec, mc.player));
 
                     // Position of crystal
-                    CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
+                    CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, new double[]{ 0, 0, 0 }, calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
 
                     if (isNotOverriding(currentTarget)) {
                         // Check it meets our filter
@@ -705,21 +705,36 @@ public class AutoCrystalRewrite extends Module {
 
                 // Get the direction we want to face
                 EnumFacing facing = EnumFacing.getDirectionFromEntityLiving(pos, mc.player);
+                double[] facingVec = new double[3];
+                RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).addVector(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);;
+                RayTraceResult laxResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+
+                // Check we hit a block
+                if (laxResult != null && laxResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
+                    facing = laxResult.sideHit;
+
+                    // We can place if we are at max height by doing this
+                    if (pos.getY() >= (mc.world.getActualHeight() - 1)) {
+                        facing = EnumFacing.DOWN;
+                    }
+                }
+
+                // Get angles
+                if (rayTraceResult != null && rayTraceResult.hitVec != null) {
+                    facingVec[0] = rayTraceResult.hitVec.x - pos.getX();
+                    facingVec[1] = rayTraceResult.hitVec.y - pos.getY();
+                    facingVec[2] = rayTraceResult.hitVec.z - pos.getZ();
+                }
 
                 // Check we can raytrace to it
-                if (raytracePosition.isEnabled()) {
-                    RayTraceResult result = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), placeVec);
-
-                    // Check we hit a block
-                    if (result != null && result.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
-                        facing = result.sideHit;
-                    } else {
+                if (placeRaytrace.isEnabled()) {
+                    if (!EntityUtil.canEntitySeePosition(mc.player, pos)) {
                         continue;
                     }
                 }
 
                 // Create new crystal position
-                CrystalPosition crystalPosition = new CrystalPosition(pos, facing, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
+                CrystalPosition crystalPosition = new CrystalPosition(pos, facing, facingVec, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
 
                 // Check we aren't overriding
                 if (isNotOverriding(currentTarget)) {
@@ -756,7 +771,8 @@ public class AutoCrystalRewrite extends Module {
     public boolean isNotOverriding(EntityLivingBase entity) {
         if (override.isEnabled()) {
             if (overrideHealth.isEnabled()) {
-                if (entity.getHealth() + entity.getAbsorptionAmount() <= overrideHealthValue.getValue()) {
+                // Get total health
+                if (EntityUtil.getEntityHealth(entity) <= overrideHealthValue.getValue()) {
                     return false;
                 }
             }
@@ -1172,15 +1188,19 @@ public class AutoCrystalRewrite extends Module {
         // The direction we want to face
         private final EnumFacing facing;
 
+        // Rotation angles
+        private final double[] facingVec;
+
         // The damage we do to the target
         private final float targetDamage;
 
         // The damage we do to us
         private final float selfDamage;
 
-        public CrystalPosition(BlockPos position, EnumFacing facing, float targetDamage, float selfDamage) {
+        public CrystalPosition(BlockPos position, EnumFacing facing, double[] facingVec, float targetDamage, float selfDamage) {
             this.position = position;
             this.facing = facing;
+            this.facingVec = facingVec;
             this.targetDamage = targetDamage;
             this.selfDamage = selfDamage;
         }

@@ -31,6 +31,7 @@ public class Paragon {
     private final EventBus eventBus = new EventBus();
 
     // Managers
+    private FontManager fontManager;
     private StorageManager storageManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
@@ -49,6 +50,8 @@ public class Paragon {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = LogManager.getLogger("Paragon");
+
+        fontManager = new FontManager();
     }
 
     @Mod.EventHandler
@@ -95,6 +98,14 @@ public class Paragon {
      */
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    /**
+     * Gets the font manager
+     * @return The font manager
+     */
+    public FontManager getFontManager() {
+        return fontManager;
     }
 
     /**

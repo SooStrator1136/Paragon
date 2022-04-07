@@ -89,10 +89,7 @@ public class EntityUtil implements Wrapper {
      * @return Whether the entity can see the block pos
      */
     public static boolean canEntitySeePosition(Entity entity, BlockPos position) {
-        return mc.world.rayTraceBlocks(
-                new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ),
-                new Vec3d(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f),
-                false, true, false) == null;
+        return mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ), new Vec3d(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5), false, true, false) != null;
     }
 
     public static boolean isEntityAllowed(Entity entity, boolean players, boolean mobs, boolean passives) {
@@ -125,5 +122,9 @@ public class EntityUtil implements Wrapper {
         }
 
         return entity instanceof EntityAgeable || entity instanceof EntityAmbientCreature || entity instanceof EntitySquid;
+    }
+
+    public static float getEntityHealth(EntityLivingBase entityLivingBase) {
+        return entityLivingBase.getHealth() + entityLivingBase.getAbsorptionAmount();
     }
 }

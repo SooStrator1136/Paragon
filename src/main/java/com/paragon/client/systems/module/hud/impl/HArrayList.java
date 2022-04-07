@@ -58,17 +58,12 @@ public class HArrayList extends Module implements TextRenderer {
         /**
          * The colour is slightly different for each module in the array list
          */
-        RAINBOW_WAVE((addition) -> ColourUtil.getRainbow(4, 1, addition)),
-
-        /**
-         * All modules are rainbow
-         */
-        RAINBOW((addition) -> ColourUtil.getRainbow(4, 1, 0)),
+        RAINBOW_WAVE((addition) -> ColourUtil.getRainbow(Colours.mainColour.getRainbowSpeed(), Colours.mainColour.getRainbowSaturation() / 100f, addition)),
 
         /**
          * Permanent static colour
          */
-        STATIC((addition) -> Colours.mainColour.getColour().getRGB());
+        SYNC((addition) -> Colours.mainColour.getColour().getRGB());
 
         private Function<Integer, Integer> colour;
 

@@ -95,7 +95,7 @@ public class ESP extends Module {
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getCurrentMode().equals(Mode.SHADER)) {
-            // Pretty much just taken from Cosmos, all credit goes to them
+            // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
             // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
 
             GlStateManager.enableAlpha();

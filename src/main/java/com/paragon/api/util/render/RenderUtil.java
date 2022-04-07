@@ -1,5 +1,6 @@
 package com.paragon.api.util.render;
 
+import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.client.systems.module.impl.client.ClientFont;
@@ -276,7 +277,7 @@ public class RenderUtil implements Wrapper {
 
     static void renderText(String text, float x, float y, int colour) {
         if (ClientFont.INSTANCE.isEnabled()) {
-            TextRenderer.custom.drawStringWithShadow(text, x, y - 3.5f, colour);
+            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x, y - 3.5f, colour);
             return;
         }
 
@@ -285,7 +286,7 @@ public class RenderUtil implements Wrapper {
 
     static float getStringWidth(String text) {
         if (ClientFont.INSTANCE.isEnabled()) {
-            return TextRenderer.custom.getStringWidth(text);
+            return Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(text);
         }
 
         return Minecraft.getMinecraft().fontRenderer.getStringWidth(text);

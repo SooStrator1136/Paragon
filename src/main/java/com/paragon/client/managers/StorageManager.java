@@ -60,6 +60,7 @@ public class StorageManager {
                         jsonObject.put(setting.getName(), ((ModeSetting) setting).getCurrentMode());
                     } else if (setting instanceof ColourSetting) {
                         jsonObject.put(setting.getName(), ((ColourSetting) setting).getColour().getRGB());
+                        jsonObject.put(setting.getName() + "-alpha", ((ColourSetting) setting).getColour().getAlpha());
                         jsonObject.put(setting.getName() + "-rainbow", ((ColourSetting) setting).isRainbow());
                         jsonObject.put(setting.getName() + "-rainbow-speed", ((ColourSetting) setting).getRainbowSpeed());
                         jsonObject.put(setting.getName() + "-rainbow-saturation", ((ColourSetting) setting).getRainbowSaturation());
@@ -80,10 +81,14 @@ public class StorageManager {
                                     jsonObject.put(settingName, ((ModeSetting<?>) setting1).getCurrentMode().toString());
                                 } else if (setting1 instanceof ColourSetting) {
                                     jsonObject.put(settingName, ((ColourSetting) setting1).getColour().getRGB());
+                                    jsonObject.put(settingName + "-rainbow", ((ColourSetting) setting1).isRainbow());
+                                    jsonObject.put(settingName + "-rainbow-speed", ((ColourSetting) setting1).getRainbowSpeed());
+                                    jsonObject.put(settingName + "-rainbow-saturation", ((ColourSetting) setting1).getRainbowSaturation());
                                 } else if (setting1 instanceof KeybindSetting) {
                                     jsonObject.put(settingName, ((KeybindSetting) setting1).getKeyCode());
                                 }
                             } catch (Exception e) {
+                                System.out.println("Failed to save setting " + settingName);
                                 e.printStackTrace();
                             }
                         });
@@ -159,9 +164,9 @@ public class StorageManager {
                             ((ModeSetting<Enum<?>>) subSetting).setCurrentMode(newValue);
                         } else if (subSetting instanceof ColourSetting) {
                             ((ColourSetting) subSetting).setColour(new Color(jsonObject.getInt(settingName)));
-                            ((ColourSetting) setting).setRainbow(jsonObject.getBoolean(settingName + "-rainbow"));
-                            ((ColourSetting) setting).setRainbowSpeed(jsonObject.getFloat(settingName + "-rainbow-speed"));
-                            ((ColourSetting) setting).setRainbowSaturation(jsonObject.getFloat(settingName + "-rainbow-saturation"));
+                            ((ColourSetting) subSetting).setRainbow(jsonObject.getBoolean(settingName + "-rainbow"));
+                            ((ColourSetting) subSetting).setRainbowSpeed(jsonObject.getFloat(settingName + "-rainbow-speed"));
+                            ((ColourSetting) subSetting).setRainbowSaturation(jsonObject.getFloat(settingName + "-rainbow-saturation"));
                         } else if (subSetting instanceof KeybindSetting) {
                             ((KeybindSetting) subSetting).setKeyCode(jsonObject.getInt(settingName));
                         }
