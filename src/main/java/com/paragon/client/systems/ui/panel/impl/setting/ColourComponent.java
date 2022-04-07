@@ -34,6 +34,8 @@ public class ColourComponent extends SettingComponent {
     private final BooleanSetting rainbow;
     private final NumberSetting rainbowSpeed;
     private final NumberSetting rainbowSaturation;
+    private final BooleanSetting sync;
+
     private Color finalColour;
     private final List<SettingComponent> components = new ArrayList<>();
     private final Animation animation = new Animation(200, false);
@@ -49,12 +51,14 @@ public class ColourComponent extends SettingComponent {
         this.rainbow = new BooleanSetting("Rainbow", "Use a rainbow effect", setting.isRainbow());
         this.rainbowSpeed = new NumberSetting("Rainbow Speed", "The speed of the rainbow effect", setting.getRainbowSpeed(), 0.1f, 10, 0.1f);
         this.rainbowSaturation = new NumberSetting("Rainbow Saturation", "The saturation of the rainbow effect", setting.getRainbowSaturation(), 0, 100, 1);
+        this.sync = new BooleanSetting("Sync", "Sync the colour to the client's colour", setting.isSync());
 
         components.add(new SliderComponent(moduleButton, hue, offset + (height * 2), height));
         components.add(new SliderComponent(moduleButton, alpha, offset + (height * 3), height));
         components.add(new BooleanComponent(moduleButton, rainbow, offset + (height * 4), height));
         components.add(new SliderComponent(moduleButton, rainbowSpeed, offset + (height * 5), height));
         components.add(new SliderComponent(moduleButton, rainbowSaturation, offset + (height * 6), height));
+        components.add(new BooleanComponent(moduleButton, sync, offset + (height * 8), height));
 
         finalColour = setting.getColour();
     }
@@ -96,6 +100,7 @@ public class ColourComponent extends SettingComponent {
             ((ColourSetting) getSetting()).setRainbow(this.rainbow.isEnabled());
             ((ColourSetting) getSetting()).setRainbowSaturation(this.rainbowSaturation.getValue());
             ((ColourSetting) getSetting()).setRainbowSpeed(this.rainbowSpeed.getValue());
+            ((ColourSetting) getSetting()).setSync(this.sync.isEnabled());
 
             float hue = this.hue.getValue();
 
@@ -204,7 +209,7 @@ public class ColourComponent extends SettingComponent {
         }
 
         float x = getModuleButton().getPanel().getX() + 4;
-        float y = getModuleButton().getOffset() + getOffset() + 39;
+        float y = getModuleButton().getOffset() + getOffset() + (components.size() * 12) + 15.5f;
         float dimension = 87;
 
         if (GuiUtil.mouseOver(x, y, x + dimension, y + dimension, mouseX, mouseY)) {

@@ -1,6 +1,7 @@
 package com.paragon.client.managers;
 
 import com.paragon.Paragon;
+import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.managers.alt.Alt;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
@@ -64,6 +65,7 @@ public class StorageManager {
                         jsonObject.put(setting.getName() + "-rainbow", ((ColourSetting) setting).isRainbow());
                         jsonObject.put(setting.getName() + "-rainbow-speed", ((ColourSetting) setting).getRainbowSpeed());
                         jsonObject.put(setting.getName() + "-rainbow-saturation", ((ColourSetting) setting).getRainbowSaturation());
+                        jsonObject.put(setting.getName() + "-sync", ((ColourSetting) setting).isSync());
                     } else if (setting instanceof KeybindSetting) {
                         jsonObject.put(setting.getName(), ((KeybindSetting) setting).getKeyCode());
                     }
@@ -81,9 +83,11 @@ public class StorageManager {
                                     jsonObject.put(settingName, ((ModeSetting<?>) setting1).getCurrentMode().toString());
                                 } else if (setting1 instanceof ColourSetting) {
                                     jsonObject.put(settingName, ((ColourSetting) setting1).getColour().getRGB());
+                                    jsonObject.put(settingName + "-alpha", ((ColourSetting) setting1).getColour().getAlpha());
                                     jsonObject.put(settingName + "-rainbow", ((ColourSetting) setting1).isRainbow());
                                     jsonObject.put(settingName + "-rainbow-speed", ((ColourSetting) setting1).getRainbowSpeed());
                                     jsonObject.put(settingName + "-rainbow-saturation", ((ColourSetting) setting1).getRainbowSaturation());
+                                    jsonObject.put(settingName + "-sync", ((ColourSetting) setting1).isSync());
                                 } else if (setting1 instanceof KeybindSetting) {
                                     jsonObject.put(settingName, ((KeybindSetting) setting1).getKeyCode());
                                 }
@@ -140,10 +144,11 @@ public class StorageManager {
                         Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) setting).getCurrentMode()).getClass(), jsonObject.getString(setting.getName()));
                         ((ModeSetting<Enum<?>>) setting).setCurrentMode(newValue);
                     } else if (setting instanceof ColourSetting) {
-                        ((ColourSetting) setting).setColour(new Color(jsonObject.getInt(setting.getName())));
+                        ((ColourSetting) setting).setColour(ColourUtil.integrateAlpha(new Color(jsonObject.getInt(setting.getName())), jsonObject.getFloat(setting.getName() + "-alpha")));
                         ((ColourSetting) setting).setRainbow(jsonObject.getBoolean(setting.getName() + "-rainbow"));
                         ((ColourSetting) setting).setRainbowSpeed(jsonObject.getFloat(setting.getName() + "-rainbow-speed"));
                         ((ColourSetting) setting).setRainbowSaturation(jsonObject.getFloat(setting.getName() + "-rainbow-saturation"));
+                        ((ColourSetting) setting).setSync(jsonObject.getBoolean(setting.getName() + "-sync"));
                     } else if (setting instanceof KeybindSetting) {
                         ((KeybindSetting) setting).setKeyCode(jsonObject.getInt(setting.getName()));
                     }
@@ -163,10 +168,11 @@ public class StorageManager {
                             Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) subSetting).getCurrentMode()).getClass(), jsonObject.getString(settingName));
                             ((ModeSetting<Enum<?>>) subSetting).setCurrentMode(newValue);
                         } else if (subSetting instanceof ColourSetting) {
-                            ((ColourSetting) subSetting).setColour(new Color(jsonObject.getInt(settingName)));
+                            ((ColourSetting) subSetting).setColour(ColourUtil.integrateAlpha(new Color(jsonObject.getInt(settingName)), jsonObject.getFloat(settingName + "-alpha")));
                             ((ColourSetting) subSetting).setRainbow(jsonObject.getBoolean(settingName + "-rainbow"));
                             ((ColourSetting) subSetting).setRainbowSpeed(jsonObject.getFloat(settingName + "-rainbow-speed"));
                             ((ColourSetting) subSetting).setRainbowSaturation(jsonObject.getFloat(settingName + "-rainbow-saturation"));
+                            ((ColourSetting) subSetting).setSync(jsonObject.getBoolean(settingName + "-sync"));
                         } else if (subSetting instanceof KeybindSetting) {
                             ((KeybindSetting) subSetting).setKeyCode(jsonObject.getInt(settingName));
                         }

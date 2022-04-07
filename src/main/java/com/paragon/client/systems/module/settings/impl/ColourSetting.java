@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.settings.impl;
 
 import com.paragon.api.util.render.ColourUtil;
+import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.settings.Setting;
 
 import java.awt.*;
@@ -11,6 +12,7 @@ public class ColourSetting extends Setting {
     private boolean rainbow;
     private float rainbowSpeed = 4;
     private float rainbowSaturation = 100;
+    private boolean sync;
 
     /**
      * Creates a new colour setting
@@ -28,6 +30,10 @@ public class ColourSetting extends Setting {
      * Gets the current colour
      */
     public Color getColour() {
+        if (sync && this != Colours.mainColour) {
+            return Colours.mainColour.getColour();
+        }
+
         if (rainbow) {
             return ColourUtil.integrateAlpha(new Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)), colour.getAlpha());
         }
@@ -49,6 +55,14 @@ public class ColourSetting extends Setting {
      */
     public boolean isRainbow() {
         return rainbow;
+    }
+
+    /**
+     * Gets whether the colour is synced to the client's colour
+     * @return Whether the colour is synced
+     */
+    public boolean isSync() {
+        return sync;
     }
 
     /**
@@ -89,6 +103,14 @@ public class ColourSetting extends Setting {
      */
     public void setRainbowSaturation(float saturation) {
         this.rainbowSaturation = saturation;
+    }
+
+    /**
+     * Sets whether the colour is synced to the client colour
+     * @param sync Whether the colour is synced
+     */
+    public void setSync(boolean sync) {
+        this.sync = sync;
     }
 
 }
