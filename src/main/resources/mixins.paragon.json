@@ -25,6 +25,7 @@
 
     "render.MixinRender",
 
+    "render.entity.MixinEntityRenderer",
     "render.entity.MixinItemRenderer",
     "render.entity.MixinRenderLivingBase",
     "render.entity.MixinRenderPlayer",

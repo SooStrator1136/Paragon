@@ -959,8 +959,15 @@ public class AutoCrystalRewrite extends Module {
     public float getBlastReduction(EntityLivingBase entity, float damage, Explosion explosion) {
         // Get damage source
         DamageSource source = DamageSource.causeExplosionDamage(explosion);
+
+        // Player is in creative, return 0
+        if (source.isCreativePlayer()) {
+            return 0;
+        }
+
         // Get damage after absorption
         damage = CombatRules.getDamageAfterAbsorb(damage, entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+
         // Enchantment modifier
         float enchantModifier = MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), source), 0, 20);
 

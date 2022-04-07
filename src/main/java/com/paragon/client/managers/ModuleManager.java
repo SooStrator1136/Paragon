@@ -70,6 +70,7 @@ public class ModuleManager {
                 new MiddleClick(),
                 new NoRotate(),
                 new Notifier(),
+                new NoTrace(),
                 new OnDeath(),
                 new XCarry(),
 
