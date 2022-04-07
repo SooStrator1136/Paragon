@@ -21,7 +21,4 @@ Linux/Mac:
 `./gradlew build`
 
 # Credits
-- Tigermouthbear, linustouchtips - Animation
-- Font Renderer - Cosmos
-- Crystal damage calculations - GameSense
-All files should have an @author tag at the top so you can see who wrote the file. (It's mostly Wolfsurge)
+Most if not all files should have an @author tag at the top so you can see who wrote the file. (It's mostly Wolfsurge)
