@@ -43,6 +43,7 @@ public class ModuleManager {
 
                 // Movement
                 new ElytraFlight(),
+                new Flight(),
                 new NoSlow(),
                 new ReverseStep(),
                 new Sprint(),
@@ -61,6 +62,7 @@ public class ModuleManager {
                 new ViewModel(),
 
                 // Misc
+                new Announcer(),
                 new AutoEZ(),
                 new AutoLog(),
                 new ChatModifications(),

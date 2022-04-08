@@ -14,8 +14,8 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-    }
+		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
+	}
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -40,13 +40,11 @@ minecraft {
     makeObfSourceJar = false
 }
 
-allprojects {
-	repositories {
-		mavenCentral()
+repositories {
+	mavenCentral()
 
-		maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
-		maven { url 'https://jitpack.io' }
-	}
+	maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -62,27 +60,27 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+	inputs.property 'version', project.version
+	inputs.property 'mcversion', project.minecraft.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
+	from(sourceSets.main.resources.srcDirs) {
+		include 'mcmod.info'
+
+		expand 'version': project.version, 'mcversion': project.minecraft.version
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+	}
 }
 
 shadowJar {
 	dependencies {
 		include(dependency('org.spongepowered:mixin'))
-		include(dependency('com.github.Litarvan:OpenAuth'))
 		include(dependency('org.json:json'))
+		include(dependency('com.github.Litarvan:OpenAuth'))
 	}
-    
+
 	exclude 'dummyThing'
 	exclude 'LICENSE.txt'
 	classifier = 'release'
@@ -90,12 +88,7 @@ shadowJar {
 
 mixin {
 	defaultObfuscationEnv searge
-
-	sourceSets {
-		main {
-			ext.refMap = "mixins.paragon.refmap.json"
-		}
-	}
+	add sourceSets.main, 'mixins.paragon.refmap.json'
 }
 
 reobf {
@@ -119,4 +112,4 @@ jar {
 	}
 }
 
-// sourceSets { main { output.resourcesDir = output.classesDir } }
+build.dependsOn(shadowJar)

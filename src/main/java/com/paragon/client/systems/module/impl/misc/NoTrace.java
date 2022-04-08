@@ -1,6 +1,6 @@
 package com.paragon.client.systems.module.impl.misc;
 
-import com.paragon.api.event.player.RaytraceEvent;
+import com.paragon.api.event.player.RaytraceEntityEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -26,7 +26,7 @@ public class NoTrace extends Module {
     }
 
     @Listener
-    public void onRaytrace(RaytraceEvent event) {
+    public void onRaytrace(RaytraceEntityEvent event) {
         // Cancel if we are holding a pickaxe
         if (pickaxe.isEnabled() && mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe) {
             event.cancel();

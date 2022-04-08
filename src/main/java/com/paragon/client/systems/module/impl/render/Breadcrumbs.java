@@ -47,15 +47,12 @@ public class Breadcrumbs extends Module {
             return;
         }
 
-        // Only add positions if we are moving
-        if (PlayerUtil.isMoving()) {
-            // Create position
-            Position pos = new Position(new Vec3d(mc.player.lastTickPosX, mc.player.lastTickPosY, mc.player.lastTickPosZ), new Color(ColourUtil.getRainbow(4, 1, colourHue)));
-            colourHue++;
+        // Create position
+        Position pos = new Position(new Vec3d(mc.player.lastTickPosX, mc.player.lastTickPosY, mc.player.lastTickPosZ), new Color(ColourUtil.getRainbow(4, 1, colourHue)));
+        colourHue++;
 
-            // Add position
-            positions.add(pos);
-        }
+        // Add position
+        positions.add(pos);
 
         // Update positions
         positions.forEach(Position::update);

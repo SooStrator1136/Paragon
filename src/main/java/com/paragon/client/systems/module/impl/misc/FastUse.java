@@ -47,8 +47,8 @@ public class FastUse extends Module {
     @Listener
     public void onPacketSend(PacketEvent.PreSend event) {
         if (event.getPacket() instanceof CPacketPlayerTryUseItem && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) && xp.isEnabled() && rotate.isEnabled()) {
-            // Send rotation packet
-            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(mc.player.rotationYaw, 90f, Rotate.PACKET, RotationPriority.NORMAL));
+            // Send rotation packet. We aren't using the rotation manager as it doesn't immediately rotate the player
+            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(mc.player.rotationYaw, 90f, mc.player.onGround));
         }
     }
 }
