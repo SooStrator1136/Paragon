@@ -1,56 +1,45 @@
 package com.paragon.client.systems.module.impl.render;
 
-import com.paragon.api.event.client.SettingUpdateEvent;
-import com.paragon.api.event.render.ShaderColourEvent;
-import com.paragon.api.event.render.entity.RenderEntityEvent;
-import com.paragon.api.util.entity.EntityUtil;
+import com.paragon.api.event.render.tileentity.RenderTileEntityEvent;
+import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
-import com.paragon.asm.mixins.accessor.IRenderGlobal;
-import com.paragon.asm.mixins.accessor.IShaderGroup;
+import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.shader.shaders.SmoothShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.*;
+import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.settings.impl.ColourSetting;
+import com.paragon.client.systems.module.settings.impl.ModeSetting;
+import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.client.shader.Shader;
-import net.minecraft.client.shader.ShaderUniform;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.tileentity.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
-/**
- * @author Wolfsurge, with shader stuff from Cosmos (first time using shaders / glsl lel)
- */
 @SuppressWarnings("unchecked")
-public class ESP extends Module {
+public class StorageESP extends Module {
 
-    /* Entity settings */
-    private final BooleanSetting passive = new BooleanSetting("Passives", "Highlight passive entities", true);
-    private final BooleanSetting mobs = new BooleanSetting("Mobs", "Highlight mobs", true);
-    private final BooleanSetting players = new BooleanSetting("Players", "Highlight player entities", true);
-    private final BooleanSetting items = new BooleanSetting("Items", "Highlight items", true);
-    private final BooleanSetting crystals = new BooleanSetting("Crystals", "Highlight end crystals", true);
+    private final BooleanSetting chests = new BooleanSetting("Chests", "Highlight chests", true);
+    private final BooleanSetting shulkers = new BooleanSetting("Shulkers", "Highlight shulker boxes", true);
+    private final BooleanSetting enderChests = new BooleanSetting("Ender Chests", "Highlight Ender Chests", true);
+    private final BooleanSetting furnaces = new BooleanSetting("Furnaces", "Highlight furnaces", true);
 
-    // Render settings
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.SHADER);
+    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to highlight the block", Mode.SHADER);
     private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 2, 0.1f);
     private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
 
@@ -60,14 +49,14 @@ public class ESP extends Module {
 
     // Outline shader
     private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the fill", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH) || mode.getCurrentMode().equals(Mode.BOX));
 
     // Smooth shader
     private final ModeSetting<SmoothShaderColour> smoothShaderColour = (ModeSetting<SmoothShaderColour>) new ModeSetting<>("Smooth Colour", "The colour to use for the smooth shader", SmoothShaderColour.POSITION)
             .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
 
     private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && !shader.getCurrentMode().equals(FragShader.SMOOTH));
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && !shader.getCurrentMode().equals(FragShader.SMOOTH) || mode.getCurrentMode().equals(Mode.BOX));
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
@@ -76,19 +65,25 @@ public class ESP extends Module {
     private final OutlineShader outlineShader = new OutlineShader();
     private final SmoothShader smoothShader = new SmoothShader();
 
-    public ESP() {
-        super("ESP", ModuleCategory.RENDER, "Highlights entities in the world");
-        this.addSettings(passive, mobs, players, items, crystals, mode, lineWidth, colour);
+    public StorageESP() {
+        super("StorageESP", ModuleCategory.RENDER, "Highlights storage blocks in the world");
+        this.addSettings(chests, shulkers, enderChests, furnaces, mode, lineWidth, colour);
     }
 
     @Override
-    public void onDisable() {
-        if (nullCheck()) {
-            return;
-        }
+    public void onRender3D() {
+        if (mode.getCurrentMode().equals(Mode.BOX)) {
+            mc.world.loadedTileEntityList.forEach(tileEntity -> {
+               if (isStorageValid(tileEntity)) {
+                   if (fill.isEnabled()) {
+                       RenderUtil.drawFilledBox(BlockUtil.getBlockBox(tileEntity.getPos()), colour.getColour());
+                   }
 
-        for(Entity e : mc.world.loadedEntityList) {
-            e.setGlowing(false);
+                   if (outline.isEnabled()) {
+                       RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(tileEntity.getPos()), lineWidth.getValue(), ColourUtil.integrateAlpha(colour.getColour(), 255));
+                   }
+               }
+            });
         }
     }
 
@@ -124,9 +119,14 @@ public class ESP extends Module {
             mc.gameSettings.entityShadows = false;
 
             ((IEntityRenderer) mc.entityRenderer).setupCamera(event.getPartialTicks(), 0);
-            for (Entity entity : mc.world.loadedEntityList) {
-                if (entity != null && entity != mc.player && isEntityValid(entity)) {
-                    mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
+
+            for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
+                if (isStorageValid(tileEntity)) {
+                    double x = mc.getRenderManager().viewerPosX;
+                    double y = mc.getRenderManager().viewerPosY;
+                    double z = mc.getRenderManager().viewerPosZ;
+
+                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.getPos().getX() - x, tileEntity.getPos().getY() - y, tileEntity.getPos().getZ() - z, mc.getRenderPartialTicks());
                 }
             }
 
@@ -181,104 +181,59 @@ public class ESP extends Module {
     }
 
     @Listener
-    public void onRenderEntity(RenderEntityEvent event) {
-        if(isEntityValid(event.getEntity()) && mode.getCurrentMode() == Mode.OUTLINE) {
+    public void onTileEntityRender(RenderTileEntityEvent event) {
+        if (mode.getCurrentMode().equals(Mode.OUTLINE) && isStorageValid(event.getTileEntityIn())) {
+            TileEntity tileEntityIn = event.getTileEntityIn();
+            float partialTicks = event.getPartialTicks();
+            BlockPos blockpos = tileEntityIn.getPos();
+
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderOne(lineWidth.getValue());
-            event.renderModel();
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderTwo();
-            event.renderModel();
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderThree();
-            event.renderModel();
             OutlineUtil.renderFour(colour.getColour());
-            event.renderModel();
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderFive();
-            event.renderModel();
         }
     }
 
-    @SubscribeEvent
-    public void onRenderWorld(RenderWorldLastEvent event) {
-        for(Entity e : mc.world.loadedEntityList) {
-            if(isEntityValid(e)) {
-                espEntity(e);
-            }
+    public boolean isStorageValid(TileEntity tileEntity) {
+        /* if (tileEntity instanceof TileEntityChest) {
+            return chests.isEnabled();
         }
 
-        // Check glow
-        if (mode.getCurrentMode().equals(Mode.GLOW)) {
-            // Get shaders
-            List<Shader> shaders = ((IShaderGroup) ((IRenderGlobal) mc.renderGlobal).getEntityOutlineShader()).getListShaders();
-
-            shaders.forEach(shader -> {
-                // Get line width
-                ShaderUniform uniform = shader.getShaderManager().getShaderUniform("Radius");
-
-                if (uniform != null) {
-                    // Set line width
-                    uniform.set(lineWidth.getValue());
-                }
-            });
+        if (tileEntity instanceof TileEntityShulkerBox) {
+            return shulkers.isEnabled();
         }
-    }
 
-    @Listener
-    public void onShaderColour(ShaderColourEvent event) {
-        if (mode.getCurrentMode().equals(Mode.GLOW)) {
-            event.setColour(colour.getColour());
-            event.cancel();
+        if (tileEntity instanceof TileEntityEnderChest) {
+            return enderChests.isEnabled();
         }
-    }
 
-    @Listener
-    public void onSettingUpdate(SettingUpdateEvent event) {
-        if (event.getSetting() == mode) {
-            for (Entity entity : mc.world.loadedEntityList) {
-                entity.setGlowing(false);
-            }
-        }
-    }
+        if (tileEntity instanceof TileEntityFurnace) {
+            return furnaces.isEnabled();
+        } */
 
-    /**
-     * Highlights an entity
-     * @param entityIn The entity to highlight
-     */
-    public void espEntity(Entity entityIn) {
-        if (mode.getCurrentMode() == Mode.BOX) {
-            RenderUtil.drawBoundingBox(EntityUtil.getEntityBox(entityIn), lineWidth.getValue(), colour.getColour());
-        } else if (mode.getCurrentMode() == Mode.GLOW) {
-            entityIn.setGlowing(true);
-        }
-    }
-
-    /**
-     * Checks if an entity is valid
-     * @param entityIn The entity to check
-     * @return Is the entity valid
-     */
-    private boolean isEntityValid(Entity entityIn) {
-        return entityIn instanceof EntityOtherPlayerMP && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
+        return true;
     }
 
     public enum Mode {
         /**
-         * Outline the entity
-         */
-        OUTLINE,
-
-        /**
-         * Apply vanilla glow shader
-         */
-        GLOW,
-
-        /**
-         * Draw a box
+         * Draws a box around the storage block
          */
         BOX,
 
         /**
-         * Draw with shader
+         * Uses a shader
          */
-        SHADER
+        SHADER,
+
+        /**
+         * Uses GL Stencil to outline the storage block
+         */
+        OUTLINE
     }
 
     public enum FragShader {
@@ -319,4 +274,5 @@ public class ESP extends Module {
             return type;
         }
     }
+
 }

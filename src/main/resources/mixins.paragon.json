@@ -33,10 +33,14 @@
     "render.gui.MixinGuiMainMenu",
     "render.gui.MixinGuiMultiplayer",
 
+    "render.tileentity.MixinTileEntityRendererDispatcher",
+
     "render.world.MixinRenderGlobal",
 
+    "world.block.MixinBlockLiquid",
     "world.block.MixinBlockSoulSand",
     "world.block.MixinBlockSlime",
+
     "world.MixinWorld"
   ]
 }

@@ -29,7 +29,7 @@ public class NoRender extends Module {
     }
 
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent event) {
+    public void onRender(RenderGameOverlayEvent.Pre event) {
         if (nullCheck()) {
             return;
         }

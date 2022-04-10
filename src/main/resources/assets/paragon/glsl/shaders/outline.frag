@@ -1,6 +1,5 @@
 #version 120
 
-// Texture based on the entity, uv (1 / resolution)
 uniform sampler2D texture;
 uniform vec2 texelSize;
 
