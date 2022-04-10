@@ -77,6 +77,7 @@ public class ModuleManager {
                 new Notifier(),
                 new NoTrace(),
                 new OnDeath(),
+                new Timer(),
                 new XCarry(),
 
                 // Client
