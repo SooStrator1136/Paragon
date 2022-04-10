@@ -1,21 +1,29 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
-import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.*;
+import com.paragon.client.systems.module.impl.misc.AutoEZ;
+import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.settings.impl.ColourSetting;
+import com.paragon.client.systems.module.settings.impl.ModeSetting;
+import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.block.BlockObsidian;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Block;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,562 +33,891 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketAnimation;
-import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.CombatRules;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.network.play.client.*;
+import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
- * This is not really that good. Go skid a different client for combat modules
- * @author Wolfsurge, with damage calculation utils from GameSense
+ * bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded (apart from damage calcs - postman (which in turn I believe is skidded from gs)).
+ * @author Wolfsurge
  */
 @SuppressWarnings("unchecked")
 public class AutoCrystal extends Module {
 
-    private final ModeSetting<Order> order = new ModeSetting<>("Order", "Whether to place or explode first", Order.PLACE_EXPLODE);
+    // Order of operations
+    public final ModeSetting<Order> order = new ModeSetting<>("Order", "The order of operations", Order.PLACE_EXPLODE);
+    public final BooleanSetting grouped = (BooleanSetting) new BooleanSetting("Grouped", "Immediately attack or place the crystal after calculating", true).setParentSetting(order);
+    public final ModeSetting<Timing> timing = new ModeSetting<>("Timing", "When to perform actions", Timing.LINEAR);
 
-    /* Targeting Settings */
-    private final BooleanSetting targeting = new BooleanSetting("Targeting", "Settings for targeting players", true);
-    private final ModeSetting<TargetPriority> targetPriority = (ModeSetting<TargetPriority>) new ModeSetting<>("Priority", "What players to prioritise", TargetPriority.DISTANCE).setParentSetting(targeting);
-    private final NumberSetting targetingRange = (NumberSetting) new NumberSetting("Range", "The range to search for targets", 7, 2, 15, 1).setParentSetting(targeting);
-    private final BooleanSetting targetFriends = (BooleanSetting) new BooleanSetting("Target Friends", "Target friends as well as enemies", false).setParentSetting(targeting);
+    public final ModeSetting<Heuristic> heuristic = new ModeSetting<>("Heuristic", "The way to calculate damage", Heuristic.MINIMAX);
 
-    /* Place Settings */
-    private final BooleanSetting place = new BooleanSetting("Place", "Automatically place crystals", true);
-    private final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals (in ms)", 30, 0, 100, 1).setParentSetting(place);
-    private final ModeSetting<TimerType> placeTimerType = (ModeSetting<TimerType>) new ModeSetting<>("Type", "When to check if the timer has passed", TimerType.PER_CRYSTAL).setParentSetting(place);
-    private final ModeSetting<PlaceWhen> placeWhen = (ModeSetting<PlaceWhen>) new ModeSetting<>("When", "When to place crystals", PlaceWhen.HOLDING).setParentSetting(place);
-    private final NumberSetting placeRange = (NumberSetting) new NumberSetting("Range", "The maximum range to place crystals", 5, 1, 7, 1).setParentSetting(place);
-    private final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the position", Rotate.PACKET).setParentSetting(place);
-    private final BooleanSetting packetPlace = (BooleanSetting) new BooleanSetting("Packet Place", "Place by sending a packet", true).setParentSetting(place);
+    // Targeting settings
+    public final BooleanSetting targeting = new BooleanSetting("Targeting" , "Settings for targeting players", true);
+    public final ModeSetting<TargetPriority> targetPriority = (ModeSetting<TargetPriority>) new ModeSetting<>("Priority", "The way to sort possible targets", TargetPriority.DISTANCE).setParentSetting(targeting);
+    public final BooleanSetting targetFriends = (BooleanSetting) new BooleanSetting("Friends", "Target friends", false).setParentSetting(targeting);
+    public final NumberSetting targetRange = (NumberSetting) new NumberSetting("Range", "The range to target players", 10, 1, 15, 1).setParentSetting(targeting);
 
-    /* Explode Settings */
-    private final BooleanSetting explode = new BooleanSetting("Explode", "Automatically explode crystals", true);
-    private final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals (in ms)", 30, 0, 100, 1).setParentSetting(explode);
-    private final ModeSetting<TimerType> explodeTimerType = (ModeSetting<TimerType>) new ModeSetting<>("Type", "When to check if the timer has passed", TimerType.PER_CRYSTAL).setParentSetting(explode);
-    private final ModeSetting<ExplodeSwing> explodeSwing = (ModeSetting<ExplodeSwing>) new ModeSetting<>("Swing", "How to swing your arm when breaking the crystal", ExplodeSwing.MAIN).setParentSetting(explode);
-    private final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystal filter to apply", ExplodeFilter.ALL).setParentSetting(explode);
-    private final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The maximum range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
-    private final ModeSetting<Rotate> explodeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the crystal", Rotate.PACKET).setParentSetting(explode);
-    private final ModeSetting<AntiWeakness> antiWeakness = (ModeSetting<AntiWeakness>) new ModeSetting<>("Anti Weakness", "Attack crystals whilst having the weakness effect", AntiWeakness.SWITCH).setParentSetting(explode);
-    private final BooleanSetting setDead = (BooleanSetting) new BooleanSetting("Set Dead", "Instantly set the crystal's alive state to dead when you attack it", false).setParentSetting(explode);
+    // Place settings
+    public final BooleanSetting place = new BooleanSetting("Place", "Automatically place crystals", true);
+    public final ModeSetting<When> placeWhen = (ModeSetting<When>) new ModeSetting<>("When", "When to place", When.HOLDING).setParentSetting(place);
+    public final BooleanSetting placeWhenSwitchBack = (BooleanSetting) new BooleanSetting("Switch Back", "Switch back to your original item", true).setParentSetting(place).setVisiblity(() -> placeWhen.getCurrentMode().equals(When.SWITCH) || placeWhen.getCurrentMode().equals(When.SILENT_SWITCH));
+    public final NumberSetting placeRange = (NumberSetting) new NumberSetting("Range", "The range to place", 5, 1, 7, 1).setParentSetting(place);
+    public final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals", 10, 0, 100, 1).setParentSetting(place);
+    public final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "Rotate to the position you are placing at", Rotate.PACKET).setParentSetting(place);
+    public final BooleanSetting placeRotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(place).setVisiblity(() -> !placeRotate.getCurrentMode().equals(Rotate.NONE));
+    public final BooleanSetting placeRaytrace = (BooleanSetting) new BooleanSetting("Raytrace", "Checks if you can raytrace to the position", true).setParentSetting(place);
+    public final BooleanSetting multiplace = (BooleanSetting) new BooleanSetting("Multiplace", "Place multiple crystals", false).setParentSetting(place);
+    public final NumberSetting placeMinDamage = (NumberSetting) new NumberSetting("Min Damage", "The minimum amount of damage to do to the target", 4, 0, 36, 1).setParentSetting(place);
+    public final NumberSetting placeMaxLocal = (NumberSetting) new NumberSetting("Max Local Damage", "The minimum amount of damage to inflict upon yourself", 8, 0, 36, 1).setParentSetting(place);
+    public final BooleanSetting placePacket = (BooleanSetting) new BooleanSetting("Packet", "Place with only a packet", false).setParentSetting(place);
+    public final ModeSetting<Swing> placeSwing = (ModeSetting<Swing>) new ModeSetting<>("Swing", "Swing when placing a crystal", Swing.MAIN_HAND).setParentSetting(place);
 
-    /* Parameters */
-    private final BooleanSetting parameters = new BooleanSetting("Parameters", "Parameter preferences", true);
-    private final NumberSetting minimumDamage = (NumberSetting) new NumberSetting("Minimum Damage", "The minimum damage to do to the target", 4, 0, 36, 1).setParentSetting(parameters);
-    private final NumberSetting maximumLocal = (NumberSetting) new NumberSetting("Maximum Local", "The maximum local damage to inflict upon yourself", 6, 0, 36, 1).setParentSetting(parameters);
-    private final BooleanSetting antiSuicide = (BooleanSetting) new BooleanSetting("Anti Suicide", "Does not explode or place crystals if they will kill us", true).setParentSetting(parameters);
+    // Explode settings
+    public final BooleanSetting explode = new BooleanSetting("Explode", "Automatically explode crystals", true);
+    public final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
+    public final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals", 10, 0, 100, 1).setParentSetting(explode);
+    public final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystals to explode", ExplodeFilter.SMART).setParentSetting(explode);
+    public final NumberSetting explodeTicksExisted = (NumberSetting) new NumberSetting("Ticks Existed", "Check the amount of ticks the crystal has existed before exploding", 0, 0, 5, 1).setParentSetting(explode);
+    public final BooleanSetting explodeRaytrace = (BooleanSetting) new BooleanSetting("Raytrace", "Checks that you can raytrace to the crystal", false).setParentSetting(explode);
+    public final ModeSetting<Rotate> explodeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the crystal", Rotate.PACKET).setParentSetting(explode);
+    public final BooleanSetting explodeRotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(explode).setVisiblity(() -> !explodeRotate.getCurrentMode().equals(Rotate.NONE));
+    public final ModeSetting<AntiWeakness> antiWeakness = (ModeSetting<AntiWeakness>) new ModeSetting<>("Anti Weakness", "If you have the weakness effect, you will still be able to explode crystals", AntiWeakness.SWITCH).setParentSetting(explode);
+    public final BooleanSetting strictInventory = (BooleanSetting) new BooleanSetting("Strict Inventory", "Fake opening your inventory when you switch", true).setParentSetting(explode).setVisiblity(() -> !antiWeakness.getCurrentMode().equals(AntiWeakness.OFF));
+    public final BooleanSetting packetExplode = (BooleanSetting) new BooleanSetting("Packet", "Explode crystals with a packet only", false).setParentSetting(explode);
+    public final ModeSetting<Swing> explodeSwing = (ModeSetting<Swing>) new ModeSetting<>("Swing", "How to swing your hand", Swing.BOTH).setParentSetting(explode);
+    public final NumberSetting explodeMinDamage = (NumberSetting) new NumberSetting("Min Damage", "The minimum amount of damage to do to the target", 4, 0, 36, 1).setParentSetting(explode).setVisiblity(() -> explodeFilter.getCurrentMode().equals(ExplodeFilter.SMART) || explodeFilter.getCurrentMode().equals(ExplodeFilter.SELF_SMART));
+    public final NumberSetting explodeMaxLocal = (NumberSetting) new NumberSetting("Max Local Damage", "The minimum amount of damage to inflict upon yourself", 8, 0, 36, 1).setParentSetting(explode).setVisiblity(() -> explodeFilter.getCurrentMode().equals(ExplodeFilter.SMART) || explodeFilter.getCurrentMode().equals(ExplodeFilter.SELF_SMART));
+    public final ModeSetting<SetDead> explodeSetDead = (ModeSetting<SetDead>) new ModeSetting<>("Set Dead", "Set the crystals alive status to dead", SetDead.ATTACK).setParentSetting(explode);
 
-    /* Render */
-    private final BooleanSetting render = new BooleanSetting("Render", "Highlight the block we are placing on", true);
-    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the block with a colour", true).setParentSetting(render);
-    private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Render an outline on the block", true).setParentSetting(render);
-    private final NumberSetting outlineWidth = (NumberSetting) new NumberSetting("Line Width", "The width of the outlines", 1, 1, 3, 1).setParentSetting(render).setVisiblity(outline::isEnabled);
-    private final ColourSetting colour = (ColourSetting) new ColourSetting("Colour", "The render colour", new Color(185, 19, 211)).setParentSetting(render);
-    private final BooleanSetting nametag = (BooleanSetting) new BooleanSetting("Damage Nametag", "Renders a nametag at the place position to show you the damage", true).setParentSetting(render);
-    private final BooleanSetting selfDamage = (BooleanSetting) new BooleanSetting("Self Damage", "Renders the damage done to you in the nametag", true).setParentSetting(render).setVisiblity(nametag::isEnabled);
-    private final ModeSetting<HUDData> hudData = new ModeSetting<>("HUD Data", "The data to show in the array list", HUDData.TARGET);
-    private final BooleanSetting targetHealth = (BooleanSetting) new BooleanSetting("Health", "Show the targets health", true).setParentSetting(render).setVisiblity(() -> hudData.getCurrentMode() == HUDData.TARGET);
+    // Override settings
+    public final BooleanSetting override = new BooleanSetting("Override", "Override minimum damage when certain things happen", true);
+    public final BooleanSetting overrideHealth = (BooleanSetting) new BooleanSetting("Health", "Override if the target's health is below a value", true).setParentSetting(override);
+    public final NumberSetting overrideHealthValue = (NumberSetting) new NumberSetting("Override Health", "If the targets health is this value or below, ignore minimum damage", 10, 0, 36, 1).setParentSetting(override).setVisiblity(() -> override.isEnabled());
+    public final BooleanSetting overrideTotalArmour = (BooleanSetting) new BooleanSetting("Armour", "Override if the target's total armour durability is below a certain value", true).setParentSetting(override);
+    public final NumberSetting overrideTotalArmourValue = (NumberSetting) new NumberSetting("Armour Value", "The value which we will start to override at (in %)", 10, 0, 100, 1).setParentSetting(override);
 
-    // The player we are targeting
-    private EntityPlayer target;
+    // Pause settings
+    public final BooleanSetting pause = new BooleanSetting("Pause", "Pause if certain things are happening", true);
+    public final BooleanSetting pauseEating = (BooleanSetting) new BooleanSetting("Eating", "Pause when eating", true).setParentSetting(pause);
+    public final BooleanSetting pauseDrinking = (BooleanSetting) new BooleanSetting("Drinking", "Pause when drinking", true).setParentSetting(pause);
+    public final BooleanSetting pauseHealth = (BooleanSetting) new BooleanSetting("Health", "Pause when your health is below a specified value", true).setParentSetting(pause);
+    public final NumberSetting pauseHealthValue = (NumberSetting) new NumberSetting("Health Value", "The health to pause at", 10, 1, 20, 1).setParentSetting(pause).setVisiblity(pauseHealth::isEnabled);
+
+    // Render settings
+    public final BooleanSetting render = new BooleanSetting("Render", "Render the placement", true);
+    public final ModeSetting<Render> renderMode = (ModeSetting<Render>) new ModeSetting<>("Mode", "How to render placement", Render.BOTH).setParentSetting(render);
+    public final NumberSetting renderOutlineWidth = (NumberSetting) new NumberSetting("Outline Width", "The width of the lines", 0.5f, 0.1f, 2, 0.1f).setParentSetting(render);
+    public final ColourSetting renderColour = (ColourSetting) new ColourSetting("Colour", "The colour of the render", new Color(185, 19, 255)).setParentSetting(render);
+
+    // The current player we are targeting
+    private EntityPlayer currentTarget;
+
+    // The current crystal we are targeting
+    private Crystal currentCrystal;
 
     // The current position we are placing at
-    private CrystalPosition crystalPosition;
+    private CrystalPosition currentPlacement;
 
-    // A list of self placed crystals. Only initialised to prevent possible NullPointerException crashes
-    private final ArrayList<BlockPos> selfPlacedCrystals = new ArrayList<>();
+    // Exists purely to stop the flickering in the HUD info
+    private CrystalPosition backlogPlacement;
 
-    // Explode timer
+    // Timers
     private final Timer explodeTimer = new Timer();
-
-    // Place timer
     private final Timer placeTimer = new Timer();
 
-    public AutoCrystal() {
-        super("AutoCrystal", ModuleCategory.COMBAT, "Automatically explodes and places crystals");
-        this.addSettings(order, targeting, place, explode, parameters, render);
-    }
+    // List of crystals we have placed
+    private final List<BlockPos> selfPlacedCrystals = new ArrayList<>();
 
-    @Override
-    public void onEnable() {
-        // Clear crystals
-        selfPlacedCrystals.clear();
+    // List of crystals we have attempted to explode
+    private final List<BlockPos> selfExplodedCrystals = new ArrayList<>();
+
+    // The current action we are performing
+    private ActionState currentActionState = ActionState.PLACING;
+
+    public AutoCrystal() {
+        super("AutoCrystal", ModuleCategory.COMBAT, "Automatically places and explodes crystals");
+        this.addSettings(order, heuristic, timing, place, explode, targeting, override, pause, render);
     }
 
     @Override
     public void onDisable() {
-        // Clear crystals
-        selfPlacedCrystals.clear();
+        reset();
     }
 
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
+    @Listener
+    public void onSettingUpdate(SettingUpdateEvent event) {
+        if (event.getSetting() == explodeFilter || event.getSetting() == explodeRotate || event.getSetting() == placeRotate) {
+            reset();
+        }
+    }
+
+    @Override
+    public void onTick() {
         if (nullCheck()) {
             return;
         }
 
-        this.target = targetPlayer();
+        if (pause.isEnabled()) {
+            // Pause if we are at a low health
+            if (pauseHealth.isEnabled() && mc.player.getHealth() <= pauseHealthValue.getValue()) {
+                return;
+            }
 
-        // If it's null, we don't want to do anything except set the place position to null
-        if (this.target == null) {
-            crystalPosition = null;
+            // Pause if we are eating
+            if (pauseEating.isEnabled() && PlayerUtil.isPlayerEating()) {
+                return;
+            }
+
+            // Pause if we are drinking
+            if (pauseDrinking.isEnabled() && PlayerUtil.isPlayerDrinking()) {
+                return;
+            }
+        }
+
+        // Set our target
+        currentTarget = getCurrentTarget();
+
+        // Don't do anything if we don't have a target
+        if (currentTarget == null) {
             return;
         }
 
-        try {
+        // Add target to AutoEZ list
+        AutoEZ.addTarget(currentTarget.getName());
+
+        switch (order.getCurrentMode()) {
+            case PLACE_EXPLODE:
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.PLACING)) {
+                    // Find placement
+                    currentPlacement = findBestPosition();
+
+                    // Immediately place if we have found a position and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        placeSearchedPosition();
+                    }
+                }
+
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.EXPLODING)) {
+                    // Find crystal
+                    currentCrystal = findBestCrystal();
+
+                    // Immediately explode if we have found a crystal and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        explodeSearchedCrystal();
+                    }
+                }
+
+                break;
+
+            case EXPLODE_PLACE:
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.EXPLODING)) {
+                    // Find crystal
+                    currentCrystal = findBestCrystal();
+
+                    // Immediately explode if we have found a crystal and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        explodeSearchedCrystal();
+                    }
+                }
+
+                if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.PLACING)) {
+                    // Find placement
+                    currentPlacement = findBestPosition();
+
+                    // Immediately place if we have found a position and grouped is enabled
+                    if (grouped.isEnabled()) {
+                        placeSearchedPosition();
+                    }
+                }
+
+                break;
+
+        }
+
+        // If we haven't grouped them
+        if (!grouped.isEnabled()) {
+            // We don't need to put timing logic here as exploding and placing are ignored if there isn't a crystal or placement
             switch (order.getCurrentMode()) {
                 case PLACE_EXPLODE:
-                    // Place
-                    if (place.isEnabled()) {
-                        if (placeTimerType.getCurrentMode().equals(TimerType.TICK)) {
-                            if (placeTimer.hasTimePassed((long) placeDelay.getValue())) {
-                                placeCrystals();
-                            }
-                        } else {
-                            placeCrystals();
-                        }
-                    }
+                    // Place crystal at position
+                    placeSearchedPosition();
 
-                    // Explode
-                    if (explode.isEnabled()) {
-                        if (explodeTimerType.getCurrentMode().equals(TimerType.TICK)) {
-                            if (!explodeTimer.hasTimePassed((long) explodeDelay.getValue())) {
-                                return;
-                            }
-                        }
-
-                        explodeCrystals();
-                    }
-
+                    // Explode best crystal
+                    explodeSearchedCrystal();
                     break;
                 case EXPLODE_PLACE:
-                    // Explode
-                    if (explode.isEnabled()) {
-                        if (explodeTimerType.getCurrentMode().equals(TimerType.TICK)) {
-                            if (explodeTimer.hasTimePassed((long) explodeDelay.getValue())) {
-                                explodeCrystals();
-                            }
-                        } else {
-                            explodeCrystals();
-                        }
-                    }
+                    // Explode best crystal
+                    explodeSearchedCrystal();
 
-                    // Place
-                    if (place.isEnabled()) {
-                        if (placeTimerType.getCurrentMode().equals(TimerType.TICK)) {
-                            if (!placeTimer.hasTimePassed((long) explodeDelay.getValue())) {
-                                return;
-                            }
-                        }
-
-                        placeCrystals();
-                    }
-
+                    // Place crystal at position
+                    placeSearchedPosition();
                     break;
             }
         }
 
-        // WHY DOES IT THROW A FUCKING NPE
-        catch (NullPointerException exception) {
-            exception.printStackTrace();
-        }
+        currentActionState = currentActionState.equals(ActionState.PLACING) ? ActionState.EXPLODING : ActionState.PLACING;
     }
 
-    @SubscribeEvent
-    public void onRenderWorld(RenderWorldLastEvent event) {
-        if (crystalPosition != null && target != null && place.isEnabled()) {
-            // Make sure render is enabled
-            if (render.isEnabled()) {
+    @Override
+    public void onRender3D() {
+        // Check we want to render
+        if (render.isEnabled()) {
+            // Check we have a placement and placing is enabled
+            if (currentPlacement != null && place.isEnabled()) {
                 // Render fill
-                if (fill.isEnabled()) {
-                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(crystalPosition.getPosition()), ColourUtil.integrateAlpha(colour.getColour(), 200));
+                if (renderMode.getCurrentMode().equals(Render.FILL) || renderMode.getCurrentMode().equals(Render.BOTH)) {
+                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderColour.getColour());
                 }
 
                 // Render outline
-                if (outline.isEnabled()) {
-                    RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(crystalPosition.getPosition()), outlineWidth.getValue(), ColourUtil.integrateAlpha(colour.getColour(), 255));
-                }
-
-                // Render nametag
-                if (nametag.isEnabled()) {
-                    float target = Math.round(crystalPosition.getTargetDamage());
-                    float self = Math.round(crystalPosition.getSelfDamage());
-                    RenderUtil.drawNametagText(target
-                            + (selfDamage.isEnabled() ?
-                            " Self " + self : ""),
-                            new Vec3d(crystalPosition.getPosition().getX() + 0.5f, crystalPosition.getPosition().getY() + 0.5f, crystalPosition.getPosition().getZ() + 0.5f), -1);
+                if (renderMode.getCurrentMode().equals(Render.OUTLINE) || renderMode.getCurrentMode().equals(Render.BOTH)) {
+                    RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderOutlineWidth.getValue(), ColourUtil.integrateAlpha(renderColour.getColour().darker(), 255));
                 }
             }
         }
     }
 
     @Listener
-    public void onPacket(PacketEvent.PreReceive preReceive) {
-        // Check if it's a CPacketPlayerTryUseItemOnBlock packet
-        if (preReceive.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
-            // Check that we are holding end crystals when we try to place
-            if (mc.player.getHeldItem(((CPacketPlayerTryUseItemOnBlock) preReceive.getPacket()).getHand()).getItem() == Items.END_CRYSTAL) {
-                // Check that the position is valid
-                if (isPosObsidianOrBedrock(((CPacketPlayerTryUseItemOnBlock) preReceive.getPacket()).getPos())) {
-                    selfPlacedCrystals.add(((CPacketPlayerTryUseItemOnBlock) preReceive.getPacket()).getPos().up());
-                }
+    public void onPacketReceive(PacketEvent.PreReceive event) {
+        // If we are trying to use and item on a block
+        if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
+            // Get packet
+            CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
+
+            // Check we are holding end crystals
+            if (mc.player.getHeldItem(packet.getHand()).getItem() == Items.END_CRYSTAL) {
+                // If we can place a crystal on that block, add it to our self placed crystals list
+                selfPlacedCrystals.add(packet.getPos());
             }
         }
-    }
 
-    /* Main Methods */
-    public void explodeCrystals() {
-        for (Entity entity : mc.world.loadedEntityList) {
-            // Make sure it's a crystal
-            if (entity instanceof EntityEnderCrystal) {
-                // Check we want to explode
-                if (explodeTimerType.getCurrentMode() == TimerType.PER_CRYSTAL) {
-                    if (!explodeTimer.hasTimePassed((long) explodeDelay.getValue())) {
+        // Check it's a sound packet
+        if (event.getPacket() instanceof SPacketSoundEffect && explodeSetDead.getCurrentMode().equals(SetDead.SOUND)) {
+            // Get packet
+            SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+
+            // Check it's an explosion sound
+            if (packet.getSound().equals(SoundEvents.ENTITY_GENERIC_EXPLODE) && packet.getCategory().equals(SoundCategory.BLOCKS)) {
+                // Iterate through loaded entities
+                for (Entity entity : mc.world.loadedEntityList) {
+                    // If the entity isn't an ender crystal, ignore
+                    if (!(entity instanceof EntityEnderCrystal)) {
                         continue;
                     }
-                }
 
-                // Make sure it is close enough
-                if (!EntityUtil.isTooFarAwayFromSelf(entity, explodeRange.getValue())) {
-                    // Check it isn't dead
+                    // If the entity is dead, ignore
                     if (entity.isDead) {
                         continue;
                     }
 
-                    float local = calculateCrystalDamage(new Vec3d(entity.posX, entity.posY, entity.posZ), mc.player);
-                    float targetDamage = calculateCrystalDamage(new Vec3d(entity.posX, entity.posY, entity.posZ), target);
-
-                    // If the crystal will kill us, don't explode
-                    if (antiSuicide.isEnabled()) {
-                        if (local >= mc.player.getHealth()) {
-                            continue;
-                        }
+                    // If the crystal is close to the explosion sound origin, set the crystals state to dead
+                    if (entity.getDistance(packet.getX(), packet.getY(), packet.getZ()) <= 6) {
+                        entity.setDead();
                     }
-
-                    if (explodeFilter.getCurrentMode() == ExplodeFilter.SELF) {
-                        // Check that the crystal's position is in our self placed crystals list
-                        if (!selfPlacedCrystals.contains(entity.getPosition())) {
-                            continue;
-                        }
-                    }
-
-                    // Make sure the target damage is bigger than the minimum
-                    if (!(targetDamage > minimumDamage.getValue())) {
-                        continue;
-                    }
-
-                    // Make sure it doesn't do too much damage to us
-                    if (local > maximumLocal.getValue()) {
-                        continue;
-                    }
-
-                    // Explode the crystal
-                    explodeCrystal((EntityEnderCrystal) entity);
                 }
             }
-        }
-    }
-
-    public void placeCrystals() {
-        // Make sure we want to place crystals
-        switch (placeWhen.getCurrentMode()) {
-            case HOLDING:
-                // If we aren't holding crystals, return
-                if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-                    crystalPosition = null;
-                    return;
-                }
-                break;
-
-            case SWITCH:
-                // If we aren't holding crystals, try to switch
-                if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-                    // If we couldn't switch, return
-                    if (!InventoryUtil.switchToItem(Items.END_CRYSTAL, false)) {
-                        crystalPosition = null;
-                        return;
-                    }
-                }
-                break;
-
-            case SILENT_SWITCH:
-                // If we aren't holding crystals, try to switch
-                if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-                    // If we couldn't switch, return
-                    if (!InventoryUtil.switchToItem(Items.END_CRYSTAL, true)) {
-                        crystalPosition = null;
-                        return;
-                    }
-                }
-                break;
-        }
-
-        // Get best placement
-        CrystalPosition placement = getPlacePosition(target);
-
-        // Make sure there actually is a place position
-        if (placement != null) {
-            crystalPosition = placement;
-
-            // Rotate to place position
-            Vec2f placeVec = RotationUtil.getRotationToBlockPos(placement.getPosition());
-            placeRotate.getCurrentMode().doRotate(placeRotate.getCurrentMode(), placeVec.x, placeVec.y);
-
-            // Place crystal
-            placeCrystalOnBlock(placement.getPosition(), new Vec3d(placement.getPosition().getX() + 0.5f, placement.getPosition().getY() + 0.5f, placement.getPosition().getZ() + 0.5f), packetPlace.isEnabled());
         }
     }
 
     /**
-     * Get the best player to target
-     * @return The best player
+     * Gets the best player to target
+     * @return The best player to target
      */
-    public EntityPlayer targetPlayer() {
-        EntityPlayer currentTarget = null;
+    public EntityPlayer getCurrentTarget() {
+        // All valid targets
+        List<EntityPlayer> validTargets = new ArrayList<>();
 
-        // Set this to a high value as it will never be that high
-        float lastValue = 99999f;
-
+        // Iterate through loaded entities
         for (Entity entity : mc.world.loadedEntityList) {
-            // Check that the entity is a player
-            if (!(entity instanceof EntityPlayer)) {
-                continue;
-            }
-
-            // Make sure we aren't the target
-            if (entity.equals(mc.player)) {
-                // But allow the entity if it is a fake player
-                if (!(entity instanceof EntityFakePlayer)) {
+            // Check it's a player that isn't us
+            if (entity instanceof EntityOtherPlayerMP) {
+                // If the player is dead, ignore
+                if (entity.isDead || ((EntityOtherPlayerMP) entity).getHealth() <= 0) {
                     continue;
                 }
-            }
 
-            // Cast to player
-            EntityPlayer player = (EntityPlayer) entity;
+                // Get player
+                EntityPlayer entityPlayer = (EntityPlayer) entity;
 
-            // Check the basic parameters for targeting
-            if (EntityUtil.isTooFarAwayFromSelf(player, targetingRange.getValue())) { // Make sure they are within our targeting range
-                continue;
-            }
-
-            // Make sure we want to attack them based on our social relationship with them
-            if (!targetFriends.isEnabled()) {
-                if (Paragon.INSTANCE.getSocialManager().isFriend(player.getName())) {
+                // If it's too far away, ignore
+                if (EntityUtil.isTooFarAwayFromSelf(entityPlayer, targetRange.getValue())) {
                     continue;
                 }
-            }
 
-            // If the current target is null, set it the player
-            if (currentTarget == null) {
-                currentTarget = player;
-                continue;
-            }
-
-            switch (targetPriority.getCurrentMode()) {
-                case DISTANCE:
-                    // Check that the player's distance from us is less than the last player's distance
-                    if (player.getDistance(mc.player) <= lastValue) {
-                        currentTarget = player;
-                        lastValue = player.getDistance(mc.player);
+                // If it's a friend, and we don't want to target friends, ignore
+                if (!targetFriends.isEnabled()) {
+                    if (Paragon.INSTANCE.getSocialManager().isFriend(entityPlayer.getName())) {
+                        continue;
                     }
+                }
 
-                    break;
-
-                case HEALTH:
-                    // Check that the player's health from us is less than the last player's health
-                    if (player.getHealth() <= currentTarget.getHealth()) {
-                        currentTarget = player;
-                        lastValue = player.getHealth();
-                    }
-
-                    break;
-
-                case ARMOUR:
-                    // Check that the player's total armour durability is less than the last player's total armour durability
-
-                    float total = 0f;
-
-                    for (ItemStack itemStack : player.inventory.armorInventory) {
-                        total += itemStack.getItemDamage();
-                    }
-
-                    if (total > lastValue) {
-                        currentTarget = player;
-                        lastValue = total;
-                    }
-
-                    break;
+                // Add to valid targets list
+                validTargets.add(entityPlayer);
             }
         }
 
+        // Return null if there are no valid targets
+        if (validTargets.isEmpty()) {
+            return null;
+        }
 
-        return currentTarget;
+        // Sort by priority
+        switch (targetPriority.getCurrentMode()) {
+            // Sort by distance
+            case DISTANCE:
+                validTargets.sort(Comparator.comparingDouble(target -> mc.player.getDistance(target)));
+                break;
+
+            // Sort by health
+            case HEALTH:
+                validTargets.sort(Comparator.comparingDouble(EntityLivingBase::getHealth));
+                break;
+
+            // Sort by total armour value
+            case ARMOUR:
+                validTargets.sort(Comparator.comparingDouble(target -> {
+                    float totalArmour = 0;
+
+                    // Iterate through target's armour slots
+                    for (ItemStack armour : target.getArmorInventoryList()) {
+                        // Don't do anything if they don't have an item in the slot
+                        if (armour.isEmpty()) {
+                            continue;
+                        }
+
+                        // Add item damage to total
+                        totalArmour += armour.getItemDamage();
+                    }
+
+                    return totalArmour;
+                }));
+
+                break;
+        }
+
+        return validTargets.get(0);
     }
 
+    /**
+     * Explodes the searched crystal
+     */
+    public void explodeSearchedCrystal() {
+        // Check we want to explode
+        if (explode.isEnabled()) {
+            // Check we have a crystal to explode, and the timer has passed the required value
+            if (currentCrystal != null && explodeTimer.hasTimePassed((long) explodeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+                // Get our current slot so we can switch back
+                int antiWeaknessSlot = mc.player.inventory.currentItem;
 
-    /** Explode Utils */
-    public void explodeCrystal(EntityEnderCrystal entityEnderCrystal) {
-        // Get the current slot so we can switch back
-        int antiWeaknessSlot = mc.player.inventory.currentItem;
+                // Check we want to apply anti weakness
+                if (!antiWeakness.getCurrentMode().equals(AntiWeakness.OFF)) {
+                    // Check we have the weakness effect
+                    if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                        // If we want to fake opening our inventory, send the opening inventory packet
+                        if (strictInventory.isEnabled()) {
+                            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+                        }
 
-        if (antiWeakness.getCurrentMode() != AntiWeakness.OFF) {
-            // Weakness and strength effects
-            PotionEffect weakness = mc.player.getActivePotionEffect(MobEffects.WEAKNESS);
-            PotionEffect strength = mc.player.getActivePotionEffect(MobEffects.STRENGTH);
+                        // Get the best sword
+                        int hotbarSwordSlot = InventoryUtil.getItemInHotbar(Items.DIAMOND_SWORD);
 
-            // Check that we want to switch
-            if (weakness != null && (strength == null || strength.getAmplifier() < weakness.getAmplifier())) {
-                int swordSlot = InventoryUtil.getItemInHotbar(Items.DIAMOND_SWORD);
+                        // If we have found a sword, switch to it
+                        if (hotbarSwordSlot != -1) {
+                            InventoryUtil.switchToSlot(hotbarSwordSlot, antiWeakness.getCurrentMode().equals(AntiWeakness.SILENT));
+                        }
+                    }
+                }
 
-                // Check that we have found the item
-                if (swordSlot > -1) {
-                    InventoryUtil.switchToSlot(swordSlot, antiWeakness.getCurrentMode() == AntiWeakness.SILENT);
-                } else if (swordSlot == -1) {
-                    // It will bug out slightly - we don't want that
-                    return;
+                // Get our original rotation before rotating to the crystal
+                Vec2f originalPlayerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
+
+                // Check we want to rotate
+                if (!explodeRotate.getCurrentMode().equals(Rotate.NONE)) {
+                    // Get rotation
+                    Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
+
+                    Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, explodeRotate.getCurrentMode(), RotationPriority.HIGHEST);
+
+                    // Send rotation
+                    Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+                }
+
+                if (packetExplode.isEnabled()) {
+                    // Explode with a packet
+                    mc.player.connection.sendPacket(new CPacketUseEntity(currentCrystal.getCrystal()));
+                } else {
+                    // Attack crystal
+                    mc.playerController.attackEntity(mc.player, currentCrystal.getCrystal());
+                }
+
+                // If we want to set the crystal to dead as soon as we attack, do that
+                if (explodeSetDead.getCurrentMode().equals(SetDead.ATTACK)) {
+                    currentCrystal.getCrystal().setDead();
+                }
+
+                // Remove it from our self placed crystals
+                selfPlacedCrystals.remove(currentCrystal.getCrystal().getPosition());
+
+                // Swing our arm
+                swing(explodeSwing.getCurrentMode());
+
+                // Rotate back to our original rotation
+                if (!explodeRotate.getCurrentMode().equals(Rotate.NONE) && explodeRotateBack.isEnabled()) {
+                    Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getCurrentMode(), RotationPriority.HIGH);
+
+                    // Send rotation
+                    Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+                }
+
+                // Check we want to switch
+                if (!antiWeakness.getCurrentMode().equals(AntiWeakness.OFF)) {
+                    // Check we have weakness
+                    if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                        // Fake opening inventory
+                        if (strictInventory.isEnabled()) {
+                            mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+                        }
+
+                        // Switch to slot
+                        if (antiWeaknessSlot != -1) {
+                            InventoryUtil.switchToSlot(antiWeaknessSlot, antiWeakness.getCurrentMode().equals(AntiWeakness.SILENT));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Places a crystal at the searched position
+     */
+    public void placeSearchedPosition() {
+        // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
+        if (currentPlacement != null && placeTimer.hasTimePassed((long) placeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+            boolean hasSwitched = false;
+            int oldSlot = mc.player.inventory.currentItem;
+
+            switch (placeWhen.getCurrentMode()) {
+                case HOLDING:
+                    hasSwitched = InventoryUtil.isHolding(Items.END_CRYSTAL);
+                    break;
+                case SWITCH:
+                    int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
+
+                    if (crystalSlot == -1) {
+                        break;
+                    } else {
+                        InventoryUtil.switchToSlot(crystalSlot, false);
+                        hasSwitched = true;
+                    }
+
+                    break;
+                case SILENT_SWITCH:
+                    int silentCrystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
+
+                    if (silentCrystalSlot == -1) {
+                        break;
+                    } else {
+                        InventoryUtil.switchToSlot(silentCrystalSlot, true);
+                        hasSwitched = true;
+                    }
+
+                    break;
+            }
+
+            if (!hasSwitched) {
+                return;
+            }
+
+            // Get our current rotation
+            Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
+
+            // Check we want to rotate
+            if (!placeRotate.getCurrentMode().equals(Rotate.NONE)) {
+                // Get rotation
+                Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
+
+                Rotation rotation = new Rotation(placeRotation.x, placeRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGHEST);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            }
+
+            // The hand we will place with
+            EnumHand placeHand = EnumHand.MAIN_HAND;
+
+            // If we want to place when holding, get the hand that is holding crystals
+            if (placeWhen.getCurrentMode().equals(When.HOLDING)) {
+                placeHand = InventoryUtil.getHandHolding(Items.END_CRYSTAL);
+            }
+
+            if (placeHand != null) {
+                if (placePacket.isEnabled()) {
+                    // Send place packet
+                    mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeHand, 0, 0, 0));
+                } else {
+                    // Place crystal
+                    mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeHand);
+                }
+            }
+
+            // Swing arm
+            swing(placeSwing.getCurrentMode());
+
+            // Add position to our self placed crystals
+            selfPlacedCrystals.add(currentPlacement.getPosition().up());
+
+            // Check we want to rotate back
+            if (!placeRotate.getCurrentMode().equals(Rotate.NONE) && placeRotateBack.isEnabled()) {
+                // Rotate back
+                Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGH);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            }
+
+            if (placeWhenSwitchBack.isEnabled()) {
+                switch (placeWhen.getCurrentMode()) {
+                    case SWITCH:
+                        InventoryUtil.switchToSlot(oldSlot, false);
+                        break;
+                    case SILENT_SWITCH:
+                        InventoryUtil.switchToSlot(oldSlot, true);
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds the best crystal to attack
+     * @return The best crystal to attack
+     */
+    public Crystal findBestCrystal() {
+        // The best crystal (we will return this)
+        Crystal crystal = null;
+
+        // Check we want to explode
+        if (explode.isEnabled()) {
+            // Iterate through loaded entities
+            for (Entity entity : mc.world.loadedEntityList) {
+                // Check the entity is a crystal
+                if (entity instanceof EntityEnderCrystal && !entity.isDead) {
+                    // Check the crystal is old enough
+                    if (entity.ticksExisted < explodeTicksExisted.getValue()) {
+                        continue;
+                    }
+
+                    // We have already tried to explode this crystal
+                    if (selfExplodedCrystals.contains(entity.getPosition())) {
+                        continue;
+                    }
+
+                    // If it's too far away, ignore
+                    if (EntityUtil.isTooFarAwayFromSelf(entity, explodeRange.getValue())) {
+                        continue;
+                    }
+
+                    // Check we can see the crystal
+                    if (explodeRaytrace.isEnabled()) {
+                        if (!mc.player.canEntityBeSeen(entity)) {
+                            continue;
+                        }
+                    }
+
+                    // Get the crystals position as a vector
+                    Vec3d vec = new Vec3d(entity.posX, entity.posY, entity.posZ);
+
+                    // Crystal
+                    Crystal calculatedCrystal = new Crystal((EntityEnderCrystal) entity, calculateDamage(vec, currentTarget), calculateDamage(vec, mc.player));
+
+                    // Position of crystal
+                    CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, new double[]{ 0, 0, 0 }, calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
+
+                    if (isNotOverriding(currentTarget)) {
+                        // Check it meets our filter
+                        switch (explodeFilter.getCurrentMode()) {
+                            case SELF:
+                                // Check it's in our self placed crystals
+                                if (!selfPlacedCrystals.contains(crystalPos.getPosition())) {
+                                    continue;
+                                }
+
+                                break;
+
+                            case SELF_SMART:
+                                // Check it's in our self placed crystals
+                                if (!selfPlacedCrystals.contains(crystalPos.getPosition())) {
+                                    continue;
+                                }
+
+                                // Check it meets our max local requirement
+                                if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
+                                    continue;
+                                }
+
+                                // Check it meets our minimum damage requirement
+                                if (calculatedCrystal.getTargetDamage() < explodeMinDamage.getValue()) {
+                                    continue;
+                                }
+
+                                break;
+
+                            case SMART:
+                                // Check it meets our max local requirement
+                                if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
+                                    continue;
+                                }
+
+                                // Check it meets our minimum damage requirement
+                                if (calculatedCrystal.getTargetDamage() < explodeMinDamage.getValue()) {
+                                    continue;
+                                }
+
+                                break;
+                        }
+                    }
+
+                    // Set the crystal to this if: the current best crystal is null, or this crystal's target damage is higher than the last crystal checked
+                    if (crystal == null || calculateHeuristic(calculatedCrystal.getSelfDamage(), calculatedCrystal.getTargetDamage(), mc.player.getDistance(entity), heuristic.getCurrentMode()) > calculateHeuristic(crystal.getSelfDamage(), crystal.getTargetDamage(), mc.player.getDistance(entity), heuristic.getCurrentMode())) {
+                        crystal = calculatedCrystal;
+                    }
                 }
             }
         }
 
-        // Throws an NPE!?
-        if (entityEnderCrystal == null) {
-            return;
+        return crystal;
+    }
+
+    /**
+     * Finds the best position to place at
+     * @return The best position to place at
+     */
+    public CrystalPosition findBestPosition() {
+        // The best placement (we will return this)
+        CrystalPosition bestPlacement = null;
+
+        // Check we want to place
+        if (place.isEnabled()) {
+
+            // Iterate through blocks around us
+            for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
+                // Check we can place crystals
+                if (!canPlaceCrystal(pos)) {
+                    continue;
+                }
+
+                // Position we are placing at
+                Vec3d placeVec = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+
+                // Position we will calculate damage at
+                Vec3d damageVec = new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+
+                // Get the direction we want to face
+                EnumFacing facing = EnumFacing.getDirectionFromEntityLiving(pos, mc.player);
+                double[] facingVec = new double[3];
+                RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).addVector(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);;
+                RayTraceResult laxResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+
+                // Check we hit a block
+                if (laxResult != null && laxResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
+                    facing = laxResult.sideHit;
+
+                    // We can place if we are at max height by doing this
+                    if (pos.getY() >= (mc.world.getActualHeight() - 1)) {
+                        facing = EnumFacing.DOWN;
+                    }
+                }
+
+                // Get angles
+                if (rayTraceResult != null && rayTraceResult.hitVec != null) {
+                    facingVec[0] = rayTraceResult.hitVec.x - pos.getX();
+                    facingVec[1] = rayTraceResult.hitVec.y - pos.getY();
+                    facingVec[2] = rayTraceResult.hitVec.z - pos.getZ();
+                }
+
+                // Check we can raytrace to it
+                if (placeRaytrace.isEnabled()) {
+                    if (!EntityUtil.canEntitySeePosition(mc.player, pos)) {
+                        continue;
+                    }
+                }
+
+                // Create new crystal position
+                CrystalPosition crystalPosition = new CrystalPosition(pos, facing, facingVec, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
+
+                // Check we aren't overriding
+                if (isNotOverriding(currentTarget)) {
+                    // Check it's above or equal to our minimum damage requirement
+                    if (crystalPosition.getTargetDamage() <= placeMinDamage.getValue()) {
+                        continue;
+                    }
+
+                    // Check it's below or equal to our maximum local damage requirement
+                    if (crystalPosition.getSelfDamage() >= placeMaxLocal.getValue()) {
+                        continue;
+                    }
+                }
+
+                // Set it to our best placement if it does more damage to the target than our last position
+                if (bestPlacement == null || calculateHeuristic(crystalPosition, heuristic.getCurrentMode()) > calculateHeuristic(bestPlacement, heuristic.getCurrentMode())) {
+                    bestPlacement = crystalPosition;
+                }
+            }
         }
 
-        // Rotate towards the crystal
-        Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(entityEnderCrystal.posX, entityEnderCrystal.posY + 0.5f, entityEnderCrystal.posZ));
-        explodeRotate.getCurrentMode().doRotate(explodeRotate.getCurrentMode(), rotationVec.x, rotationVec.y);
+        // Set our backlog placement
+        backlogPlacement = bestPlacement;
 
-        // Attack the crystal
-        mc.playerController.attackEntity(mc.player, entityEnderCrystal);
+        // Return our best placement
+        return bestPlacement;
+    }
 
-        // Instantly set the crystal to dead
-        if (setDead.isEnabled()) {
-            entityEnderCrystal.setDead();
+    /**
+     * Checks if we are overriding the minimum damage
+     * @param entity The entity to check
+     * @return Whether we are not overriding
+     */
+    public boolean isNotOverriding(EntityLivingBase entity) {
+        if (override.isEnabled()) {
+            if (overrideHealth.isEnabled()) {
+                // Get total health
+                if (EntityUtil.getEntityHealth(entity) <= overrideHealthValue.getValue()) {
+                    return false;
+                }
+            }
+
+            if (overrideTotalArmour.isEnabled()) {
+                // Pretty much from Cosmos, so thanks, just wanted to make sure I was doing this right :')
+
+                float lowest = 100;
+
+                // Iterate through target's armour
+                for (ItemStack armourPiece : entity.getArmorInventoryList()) {
+                    // If it is an actual piece of armour
+                    if (armourPiece != null && armourPiece.getItem() != Items.AIR) {
+                        // Get durability
+                        float durability = (armourPiece.getMaxDamage() - armourPiece.getItemDamage()) / (float) armourPiece.getMaxDamage() * 100;
+
+                        // If it is less than the last lowest, set the lowest to this durability
+                        if (durability < lowest) {
+                            lowest = durability;
+                        }
+                    }
+                }
+
+                // We are overriding if the lowest durability is less or equal to the total armour value setting
+                if (lowest <= overrideTotalArmourValue.getValue()) {
+                    return false;
+                }
+            }
         }
 
-        switch (explodeSwing.getCurrentMode()) {
-            case PACKET:
-                // Send animation packet
-                mc.player.connection.sendPacket(new CPacketAnimation(mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL) ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND));
-                break;
-            case MAIN:
+        return true;
+    }
+
+    /**
+     * Swings our hands
+     * @param swing The hand to swing
+     */
+    public void swing(Swing swing) {
+        switch (swing) {
+            case MAIN_HAND:
                 // Swing main hand
                 mc.player.swingArm(EnumHand.MAIN_HAND);
                 break;
-            case OFF:
+            case OFFHAND:
                 // Swing offhand
                 mc.player.swingArm(EnumHand.OFF_HAND);
                 break;
-            default:
+            case BOTH:
+                // Swing both hands
+                mc.player.swingArm(EnumHand.MAIN_HAND);
+                mc.player.swingArm(EnumHand.OFF_HAND);
+                break;
+            case PACKET:
+                // Send a swing hand packet
+                mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
                 break;
         }
-
-        // Remove the position from our self placed crystals
-        selfPlacedCrystals.remove(entityEnderCrystal.getPosition());
-
-        if (antiWeakness.getCurrentMode() != AntiWeakness.OFF) {
-            PotionEffect weakness = mc.player.getActivePotionEffect(MobEffects.WEAKNESS);
-            PotionEffect strength = mc.player.getActivePotionEffect(MobEffects.STRENGTH);
-
-            if (weakness != null && (strength == null || strength.getAmplifier() < weakness.getAmplifier())) {
-                // Switch back to original slot
-                InventoryUtil.switchToSlot(antiWeaknessSlot, antiWeakness.getCurrentMode() == AntiWeakness.SILENT);
-            }
-        }
     }
 
-    /** Place Utils */
-    public void placeCrystalOnBlock(BlockPos position, Vec3d vec, boolean packet) {
-        if (packet) {
-            // Send packet place
-            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(position, EnumFacing.getDirectionFromEntityLiving(position, mc.player), mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL) ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND, (float) vec.x, (float) vec.y, (float) vec.z));
-        } else {
-            // Legit click pos
-            mc.playerController.processRightClickBlock(mc.player, mc.world, position, EnumFacing.getDirectionFromEntityLiving(position, mc.player), vec, mc.player.getHeldItemMainhand().getItem().equals(Items.END_CRYSTAL) ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND);
+    /**
+     * Calculates the heuristic
+     * @param self The damage done to us
+     * @param target The damage done to the target
+     * @param distance The distance from the crystal
+     * @param heuristic The heuristic type
+     * @return The damage heuristic
+     */
+    public float calculateHeuristic(float self, float target, float distance, Heuristic heuristic) {
+        switch (heuristic) {
+            case DAMAGE:
+                // Just target damage
+                return target;
+            case MINIMAX:
+                // Target damage minus self damage
+                return target - self;
+            case UNIFORM:
+                // Target damage minus self damage minus distance
+                return target - self - distance;
         }
 
-        // Add the position above the place position, which is where the crystal will be placed
-        selfPlacedCrystals.add(position.up());
+        return target;
     }
 
-    public CrystalPosition getPlacePosition(EntityPlayer playerTarget) {
-        CrystalPosition bestPosition = null;
-
-        for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
-            // Check we can place the crystal
-            if (!canPlaceCrystal(pos)) {
-                continue;
-            }
-
-            if (placeTimerType.getCurrentMode().equals(TimerType.PER_CRYSTAL)) {
-                if (!placeTimer.hasTimePassed((long) placeDelay.getValue())) {
-                    continue;
-                }
-            }
-
-            float selfDamage = calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), mc.player);
-
-            // If the crystal will kill us, don't place
-            if (antiSuicide.isEnabled()) {
-                if (selfDamage >= mc.player.getHealth()) {
-                    continue;
-                }
-            }
-
-            // Make sure it is close enough
-            if (mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > placeRange.getValue()) {
-                continue;
-            }
-
-            float targetDamage = calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), playerTarget);
-
-            // Make sure the target damage is bigger than the minimum
-            if (!(targetDamage > minimumDamage.getValue())) {
-                continue;
-            }
-
-            // Make sure it doesn't do too much damage to us
-            if (selfDamage > maximumLocal.getValue()) {
-                continue;
-            }
-
-            // Set best position A. if the previous position is null or B. the damage is higher than that of the previous position
-            if (bestPosition == null || calculateCrystalDamage(new Vec3d(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ()), playerTarget) >
-                    calculateCrystalDamage(new Vec3d(bestPosition.getPosition().getX() + 0.5f, bestPosition.getPosition().getY() + 1, bestPosition.getPosition().getZ()), playerTarget)) {
-                bestPosition = new CrystalPosition(pos, targetDamage, selfDamage);
-            }
+    /**
+     * Calculates the heuristic based on a crystal position
+     * @param crystal The crystal to calculate heuristic for
+     * @param heuristic The heuristic type
+     * @return The damage heuristic
+     */
+    public float calculateHeuristic(CrystalPosition crystal, Heuristic heuristic) {
+        // Prevent NPE
+        if (crystal == null) {
+            return 0;
         }
 
-        // Return position
-        return bestPosition;
+        // Calculate and return heuristic
+        return calculateHeuristic(crystal.getSelfDamage(), crystal.getTargetDamage(), (float) mc.player.getDistanceSq(crystal.getPosition()), heuristic);
     }
 
+    /**
+     * Checks if we can place a crystal on a block
+     * @param pos The pos to check
+     * @return Whether we can place a crystal on that block or not
+     */
     public boolean canPlaceCrystal(BlockPos pos) {
-        if (!isPosObsidianOrBedrock(pos)) {
+        // Get block
+        Block block = BlockUtil.getBlockAtPos(pos);
+
+        // Check the block is obsidian or bedrock
+        if (!(block.equals(Blocks.OBSIDIAN) || block.equals(Blocks.BEDROCK))) {
             return false;
         }
 
-        BlockPos nativePosition = pos.up();
-
-        if (!mc.world.isAirBlock(nativePosition) && !mc.world.getBlockState(nativePosition).getMaterial().isReplaceable() && !mc.world.getBlockState(nativePosition).getMaterial().equals(Material.FIRE)) {
+        // Check the position above is an air block
+        if (!mc.world.isAirBlock(pos.up()) || !mc.world.getBlockState(pos.up(2)).getMaterial().isReplaceable()) {
             return false;
         }
 
-        if (BlockUtil.isIntercepted(pos)) {
+        // Check we aren't standing in the position
+        if (mc.player.getPosition().equals(pos)) {
+            return false;
+        }
+
+        // Iterate through entities in the block above
+        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(0, 1, 0)))) {
+            // If the entity is dead, or we aren't multiplacing, continue
+            if (entity.isDead || !multiplace.isEnabled() && entity instanceof EntityEnderCrystal) {
+                continue;
+            }
+
             return false;
         }
 
@@ -588,81 +925,78 @@ public class AutoCrystal extends Module {
     }
 
     /**
-     * Checks if a given position is obsidian or bedrock
-     * @param blockPos Position to check
-     * @return If the given position is obsidian or bedrock
+     * Calculates the explosion damage based on a Vec3D
+     * @param vec The vector to calculate damage from
+     * @param entity The target
+     * @return The damage done to the target
      */
-    public boolean isPosObsidianOrBedrock(BlockPos blockPos) {
-        return BlockUtil.getBlockAtPos(blockPos) instanceof BlockObsidian || BlockUtil.getBlockAtPos(blockPos) == Blocks.BEDROCK;
-    }
+    public float calculateDamage(Vec3d vec, EntityLivingBase entity) {
+        // Distanced size
+        double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) 12;
 
-    /* Other Utils */
-    /**
-     * @author GameSense
-     * @param vec Vec3D of positions
-     * @param entity The entity to calculate damage to
-     * @return The damage from the crystal
-     */
-    public float calculateCrystalDamage(Vec3d vec, Entity entity) {
-        float doubleExplosionSize = 12.0F;
-        double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) doubleExplosionSize;
-        Vec3d vec3d = new Vec3d(vec.x, vec.y, vec.z);
-        double blockDensity = entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
+        // Get block density
+        double blockDensity = mc.world.getBlockDensity(vec, entity.getEntityBoundingBox());
+
         double v = (1.0D - distancedSize) * blockDensity;
-        float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * (double) doubleExplosionSize + 1.0D));
-        double finald = 1.0D;
 
-        if (entity instanceof EntityLivingBase) {
-            float damageMultiplied = damage * (mc.world.getDifficulty().getDifficultyId() == 0 ? 0 : (mc.world.getDifficulty().getDifficultyId() == 2 ? 1 : (mc.world.getDifficulty().getDifficultyId() == 1 ? 0.5f : 1.5f)));
-            finald = getBlastReduction((EntityLivingBase) entity, damageMultiplied, new Explosion(mc.world, entity, vec.x, vec.y, vec.z, 6F, false, true));
-        }
-        return (float) finald;
+        // Get damage
+        float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * 12 + 1.0D));
+
+        // Multiply damage by difficulty
+        float damageMultiplied = damage * (mc.world.getDifficulty().getDifficultyId() == 0 ? 0 : (mc.world.getDifficulty().getDifficultyId() == 2 ? 1 : (mc.world.getDifficulty().getDifficultyId() == 1 ? 0.5f : 1.5f)));
+
+        // Apply blast reduction and return
+        return getBlastReduction(entity, damageMultiplied, new Explosion(mc.world, entity, vec.x, vec.y, vec.z, 6F, false, true));
     }
 
     /**
-     * @author GameSense, Wolfsurge
-     * @param entityLivingBase The entity to calculate damage for
-     * @param damage The original, unmodified damage
-     * @param explosion The explosion to calculate
-     * @return Damage minus blast reduction
+     * Gets the blast reduction
+     * @param entity The entity to calculate damage for
+     * @param damage The original damage
+     * @param explosion The explosion
+     * @return The blast reduction
      */
-    public float getBlastReduction(EntityLivingBase entityLivingBase, float damage, Explosion explosion) {
-        if (entityLivingBase instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) entityLivingBase;
-            DamageSource damageSource = DamageSource.causeExplosionDamage(explosion);
-            damage = CombatRules.getDamageAfterAbsorb(damage, (float) player.getTotalArmorValue(), (float) player.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+    public float getBlastReduction(EntityLivingBase entity, float damage, Explosion explosion) {
+        // Get damage source
+        DamageSource source = DamageSource.causeExplosionDamage(explosion);
 
-            int enchantmentModifierDamage = EnchantmentHelper.getEnchantmentModifierDamage(player.getArmorInventoryList(), damageSource);
-            float clampedModifierDamage = MathHelper.clamp(enchantmentModifierDamage, 0.0F, 20.0F);
-            damage *= 1.0F - clampedModifierDamage / 25.0F;
-
-            // If player has resistance, decrease damage
-            if (player.isPotionActive(MobEffects.RESISTANCE)) {
-                damage = damage - (damage / 4);
-            }
-
-            damage = Math.max(damage, 0.0F);
-            return damage;
+        // Player is in creative, return 0
+        if (source.isCreativePlayer()) {
+            return 0;
         }
 
-        damage = CombatRules.getDamageAfterAbsorb(damage, (float) entityLivingBase.getTotalArmorValue(), (float) entityLivingBase.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
-        return damage;
+        // Get damage after absorption
+        damage = CombatRules.getDamageAfterAbsorb(damage, entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+
+        // Enchantment modifier
+        float enchantModifier = MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), source), 0, 20);
+
+        // Modify damage
+        damage *= 1 - enchantModifier / 25;
+
+        // Decrease damage if they have resistance
+        if (entity.isPotionActive(MobEffects.RESISTANCE)) {
+            damage -= damage / 4;
+        }
+
+        // Return damage
+        return Math.max(damage, 0);
     }
 
-    /** Other Stuff */
+    /**
+     * Resets the process
+     */
+    public void reset() {
+        this.currentTarget = null;
+        this.currentCrystal = null;
+        this.currentPlacement = null;
+        this.selfPlacedCrystals.clear();
+        this.selfExplodedCrystals.clear();
+    }
+
+    @Override
     public String getModuleInfo() {
-        String moduleInfo = " ";
-
-        if (hudData.getCurrentMode() == HUDData.TARGET) {
-            moduleInfo += (target == null ? "No Target" : target.getName());
-            if (targetHealth.isEnabled()) {
-                moduleInfo += (target == null ? "" : EntityUtil.getTextColourFromEntityHealth(target) + " " + target.getHealth());
-            }
-        } else if (hudData.getCurrentMode() == HUDData.CRYSTAL_COUNT) {
-            moduleInfo += String.valueOf(InventoryUtil.getCountOfItem(Items.END_CRYSTAL, true));
-        }
-
-        return moduleInfo;
+        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() + EntityUtil.getTextColourFromEntityHealth(currentTarget) + " " + Math.round(currentTarget.getHealth() + currentTarget.getAbsorptionAmount()) + TextFormatting.GRAY + " DMG " + (isNotOverriding(currentTarget) ? "" : "[OVERRIDING] ") + (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));
     }
 
     public enum Order {
@@ -677,26 +1011,67 @@ public class AutoCrystal extends Module {
         EXPLODE_PLACE
     }
 
+    public enum Timing {
+        /**
+         * Run actions one after another
+         */
+        LINEAR,
+
+        /**
+         * Run actions on different ticks
+         */
+        SEQUENTIAL
+    }
+
+    public enum ActionState {
+        /**
+         * About to explode crystals
+         */
+        EXPLODING,
+
+        /**
+         * About to place crystals
+         */
+        PLACING
+    }
+
+    public enum Heuristic {
+        /**
+         * Just target damage
+         */
+        DAMAGE,
+
+        /**
+         * Target damage minus self damage
+         */
+        MINIMAX,
+
+        /**
+         * Target damage minus self damage minus distance
+         */
+        UNIFORM
+    }
+
     public enum TargetPriority {
         /**
-         * Sort by distance
+         * Target closest to us
          */
         DISTANCE,
 
         /**
-         * Sort by health
+         * Target with the lowest health
          */
         HEALTH,
 
         /**
-         * Sort by total armour durability
+         * Target with the lowest total armour value
          */
         ARMOUR
     }
 
-    public enum PlaceWhen {
+    public enum When {
         /**
-         * Place when holding crystals
+         * Only place when holding crystals
          */
         HOLDING,
 
@@ -706,58 +1081,41 @@ public class AutoCrystal extends Module {
         SWITCH,
 
         /**
-         * Switch with a packet to crystals
+         * Silent switch to crystals (with a packet)
          */
         SILENT_SWITCH
     }
 
-    public enum ExplodeSwing {
-        /**
-         * Packet swing
-         */
-        PACKET,
-
-        /**
-         * Swing main hand
-         */
-        MAIN,
-
-        /**
-         * Swing off hand
-         */
-        OFF,
-
-        /**
-         * Don't swing
-         */
-        NO_SWING
-    }
-
     public enum ExplodeFilter {
         /**
-         * Explode any crystal if they are within the damage parameters
+         * Explode all crystals regardless of parameters
+         */
+        ALL,
+
+        /**
+         * Explode crystals if they fit our minimum damage and maximum local damage requirements
          */
         SMART,
 
         /**
-         * Only explode crystals placed by you
+         * Explode crystals only if we have placed them
          */
         SELF,
 
         /**
-         * Explode all crystals
+         * Explode crystals if they fit our minimum damage and maximum local damage requirements, and only we have placed them
          */
-        ALL
+        SELF_SMART
     }
 
     public enum AntiWeakness {
         /**
-         * Legit switch
+         * Switch to sword
          */
         SWITCH,
 
         /**
-         * Switch with a packet
+         * Silent switch to sword
          */
         SILENT,
 
@@ -767,76 +1125,128 @@ public class AutoCrystal extends Module {
         OFF
     }
 
-    public enum Rotate {
+    public enum SetDead {
         /**
-         * Packet rotate
+         * Set crystal's alive status to dead when we attack it
+         */
+        ATTACK,
+
+        /**
+         * Set crystal's alive status to dead when the explosion sound plays
+         */
+        SOUND,
+
+        /**
+         * Don't modify when we set it's alive status
+         */
+        OFF
+    }
+
+    public enum Swing {
+        /**
+         * Swing main hand
+         */
+        MAIN_HAND,
+
+        /**
+         * Swing offhand
+         */
+        OFFHAND,
+
+        /**
+         * Swing both hands
+         */
+        BOTH,
+
+        /**
+         * Send swing animation packet
          */
         PACKET,
 
         /**
-         * Legit rotate - set player's yaw and pitch
+         * Don't swing
          */
-        LEGIT,
+        OFF
+    }
+
+    public enum Render {
+        /**
+         * Render outline
+         */
+        OUTLINE,
 
         /**
-         * Do not rotate
+         * Render fill
          */
-        NONE;
+        FILL,
 
-        public void doRotate(Rotate in, float yaw, float pitch) {
-            switch (in) {
-                case PACKET:
-                    mc.player.connection.sendPacket(new CPacketPlayer.Rotation(yaw, pitch, mc.player.onGround));
-                    break;
-                case LEGIT:
-                    mc.player.rotationYaw = yaw;
-                    mc.player.rotationYawHead = yaw;
-                    mc.player.rotationPitch = pitch;
-                    mc.player.connection.sendPacket(new CPacketPlayer.Rotation(yaw, pitch, mc.player.onGround));
-                    break;
-                case NONE:
-                    break;
-            }
+        /**
+         * Render both
+         */
+        BOTH
+    }
+
+    static class Crystal {
+        // The entity
+        private final EntityEnderCrystal crystal;
+
+        // The damage we do to the target
+        private final float targetDamage;
+
+        // The damage we do to us
+        private final float selfDamage;
+
+        public Crystal(EntityEnderCrystal crystal, float targetDamage, float selfDamage) {
+            this.crystal = crystal;
+            this.targetDamage = targetDamage;
+            this.selfDamage = selfDamage;
+        }
+
+        /**
+         * Gets the crystal
+         * @return The crystal
+         */
+        public EntityEnderCrystal getCrystal() {
+            return crystal;
+        }
+
+        /**
+         * Gets the target damage
+         * @return The target damage
+         */
+        public float getTargetDamage() {
+            return targetDamage;
+        }
+
+        /**
+         * Gets the self damage
+         * @return The self damage
+         */
+        public float getSelfDamage() {
+            return selfDamage;
         }
     }
 
-    public enum HUDData {
-        /**
-         * Show target info
-         */
-        TARGET,
+    static class CrystalPosition {
+        // The position we will place at
+        private final BlockPos position;
 
-        /**
-         * Show crystal count
-         */
-        CRYSTAL_COUNT
-    }
+        // The direction we want to face
+        private final EnumFacing facing;
 
-    public enum TimerType {
-        /**
-         * Check if the timer has passed for each crystal
-         */
-        PER_CRYSTAL,
+        // Rotation angles
+        private final double[] facingVec;
 
-        /**
-         * Only check once per tick
-         */
-        TICK
-    }
+        // The damage we do to the target
+        private final float targetDamage;
 
-    class CrystalPosition {
+        // The damage we do to us
+        private final float selfDamage;
 
-        // Position to place
-        private BlockPos position;
-
-        // Damage done to target
-        private float targetDamage;
-
-        // Damage done to us
-        private float selfDamage;
-
-        public CrystalPosition(BlockPos position, float targetDamage, float selfDamage) {
+        public CrystalPosition(BlockPos position, EnumFacing facing, double[] facingVec, float targetDamage, float selfDamage) {
             this.position = position;
+            this.facing = facing;
+            this.facingVec = facingVec;
             this.targetDamage = targetDamage;
             this.selfDamage = selfDamage;
         }
@@ -847,6 +1257,14 @@ public class AutoCrystal extends Module {
          */
         public BlockPos getPosition() {
             return position;
+        }
+
+        /**
+         * Gets the direction we want to face in
+         * @return The direction we want to face in
+         */
+        public EnumFacing getFacing() {
+            return facing;
         }
 
         /**

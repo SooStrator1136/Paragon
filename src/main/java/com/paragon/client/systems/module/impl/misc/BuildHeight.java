@@ -23,8 +23,9 @@ public class BuildHeight extends Module {
             // Get packet
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
 
-            // Check the position we are trying to place at is 256 or above, and we are placing on top of a block
-            if (packet.getPos().getY() >= 256 && packet.getDirection().equals(EnumFacing.UP)) {
+            // Check the position we are trying to place at is 255 or above, and we are placing on top of a block
+            if (packet.getPos().getY() >= 255 && packet.getDirection().equals(EnumFacing.UP)) {
+
                 // Send new packet with the place direction being down
                 mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(packet.getPos(), EnumFacing.DOWN, packet.getHand(), packet.getFacingX(), packet.getFacingY(), packet.getFacingZ()));
 

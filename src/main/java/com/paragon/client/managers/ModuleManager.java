@@ -37,7 +37,6 @@ public class ModuleManager {
                 // Combat
                 new Aura(),
                 new AutoCrystal(),
-                new AutoCrystalRewrite(),
                 new Blink(),
                 new Offhand(),
 

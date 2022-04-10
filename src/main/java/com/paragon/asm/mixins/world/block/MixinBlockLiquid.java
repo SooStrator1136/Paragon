@@ -17,8 +17,8 @@ public class MixinBlockLiquid {
         LiquidInteractEvent liquidInteractEvent = new LiquidInteractEvent();
         Paragon.INSTANCE.getEventBus().post(liquidInteractEvent);
 
-        if (liquidInteractEvent.isCancelled()) {
-            cir.setReturnValue(false);
+        if (liquidInteractEvent.isCancelled() || hitIfLiquid && state.getValue(BlockLiquid.LEVEL) == 0) {
+            cir.setReturnValue(true);
         }
     }
 

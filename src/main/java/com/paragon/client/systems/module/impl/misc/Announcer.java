@@ -39,7 +39,7 @@ public class Announcer extends Module {
             return;
         }
 
-        if (timer.hasTimePassed((long) (chatTimer.getValue() * 1000)) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
+        if (timer.hasTimePassed((long) chatTimer.getValue(), Timer.TimeFormat.SECONDS) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
             mc.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2]);
             announceComponents = new String[] { "", "0", ""};
 

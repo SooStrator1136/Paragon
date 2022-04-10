@@ -1,41 +1,64 @@
 package com.paragon.api.util.calculations;
 
-public class Timer {
+import com.paragon.api.util.Wrapper;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-    public long lastMS;
+public class Timer implements Wrapper {
 
-    public void reset() {
-        lastMS = System.currentTimeMillis();
-    }
-
-    public boolean hasTimePassed(long time) {
-        if ((System.currentTimeMillis() - lastMS) > time) {
-            reset();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean hasTimePassed(long time, boolean reset) {
-        if ((System.currentTimeMillis() - lastMS) > time) {
-            if (reset) {
-                reset();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
+    public long milliseconds;
+    public int tickCount;
 
     public Timer() {
-        this.lastMS = 0L;
+        milliseconds = -1;
+        tickCount = -1;
+
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public long getTime() {
-        return System.nanoTime() / 1000000L;
+    @SubscribeEvent
+    public void onClientTick(LivingEvent.LivingUpdateEvent event) {
+        if (nullCheck()) {
+            milliseconds = -1;
+            tickCount = -1;
+        } else {
+            tickCount++;
+        }
+    }
+
+    public boolean hasTimePassed(long time, TimeFormat format) {
+        switch (format) {
+            case MILLISECONDS:
+                return System.currentTimeMillis() - milliseconds > time;
+            case SECONDS:
+                return System.currentTimeMillis() - milliseconds > time * 1000;
+            case TICKS:
+                return tickCount > time;
+        }
+
+        return false;
+    }
+
+    public void reset() {
+        milliseconds = System.currentTimeMillis();
+    }
+
+    public enum TimeFormat {
+        /**
+         * Time in milliseconds
+         */
+        MILLISECONDS,
+
+        /**
+         * Time in seconds
+         */
+        SECONDS,
+
+        /**
+         * Time in in-game ticks
+         */
+        TICKS
     }
 
 }
