@@ -35,8 +35,10 @@
 
     "render.tileentity.MixinTileEntityRendererDispatcher",
 
+    "render.world.MixinBlockModelRenderer",
     "render.world.MixinRenderGlobal",
 
+    "world.block.MixinBlock",
     "world.block.MixinBlockLiquid",
     "world.block.MixinBlockSoulSand",
     "world.block.MixinBlockSlime",

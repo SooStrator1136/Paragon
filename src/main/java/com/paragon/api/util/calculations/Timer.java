@@ -30,11 +30,11 @@ public class Timer implements Wrapper {
     public boolean hasTimePassed(long time, TimeFormat format) {
         switch (format) {
             case MILLISECONDS:
-                return System.currentTimeMillis() - milliseconds > time;
+                return (System.currentTimeMillis() - milliseconds) >= time;
             case SECONDS:
-                return System.currentTimeMillis() - milliseconds > time * 1000;
+                return (System.currentTimeMillis() - milliseconds) >= (time * 1000);
             case TICKS:
-                return tickCount > time;
+                return tickCount >= time;
         }
 
         return false;

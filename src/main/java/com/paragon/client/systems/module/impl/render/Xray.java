@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Xray extends Module {
 
-    private List<Block> visibleBlocks = Arrays.asList(
+    private final List<Block> visibleBlocks = Arrays.asList(
             Blocks.DIAMOND_ORE,
             Blocks.IRON_ORE,
             Blocks.GOLD_ORE,
@@ -64,30 +64,26 @@ public class Xray extends Module {
 
     @Listener
     public void onFullCubeBlock(FullCubeBlockEvent event) {
-        if (visibleBlocks.contains(event.getBlock())) {
-            event.cancel();
-        }
+        event.setReturnValue(visibleBlocks.contains(event.getBlock()));
+        event.cancel();
     }
 
     @Listener
     public void onRenderBlockModel(RenderBlockModelEvent event) {
-        if (visibleBlocks.contains(BlockUtil.getBlockAtPos(event.getPos()))) {
-            event.cancel();
-        }
+        event.setReturnValue(!visibleBlocks.contains(BlockUtil.getBlockAtPos(event.getPos())));
+        event.cancel();
     }
 
     @Listener
     public void onRenderSmooth(RenderBlockSmoothEvent event) {
-        if (visibleBlocks.contains(BlockUtil.getBlockAtPos(event.getPos()))) {
-            event.cancel();
-        }
+        event.setReturnValue(!visibleBlocks.contains(BlockUtil.getBlockAtPos(event.getPos())));
+        event.cancel();
     }
 
     @Listener
     public void onSideRenderBlock(SideRenderBlockEvent event) {
-        if (visibleBlocks.contains(BlockUtil.getBlockAtPos(event.getPos()))) {
-            event.cancel();
-        }
+        event.setReturnValue(visibleBlocks.contains(BlockUtil.getBlockAtPos(event.getPos())));
+        event.cancel();
     }
 
 }

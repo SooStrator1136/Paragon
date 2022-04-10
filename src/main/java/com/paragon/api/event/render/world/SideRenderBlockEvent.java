@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 public class SideRenderBlockEvent extends CancellableEvent {
 
     private final BlockPos pos;
+    private boolean returnValue;
 
     public SideRenderBlockEvent(BlockPos pos) {
         this.pos = pos;
@@ -20,6 +21,22 @@ public class SideRenderBlockEvent extends CancellableEvent {
      */
     public BlockPos getPos() {
         return pos;
+    }
+
+    /**
+     * Gets the return value
+     * @return The return value
+     */
+    public boolean getReturnValue() {
+        return returnValue;
+    }
+
+    /**
+     * Sets the return value
+     * @param returnValue The return value
+     */
+    public void setReturnValue(boolean returnValue) {
+        this.returnValue = returnValue;
     }
 
 }

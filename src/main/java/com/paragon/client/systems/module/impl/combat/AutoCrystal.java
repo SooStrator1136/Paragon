@@ -996,7 +996,9 @@ public class AutoCrystal extends Module {
 
     @Override
     public String getModuleInfo() {
-        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() + EntityUtil.getTextColourFromEntityHealth(currentTarget) + " " + Math.round(currentTarget.getHealth() + currentTarget.getAbsorptionAmount()) + TextFormatting.GRAY + " DMG " + (isNotOverriding(currentTarget) ? "" : "[OVERRIDING] ") + (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));
+        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() +
+                " DMG " + (isNotOverriding(currentTarget) ? "" : "[OVERRIDING] ") +
+                (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));
     }
 
     public enum Order {

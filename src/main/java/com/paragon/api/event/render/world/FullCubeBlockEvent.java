@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 public class FullCubeBlockEvent extends CancellableEvent {
 
     private final Block block;
+    private boolean returnValue = false;
 
     public FullCubeBlockEvent(Block block) {
         this.block = block;
@@ -20,6 +21,22 @@ public class FullCubeBlockEvent extends CancellableEvent {
      */
     public Block getBlock() {
         return block;
+    }
+
+    /**
+     * Gets the return value
+     * @return The return value
+     */
+    public boolean getReturnValue() {
+        return returnValue;
+    }
+
+    /**
+     * Sets the return value
+     * @param returnValue The return value
+     */
+    public void setReturnValue(boolean returnValue) {
+        this.returnValue = returnValue;
     }
 
 }

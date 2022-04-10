@@ -151,6 +151,8 @@ public class Aura extends Module {
                     InventoryUtil.switchToSlot(oldSlot, false);
                 }
             }
+
+            attackTimer.reset();
         }
     }
 

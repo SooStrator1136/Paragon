@@ -60,6 +60,7 @@ public class ModuleManager {
                 new StorageESP(),
                 new Tracers(),
                 new ViewModel(),
+                new Xray(),
 
                 // Misc
                 new Announcer(),
