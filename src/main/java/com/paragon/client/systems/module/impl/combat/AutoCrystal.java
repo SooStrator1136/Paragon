@@ -86,6 +86,8 @@ public class AutoCrystal extends Module {
     public final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
     public final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals", 10, 0, 100, 1).setParentSetting(explode);
     public final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystals to explode", ExplodeFilter.SMART).setParentSetting(explode);
+    public final BooleanSetting inhibit = (BooleanSetting) new BooleanSetting("Inhibit", "Prevent excessive amounts of attacks on crystals", true).setParentSetting(explode);
+    public final NumberSetting inhibitMax = (NumberSetting) new NumberSetting("Inhibit Max", "When to start ignoring the crystals", 5, 1, 10, 1).setParentSetting(explode).setVisiblity(inhibit::isEnabled);
     public final NumberSetting explodeTicksExisted = (NumberSetting) new NumberSetting("Ticks Existed", "Check the amount of ticks the crystal has existed before exploding", 0, 0, 5, 1).setParentSetting(explode);
     public final BooleanSetting explodeRaytrace = (BooleanSetting) new BooleanSetting("Raytrace", "Checks that you can raytrace to the crystal", false).setParentSetting(explode);
     public final ModeSetting<Rotate> explodeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "How to rotate to the crystal", Rotate.PACKET).setParentSetting(explode);
@@ -137,11 +139,11 @@ public class AutoCrystal extends Module {
     // List of crystals we have placed
     private final List<BlockPos> selfPlacedCrystals = new ArrayList<>();
 
-    // List of crystals we have attempted to explode
-    private final List<BlockPos> selfExplodedCrystals = new ArrayList<>();
-
     // The current action we are performing
     private ActionState currentActionState = ActionState.PLACING;
+
+    // Map of crystals we have attacked. Key is ID, Value is the amount of times we have attacked it
+    private final Map<Integer, Integer> inhibitMap = new HashMap<>();
 
     public AutoCrystal() {
         super("AutoCrystal", ModuleCategory.COMBAT, "Automatically places and explodes crystals");
@@ -626,8 +628,10 @@ public class AutoCrystal extends Module {
                     }
 
                     // We have already tried to explode this crystal
-                    if (selfExplodedCrystals.contains(entity.getPosition())) {
+                    if (inhibitMap.containsKey(entity.getEntityId()) && inhibitMap.get(entity.getEntityId()) > inhibitMax.getValue()) {
                         continue;
+                    } else {
+                        inhibitMap.put(entity.getEntityId(), inhibitMap.getOrDefault(entity.getEntityId(), 0) + 1);
                     }
 
                     // If it's too far away, ignore
@@ -1001,7 +1005,7 @@ public class AutoCrystal extends Module {
         this.currentCrystal = null;
         this.currentPlacement = null;
         this.selfPlacedCrystals.clear();
-        this.selfExplodedCrystals.clear();
+        this.inhibitMap.clear();
     }
 
     @Override
