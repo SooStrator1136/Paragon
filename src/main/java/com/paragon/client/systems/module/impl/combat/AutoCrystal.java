@@ -414,7 +414,7 @@ public class AutoCrystal extends Module {
         // Check we want to explode
         if (explode.isEnabled()) {
             // Check we have a crystal to explode, and the timer has passed the required value
-            if (currentCrystal != null && explodeTimer.hasTimePassed((long) explodeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+            if (currentCrystal != null && explodeTimer.hasTimePassed((long) explodeDelay.getValue(), Timer.TimeFormat.TICKS)) {
                 // Get our current slot so we can switch back
                 int antiWeaknessSlot = mc.player.inventory.currentItem;
 
@@ -502,7 +502,7 @@ public class AutoCrystal extends Module {
      */
     public void placeSearchedPosition() {
         // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
-        if (currentPlacement != null && placeTimer.hasTimePassed((long) placeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+        if (currentPlacement != null && placeTimer.hasTimePassed((long) placeDelay.getValue(), Timer.TimeFormat.TICKS)) {
             boolean hasSwitched = false;
             int oldSlot = mc.player.inventory.currentItem;
 
@@ -912,7 +912,7 @@ public class AutoCrystal extends Module {
         }
 
         // Iterate through entities in the block above
-        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(0, 1, 0)))) {
+        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.up()))) {
             // If the entity is dead, or we aren't multiplacing, continue
             if (entity.isDead || !multiplace.isEnabled() && entity instanceof EntityEnderCrystal) {
                 continue;

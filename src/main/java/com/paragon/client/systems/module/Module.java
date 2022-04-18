@@ -7,7 +7,6 @@ import com.paragon.client.systems.feature.Feature;
 import com.paragon.client.systems.module.hud.impl.HArrayList;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import com.paragon.client.systems.ui.animation.Animation;
-import com.paragon.client.systems.module.impl.client.HUD;
 import com.paragon.client.systems.module.settings.Setting;
 import com.paragon.client.systems.module.settings.impl.KeybindSetting;
 import net.minecraftforge.common.MinecraftForge;

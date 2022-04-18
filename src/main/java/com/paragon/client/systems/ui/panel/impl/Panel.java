@@ -11,7 +11,6 @@ import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;

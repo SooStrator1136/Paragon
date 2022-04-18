@@ -7,6 +7,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.asm.mixins.accessor.IRenderManager;
+import com.paragon.client.shader.shaders.DiagonalShader;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.shader.shaders.SmoothShader;
 import com.paragon.client.systems.module.Module;
@@ -37,11 +38,9 @@ public class StorageESP extends Module {
     private final BooleanSetting chests = new BooleanSetting("Chests", "Highlight chests", true);
     private final BooleanSetting shulkers = new BooleanSetting("Shulkers", "Highlight shulker boxes", true);
     private final BooleanSetting enderChests = new BooleanSetting("Ender Chests", "Highlight Ender Chests", true);
-    private final BooleanSetting furnaces = new BooleanSetting("Furnaces", "Highlight furnaces", true);
 
     private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to highlight the block", Mode.SHADER);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 2, 0.1f);
-    private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
+    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 5, 0.1f);
 
     // Shader settings
     private final ModeSetting<FragShader> shader = (ModeSetting<FragShader>) new ModeSetting<>("Shader", "The shader to use", FragShader.OUTLINE)
@@ -58,16 +57,25 @@ public class StorageESP extends Module {
     private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
             .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && !shader.getCurrentMode().equals(FragShader.SMOOTH) || mode.getCurrentMode().equals(Mode.BOX));
 
+    // Diagonal shader
+    private final NumberSetting diagonalSpeed = (NumberSetting) new NumberSetting("Speed", "The speed at which the shader moves", 0.01f, 0.01f, 0.3f, 0.01f)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.DIAGONAL));
+
+    // Colour setting
+    private final ColourSetting colour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255))
+            .setVisiblity(() -> !mode.getCurrentMode().equals(Mode.SHADER) || shader.getCurrentMode().equals(FragShader.OUTLINE) || shader.getCurrentMode().equals(FragShader.DIAGONAL));
+
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
 
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
     private final SmoothShader smoothShader = new SmoothShader();
+    private final DiagonalShader diagonalShader = new DiagonalShader();
 
     public StorageESP() {
         super("StorageESP", ModuleCategory.RENDER, "Highlights storage blocks in the world");
-        this.addSettings(chests, shulkers, enderChests, furnaces, mode, lineWidth, colour);
+        this.addSettings(chests, shulkers, enderChests, mode, lineWidth, colour);
     }
 
     @Override
@@ -147,11 +155,19 @@ public class StorageESP extends Module {
                     outlineShader.setFill(fill.isEnabled() ? 1 : 0);
                     outlineShader.startShader();
                     break;
+
                 case SMOOTH:
                     smoothShader.setColor(smoothShaderColour.getCurrentMode().getType());
                     smoothShader.setWidth(lineWidth.getValue());
                     smoothShader.setOutline(outline.isEnabled() ? 1 : 0);
                     smoothShader.startShader();
+                    break;
+
+                case DIAGONAL:
+                    diagonalShader.setColour(colour.getColour());
+                    diagonalShader.setLineWidth(lineWidth.getValue());
+                    diagonalShader.startShader();
+                    diagonalShader.setTime(diagonalShader.getTime() + diagonalSpeed.getValue());
                     break;
             }
 
@@ -200,7 +216,7 @@ public class StorageESP extends Module {
     }
 
     public boolean isStorageValid(TileEntity tileEntity) {
-        /* if (tileEntity instanceof TileEntityChest) {
+        if (tileEntity instanceof TileEntityChest) {
             return chests.isEnabled();
         }
 
@@ -211,10 +227,6 @@ public class StorageESP extends Module {
         if (tileEntity instanceof TileEntityEnderChest) {
             return enderChests.isEnabled();
         }
-
-        if (tileEntity instanceof TileEntityFurnace) {
-            return furnaces.isEnabled();
-        } */
 
         return true;
     }
@@ -245,7 +257,12 @@ public class StorageESP extends Module {
         /**
          * Draw a smooth fill and optional outline with colour based on the entity's position on the screen
          */
-        SMOOTH
+        SMOOTH,
+
+        /**
+         * Some weird diagonal line thing
+         */
+        DIAGONAL
     }
 
     public enum SmoothShaderColour {

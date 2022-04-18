@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.impl.Panel;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.ClientFont;
@@ -24,6 +25,8 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     // The tooltip being rendered
     public static String tooltip = "";
+
+    private Animation animation = new Animation(100, false);
 
     public PanelGUI() {
         // X position of panel
@@ -131,11 +134,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         int dWheel = Mouse.getDWheel();
 
         for (Panel panel : panels) {
-            if (dWheel > 0) {
-                panel.setY(panel.getY() - ClickGUI.scrollSpeed.getValue());
-            } else if (dWheel < 0) {
-                panel.setY(panel.getY() + ClickGUI.scrollSpeed.getValue());
-            }
+            panel.setY(panel.getY() + (dWheel / 100f) * ClickGUI.scrollSpeed.getValue());
         }
     }
 

@@ -18,6 +18,8 @@ public class Shader implements Wrapper {
     private int program;
     private Map<String, Integer> uniforms;
 
+    private double time;
+
     public Shader(String path) {
         int vertex = 0;
         int fragment = 0;
@@ -103,6 +105,14 @@ public class Shader implements Wrapper {
 
     public int getUniform(String name) {
         return uniforms.get(name);
+    }
+
+    public double getTime() {
+        return time;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
     }
 
 }

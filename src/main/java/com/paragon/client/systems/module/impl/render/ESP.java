@@ -11,6 +11,7 @@ import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.asm.mixins.accessor.IShaderGroup;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.shader.shaders.SmoothShader;
+import com.paragon.client.shader.shaders.DiagonalShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.*;
@@ -51,8 +52,7 @@ public class ESP extends Module {
 
     // Render settings
     private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.SHADER);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 2, 0.1f);
-    private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
+    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 8, 0.1f);
 
     // Shader settings
     private final ModeSetting<FragShader> shader = (ModeSetting<FragShader>) new ModeSetting<>("Shader", "The shader to use", FragShader.OUTLINE)
@@ -62,12 +62,19 @@ public class ESP extends Module {
     private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the fill", true)
             .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
 
+    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.OUTLINE));
+
     // Smooth shader
     private final ModeSetting<SmoothShaderColour> smoothShaderColour = (ModeSetting<SmoothShaderColour>) new ModeSetting<>("Smooth Colour", "The colour to use for the smooth shader", SmoothShaderColour.POSITION)
             .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
 
-    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && !shader.getCurrentMode().equals(FragShader.SMOOTH));
+    // Diagonal shader
+    private final NumberSetting diagonalSpeed = (NumberSetting) new NumberSetting("Speed", "The speed at which the shader moves", 0.01f, 0.01f, 0.3f, 0.01f)
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.DIAGONAL));
+
+    private final ColourSetting colour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255))
+            .setVisiblity(() -> !mode.getCurrentMode().equals(Mode.SHADER) || shader.getCurrentMode().equals(FragShader.OUTLINE) || shader.getCurrentMode().equals(FragShader.DIAGONAL));
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
@@ -75,6 +82,7 @@ public class ESP extends Module {
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
     private final SmoothShader smoothShader = new SmoothShader();
+    private final DiagonalShader diagonalShader = new DiagonalShader();
 
     public ESP() {
         super("ESP", ModuleCategory.RENDER, "Highlights entities in the world");
@@ -147,11 +155,19 @@ public class ESP extends Module {
                     outlineShader.setFill(fill.isEnabled() ? 1 : 0);
                     outlineShader.startShader();
                     break;
+
                 case SMOOTH:
                     smoothShader.setColor(smoothShaderColour.getCurrentMode().getType());
                     smoothShader.setWidth(lineWidth.getValue());
                     smoothShader.setOutline(outline.isEnabled() ? 1 : 0);
                     smoothShader.startShader();
+                    break;
+
+                case DIAGONAL:
+                    diagonalShader.setColour(colour.getColour());
+                    diagonalShader.setLineWidth(lineWidth.getValue());
+                    diagonalShader.startShader();
+                    diagonalShader.setTime(diagonalShader.getTime() + diagonalSpeed.getValue());
                     break;
             }
 
@@ -290,7 +306,12 @@ public class ESP extends Module {
         /**
          * Draw a smooth fill and optional outline with colour based on the entity's position on the screen
          */
-        SMOOTH
+        SMOOTH,
+
+        /**
+         * Some weird diagonal line thing
+         */
+        DIAGONAL
     }
 
     public enum SmoothShaderColour {
