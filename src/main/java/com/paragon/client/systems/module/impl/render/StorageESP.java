@@ -6,7 +6,6 @@ import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
-import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.client.shader.shaders.DiagonalShader;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.shader.shaders.SmoothShader;
@@ -21,7 +20,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -40,7 +38,7 @@ public class StorageESP extends Module {
     private final BooleanSetting enderChests = new BooleanSetting("Ender Chests", "Highlight Ender Chests", true);
 
     private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to highlight the block", Mode.SHADER);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 2, 0.1f, 5, 0.1f);
+    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 1, 0.1f, 8, 0.1f);
 
     // Shader settings
     private final ModeSetting<FragShader> shader = (ModeSetting<FragShader>) new ModeSetting<>("Shader", "The shader to use", FragShader.OUTLINE)
@@ -55,7 +53,7 @@ public class StorageESP extends Module {
             .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
 
     private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && !shader.getCurrentMode().equals(FragShader.SMOOTH) || mode.getCurrentMode().equals(Mode.BOX));
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.OUTLINE) || mode.getCurrentMode().equals(Mode.BOX));
 
     // Diagonal shader
     private final NumberSetting diagonalSpeed = (NumberSetting) new NumberSetting("Speed", "The speed at which the shader moves", 0.01f, 0.01f, 0.3f, 0.01f)
