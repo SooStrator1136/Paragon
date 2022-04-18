@@ -18,9 +18,7 @@ void main() {
         float x = time + gl_FragCoord.x / size;
         float y = gl_FragCoord.y / size;
 
-        float sum = x + y;
-
-        if (int(mod(float(sum), float(2))) == 0) {
+        if (int(mod(float(x + y), float(2))) == 0) {
             gl_FragColor = colour;
         } else {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);

@@ -29,6 +29,7 @@ public class Paragon {
     // Client stuff
     private Logger logger;
     private final EventBus eventBus = new EventBus();
+    private DiscordPresenceManager presenceManager = new DiscordPresenceManager();
 
     // Managers
     private FontManager fontManager;
@@ -98,6 +99,14 @@ public class Paragon {
      */
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    /**
+     * Gets the presence manager
+     * @return The presence manager
+     */
+    public DiscordPresenceManager getPresenceManager() {
+        return presenceManager;
     }
 
     /**

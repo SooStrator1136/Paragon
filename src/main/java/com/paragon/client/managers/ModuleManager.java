@@ -84,6 +84,7 @@ public class ModuleManager {
                 new ClientFont(),
                 new Colours(),
                 new ClickGUI(),
+                new DiscordRPC(),
                 new HUD(),
 
                 // HUD
