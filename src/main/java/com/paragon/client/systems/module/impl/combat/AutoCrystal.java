@@ -414,7 +414,11 @@ public class AutoCrystal extends Module {
         // Check we want to explode
         if (explode.isEnabled()) {
             // Check we have a crystal to explode, and the timer has passed the required value
-            if (currentCrystal != null && explodeTimer.hasTimePassed((long) explodeDelay.getValue(), Timer.TimeFormat.TICKS)) {
+            if (currentCrystal != null) {
+                if (!explodeTimer.hasTimePassed((long) explodeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+                    return;
+                }
+
                 // Get our current slot so we can switch back
                 int antiWeaknessSlot = mc.player.inventory.currentItem;
 
@@ -493,6 +497,8 @@ public class AutoCrystal extends Module {
                         }
                     }
                 }
+
+                explodeTimer.reset();
             }
         }
     }
@@ -502,7 +508,11 @@ public class AutoCrystal extends Module {
      */
     public void placeSearchedPosition() {
         // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
-        if (currentPlacement != null && placeTimer.hasTimePassed((long) placeDelay.getValue(), Timer.TimeFormat.TICKS)) {
+        if (currentPlacement != null) {
+            if (!placeTimer.hasTimePassed((long) placeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+                return;
+            }
+
             boolean hasSwitched = false;
             int oldSlot = mc.player.inventory.currentItem;
 
@@ -591,6 +601,8 @@ public class AutoCrystal extends Module {
                         break;
                 }
             }
+
+            placeTimer.reset();
         }
     }
 
@@ -812,9 +824,7 @@ public class AutoCrystal extends Module {
                 }
 
                 // We are overriding if the lowest durability is less or equal to the total armour value setting
-                if (lowest <= overrideTotalArmourValue.getValue()) {
-                    return false;
-                }
+                return !(lowest <= overrideTotalArmourValue.getValue());
             }
         }
 
