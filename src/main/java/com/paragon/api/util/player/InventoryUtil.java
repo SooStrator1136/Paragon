@@ -6,6 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.EnumHand;
 
@@ -113,6 +114,6 @@ public class InventoryUtil implements Wrapper {
     public static boolean isHoldingSword() {
         Item heldItem = mc.player.getHeldItemMainhand().getItem();
 
-        return heldItem == Items.WOODEN_SWORD || heldItem == Items.STONE_SWORD || heldItem == Items.IRON_SWORD || heldItem == Items.GOLDEN_SWORD || heldItem == Items.DIAMOND_SWORD;
+        return heldItem instanceof ItemSword;
     }
 }

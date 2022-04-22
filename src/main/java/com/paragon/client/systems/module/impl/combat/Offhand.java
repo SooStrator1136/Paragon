@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.combat;
 
+import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
@@ -10,171 +11,90 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.play.server.SPacketOpenWindow;
 
+/**
+ * @author Wolfsurge
+ */
 public class Offhand extends Module {
 
-    private final ModeSetting<Main> main = new ModeSetting<>("Main", "The item you want to prioritise the most", Main.TOTEM);
-    private final ModeSetting<Fallback> fallback = new ModeSetting<>("Fallback", "The item you want to switch to if you don't have the main item", Fallback.GAPPLE);
+    private final ModeSetting<ItemMode> priority = new ModeSetting<>("Priority", "The item we most want to use in the offhand", ItemMode.END_CRYSTAL);
+    private final ModeSetting<ItemMode> secondary = new ModeSetting<>("Secondary", "The item we want to use if we cannot find the main item", ItemMode.TOTEM_OF_UNDYING);
 
-    private final BooleanSetting strictInv = new BooleanSetting("Strict Inventory", "Fake opening your inventory", true);
-    private final BooleanSetting pauseMotion = new BooleanSetting("Pause motion", "Stop moving when swapping items", true);
+    private final BooleanSetting safety = new BooleanSetting("Safety", "Switch to a totem in certain scenarios", true);
+    private final BooleanSetting elytra = (BooleanSetting) new BooleanSetting("Elytra", "Switch to a totem when elytra flying", true).setParentSetting(safety);
+    private final BooleanSetting falling = (BooleanSetting) new BooleanSetting("Falling", "Switch to a totem when you are falling more than 3 blocks (you will take damage)", true).setParentSetting(safety);
+    private final BooleanSetting health = (BooleanSetting) new BooleanSetting("Health", "Switch to a totem when you are below a value", true).setParentSetting(safety);
+    private final NumberSetting healthValue = (NumberSetting) new NumberSetting("Health Value", "The value we want to switch to a totem when you are below", 10, 0, 20, 1).setParentSetting(safety).setVisiblity(health::isEnabled);
+    private final BooleanSetting lava = (BooleanSetting) new BooleanSetting("Lava", "Switch to a totem when you are in lava", true).setParentSetting(safety);
+    private final BooleanSetting fire = (BooleanSetting) new BooleanSetting("Fire", "Switch to a totem when you are on fire", false).setParentSetting(safety);
 
-    private final BooleanSetting safety = new BooleanSetting("Safety", "Switch to totems when certain things happen", true);
-    private final BooleanSetting elytra = (BooleanSetting) new BooleanSetting("Elytra", "Switch to a totem when flying with an elytra", false).setParentSetting(safety);
-    private final BooleanSetting fall = (BooleanSetting) new BooleanSetting("Falling", "Switch to a totem when falling", true).setParentSetting(safety);
-    private final BooleanSetting lowHealth = (BooleanSetting) new BooleanSetting("Low Health", "Switch to a totem when on low health", true).setParentSetting(safety);
-    private final NumberSetting lowHealthValue = (NumberSetting) new NumberSetting("Health", "The health to switch to totems", 10, 1, 20, 1).setParentSetting(safety).setVisiblity(lowHealth::isEnabled);
+    private final NumberSetting delay = new NumberSetting("Delay", "The delay between switching items", 0, 0, 200, 1);
 
-    private boolean hasJustPausedMotion = false;
+    private final BooleanSetting inventorySpoof = new BooleanSetting("Inventory Spoof", "Spoof opening your inventory", true);
+
+    private final Timer switchTimer = new Timer();
 
     public Offhand() {
-        super("Offhand", ModuleCategory.COMBAT, "Automatically manages the items in your offhand");
-        this.addSettings(main, fallback, strictInv, pauseMotion, safety);
+        super("Offhand", ModuleCategory.COMBAT, "Manages the item in your offhand");
+        this.addSettings(priority, secondary, safety, delay, inventorySpoof);
     }
 
     @Override
     public void onTick() {
-        if (nullCheck() || mc.currentScreen != null) {
+        if (nullCheck() || mc.player.getHeldItemOffhand().getItem().equals(priority.getCurrentMode().getItem()) || mc.player.getHeldItemOffhand().getItem().equals(secondary.getCurrentMode().getItem())) {
             return;
         }
 
-        // Get the item we want to switch to
-        Item itemToSwitch = getItemToSwitch(false);
+        if (switchTimer.hasTimePassed((long) delay.getValue() / 10, Timer.TimeFormat.SECONDS)) {
+            int switchItemSlot = InventoryUtil.getItemSlot(priority.getCurrentMode().getItem());
 
-        // Do fallback
-        if (itemToSwitch == null) {
-            itemToSwitch = getItemToSwitch(true);
-        }
+            if (switchItemSlot == -1) {
+                switchItemSlot = InventoryUtil.getItemSlot(secondary.getCurrentMode().getItem());
+            }
 
-        // Cancel if we are already holding the item
-        if (mc.player.getHeldItemOffhand().getItem() == itemToSwitch) {
-            return;
-        }
+            if (safety.isEnabled()) {
+                if (elytra.isEnabled() && mc.player.isElytraFlying() || falling.isEnabled() && mc.player.fallDistance > 3 || health.isEnabled() && mc.player.getHealth() < healthValue.getValue() || lava.isEnabled() && mc.player.isInLava() || fire.isEnabled() && mc.player.isBurning()) {
+                    switchItemSlot = InventoryUtil.getItemSlot(Items.TOTEM_OF_UNDYING);
+                }
+            }
 
-        // Get item slot
-        int slot = InventoryUtil.getItemSlot(itemToSwitch);
+            if (switchItemSlot != -1) {
+                if (inventorySpoof.isEnabled()) {
+                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+                }
 
-        // Return if we couldn't find an item
-        if (slot == -1) {
-            return;
-        }
+                InventoryUtil.swapOffhand(switchItemSlot);
 
-        // Open inventory
-        if (strictInv.isEnabled()) {
-            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
-        }
+                if (inventorySpoof.isEnabled()) {
+                    mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+                }
+            }
 
-        // Pause movement
-        if (pauseMotion.isEnabled() && !hasJustPausedMotion) {
-            mc.player.motionX = 0;
-            mc.player.motionZ = 0;
-            mc.player.setVelocity(0, mc.player.motionY, 0);
-            hasJustPausedMotion = true;
-            return;
-        }
-
-        // Swap item
-        InventoryUtil.swapOffhand(slot);
-
-        // Close inventory
-        if (strictInv.isEnabled()) {
-            mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+            switchTimer.reset();
         }
     }
 
-    /**
-     * Gets the item to switch to
-     * @return The item to switch to
-     */
-    private Item getItemToSwitch(boolean fallbackItem) {
-        if (safety.isEnabled()) {
-            // Prioritise low health
-            if (lowHealth.isEnabled()) {
-                if (mc.player.getHealth() <= lowHealthValue.getValue()) {
-                    return Items.TOTEM_OF_UNDYING;
-                }
-            }
-
-            if (fall.isEnabled()) {
-                // We will take fall damage
-                if (mc.player.fallDistance > 3) {
-                    return Items.TOTEM_OF_UNDYING;
-                }
-            }
-
-            if (elytra.isEnabled()) {
-                // We are flying with an elytra
-                if (mc.player.isElytraFlying()) {
-                    return Items.TOTEM_OF_UNDYING;
-                }
-            }
-        }
-
-        if (!fallbackItem) {
-            // Get main item
-            return main.getCurrentMode().getItem();
-        } else {
-            // Get fallback item
-            return fallback.getCurrentMode().getItem();
-        }
+    @Override
+    public String getModuleInfo() {
+        return " " + InventoryUtil.getCountOfItem(priority.getCurrentMode().getItem(), false) + ", " + InventoryUtil.getCountOfItem(secondary.getCurrentMode().getItem(), false);
     }
 
-    public enum Main {
-        /**
-         * Switch to totem
-         */
-        TOTEM(Items.TOTEM_OF_UNDYING),
+    public enum ItemMode {
+        TOTEM_OF_UNDYING(Items.TOTEM_OF_UNDYING),
+        END_CRYSTAL(Items.END_CRYSTAL),
+        GAPPLE(Items.GOLDEN_APPLE);
 
-        /**
-         * Switch to gapple
-         */
-        GAPPLE(Items.GOLDEN_APPLE),
+        // The item we want to switch to
+        private final Item item;
 
-        /**
-         * Switch to crystal
-         */
-        CRYSTAL(Items.END_CRYSTAL);
-
-        private Item item;
-
-        Main(Item item) {
+        ItemMode(Item item) {
             this.item = item;
         }
 
         /**
-         * Gets the item to switch to
-         * @return The item to switch to
-         */
-        public Item getItem() {
-            return item;
-        }
-    }
-
-    public enum Fallback {
-        /**
-         * Switch to totem
-         */
-        TOTEM(Items.TOTEM_OF_UNDYING),
-
-        /**
-         * Switch to gapple
-         */
-        GAPPLE(Items.GOLDEN_APPLE),
-
-        /**
-         * Switch to crystal
-         */
-        CRYSTAL(Items.END_CRYSTAL);
-
-        private Item item;
-
-        Fallback(Item item) {
-            this.item = item;
-        }
-
-        /**
-         * Gets the item to switch to
-         * @return The item to switch to
+         * Gets the item we want to switch to
+         * @return The item we want to switch to
          */
         public Item getItem() {
             return item;

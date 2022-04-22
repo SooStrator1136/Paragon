@@ -70,8 +70,8 @@ public class ColourComponent extends SettingComponent {
         RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 12, mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
         GL11.glPushMatrix();
-        GL11.glScalef(0.7f, 0.7f, 0.7f);
-        float scaleFactor = 1 / 0.7f;
+        GL11.glScalef(0.65f, 0.65f, 0.65f);
+        float scaleFactor = 1 / 0.65f;
         renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4) * scaleFactor, -1);
         GL11.glScalef(scaleFactor, scaleFactor, scaleFactor);
         GL11.glScalef(0.5f, 0.5f, 0.5f);

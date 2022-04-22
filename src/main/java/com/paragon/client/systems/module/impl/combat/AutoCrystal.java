@@ -11,6 +11,7 @@ import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
+import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
@@ -562,22 +563,15 @@ public class AutoCrystal extends Module {
                 Paragon.INSTANCE.getRotationManager().addRotation(rotation);
             }
 
-            // The hand we will place with
-            EnumHand placeHand = EnumHand.MAIN_HAND;
+            // Let's call this, it fixes the packet place bug, and it shouldn't do anything bad afaik.
+            ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
 
-            // If we want to place when holding, get the hand that is holding crystals
-            if (placeWhen.getCurrentMode().equals(When.HOLDING)) {
-                placeHand = InventoryUtil.getHandHolding(Items.END_CRYSTAL);
-            }
-
-            if (placeHand != null) {
-                if (placePacket.isEnabled()) {
-                    // Send place packet
-                    mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeHand, 0, 0, 0));
-                } else {
-                    // Place crystal
-                    mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeHand);
-                }
+            if (placePacket.isEnabled()) {
+                // Send place packet
+                mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND, (float) currentPlacement.facingVec.x, (float) currentPlacement.facingVec.y, (float) currentPlacement.facingVec.z));
+            } else {
+                // Place crystal
+                mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND);
             }
 
             // Swing arm
@@ -653,7 +647,7 @@ public class AutoCrystal extends Module {
                     Crystal calculatedCrystal = new Crystal((EntityEnderCrystal) entity, calculateDamage(vec, currentTarget), calculateDamage(vec, mc.player));
 
                     // Position of crystal
-                    CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, new double[]{ 0, 0, 0 }, calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
+                    CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, new Vec3d(0, 0, 0), calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
 
                     if (isNotOverriding(currentTarget)) {
                         // Check it meets our filter
@@ -736,7 +730,7 @@ public class AutoCrystal extends Module {
 
                 // Get the direction we want to face
                 EnumFacing facing = EnumFacing.getDirectionFromEntityLiving(pos, mc.player);
-                double[] facingVec = new double[3];
+                Vec3d facingVec = null;
                 RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).addVector(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);;
                 RayTraceResult laxResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).addVector(0.5, 0.5, 0.5));
 
@@ -752,9 +746,7 @@ public class AutoCrystal extends Module {
 
                 // Get angles
                 if (rayTraceResult != null && rayTraceResult.hitVec != null) {
-                    facingVec[0] = rayTraceResult.hitVec.x - pos.getX();
-                    facingVec[1] = rayTraceResult.hitVec.y - pos.getY();
-                    facingVec[2] = rayTraceResult.hitVec.z - pos.getZ();
+                    facingVec = new Vec3d(rayTraceResult.hitVec.x - pos.getX(), rayTraceResult.hitVec.y - pos.getY(), rayTraceResult.hitVec.z - pos.getZ());
                 }
 
                 // Check we can raytrace to it
@@ -1251,7 +1243,7 @@ public class AutoCrystal extends Module {
         private final EnumFacing facing;
 
         // Rotation angles
-        private final double[] facingVec;
+        private final Vec3d facingVec;
 
         // The damage we do to the target
         private final float targetDamage;
@@ -1259,7 +1251,7 @@ public class AutoCrystal extends Module {
         // The damage we do to us
         private final float selfDamage;
 
-        public CrystalPosition(BlockPos position, EnumFacing facing, double[] facingVec, float targetDamage, float selfDamage) {
+        public CrystalPosition(BlockPos position, EnumFacing facing, Vec3d facingVec, float targetDamage, float selfDamage) {
             this.position = position;
             this.facing = facing;
             this.facingVec = facingVec;

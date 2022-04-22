@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "accessor.ICPacketCloseWindow",
+    "accessor.ICPacketPlayer",
     "accessor.IEntity",
     "accessor.IEntityRenderer",
     "accessor.IMinecraft",

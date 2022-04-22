@@ -23,9 +23,9 @@ public class BooleanComponent extends SettingComponent {
 
         // Render setting name
         GL11.glPushMatrix();
-        GL11.glScalef(0.7f, 0.7f, 0.7f);
-        float scaleFactor = 1 / 0.7f;
-        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4) * scaleFactor, ((BooleanSetting) getSetting()).isEnabled() ? Colours.mainColour.getColour().getRGB() : -1);
+        GL11.glScalef(0.65f, 0.65f, 0.65f);
+        float scaleFactor = 1 / 0.65f;
+        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4f) * scaleFactor, ((BooleanSetting) getSetting()).isEnabled() ? Colours.mainColour.getColour().getRGB() : -1);
         GL11.glPopMatrix();
 
         super.renderSetting(mouseX, mouseY);
