@@ -6,9 +6,7 @@ import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
-import com.paragon.client.shader.shaders.DiagonalShader;
 import com.paragon.client.shader.shaders.OutlineShader;
-import com.paragon.client.shader.shaders.SmoothShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -37,39 +35,24 @@ public class StorageESP extends Module {
     private final BooleanSetting shulkers = new BooleanSetting("Shulkers", "Highlight shulker boxes", true);
     private final BooleanSetting enderChests = new BooleanSetting("Ender Chests", "Highlight Ender Chests", true);
 
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to highlight the block", Mode.SHADER);
+    // Render settings
+    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.SHADER);
     private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 1, 0.1f, 8, 0.1f);
-
-    // Shader settings
-    private final ModeSetting<FragShader> shader = (ModeSetting<FragShader>) new ModeSetting<>("Shader", "The shader to use", FragShader.OUTLINE)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
 
     // Outline shader
     private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the fill", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH) || mode.getCurrentMode().equals(Mode.BOX));
-
-    // Smooth shader
-    private final ModeSetting<SmoothShaderColour> smoothShaderColour = (ModeSetting<SmoothShaderColour>) new ModeSetting<>("Smooth Colour", "The colour to use for the smooth shader", SmoothShaderColour.POSITION)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.SMOOTH));
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
 
     private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.OUTLINE) || mode.getCurrentMode().equals(Mode.BOX));
+            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
 
-    // Diagonal shader
-    private final NumberSetting diagonalSpeed = (NumberSetting) new NumberSetting("Speed", "The speed at which the shader moves", 0.01f, 0.01f, 0.3f, 0.01f)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER) && shader.getCurrentMode().equals(FragShader.DIAGONAL));
-
-    // Colour setting
-    private final ColourSetting colour = (ColourSetting) new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255))
-            .setVisiblity(() -> !mode.getCurrentMode().equals(Mode.SHADER) || shader.getCurrentMode().equals(FragShader.OUTLINE) || shader.getCurrentMode().equals(FragShader.DIAGONAL));
+    private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
 
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
-    private final SmoothShader smoothShader = new SmoothShader();
-    private final DiagonalShader diagonalShader = new DiagonalShader();
 
     public StorageESP() {
         super("StorageESP", ModuleCategory.RENDER, "Highlights storage blocks in the world");
@@ -145,29 +128,12 @@ public class StorageESP extends Module {
             RenderHelper.disableStandardItemLighting();
             GlStateManager.pushMatrix();
 
-            // Render shaders
-            switch (shader.getCurrentMode()) {
-                case OUTLINE:
-                    outlineShader.setColor(colour.getColour());
-                    outlineShader.setWidth(lineWidth.getValue());
-                    outlineShader.setFill(fill.isEnabled() ? 1 : 0);
-                    outlineShader.startShader();
-                    break;
-
-                case SMOOTH:
-                    smoothShader.setColor(smoothShaderColour.getCurrentMode().getType());
-                    smoothShader.setWidth(lineWidth.getValue());
-                    smoothShader.setOutline(outline.isEnabled() ? 1 : 0);
-                    smoothShader.startShader();
-                    break;
-
-                case DIAGONAL:
-                    diagonalShader.setColour(colour.getColour());
-                    diagonalShader.setLineWidth(lineWidth.getValue());
-                    diagonalShader.startShader();
-                    diagonalShader.setTime(diagonalShader.getTime() + diagonalSpeed.getValue());
-                    break;
-            }
+            // Render shader
+            outlineShader.setColour(colour.getColour());
+            outlineShader.setWidth(lineWidth.getValue());
+            outlineShader.setFill(fill.isEnabled() ? 1 : 0);
+            outlineShader.setOutline(outline.isEnabled() ? 1 : 0);
+            outlineShader.startShader();
 
             mc.entityRenderer.setupOverlayRendering();
 
@@ -226,7 +192,7 @@ public class StorageESP extends Module {
             return enderChests.isEnabled();
         }
 
-        return true;
+        return false;
     }
 
     public enum Mode {
@@ -244,50 +210,6 @@ public class StorageESP extends Module {
          * Uses GL Stencil to outline the storage block
          */
         OUTLINE
-    }
-
-    public enum FragShader {
-        /**
-         * Outline the entity
-         */
-        OUTLINE,
-
-        /**
-         * Draw a smooth fill and optional outline with colour based on the entity's position on the screen
-         */
-        SMOOTH,
-
-        /**
-         * Some weird diagonal line thing
-         */
-        DIAGONAL
-    }
-
-    public enum SmoothShaderColour {
-        /**
-         * Sets colour based on entity's position on the screen
-         */
-        POSITION(1),
-
-        /**
-         * Sets colour based on player's yaw
-         */
-        YAW(2),
-
-        /**
-         * Sets colour based on player's pitch
-         */
-        PITCH(3);
-
-        private int type;
-
-        SmoothShaderColour(int type) {
-            this.type = type;
-        }
-
-        public int getType() {
-            return type;
-        }
     }
 
 }

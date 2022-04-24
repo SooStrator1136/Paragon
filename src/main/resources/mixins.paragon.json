@@ -2,7 +2,7 @@
   "required": true,
   "package": "com.paragon.asm.mixins",
   "refmap": "mixins.paragon.refmap.json",
-  "minVersion": "0.7.4",
+  "minVersion": "0.7.11",
   "compatibilityLevel": "JAVA_8",
   "client": [
     "accessor.ICPacketCloseWindow",

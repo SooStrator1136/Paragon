@@ -86,17 +86,6 @@ public class Aura extends Module {
 
                 // Check we want to attack
                 switch (when.getCurrentMode()) {
-                    case SILENT_SWITCH:
-                        // If we aren't holding a sword, switch to it
-                        if (!InventoryUtil.isHoldingSword()) {
-                            int swordSlot = InventoryUtil.getItemSlot(Items.DIAMOND_SWORD);
-
-                            if (swordSlot > -1) {
-                                InventoryUtil.switchToSlot(swordSlot, true);
-                            } else {
-                                return;
-                            }
-                        }
                     case SWITCH:
                         // If we aren't holding a sword, switch to it
                         if (!InventoryUtil.isHoldingSword()) {

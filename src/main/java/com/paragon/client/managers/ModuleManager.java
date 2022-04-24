@@ -57,6 +57,7 @@ public class ModuleManager {
                 new HoleESP(),
                 new Nametags(),
                 new NoRender(),
+                new Shader(),
                 new StorageESP(),
                 new Tracers(),
                 new ViewModel(),

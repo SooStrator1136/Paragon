@@ -14,13 +14,11 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
-		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
 	}
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'com.github.johnrengelman.shadow'
 
 version = "1.0.0"
 group = "com.paragon"
@@ -48,7 +46,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.spongepowered:mixin:0.7.4-SNAPSHOT') {
+    compile('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
 		exclude module: 'launchwrapper'
 		exclude module: 'guava'
 		exclude module: 'gson'
@@ -75,29 +73,9 @@ processResources {
 	}
 }
 
-shadowJar {
-	dependencies {
-		include(dependency('org.spongepowered:mixin'))
-		include(dependency('org.json:json'))
-		include(dependency('com.github.Litarvan:OpenAuth'))
-		include(dependency('club.minnced:discord-rpc'))
-	}
-
-	exclude 'dummyThing'
-	exclude 'LICENSE.txt'
-	classifier = 'release'
-}
-
 mixin {
 	defaultObfuscationEnv searge
 	add sourceSets.main, 'mixins.paragon.refmap.json'
-}
-
-reobf {
-	shadowJar {
-		mappingType = 'SEARGE'
-		classpath = sourceSets.main.compileClasspath
-	}
 }
 
 jar {
@@ -113,5 +91,3 @@ jar {
 		)
 	}
 }
-
-build.dependsOn(shadowJar)

@@ -8,6 +8,7 @@ uniform vec4 colour;
 uniform float radius;
 
 uniform int fill;
+uniform int outline;
 
 void main() {
     vec4 centerCol = texture2D(texture, gl_TexCoord[0].xy);
@@ -18,7 +19,7 @@ void main() {
         } else {
             gl_FragColor = vec4(0, 0, 0, 0);
         }
-    } else {
+    } else if (outline == 1) {
         float closest = radius * 2.0F + 2.0F;
 
         for (float x = -radius; x <= radius; x++) {

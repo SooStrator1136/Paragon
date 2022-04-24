@@ -6,22 +6,22 @@ import java.awt.*;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class DiagonalShader extends Shader {
+public class DiamondsShader extends Shader {
 
-    private Color lineColour;
-    private float lineWidth;
+    private Color colour;
+    private float size;
     private float spacing;
 
-    public DiagonalShader() {
-        super("/assets/paragon/glsl/shaders/diagonal.frag");
+    public DiamondsShader() {
+        super("/assets/paragon/glsl/shaders/diamonds.frag");
     }
 
-    public void setColour(Color colour) {
-        lineColour = colour;
+    public void setColor(Color colour) {
+        this.colour = colour;
     }
 
-    public void setWidth(float width) {
-        lineWidth = width;
+    public void setSize(float size) {
+        this.size = size;
     }
 
     public void setSpacing(float spacing) {
@@ -35,9 +35,9 @@ public class DiagonalShader extends Shader {
         setupUniform("resolution");
         setupUniform("time");
 
-        setupUniform("colour");
         setupUniform("size");
         setupUniform("spacing");
+        setupUniform("colour");
     }
 
     @Override
@@ -47,8 +47,8 @@ public class DiagonalShader extends Shader {
         glUniform2f(getUniform("resolution"), mc.displayWidth, mc.displayHeight);
         glUniform1f(getUniform("time"), (float) getTime());
 
-        glUniform4f(getUniform("colour"), lineColour.getRed() / 255f, lineColour.getGreen() / 255f, lineColour.getBlue() / 255f, lineColour.getAlpha() / 255f);
-        glUniform1f(getUniform("size"), lineWidth);
+        glUniform4f(getUniform("colour"), colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue() / 255f, colour.getAlpha() / 255f);
+        glUniform1f(getUniform("size"), size);
         glUniform1f(getUniform("spacing"), spacing);
     }
 }
