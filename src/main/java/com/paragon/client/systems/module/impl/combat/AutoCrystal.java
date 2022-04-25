@@ -18,10 +18,7 @@ import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.settings.impl.*;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -42,6 +39,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.*;
@@ -107,6 +105,7 @@ public class AutoCrystal extends Module {
     public final NumberSetting overrideHealthValue = (NumberSetting) new NumberSetting("Override Health", "If the targets health is this value or below, ignore minimum damage", 10, 0, 36, 1).setParentSetting(override).setVisiblity(() -> override.isEnabled());
     public final BooleanSetting overrideTotalArmour = (BooleanSetting) new BooleanSetting("Armour", "Override if the target's total armour durability is below a certain value", true).setParentSetting(override);
     public final NumberSetting overrideTotalArmourValue = (NumberSetting) new NumberSetting("Armour Value", "The value which we will start to override at (in %)", 10, 0, 100, 1).setParentSetting(override);
+    public final KeybindSetting forceOverride = (KeybindSetting) new KeybindSetting("Force Override", "Force override when you press a key", Keyboard.KEY_NONE).setParentSetting(override);
 
     // Pause settings
     public final BooleanSetting pause = new BooleanSetting("Pause", "Pause if certain things are happening", true);
@@ -649,7 +648,7 @@ public class AutoCrystal extends Module {
                     // Position of crystal
                     CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, new Vec3d(0, 0, 0), calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
 
-                    if (isNotOverriding(currentTarget)) {
+                    if (!isOverriding(currentTarget)) {
                         // Check it meets our filter
                         switch (explodeFilter.getCurrentMode()) {
                             case SELF:
@@ -760,7 +759,7 @@ public class AutoCrystal extends Module {
                 CrystalPosition crystalPosition = new CrystalPosition(pos, facing, facingVec, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
 
                 // Check we aren't overriding
-                if (isNotOverriding(currentTarget)) {
+                if (!isOverriding(currentTarget)) {
                     // Check it's above or equal to our minimum damage requirement
                     if (crystalPosition.getTargetDamage() <= placeMinDamage.getValue()) {
                         continue;
@@ -786,12 +785,55 @@ public class AutoCrystal extends Module {
         return bestPlacement;
     }
 
+    public boolean isOverriding(EntityPlayer player) {
+        if (override.isEnabled()) {
+            if (overrideHealth.isEnabled()) {
+                // Get total health
+                if (EntityUtil.getEntityHealth(player) <= overrideHealthValue.getValue()) {
+                    return true;
+                }
+            }
+
+            if (overrideTotalArmour.isEnabled()) {
+                // *Looked* at Cosmos for this, so thanks, just wanted to make sure I was doing this right :')
+
+                float lowest = 100;
+
+                // Iterate through target's armour
+                for (ItemStack armourPiece : player.getArmorInventoryList()) {
+                    // If it is an actual piece of armour
+                    if (armourPiece != null && armourPiece.getItem() != Items.AIR) {
+                        // Get durability
+                        float durability = (armourPiece.getMaxDamage() - armourPiece.getItemDamage()) / (float) armourPiece.getMaxDamage() * 100;
+
+                        // If it is less than the last lowest, set the lowest to this durability
+                        if (durability < lowest) {
+                            lowest = durability;
+                        }
+                    }
+                }
+
+                // We are overriding if the lowest durability is less or equal to the total armour value setting
+                return lowest <= overrideTotalArmourValue.getValue();
+            }
+
+            if (Keyboard.getEventKeyState()) {
+                if (Keyboard.getEventKey() == forceOverride.getKeyCode()) {
+                    System.out.println("Forcing override");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Checks if we are overriding the minimum damage
      * @param entity The entity to check
      * @return Whether we are not overriding
      */
-    public boolean isNotOverriding(EntityLivingBase entity) {
+    /*public boolean isNotOverriding(EntityLivingBase entity) {
         if (override.isEnabled()) {
             if (overrideHealth.isEnabled()) {
                 // Get total health
@@ -801,7 +843,7 @@ public class AutoCrystal extends Module {
             }
 
             if (overrideTotalArmour.isEnabled()) {
-                // Pretty much from Cosmos, so thanks, just wanted to make sure I was doing this right :')
+                // *Looked* at Cosmos for this, so thanks, just wanted to make sure I was doing this right :')
 
                 float lowest = 100;
 
@@ -822,10 +864,13 @@ public class AutoCrystal extends Module {
                 // We are overriding if the lowest durability is less or equal to the total armour value setting
                 return !(lowest <= overrideTotalArmourValue.getValue());
             }
+
+            // Check if we are holding down the force override key
+            return !Keyboard.isKeyDown(forceOverride.getKeyCode());
         }
 
         return true;
-    }
+    } */
 
     /**
      * Swings our hands
@@ -1003,7 +1048,7 @@ public class AutoCrystal extends Module {
     @Override
     public String getModuleInfo() {
         return (currentTarget == null ? " No Target" : " " + currentTarget.getName() +
-                " DMG " + (isNotOverriding(currentTarget) ? "" : "[OVERRIDING] ") +
+                " DMG " + (!isOverriding(currentTarget) ? "" : "[OVERRIDING] ") +
                 (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));
     }
 

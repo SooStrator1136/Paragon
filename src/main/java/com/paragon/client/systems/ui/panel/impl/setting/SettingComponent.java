@@ -124,7 +124,11 @@ public class SettingComponent implements TextRenderer {
     }
 
     public void keyTyped(char typedChar, int keyCode) {
-
+        for (SettingComponent settingComponent : getSettingComponents()) {
+            if (settingComponent.getSetting().isVisible()) {
+                settingComponent.keyTyped(typedChar, keyCode);
+            }
+        }
     }
 
     public boolean isMouseOver(int mouseX, int mouseY) {

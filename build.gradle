@@ -1,5 +1,7 @@
 buildscript {
     repositories {
+		mavenCentral()
+
         maven {
 			name = 'forge'
 			url = 'https://maven.minecraftforge.net/'
@@ -13,12 +15,14 @@ buildscript {
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
 	}
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 version = "1.0.0"
 group = "com.paragon"
@@ -34,8 +38,10 @@ minecraft {
     version = "1.12.2-14.23.5.2768"
     runDir = "run"
     mappings = "snapshot_20171003"
-    coreMod = "com.paragon.asm.MixinLoader"
     makeObfSourceJar = false
+
+	clientJvmArgs += "-Dfml.coreMods.load=com.paragon.asm.MixinLoader"
+	clientRunArgs += "--mixin mixins.paragon.json"
 }
 
 repositories {
@@ -53,7 +59,7 @@ dependencies {
 		exclude module: 'commons-io'
 	}
 
-	compile group: 'org.json', name: 'json', version: '20211205'
+	compile group: 'org.json', name: 'json', version: '20220320'
 	compile group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
 	compile group: 'club.minnced', name: 'java-discord-rpc', version: '2.0.1'
 }
@@ -73,9 +79,29 @@ processResources {
 	}
 }
 
+shadowJar {
+	dependencies {
+		include(dependency('org.spongepowered:mixin'))
+		include(dependency('club.minnced:java-discord-rpc:2.0.1'))
+		include(dependency('com.github.Litarvan:OpenAuth:1.1.2'))
+		include(dependency('org.json:json:20220320'))
+	}
+
+	exclude 'dummyThing'
+	exclude 'LICENSE.txt'
+	classifier = 'release'
+}
+
 mixin {
 	defaultObfuscationEnv searge
 	add sourceSets.main, 'mixins.paragon.refmap.json'
+}
+
+reobf {
+	shadowJar {
+		mappingType = 'SEARGE'
+		classpath = sourceSets.main.compileClasspath
+	}
 }
 
 jar {
@@ -91,3 +117,5 @@ jar {
 		)
 	}
 }
+
+build.dependsOn(shadowJar)
