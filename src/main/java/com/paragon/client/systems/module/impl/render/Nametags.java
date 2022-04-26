@@ -66,7 +66,7 @@ public class Nametags extends Module implements TextRenderer {
         for (EntityPlayer player : mc.world.playerEntities) {
             // Check the player isn't us
             if (player == mc.player) {
-                continue;
+                // continue;
             }
 
             // Get render x, y, and z
@@ -101,7 +101,7 @@ public class Nametags extends Module implements TextRenderer {
 
             // Build string
             String renderString = player.getName() +
-                    (health.isEnabled() ? " " + EntityUtil.getTextColourFromEntityHealth(player) + player.getHealth() : "")
+                    (health.isEnabled() ? " " + EntityUtil.getTextColourFromEntityHealth(player) + Math.round(EntityUtil.getEntityHealth(player)) : "")
                     + (ping.isEnabled() ? " " + getPingColour(playerPing) + playerPing : "")
                     + (pops.isEnabled() ? " " + TextFormatting.GOLD + popCount : "");
 

@@ -35,6 +35,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextFormatting;
@@ -46,7 +47,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- * bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded (apart from damage calcs - postman (which in turn I believe is skidded from gs)).
+ * bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded (apart from damage calcs - gamesense).
  * @author Wolfsurge
  */
 @SuppressWarnings("unchecked")
@@ -758,15 +759,15 @@ public class AutoCrystal extends Module {
                 // Create new crystal position
                 CrystalPosition crystalPosition = new CrystalPosition(pos, facing, facingVec, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
 
+                // Check it's below or equal to our maximum local damage requirement
+                if (crystalPosition.getSelfDamage() > placeMaxLocal.getValue()) {
+                    continue;
+                }
+
                 // Check we aren't overriding
                 if (!isOverriding(currentTarget)) {
                     // Check it's above or equal to our minimum damage requirement
-                    if (crystalPosition.getTargetDamage() <= placeMinDamage.getValue()) {
-                        continue;
-                    }
-
-                    // Check it's below or equal to our maximum local damage requirement
-                    if (crystalPosition.getSelfDamage() >= placeMaxLocal.getValue()) {
+                    if (crystalPosition.getTargetDamage() < placeMinDamage.getValue()) {
                         continue;
                     }
                 }
@@ -776,6 +777,10 @@ public class AutoCrystal extends Module {
                     bestPlacement = crystalPosition;
                 }
             }
+        }
+
+        if (bestPlacement != null) {
+            System.out.println(bestPlacement.getSelfDamage());
         }
 
         // Set our backlog placement
@@ -816,61 +821,10 @@ public class AutoCrystal extends Module {
                 // We are overriding if the lowest durability is less or equal to the total armour value setting
                 return lowest <= overrideTotalArmourValue.getValue();
             }
-
-            if (Keyboard.getEventKeyState()) {
-                if (Keyboard.getEventKey() == forceOverride.getKeyCode()) {
-                    System.out.println("Forcing override");
-                    return true;
-                }
-            }
         }
 
         return false;
     }
-
-    /**
-     * Checks if we are overriding the minimum damage
-     * @param entity The entity to check
-     * @return Whether we are not overriding
-     */
-    /*public boolean isNotOverriding(EntityLivingBase entity) {
-        if (override.isEnabled()) {
-            if (overrideHealth.isEnabled()) {
-                // Get total health
-                if (EntityUtil.getEntityHealth(entity) <= overrideHealthValue.getValue()) {
-                    return false;
-                }
-            }
-
-            if (overrideTotalArmour.isEnabled()) {
-                // *Looked* at Cosmos for this, so thanks, just wanted to make sure I was doing this right :')
-
-                float lowest = 100;
-
-                // Iterate through target's armour
-                for (ItemStack armourPiece : entity.getArmorInventoryList()) {
-                    // If it is an actual piece of armour
-                    if (armourPiece != null && armourPiece.getItem() != Items.AIR) {
-                        // Get durability
-                        float durability = (armourPiece.getMaxDamage() - armourPiece.getItemDamage()) / (float) armourPiece.getMaxDamage() * 100;
-
-                        // If it is less than the last lowest, set the lowest to this durability
-                        if (durability < lowest) {
-                            lowest = durability;
-                        }
-                    }
-                }
-
-                // We are overriding if the lowest durability is less or equal to the total armour value setting
-                return !(lowest <= overrideTotalArmourValue.getValue());
-            }
-
-            // Check if we are holding down the force override key
-            return !Keyboard.isKeyDown(forceOverride.getKeyCode());
-        }
-
-        return true;
-    } */
 
     /**
      * Swings our hands
@@ -982,22 +936,20 @@ public class AutoCrystal extends Module {
      * @return The damage done to the target
      */
     public float calculateDamage(Vec3d vec, EntityLivingBase entity) {
-        // Distanced size
-        double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) 12;
+        float finalDamage = 1.0f;
+        try {
+            float doubleExplosionSize = 12.0F;
+            double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) doubleExplosionSize;
+            double blockDensity = entity.world.getBlockDensity(new Vec3d(vec.x, vec.y, vec.z), entity.getEntityBoundingBox());
+            double v = (1.0D - distancedSize) * blockDensity;
+            float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * (double) doubleExplosionSize + 1.0D));
 
-        // Get block density
-        double blockDensity = mc.world.getBlockDensity(vec, entity.getEntityBoundingBox());
+            int diff = mc.world.getDifficulty().getDifficultyId();
+            finalDamage = getBlastReduction(entity, damage * (diff == 0 ? 0 : (diff == 2 ? 1 : (diff == 1 ? 0.5f : 1.5f))), new Explosion(mc.world, null, vec.x, vec.y, vec.z, 6F, false, true));
+        } catch (NullPointerException ignored){
+        }
 
-        double v = (1.0D - distancedSize) * blockDensity;
-
-        // Get damage
-        float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * 12 + 1.0D));
-
-        // Multiply damage by difficulty
-        float damageMultiplied = damage * (mc.world.getDifficulty().getDifficultyId() == 0 ? 0 : (mc.world.getDifficulty().getDifficultyId() == 2 ? 1 : (mc.world.getDifficulty().getDifficultyId() == 1 ? 0.5f : 1.5f)));
-
-        // Apply blast reduction and return
-        return getBlastReduction(entity, damageMultiplied, new Explosion(mc.world, entity, vec.x, vec.y, vec.z, 6F, false, true));
+        return finalDamage;
     }
 
     /**
@@ -1008,30 +960,24 @@ public class AutoCrystal extends Module {
      * @return The blast reduction
      */
     public float getBlastReduction(EntityLivingBase entity, float damage, Explosion explosion) {
-        // Get damage source
-        DamageSource source = DamageSource.causeExplosionDamage(explosion);
+        if (entity instanceof EntityPlayer) {
+            EntityPlayer ep = (EntityPlayer) entity;
+            DamageSource ds = DamageSource.causeExplosionDamage(explosion);
+            damage = CombatRules.getDamageAfterAbsorb(damage, (float) ep.getTotalArmorValue(), (float) ep.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
 
-        // Player is in creative, return 0
-        if (source.isCreativePlayer()) {
-            return 0;
+            int k = EnchantmentHelper.getEnchantmentModifierDamage(ep.getArmorInventoryList(), ds);
+            float f = MathHelper.clamp(k, 0.0F, 20.0F);
+            damage *= 1.0F - f / 25.0F;
+
+            if (entity.isPotionActive(Potion.getPotionById(11))) {
+                damage = damage - (damage / 4);
+            }
+
+            damage = Math.max(damage, 0.0F);
+            return damage;
         }
-
-        // Get damage after absorption
-        damage = CombatRules.getDamageAfterAbsorb(damage, entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
-
-        // Enchantment modifier
-        float enchantModifier = MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), source), 0, 20);
-
-        // Modify damage
-        damage *= 1 - enchantModifier / 25;
-
-        // Decrease damage if they have resistance
-        if (entity.isPotionActive(MobEffects.RESISTANCE)) {
-            damage -= damage / 4;
-        }
-
-        // Return damage
-        return Math.max(damage, 0);
+        damage = CombatRules.getDamageAfterAbsorb(damage, (float) entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+        return damage;
     }
 
     /**

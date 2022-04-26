@@ -16,6 +16,9 @@ import net.minecraft.util.math.BlockPos;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * @author Wolfsurge
+ */
 public class HoleESP extends Module {
 
     private final BooleanSetting obsidian = new BooleanSetting("Obsidian", "Highlight obsidian holes", true);
@@ -89,28 +92,21 @@ public class HoleESP extends Module {
     }
 
     /**
-     * It works...
+     * It works... if this can be done in a better way, I'll be glad to hear it.
      * @param pos The position to check
      * @return Whether the hole is mixed or not
      */
     public boolean isHoleMixed(BlockPos pos) {
-        if (BlockUtil.getBlockAtPos(pos.north()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.north()) == Blocks.BEDROCK) {
-            if (BlockUtil.getBlockAtPos(pos.west()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.west()) == Blocks.BEDROCK) {
-                if (BlockUtil.getBlockAtPos(pos.east()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.east()) == Blocks.BEDROCK) {
-                    if (BlockUtil.getBlockAtPos(pos.south()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.south()) == Blocks.BEDROCK) {
-                        if (BlockUtil.getBlockAtPos(pos.down()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.down()) == Blocks.BEDROCK) {
-                            return BlockUtil.getBlockAtPos(pos) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.up()) == Blocks.AIR;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
+        return (BlockUtil.getBlockAtPos(pos.north()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.north()) == Blocks.BEDROCK) &&
+                (BlockUtil.getBlockAtPos(pos.west()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.west()) == Blocks.BEDROCK) &&
+                (BlockUtil.getBlockAtPos(pos.east()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.east()) == Blocks.BEDROCK) &&
+                (BlockUtil.getBlockAtPos(pos.south()) == Blocks.OBSIDIAN || BlockUtil.getBlockAtPos(pos.south()) == Blocks.BEDROCK) &&
+                BlockUtil.getBlockAtPos(pos) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.up()) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.up().up()) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.down()) != Blocks.AIR;
     }
 
     public boolean isSurroundedByBlock(BlockPos pos, Block blockCheck) {
-        return BlockUtil.getBlockAtPos(pos) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.north()) == blockCheck && BlockUtil.getBlockAtPos(pos.south()) == blockCheck && BlockUtil.getBlockAtPos(pos.east()) == blockCheck && BlockUtil.getBlockAtPos(pos.west()) == blockCheck && BlockUtil.getBlockAtPos(pos.down()) == blockCheck;
+        return BlockUtil.getBlockAtPos(pos) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.north()) == blockCheck && BlockUtil.getBlockAtPos(pos.south()) == blockCheck && BlockUtil.getBlockAtPos(pos.east()) == blockCheck && BlockUtil.getBlockAtPos(pos.west()) == blockCheck
+                && BlockUtil.getBlockAtPos(pos.up()) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.up().up()) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.down()) != Blocks.AIR;
     }
 
     public class Hole {
@@ -149,8 +145,19 @@ public class HoleESP extends Module {
     }
 
     public enum HoleType {
+        /**
+         * A hole made of obsidian
+         */
         OBSIDIAN,
+
+        /**
+         * A hole made of bedrock or obsidian
+         */
         MIXED,
+
+        /**
+         * A hole made of bedrock
+         */
         BEDROCK
     }
 }

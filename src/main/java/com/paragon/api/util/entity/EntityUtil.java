@@ -44,14 +44,19 @@ public class EntityUtil implements Wrapper {
      * @return The colour of the health
      */
     public static TextFormatting getTextColourFromEntityHealth(EntityLivingBase entity) {
-        if(entity.getHealth() <= 20 && entity.getHealth() > 15)
+        float health = getEntityHealth(entity);
+
+        if (health > 20) {
+            return TextFormatting.YELLOW;
+        } else if (entity.getHealth() <= 20 && entity.getHealth() > 15) {
             return TextFormatting.GREEN;
-        else if(entity.getHealth() <= 15 && entity.getHealth() > 10)
+        } else if (entity.getHealth() <= 15 && entity.getHealth() > 10) {
             return TextFormatting.GOLD;
-        else if(entity.getHealth() <= 10 && entity.getHealth() > 5)
+        } else if (entity.getHealth() <= 10 && entity.getHealth() > 5) {
             return TextFormatting.RED;
-        else if(entity.getHealth() <= 5)
+        } else if(entity.getHealth() <= 5) {
             return TextFormatting.DARK_RED;
+        }
 
         return TextFormatting.GRAY;
     }

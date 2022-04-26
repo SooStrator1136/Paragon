@@ -9,6 +9,9 @@ import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumHandSide;
 
+/**
+ * @author Wolfsurge
+ */
 public class ViewModel extends Module {
 
     // Main hand settings
@@ -56,7 +59,7 @@ public class ViewModel extends Module {
             GlStateManager.rotate(offhandRoll.getValue(), 0, 0, 1);
         }
 
-        if (event.getSide() == EnumHandSide.LEFT && main.isEnabled()) {
+        if (event.getSide() == EnumHandSide.RIGHT && main.isEnabled()) {
             // Rotate main hand item according to yaw, pitch, and roll settings
             GlStateManager.rotate(mainYaw.getValue(), 0, 1, 0);
             GlStateManager.rotate(mainPitch.getValue(), 1, 0, 0);
