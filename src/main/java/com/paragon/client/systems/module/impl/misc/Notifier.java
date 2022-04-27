@@ -29,7 +29,7 @@ public class Notifier extends Module {
     @Listener
     public void onModuleToggle(ModuleToggleEvent moduleToggleEvent) {
         if (moduleEnabled.isEnabled()) {
-            CommandManager.sendClientMessage(moduleToggleEvent.getModule().getName() + " was " + (moduleToggleEvent.getModule().isEnabled() ? TextFormatting.RED + "Disabled!" : TextFormatting.GREEN + "Enabled!"), false);
+            CommandManager.sendClientMessage(moduleToggleEvent.getModule().getName() + " was " + (!moduleToggleEvent.getModule().isEnabled() ? TextFormatting.RED + "Disabled!" : TextFormatting.GREEN + "Enabled!"), false);
         }
     }
 
