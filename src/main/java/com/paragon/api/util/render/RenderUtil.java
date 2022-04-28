@@ -57,7 +57,7 @@ public class RenderUtil implements Wrapper {
         GlStateManager.popMatrix();
     }
 
-    public static void drawRoundedRect(float x, float y, float width, float height, float tLeft, float tRight, float bLeft, float bRight, int colour) {
+    public static void drawRoundedRect(double x, double y, double width, double height, double tLeft, double tRight, double bLeft, double bRight, int colour) {
         glPushAttrib(0);
         glScaled(0.5D, 0.5D, 0.5D);
         x *= 2.0D;
@@ -317,6 +317,19 @@ public class RenderUtil implements Wrapper {
         GlStateManager.enableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.enableDepth();
+    }
+
+    public static void drawModalRectWithCustomSizedTexture(float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {
+        float f = 1.0F / textureWidth;
+        float f1 = 1.0F / textureHeight;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos(x, (y + height), 0.0D).tex((u * f), ((v + height) * f1)).endVertex();
+        bufferbuilder.pos((x + width), (y + height), 0.0D).tex(((u + width) * f), ((v + height) * f1)).endVertex();
+        bufferbuilder.pos((x + width), y, 0.0D).tex(((u + width) * f), (v * f1)).endVertex();
+        bufferbuilder.pos(x, y, 0.0D).tex((u * f), (v * f1)).endVertex();
+        tessellator.draw();
     }
 
     public static float getScreenWidth() {

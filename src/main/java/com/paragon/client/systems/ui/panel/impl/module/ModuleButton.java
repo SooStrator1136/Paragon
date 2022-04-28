@@ -165,14 +165,14 @@ public class ModuleButton implements TextRenderer {
         for (SettingComponent settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.setOffset(settingOffset);
-                settingOffset += settingComponent.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
+                settingOffset += settingComponent.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) animation.getAnimationFactor());
 
                 if (settingComponent.animation.getAnimationFactor() > 0) {
                     float subsettingOffset = settingComponent.getOffset() + settingComponent.getHeight();
                     for (SettingComponent settingComponent1 : settingComponent.getSettingComponents()) {
                         if (settingComponent1.getSetting().isVisible()) {
                             settingComponent1.setOffset(subsettingOffset);
-                            subsettingOffset += settingComponent1.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor(settingComponent.animation.getAnimationFactor());
+                            subsettingOffset += settingComponent1.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) settingComponent.animation.getAnimationFactor());
                             settingOffset += settingComponent1.getHeight() * settingComponent.animation.getAnimationFactor();
                         }
                     }
@@ -234,7 +234,7 @@ public class ModuleButton implements TextRenderer {
             }
         }
 
-        return height + (settingHeight * animation.getAnimationFactor());
+        return (float) (height + (settingHeight * animation.getAnimationFactor()));
     }
 
     /**

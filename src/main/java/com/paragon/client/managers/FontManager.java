@@ -93,10 +93,10 @@ public class FontManager {
         try {
             InputStream fontStream = new FileInputStream("paragon/font/font.ttf");
 
-            Font awtClientFont = Font.createFont(0, fontStream);
+            Font font = Font.createFont(0, fontStream);
             fontStream.close();
 
-            return awtClientFont.deriveFont(Font.PLAIN, size);
+            return font.deriveFont(Font.PLAIN, size);
         } catch (Exception exception) {
             exception.printStackTrace();
             return new Font("default", Font.PLAIN, (int) size);

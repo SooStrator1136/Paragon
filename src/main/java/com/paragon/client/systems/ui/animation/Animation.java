@@ -33,7 +33,7 @@ public class Animation {
      * Gets the animation length (0 to 1)
      * @return The animation length (0 to 1)
      */
-    public float getAnimationFactor() {
+    public double getAnimationFactor() {
         if (currentState.equals(State.EXPANDING)) {
             return MathHelper.clamp((System.currentTimeMillis() - currentStateStart) / time, 0, 1);
         }
@@ -61,9 +61,7 @@ public class Animation {
         if (expand) {
             currentState = State.EXPANDING;
             initialState = true;
-        }
-
-        else {
+        } else {
             currentState = State.RETRACTING;
         }
 

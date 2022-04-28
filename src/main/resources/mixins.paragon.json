@@ -44,6 +44,8 @@
     "world.block.MixinBlockSoulSand",
     "world.block.MixinBlockSlime",
 
-    "world.MixinWorld"
+    "world.MixinWorld",
+
+    "MixinMinecraft"
   ]
 }

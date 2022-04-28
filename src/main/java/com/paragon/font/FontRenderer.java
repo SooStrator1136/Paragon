@@ -12,6 +12,9 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
+/**
+ * @author Cosmos
+ */
 public class FontRenderer implements Wrapper {
 
     private final ImageAWT defaultFont;

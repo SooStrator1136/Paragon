@@ -48,7 +48,7 @@ public class HArrayList extends Module implements TextRenderer {
         Collections.reverse(modules);
 
         for(Module module : modules) {
-            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getModuleInfo(), sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getModuleInfo())) * module.animation.getAnimationFactor()) + 2), y, arrayListColour.getCurrentMode().getColour(index * 150));
+            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getModuleInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getModuleInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getCurrentMode().getColour(index * 150));
             y -= 11 * module.animation.getAnimationFactor();
             index++;
         }

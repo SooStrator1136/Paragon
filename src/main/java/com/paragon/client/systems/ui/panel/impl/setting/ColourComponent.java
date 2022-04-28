@@ -107,7 +107,7 @@ public class ColourComponent extends SettingComponent {
             float x = getModuleButton().getPanel().getX() + 4;
             float y = getModuleButton().getOffset() + getOffset() + (components.size() * 12) + 15.5f;
             float dimension = 87;
-            float height = dimension * ClickGUI.animation.getCurrentMode().getAnimationFactor(animation.getAnimationFactor());
+            float height = dimension * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) animation.getAnimationFactor());
 
             Color colour = Color.getHSBColor(hue / 360, 1, 1);
 
@@ -241,7 +241,7 @@ public class ColourComponent extends SettingComponent {
 
     @Override
     public float getHeight() {
-        return 12 + (((components.size() * 12) + 94.5f) * animation.getAnimationFactor());
+        return (float) (12 + (((components.size() * 12) + 94.5f) * animation.getAnimationFactor()));
     }
 
     @Override

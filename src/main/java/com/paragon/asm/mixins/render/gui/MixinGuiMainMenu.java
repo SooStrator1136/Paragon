@@ -2,6 +2,7 @@ package com.paragon.asm.mixins.render.gui;
 
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.client.systems.ui.menu.ParagonMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;

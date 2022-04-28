@@ -81,7 +81,7 @@ processResources {
 
 shadowJar {
 	dependencies {
-		include(dependency('org.spongepowered:mixin'))
+		include(dependency('org.spongepowered:mixin:0.7.11-SNAPSHOT'))
 		include(dependency('club.minnced:java-discord-rpc:2.0.1'))
 		include(dependency('com.github.Litarvan:OpenAuth:1.1.2'))
 		include(dependency('org.json:json:20220320'))
