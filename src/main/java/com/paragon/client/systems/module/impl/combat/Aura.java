@@ -45,7 +45,7 @@ public class Aura extends Module {
 
     // Main settings
     private final NumberSetting range = new NumberSetting("Range", "The range to attack", 5, 0, 5, 1);
-    private final NumberSetting delay = new NumberSetting("Delay", "The delay between attacking in seconds", 1, 0, 5, 0.1f);
+    private final NumberSetting delay = new NumberSetting("Delay", "The delay between attacking in milliseconds", 700, 0, 2000, 1);
     private final ModeSetting<When> when = new ModeSetting<>("When", "When to attack", When.HOLDING);
     private final ModeSetting<Rotate> rotate = new ModeSetting<>("Rotate", "How to rotate to the target", Rotate.PACKET);
     private final BooleanSetting rotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(rotate);
@@ -66,7 +66,7 @@ public class Aura extends Module {
         }
 
         // Check the delay has passed
-        if (attackTimer.hasTimePassed((long) delay.getValue(), Timer.TimeFormat.SECONDS)) {
+        if (attackTimer.hasMSPassed((long) delay.getValue())) {
             // Filter entities
             List<Entity> entities = mc.world.loadedEntityList.stream().filter(EntityLivingBase.class::isInstance).collect(Collectors.toList());
 

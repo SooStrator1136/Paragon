@@ -28,6 +28,8 @@ public class RotationManager implements Wrapper {
 
         if (preSend.getPacket() instanceof CPacketPlayer.Rotation) {
             if (!rotationsQueue.isEmpty()) {
+                preSend.cancel();
+
                 rotationsQueue.sort(Comparator.comparing(rotation -> rotation.getPriority().getPriority()));
 
                 CPacketPlayer packet = (CPacketPlayer.Rotation) preSend.getPacket();

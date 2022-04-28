@@ -47,7 +47,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- * bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded (apart from damage calcs - gamesense).
+ * somewhat bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded (apart from damage calcs - gamesense).
  * @author Wolfsurge
  */
 @SuppressWarnings("unchecked")
@@ -71,7 +71,7 @@ public class AutoCrystal extends Module {
     public final ModeSetting<When> placeWhen = (ModeSetting<When>) new ModeSetting<>("When", "When to place", When.HOLDING).setParentSetting(place);
     public final BooleanSetting placeWhenSwitchBack = (BooleanSetting) new BooleanSetting("Switch Back", "Switch back to your original item", true).setParentSetting(place).setVisiblity(() -> placeWhen.getCurrentMode().equals(When.SWITCH) || placeWhen.getCurrentMode().equals(When.SILENT_SWITCH));
     public final NumberSetting placeRange = (NumberSetting) new NumberSetting("Range", "The range to place", 5, 1, 7, 1).setParentSetting(place);
-    public final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals", 10, 0, 100, 1).setParentSetting(place);
+    public final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals", 10, 0, 500, 1).setParentSetting(place);
     public final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "Rotate to the position you are placing at", Rotate.PACKET).setParentSetting(place);
     public final BooleanSetting placeRotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(place).setVisiblity(() -> !placeRotate.getCurrentMode().equals(Rotate.NONE));
     public final BooleanSetting placeRaytrace = (BooleanSetting) new BooleanSetting("Raytrace", "Checks if you can raytrace to the position", true).setParentSetting(place);
@@ -84,7 +84,7 @@ public class AutoCrystal extends Module {
     // Explode settings
     public final BooleanSetting explode = new BooleanSetting("Explode", "Automatically explode crystals", true);
     public final NumberSetting explodeRange = (NumberSetting) new NumberSetting("Range", "The range to explode crystals", 5, 1, 7, 1).setParentSetting(explode);
-    public final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals", 10, 0, 100, 1).setParentSetting(explode);
+    public final NumberSetting explodeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between exploding crystals", 10, 0, 500, 1).setParentSetting(explode);
     public final ModeSetting<ExplodeFilter> explodeFilter = (ModeSetting<ExplodeFilter>) new ModeSetting<>("Filter", "What crystals to explode", ExplodeFilter.SMART).setParentSetting(explode);
     public final BooleanSetting inhibit = (BooleanSetting) new BooleanSetting("Inhibit", "Prevent excessive amounts of attacks on crystals", true).setParentSetting(explode);
     public final NumberSetting inhibitMax = (NumberSetting) new NumberSetting("Inhibit Max", "When to start ignoring the crystals", 5, 1, 10, 1).setParentSetting(explode).setVisiblity(inhibit::isEnabled);
@@ -418,7 +418,7 @@ public class AutoCrystal extends Module {
         if (explode.isEnabled()) {
             // Check we have a crystal to explode, and the timer has passed the required value
             if (currentCrystal != null) {
-                if (!explodeTimer.hasTimePassed((long) explodeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+                if (!explodeTimer.hasMSPassed((long) explodeDelay.getValue())) {
                     return;
                 }
 
@@ -512,7 +512,7 @@ public class AutoCrystal extends Module {
     public void placeSearchedPosition() {
         // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
         if (currentPlacement != null) {
-            if (!placeTimer.hasTimePassed((long) placeDelay.getValue(), Timer.TimeFormat.MILLISECONDS)) {
+            if (!placeTimer.hasMSPassed((long) placeDelay.getValue())) {
                 return;
             }
 

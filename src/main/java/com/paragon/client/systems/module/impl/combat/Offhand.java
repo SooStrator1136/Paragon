@@ -46,7 +46,7 @@ public class Offhand extends Module {
             return;
         }
 
-        if (switchTimer.hasTimePassed((long) delay.getValue() / 10, Timer.TimeFormat.SECONDS)) {
+        if (switchTimer.hasMSPassed((long) delay.getValue())) {
             int switchItemSlot = InventoryUtil.getItemSlot(priority.getCurrentMode().getItem());
 
             if (switchItemSlot == -1) {
