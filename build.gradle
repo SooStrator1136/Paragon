@@ -1,81 +1,85 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'https://repo.spongepowered.org/maven' }
-        maven { url 'https://files.minecraftforge.net/maven' }
-        maven { url 'https://jitpack.io' }
+
+        maven { url 'https://maven.minecraftforge.net/'}
+        maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
     }
+
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3.4'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
 
-
-version = '1.0.0' // Jar output Version
-group = 'com.paragon'
-archivesBaseName = 'paragon' // Jar output name
+version = "1.0.0"
+group = "com.paragon"
+archivesBaseName = "paragon"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
-    options.encoding = 'UTF-8'
+    options.encoding 'UTF-8'
 }
 
-// Run Configurations
 minecraft {
-    replace '%version%', project.version
-    version = '1.12.2-14.23.5.2847'
-    runDir = 'run'
-    mappings = 'stable_39'
-    coreMod = 'com.paragon.asm.MixinLoader'
+    version = "1.12.2-14.23.5.2768"
+    runDir = "run"
+    mappings = "stable_39"
+    coreMod = "com.paragon.asm.MixinLoader"
     makeObfSourceJar = false
 }
 
-// Build Configurations
-jar {
-    manifest {
-        attributes(
-                'MixinConfigs': 'mixins.paragon.json',
-                'tweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
-                'TweakOrder': 0,
-                'FMLCorePluginContainsFMLMod': 'true',
-                'FMLCorePlugin': 'com.paragon.asm.MixinLoader',
-                'ForceLoadAsMod': 'true', // On runClient: 'false'; On build: 'true'
-                'FMLAT': 'paragon_at.cfg',
-        )
-    }
-}
-
-
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spongepowered.org/maven' }
-    maven { url "https://jitpack.io"}
+
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
-        exclude module: 'launchwrapper'
-        exclude module: 'guava'
-        exclude module: 'gson'
-        exclude module: 'commons-io'
-        exclude module: 'log4j-core'
+    compile group: 'org.spongepowered', name: 'mixin', version: '0.7.11-SNAPSHOT'
+    compile group: 'org.json', name: 'json', version: '20220320'
+    compile group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
+    compile group: 'club.minnced', name: 'java-discord-rpc', version: '2.0.1'
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
 
-    compile('com.github.Litarvan:OpenAuth:1.1.2')
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
 
-    annotationProcessor("org.spongepowered:mixin:0.8.2:processor") {
-        exclude module: 'gson'
+shadowJar {
+    dependencies {
+        include dependency('org.spongepowered:mixin:0.7.11-SNAPSHOT')
+        include dependency('club.minnced:java-discord-rpc:2.0.1')
+        include dependency('com.github.Litarvan:OpenAuth:1.1.2')
+        include dependency('org.json:json:20220320')
     }
 
-    compile 'club.minnced:java-discord-rpc:2.0.2'
-    compile 'org.json:json:20220320'
+    exclude 'dummyThing'
+    exclude 'LICENSE.txt'
+    classifier = 'client'
+}
+
+mixin {
+    defaultObfuscationEnv searge
+    add sourceSets.main, 'mixins.paragon.refmap.json'
 }
 
 reobf {
@@ -85,35 +89,18 @@ reobf {
     }
 }
 
-mixin {
-    defaultObfuscationEnv searge
-    sourceSets.main {
-        ext.refMap = 'mixins.paragon.refmap.json'
+jar {
+    manifest {
+        attributes(
+                'MixinConfigs': 'mixins.paragon.json',
+                'tweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+                'TweakOrder': 0,
+                'FMLCorePluginContainsFMLMod': 'true',
+                'FMLCorePlugin': 'com.paragon.asm.MixinLoader',
+                'ForceLoadAsMod': 'true',
+                'FMLAT': ''
+        )
     }
 }
 
-shadowJar {
-    dependencies {
-        include dependency('org.spongepowered:mixin')
-        include dependency('club.minnced:java-discord-rpc')
-        include dependency('com.github.Litarvan:OpenAuth:1.1.2')
-        include dependency('org.json:json:20180813')
-    }
-
-    exclude 'dummyThing', 'LICENSE.txt', 'org/**/*.html', 'META-INF/maven/**'
-    classifier = ''
-}
-
-processResources {
-    inputs.property 'version', project.version
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'version': project.version
-    }
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-    rename '(.+_at.cfg)', 'META-INF/$1'
-}
-
-build.dependsOn shadowJar
+build.dependsOn(shadowJar)
