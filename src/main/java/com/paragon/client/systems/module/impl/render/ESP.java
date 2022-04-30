@@ -116,9 +116,16 @@ public class ESP extends Module {
             mc.gameSettings.entityShadows = false;
 
             ((IEntityRenderer) mc.entityRenderer).setupCamera(event.getPartialTicks(), 0);
+
             for (Entity entity : mc.world.loadedEntityList) {
                 if (entity != null && entity != mc.player && isEntityValid(entity)) {
-                    mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
+                    try {
+                        mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
+                    }
+                    // ok i actually have no idea why this is happening but it is
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
