@@ -1,4 +1,3 @@
-# From GS++, thanks techale
 name: Build Paragon
 
 on: [push, pull_request]
@@ -24,7 +23,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Allow ubuntu to use gradle
+      - name: Gradle
         run: chmod +x gradlew
 
       - name: Decompile Minecraft workspace
@@ -36,7 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Package
-          path: build/libs/*-release.jar
+          path: build/libs/*.jar
 
       - name: Cleanup Gradle Cache
         run: |
