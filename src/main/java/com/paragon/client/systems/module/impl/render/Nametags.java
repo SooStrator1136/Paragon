@@ -66,7 +66,7 @@ public class Nametags extends Module implements TextRenderer {
         for (EntityPlayer player : mc.world.playerEntities) {
             // Check the player isn't us
             if (player == mc.player) {
-                // continue;
+                continue;
             }
 
             // Get render x, y, and z
@@ -122,11 +122,11 @@ public class Nametags extends Module implements TextRenderer {
             if (armour.isEnabled()) {
                 // Get the items we want to render
                 ArrayList<ItemStack> stacks = new ArrayList<>();
-                stacks.add(mc.player.getHeldItemMainhand());
-                Collections.reverse(mc.player.inventory.armorInventory);
-                stacks.addAll(mc.player.inventory.armorInventory);
-                Collections.reverse(mc.player.inventory.armorInventory);
-                stacks.add(mc.player.getHeldItemOffhand());
+                stacks.add(player.getHeldItemMainhand());
+                Collections.reverse(player.inventory.armorInventory);
+                stacks.addAll(player.inventory.armorInventory);
+                Collections.reverse(player.inventory.armorInventory);
+                stacks.add(player.getHeldItemOffhand());
 
                 // Get armour count
                 int count = 0;

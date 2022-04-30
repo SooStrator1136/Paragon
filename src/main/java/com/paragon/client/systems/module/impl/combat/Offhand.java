@@ -14,6 +14,7 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.server.SPacketOpenWindow;
 
 /**
+ * @TODO: 29/04/2022 - Re-add inventory spoof
  * @author Wolfsurge
  */
 public class Offhand extends Module {
@@ -31,13 +32,11 @@ public class Offhand extends Module {
 
     private final NumberSetting delay = new NumberSetting("Delay", "The delay between switching items", 0, 0, 200, 1);
 
-    private final BooleanSetting inventorySpoof = new BooleanSetting("Inventory Spoof", "Spoof opening your inventory", true);
-
     private final Timer switchTimer = new Timer();
 
     public Offhand() {
         super("Offhand", ModuleCategory.COMBAT, "Manages the item in your offhand");
-        this.addSettings(priority, secondary, safety, delay, inventorySpoof);
+        this.addSettings(priority, secondary, safety, delay);
     }
 
     @Override
@@ -54,21 +53,17 @@ public class Offhand extends Module {
             }
 
             if (safety.isEnabled()) {
-                if (elytra.isEnabled() && mc.player.isElytraFlying() || falling.isEnabled() && mc.player.fallDistance > 3 || health.isEnabled() && mc.player.getHealth() < healthValue.getValue() || lava.isEnabled() && mc.player.isInLava() || fire.isEnabled() && mc.player.isBurning()) {
+                if (elytra.isEnabled() && mc.player.isElytraFlying() ||
+                        falling.isEnabled() && mc.player.fallDistance > 3 ||
+                        health.isEnabled() && mc.player.getHealth() < healthValue.getValue() ||
+                        lava.isEnabled() && mc.player.isInLava() ||
+                        fire.isEnabled() && mc.player.isBurning()) {
                     switchItemSlot = InventoryUtil.getItemSlot(Items.TOTEM_OF_UNDYING);
                 }
             }
 
             if (switchItemSlot != -1) {
-                if (inventorySpoof.isEnabled()) {
-                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
-                }
-
                 InventoryUtil.swapOffhand(switchItemSlot);
-
-                if (inventorySpoof.isEnabled()) {
-                    mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
-                }
             }
 
             switchTimer.reset();

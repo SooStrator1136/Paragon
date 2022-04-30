@@ -75,13 +75,12 @@ public class Panel implements TextRenderer {
         }
 
         // Header
-        //(6 * animation.getAnimationFactor()) + (height * animation.getAnimationFactor())
         RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.cornerRadius.getValue(), ClickGUI.cornerRadius.getValue(), (float) ((ClickGUI.cornerRadius.getValue() + (1 * (1 - animation.getAnimationFactor()))) * animation.getAnimationFactor()), (float) ((ClickGUI.cornerRadius.getValue() +  + (1 * (1 - animation.getAnimationFactor()))) * animation.getAnimationFactor()), new Color(23, 23, 23).darker().getRGB());
         renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
 
         refreshOffsets();
 
-        RenderUtil.startGlScissor(getX() - 0.5f, getY(), getWidth() + 1, barHeight + (height * animation.getAnimationFactor()) - 0.5f);
+        RenderUtil.startGlScissor(getX() - 0.5f, getY(), getWidth() + 1, barHeight + (height * animation.getAnimationFactor()));
 
         if (isExpanded()) {
             // Draw modules
@@ -92,7 +91,7 @@ public class Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        // RenderUtil.drawRect(getX(), getY() + barHeight + (height * animation.getAnimationFactor()), getWidth(), 1 * animation.getAnimationFactor(), new Color(23, 23, 23, (int) (255 * animation.getAnimationFactor())).darker().getRGB());
+        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
 
         if (ClickGUI.panelHeaderSeparator.isEnabled()) {
             RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getColour().getRGB());

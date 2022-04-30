@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
  */
 public class Aura extends Module {
 
+    public static Aura INSTANCE;
+
     // How to sort the targets
     private final ModeSetting<Sort> sort = new ModeSetting<>("Sort", "How to sort the targets", Sort.DISTANCE);
 
@@ -57,6 +59,8 @@ public class Aura extends Module {
     public Aura() {
         super("Aura", ModuleCategory.COMBAT, "Automatically attacks entities");
         this.addSettings(sort, players, mobs, passives, range, delay, when, rotate, packetAttack, where);
+
+        INSTANCE = this;
     }
 
     @Override

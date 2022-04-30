@@ -4,6 +4,7 @@ import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
+import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.ui.console.ConsoleGUI;
 import com.paragon.client.systems.ui.taskbar.icons.Icon;
 import com.paragon.client.systems.module.impl.client.Colours;
@@ -43,11 +44,7 @@ public class Taskbar implements Wrapper, TextRenderer {
             }
         }
 
-        if (!open) {
-            RenderUtil.drawRect(scaledResolution.getScaledWidth() - getStringWidth(open ? "Hide" : "Show") - 5, scaledResolution.getScaledHeight() - getFontHeight() - 7, getStringWidth(open ? "Hide" : "Show") + 3.5f, getFontHeight() + 3.5f, 0x90000000);
-        }
-
-        renderText(open ? "Hide" : "Show", scaledResolution.getScaledWidth() - getStringWidth(open ? "Hide" : "Show") - 3, scaledResolution.getScaledHeight() - getFontHeight() - 5, -1);
+        renderText(open ? "Close" : "Open", scaledResolution.getScaledWidth() - getStringWidth(open ? "Close" : "Open") - 3, scaledResolution.getScaledHeight() - getFontHeight() - (ClientFont.INSTANCE.isEnabled() ? 3 : 5), -1);
     }
 
     public void mouseClicked(int mouseX, int mouseY) {

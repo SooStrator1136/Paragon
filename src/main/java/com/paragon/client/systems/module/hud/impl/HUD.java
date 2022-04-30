@@ -1,4 +1,4 @@
-package com.paragon.client.systems.module.impl.client;
+package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.ColourUtil;
@@ -21,7 +21,7 @@ import java.util.List;
 public class HUD extends Module implements TextRenderer {
 
     public HUD() {
-        super("HUD", ModuleCategory.CLIENT, "Render the client's HUD on screen");
+        super("HUD", ModuleCategory.HUD, "Render the client's HUD on screen");
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.feature.Feature;
-import com.paragon.client.systems.module.hud.impl.HArrayList;
+import com.paragon.client.systems.module.hud.impl.ArrayListHUD;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.module.settings.Setting;
@@ -102,7 +102,7 @@ public class Module extends Feature implements Wrapper {
             MinecraftForge.EVENT_BUS.register(this);
             Paragon.INSTANCE.getEventBus().register(this);
 
-            animation.time = HArrayList.animationSpeed.getValue();
+            animation.time = ArrayListHUD.animationSpeed.getValue();
             animation.setState(true);
 
             // Call onEnable
@@ -113,7 +113,7 @@ public class Module extends Feature implements Wrapper {
             MinecraftForge.EVENT_BUS.unregister(this);
             Paragon.INSTANCE.getEventBus().unregister(this);
 
-            animation.time = HArrayList.animationSpeed.getValue();
+            animation.time = ArrayListHUD.animationSpeed.getValue();
             animation.setState(false);
 
             // Call onDisable

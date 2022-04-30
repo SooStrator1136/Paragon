@@ -86,13 +86,14 @@ public class ModuleManager {
                 new Colours(),
                 new ClickGUI(),
                 new DiscordRPC(),
-                new HUD(),
 
                 // HUD
                 new Armour(),
-                new HArrayList(),
+                new ArrayListHUD(),
+                new CombatInfo(),
                 new Coordinates(),
                 new FPS(),
+                new HUD(),
                 new Totems(),
                 new Watermark()
         );

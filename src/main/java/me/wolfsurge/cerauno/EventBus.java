@@ -116,9 +116,7 @@ public class EventBus {
                 try {
                     // Invoke (run) the method
                     subscribedMethod1.getMethod().invoke(subscribedMethod1.getSource(), obj);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception ignored) {}
             }
         }
     }

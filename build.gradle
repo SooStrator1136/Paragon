@@ -66,14 +66,16 @@ dependencies {
         exclude module: 'gson'
         exclude module: 'commons-io'
         exclude module: 'log4j-core'
+    }
 
     compile('com.github.Litarvan:OpenAuth:1.1.2')
-    }
 
     annotationProcessor("org.spongepowered:mixin:0.8.2:processor") {
         exclude module: 'gson'
     }
+
     compile 'club.minnced:java-discord-rpc:2.0.2'
+    compile 'org.json:json:20220320'
 }
 
 reobf {
@@ -95,6 +97,7 @@ shadowJar {
         include dependency('org.spongepowered:mixin')
         include dependency('club.minnced:java-discord-rpc')
         include dependency('com.github.Litarvan:OpenAuth:1.1.2')
+        include dependency('org.json:json:20180813')
     }
 
     exclude 'dummyThing', 'LICENSE.txt', 'org/**/*.html', 'META-INF/maven/**'

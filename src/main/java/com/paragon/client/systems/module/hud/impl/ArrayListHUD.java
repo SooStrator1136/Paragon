@@ -6,7 +6,6 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.impl.client.HUD;
 import com.paragon.client.systems.module.settings.impl.ModeSetting;
 import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import net.minecraft.client.gui.ScaledResolution;
@@ -18,12 +17,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-public class HArrayList extends Module implements TextRenderer {
+public class ArrayListHUD extends Module implements TextRenderer {
 
     public static final NumberSetting animationSpeed = new NumberSetting("Animation", "The speed of the animation", 200, 0, 1000, 10);
     public static final ModeSetting<ArrayListColour> arrayListColour = new ModeSetting<>("Colour", "What colour to render the modules in", ArrayListColour.RAINBOW_WAVE);
 
-    public HArrayList() {
+    public ArrayListHUD() {
         super("ArrayList", ModuleCategory.HUD, "Renders the enabled modules on screen");
         this.addSettings(animationSpeed, arrayListColour);
     }
