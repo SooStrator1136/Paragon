@@ -43,11 +43,11 @@ public class ArrayListHUD extends Module implements TextRenderer {
         }
 
         // Sort by module length
-        modules.sort(Comparator.comparingDouble(module -> getStringWidth(module.getName() + module.getModuleInfo())));
+        modules.sort(Comparator.comparingDouble(module -> getStringWidth(module.getName() + module.getArrayListInfo())));
         Collections.reverse(modules);
 
         for(Module module : modules) {
-            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getModuleInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getModuleInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getCurrentMode().getColour(index * 150));
+            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getCurrentMode().getColour(index * 150));
             y -= 11 * module.animation.getAnimationFactor();
             index++;
         }

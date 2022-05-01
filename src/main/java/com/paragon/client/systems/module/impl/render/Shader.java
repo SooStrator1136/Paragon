@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.render;
 
+import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.client.shader.shaders.DiagonalShader;
 import com.paragon.client.shader.shaders.DiamondsShader;
@@ -192,6 +193,31 @@ public class Shader extends Module {
         }
     }
 
+    private boolean isEntityValid(Entity entityIn) {
+        return entityIn instanceof EntityOtherPlayerMP && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
+    }
+
+    public boolean isStorageValid(TileEntity tileEntity) {
+        if (tileEntity instanceof TileEntityChest) {
+            return chests.isEnabled();
+        }
+
+        if (tileEntity instanceof TileEntityShulkerBox) {
+            return shulkers.isEnabled();
+        }
+
+        if (tileEntity instanceof TileEntityEnderChest) {
+            return enderChests.isEnabled();
+        }
+
+        return false;
+    }
+
+    @Override
+    public String getArrayListInfo() {
+        return " " + EnumFormatter.getFormattedText(shaderType.getCurrentMode());
+    }
+
     public enum ShaderType {
         /**
          * Outline shader
@@ -212,26 +238,6 @@ public class Shader extends Module {
          * Fluid Shader
          */
         FLUID
-    }
-
-    private boolean isEntityValid(Entity entityIn) {
-        return entityIn instanceof EntityOtherPlayerMP && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
-    }
-
-    public boolean isStorageValid(TileEntity tileEntity) {
-        if (tileEntity instanceof TileEntityChest) {
-            return chests.isEnabled();
-        }
-
-        if (tileEntity instanceof TileEntityShulkerBox) {
-            return shulkers.isEnabled();
-        }
-
-        if (tileEntity instanceof TileEntityEnderChest) {
-            return enderChests.isEnabled();
-        }
-
-        return false;
     }
 
 }

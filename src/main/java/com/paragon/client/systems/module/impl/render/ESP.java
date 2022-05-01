@@ -6,6 +6,7 @@ import com.paragon.api.event.render.entity.RenderEntityEvent;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.asm.mixins.accessor.IShaderGroup;
@@ -247,6 +248,11 @@ public class ESP extends Module {
      */
     private boolean isEntityValid(Entity entityIn) {
         return entityIn instanceof EntityPlayer && entityIn != mc.player && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
+    }
+
+    @Override
+    public String getArrayListInfo() {
+        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
     }
 
     public enum Mode {

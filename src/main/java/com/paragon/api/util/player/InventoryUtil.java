@@ -78,10 +78,10 @@ public class InventoryUtil implements Wrapper {
         }
     }
 
-    public static int getCountOfItem(Item item, boolean hotbarOnly) {
+    public static int getCountOfItem(Item item, boolean hotbarOnly, boolean ignoreHotbar) {
         int count = 0;
 
-        for (int i = 0; i < (hotbarOnly ? 9 : 36); i++) {
+        for (int i = (ignoreHotbar ? 9 : 0); i < (hotbarOnly ? 9 : 36); i++) {
             ItemStack stack = mc.player.inventory.getStackInSlot(i);
 
             if (stack.getItem() == item) {

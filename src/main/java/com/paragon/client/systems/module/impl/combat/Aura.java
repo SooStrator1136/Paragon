@@ -55,6 +55,7 @@ public class Aura extends Module {
     private final BooleanSetting packetAttack = new BooleanSetting("Packet Attack", "Attack with a packet", false);
 
     private final Timer attackTimer = new Timer();
+    private EntityLivingBase target;
 
     public Aura() {
         super("Aura", ModuleCategory.COMBAT, "Automatically attacks entities");
@@ -84,6 +85,8 @@ public class Aura extends Module {
             if (!entities.isEmpty()) {
                 // Get the target
                 EntityLivingBase entityLivingBase = (EntityLivingBase) entities.get(0);
+
+                target = entityLivingBase;
 
                 // Get our old slot
                 int oldSlot = mc.player.inventory.currentItem;
@@ -187,6 +190,11 @@ public class Aura extends Module {
         public float getSort(EntityLivingBase entityLivingBase) {
             return function.apply(entityLivingBase);
         }
+    }
+
+    @Override
+    public String getArrayListInfo() {
+        return " " + (target == null ? "No target" : target.getName());
     }
 
     public enum When {

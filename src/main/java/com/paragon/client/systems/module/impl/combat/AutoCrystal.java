@@ -988,7 +988,7 @@ public class AutoCrystal extends Module {
     }
 
     @Override
-    public String getModuleInfo() {
+    public String getArrayListInfo() {
         return (currentTarget == null ? " No Target" : " " + currentTarget.getName() +
                 " DMG " + (!isOverriding(currentTarget) ? "" : "[OVERRIDING] ") +
                 (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getCurrentMode()))));

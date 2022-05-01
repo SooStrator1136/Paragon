@@ -163,7 +163,7 @@ public class ElytraFlight extends Module {
     }
 
     @Override
-    public String getModuleInfo() {
+    public String getArrayListInfo() {
         return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
     }
 

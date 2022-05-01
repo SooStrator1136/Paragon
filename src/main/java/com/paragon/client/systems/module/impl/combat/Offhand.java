@@ -4,6 +4,7 @@ import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
+import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -112,6 +113,11 @@ public class Offhand extends Module {
         else {
             return secondary.getCurrentMode().getItem();
         }
+    }
+
+    @Override
+    public String getArrayListInfo() {
+        return " " + EnumFormatter.getFormattedText(primary.getCurrentMode()) + ", " + InventoryUtil.getCountOfItem(primary.getCurrentMode().getItem(), false, true);
     }
 
     public enum ItemMode {

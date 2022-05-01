@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.util.player.PlayerUtil;
+import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -49,6 +50,11 @@ public class Sprint extends Module {
                 mc.player.setSprinting(mc.player.movementInput.moveForward > 0);
                 break;
         }
+    }
+
+    @Override
+    public String getArrayListInfo() {
+        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
     }
 
     public enum Mode {

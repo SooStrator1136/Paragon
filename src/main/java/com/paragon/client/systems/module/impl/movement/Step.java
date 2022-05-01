@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.util.player.PlayerUtil;
+import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.ModeSetting;
@@ -63,6 +64,11 @@ public class Step extends Module {
 
         }
 
+    }
+
+    @Override
+    public String getArrayListInfo() {
+        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
     }
 
     public enum Mode {

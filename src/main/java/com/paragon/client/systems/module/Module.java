@@ -125,7 +125,7 @@ public class Module extends Feature implements Wrapper {
      * Gets the module info for the array list
      * @return The module's info
      */
-    public String getModuleInfo() {
+    public String getArrayListInfo() {
         return "";
     }
 

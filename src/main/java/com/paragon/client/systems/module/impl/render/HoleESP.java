@@ -120,6 +120,7 @@ public class HoleESP extends Module {
 
         /**
          * Gets the hole's position
+         *
          * @return The hole's position
          */
         public BlockPos getHolePosition() {
@@ -128,6 +129,7 @@ public class HoleESP extends Module {
 
         /**
          * Gets the colour of the hole
+         *
          * @return The colour of the hole
          */
         public Color getHoleColour() {
