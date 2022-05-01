@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
@@ -61,28 +62,8 @@ public class BlockUtil implements Wrapper {
         return new AxisAlignedBB(blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockPos.getX() + 1, blockPos.getY() + 1, blockPos.getZ() + 1).offset(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY, -mc.getRenderManager().viewerPosZ);
     }
 
-    /**
-     * Returns whether an entity is on top / in a block, and therefore cannot be placed on.
-     * @author linustouchtips, Wolfsurge
-     * @param pos The block to check
-     * @return Whether the block is placeable
-     */
-    public static boolean isIntercepted(BlockPos pos) {
-        BlockPos nativePosition = pos.up();
-
-        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(nativePosition.getX(), pos.getY(), nativePosition.getZ(), nativePosition.getX() + 1, nativePosition.getY() + 2, nativePosition.getZ() + 1))) {
-            if (entity instanceof EntityEnderCrystal && entity.getPosition().equals(nativePosition)) {
-                continue;
-            }
-
-            if (entity.isDead) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+    public static boolean canSeePos(BlockPos pos) {
+        return mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + (double) mc.player.getEyeHeight(), mc.player.posZ), new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), false, true, false) == null;
     }
 
 }
