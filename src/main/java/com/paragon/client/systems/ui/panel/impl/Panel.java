@@ -75,7 +75,7 @@ public class Panel implements TextRenderer {
         }
 
         // Header
-        RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.cornerRadius.getValue(), ClickGUI.cornerRadius.getValue(), (float) ((ClickGUI.cornerRadius.getValue() + (1 * (1 - animation.getAnimationFactor()))) * animation.getAnimationFactor()), (float) ((ClickGUI.cornerRadius.getValue() +  + (1 * (1 - animation.getAnimationFactor()))) * animation.getAnimationFactor()), new Color(23, 23, 23).darker().getRGB());
+        RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.cornerRadius.getValue(), ClickGUI.cornerRadius.getValue(), 1, 1, new Color(23, 23, 23).darker().getRGB());
         renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
 
         refreshOffsets();
