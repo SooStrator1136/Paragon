@@ -5,6 +5,7 @@ import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
@@ -55,35 +56,51 @@ public class Offhand extends Module {
             return;
         }
 
+        if (mc.player.isHandActive()) {
+            return;
+        }
+
         // Delay timer has passed
         if (timer.hasMSPassed((long) delay.getValue())) {
+            // Fake opening inventory
+            if (inventorySpoof.isEnabled()) {
+                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+            }
+
+            // Cancel motion
+            if (cancelMotion.isEnabled()) {
+                mc.player.motionX = 0;
+                mc.player.motionZ = 0;
+                mc.player.setVelocity(0, mc.player.motionY, 0);
+            }
+
             // Get switch slot
             int switchItemSlot = InventoryUtil.getItemSlot(getSwitchItem());
 
+            // Switching to primary item
+            if (getSwitchItem() == primary.getCurrentMode().getItem()) {
+                // We don't have a primary item
+                if (InventoryUtil.getCountOfItem(getSwitchItem(), false, true) == 0) {
+                    // Switch to secondary
+                    switchItemSlot = InventoryUtil.getItemSlot(secondary.getCurrentMode().getItem());
+                }
+            }
+
             if (switchItemSlot != -1) {
-                // Fake opening inventory
-                if (inventorySpoof.isEnabled()) {
-                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
-                }
-
-                // Cancel motion
-                if (cancelMotion.isEnabled()) {
-                    mc.player.motionX = 0;
-                    mc.player.motionZ = 0;
-                    mc.player.setVelocity(0, mc.player.motionY, 0);
-                }
-
                 // Switch to the item
                 InventoryUtil.swapOffhand(switchItemSlot);
-
-                // Close inventory
-                if (inventorySpoof.isEnabled()) {
-                    mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.openContainer.windowId));
-                }
-
-                // Reset timer
-                timer.reset();
             }
+
+            // We do this because otherwise the hotbar displays incorrect values for items
+            ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
+
+            // Close inventory
+            if (inventorySpoof.isEnabled()) {
+                mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+            }
+
+            // Reset timer
+            timer.reset();
         }
     }
 
@@ -92,27 +109,25 @@ public class Offhand extends Module {
      * @return The item we want to switch to
      */
     public Item getSwitchItem() {
-        // Check safety is enabled
-        if (safety.isEnabled()) {
-            // Check safety conditions
-            if (elytra.isEnabled() && mc.player.isElytraFlying() || falling.isEnabled() && mc.player.fallDistance > 3 || health.isEnabled() && EntityUtil.getEntityHealth(mc.player) <= healthValue.getValue() || lava.isEnabled() && mc.player.isInLava() || fire.isEnabled() && mc.player.isBurning()) {
-                return Items.TOTEM_OF_UNDYING;
-            }
-        }
-
         // Apply gapple sword
         if (gappleSword.isEnabled() && mc.player.getHeldItemMainhand().getItem() == Items.DIAMOND_SWORD) {
             return Items.GOLDEN_APPLE;
         }
 
-        // Return primary item
-        if (InventoryUtil.getItemSlot(primary.getCurrentMode().getItem()) != -1) {
-            return primary.getCurrentMode().getItem();
+        // Check safety is enabled
+        if (safety.isEnabled()) {
+            // Check safety conditions
+            if (elytra.isEnabled() && mc.player.isElytraFlying() ||
+                    falling.isEnabled() && mc.player.fallDistance > 3 ||
+                    health.isEnabled() && EntityUtil.getEntityHealth(mc.player) <= healthValue.getValue() ||
+                    lava.isEnabled() && mc.player.isInLava() ||
+                    fire.isEnabled() && mc.player.isBurning()) {
+
+                return Items.TOTEM_OF_UNDYING;
+            }
         }
-        // Return secondary item
-        else {
-            return secondary.getCurrentMode().getItem();
-        }
+
+        return primary.getCurrentMode().getItem();
     }
 
     @Override

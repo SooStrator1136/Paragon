@@ -70,6 +70,8 @@ public class Aura extends Module {
             return;
         }
 
+        target = null;
+
         // Check the delay has passed
         if (attackTimer.hasMSPassed((long) delay.getValue())) {
             // Filter entities
