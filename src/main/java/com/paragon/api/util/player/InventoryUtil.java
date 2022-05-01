@@ -92,24 +92,6 @@ public class InventoryUtil implements Wrapper {
         return count;
     }
 
-    public static void swapOffhand(int slot) {
-        mc.playerController.windowClick(0, slot, 0, ClickType.PICKUP, mc.player);
-        mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, mc.player);
-
-        int returnSlot = -1;
-        for (int i = 9; i <= 44; i++) {
-            if (mc.player.inventory.getStackInSlot(i).isEmpty()) {
-                returnSlot = i;
-                break;
-            }
-        }
-
-        if (returnSlot != -1) {
-            mc.playerController.windowClick(0, returnSlot, 0, ClickType.PICKUP, mc.player);
-            mc.playerController.updateController();
-        }
-    }
-
     public static boolean isHoldingSword() {
         return mc.player.getHeldItemMainhand().getItem() instanceof ItemSword;
     }

@@ -1,15 +1,12 @@
 package com.paragon.client.systems.module.impl.misc;
 
-import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
-import com.paragon.client.managers.rotation.Rotate;
-import com.paragon.client.managers.rotation.Rotation;
-import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
