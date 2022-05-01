@@ -103,7 +103,7 @@ public class Nametags extends Module implements TextRenderer {
             String renderString = player.getName() +
                     (health.isEnabled() ? " " + EntityUtil.getTextColourFromEntityHealth(player) + Math.round(EntityUtil.getEntityHealth(player)) : "")
                     + (ping.isEnabled() ? " " + getPingColour(playerPing) + playerPing : "")
-                    + (pops.isEnabled() ? " " + TextFormatting.GOLD + popCount : "");
+                    + (pops.isEnabled() ? " " + TextFormatting.GOLD + "-" + popCount : "");
 
             // Get nametag width
             float width = getStringWidth(renderString) + 4;

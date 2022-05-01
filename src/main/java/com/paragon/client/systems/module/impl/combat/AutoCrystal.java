@@ -109,6 +109,7 @@ public class AutoCrystal extends Module {
     public final BooleanSetting overrideTotalArmour = (BooleanSetting) new BooleanSetting("Armour", "Override if the target's total armour durability is below a certain value", true).setParentSetting(override);
     public final NumberSetting overrideTotalArmourValue = (NumberSetting) new NumberSetting("Armour Value", "The value which we will start to override at (in %)", 10, 0, 100, 1).setParentSetting(override);
     public final KeybindSetting forceOverride = (KeybindSetting) new KeybindSetting("Force Override", "Force override when you press a key", Keyboard.KEY_NONE).setParentSetting(override);
+    public final BooleanSetting ignoreInhibit = (BooleanSetting) new BooleanSetting("Ignore Inhibit", "Do not inhibit if we are overriding", true).setParentSetting(override).setVisiblity(inhibit::isEnabled);
 
     // Pause settings
     public final BooleanSetting pause = new BooleanSetting("Pause", "Pause if certain things are happening", true);
@@ -198,6 +199,10 @@ public class AutoCrystal extends Module {
             return;
         }
 
+        // Get overriding state
+        // Called once because otherwise we do the same logic several times
+        boolean overriding = isOverriding(currentTarget);
+
         // Add target to AutoEZ list
         AutoEZ.addTarget(currentTarget.getName());
 
@@ -205,22 +210,28 @@ public class AutoCrystal extends Module {
             case PLACE_EXPLODE:
                 if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.PLACING)) {
                     // Find placement
-                    currentPlacement = findBestPosition();
+                    currentPlacement = findBestPosition(overriding);
 
-                    // Immediately place if we have found a position and grouped is enabled
-                    if (grouped.isEnabled()) {
+                    if (currentPlacement != null && grouped.isEnabled()) {
                         placeSearchedPosition();
                     }
                 }
 
                 if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.EXPLODING)) {
                     // Find crystal
-                    currentCrystal = findBestCrystal();
+                    currentCrystal = findBestCrystal(overriding);
 
-                    // Immediately explode if we have found a crystal and grouped is enabled
-                    if (grouped.isEnabled()) {
+                    if (currentCrystal != null && grouped.isEnabled()) {
                         explodeSearchedCrystal();
                     }
+                }
+
+                if (currentPlacement != null && !grouped.isEnabled()) {
+                    placeSearchedPosition();
+                }
+
+                if (currentCrystal != null && !grouped.isEnabled()) {
+                    explodeSearchedCrystal();
                 }
 
                 break;
@@ -228,47 +239,32 @@ public class AutoCrystal extends Module {
             case EXPLODE_PLACE:
                 if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.EXPLODING)) {
                     // Find crystal
-                    currentCrystal = findBestCrystal();
+                    currentCrystal = findBestCrystal(overriding);
 
-                    // Immediately explode if we have found a crystal and grouped is enabled
-                    if (grouped.isEnabled()) {
+                    if (currentCrystal != null) {
                         explodeSearchedCrystal();
                     }
                 }
 
                 if (!timing.getCurrentMode().equals(Timing.SEQUENTIAL) || currentActionState.equals(ActionState.PLACING)) {
                     // Find placement
-                    currentPlacement = findBestPosition();
+                    currentPlacement = findBestPosition(overriding);
 
-                    // Immediately place if we have found a position and grouped is enabled
-                    if (grouped.isEnabled()) {
+                    if (currentPlacement != null) {
                         placeSearchedPosition();
                     }
                 }
 
+                if (currentCrystal != null && !grouped.isEnabled()) {
+                    explodeSearchedCrystal();
+                }
+
+                if (currentPlacement != null && !grouped.isEnabled()) {
+                    placeSearchedPosition();
+                }
+
                 break;
 
-        }
-
-        // If we haven't grouped them
-        if (!grouped.isEnabled()) {
-            // We don't need to put timing logic here as exploding and placing are ignored if there isn't a crystal or placement
-            switch (order.getCurrentMode()) {
-                case PLACE_EXPLODE:
-                    // Place crystal at position
-                    placeSearchedPosition();
-
-                    // Explode best crystal
-                    explodeSearchedCrystal();
-                    break;
-                case EXPLODE_PLACE:
-                    // Explode best crystal
-                    explodeSearchedCrystal();
-
-                    // Place crystal at position
-                    placeSearchedPosition();
-                    break;
-            }
         }
 
         currentActionState = currentActionState.equals(ActionState.PLACING) ? ActionState.EXPLODING : ActionState.PLACING;
@@ -282,7 +278,7 @@ public class AutoCrystal extends Module {
             if (currentPlacement != null && place.isEnabled()) {
                 // Render fill
                 if (renderMode.getCurrentMode().equals(Render.FILL) || renderMode.getCurrentMode().equals(Render.BOTH)) {
-                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderColour.getColour());
+                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), ColourUtil.integrateAlpha(renderColour.getColour(), renderColour.getColour().getAlpha()));
                 }
 
                 // Render outline
@@ -420,93 +416,91 @@ public class AutoCrystal extends Module {
     public void explodeSearchedCrystal() {
         // Check we want to explode
         if (explode.isEnabled()) {
-            // Check we have a crystal to explode, and the timer has passed the required value
-            if (currentCrystal != null) {
-                if (!explodeTimer.hasMSPassed((long) explodeDelay.getValue())) {
-                    return;
-                }
-
-                // Get our current slot so we can switch back
-                int antiWeaknessSlot = mc.player.inventory.currentItem;
-
-                // Check we want to apply anti weakness
-                if (!antiWeakness.getCurrentMode().equals(AntiWeakness.OFF)) {
-                    // Check we have the weakness effect
-                    if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
-                        // If we want to fake opening our inventory, send the opening inventory packet
-                        if (strictInventory.isEnabled()) {
-                            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
-                        }
-
-                        // Get the best sword
-                        int hotbarSwordSlot = InventoryUtil.getItemInHotbar(Items.DIAMOND_SWORD);
-
-                        // If we have found a sword, switch to it
-                        if (hotbarSwordSlot != -1) {
-                            InventoryUtil.switchToSlot(hotbarSwordSlot, antiWeakness.getCurrentMode().equals(AntiWeakness.SILENT));
-                        }
-                    }
-                }
-
-                // Get our original rotation before rotating to the crystal
-                Vec2f originalPlayerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
-
-                // Check we want to rotate
-                if (!explodeRotate.getCurrentMode().equals(Rotate.NONE)) {
-                    // Get rotation
-                    Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
-
-                    Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, explodeRotate.getCurrentMode(), RotationPriority.HIGHEST);
-
-                    // Send rotation
-                    Paragon.INSTANCE.getRotationManager().addRotation(rotation);
-                }
-
-                if (packetExplode.isEnabled()) {
-                    // Explode with a packet
-                    mc.player.connection.sendPacket(new CPacketUseEntity(currentCrystal.getCrystal()));
-                } else {
-                    // Attack crystal
-                    mc.playerController.attackEntity(mc.player, currentCrystal.getCrystal());
-                }
-
-                // If we want to set the crystal to dead as soon as we attack, do that
-                if (explodeSetDead.getCurrentMode().equals(SetDead.ATTACK)) {
-                    currentCrystal.getCrystal().setDead();
-                }
-
-                // Remove it from our self placed crystals
-                selfPlacedCrystals.remove(currentCrystal.getCrystal().getPosition());
-
-                // Swing our arm
-                swing(explodeSwing.getCurrentMode());
-
-                // Rotate back to our original rotation
-                if (!explodeRotate.getCurrentMode().equals(Rotate.NONE) && explodeRotateBack.isEnabled()) {
-                    Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getCurrentMode(), RotationPriority.HIGH);
-
-                    // Send rotation
-                    Paragon.INSTANCE.getRotationManager().addRotation(rotation);
-                }
-
-                // Check we want to switch
-                if (!antiWeakness.getCurrentMode().equals(AntiWeakness.OFF)) {
-                    // Check we have weakness
-                    if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
-                        // Fake opening inventory
-                        if (strictInventory.isEnabled()) {
-                            mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
-                        }
-
-                        // Switch to slot
-                        if (antiWeaknessSlot != -1) {
-                            InventoryUtil.switchToSlot(antiWeaknessSlot, antiWeakness.getCurrentMode().equals(AntiWeakness.SILENT));
-                        }
-                    }
-                }
-
-                explodeTimer.reset();
+            // Check the timer has passed the required value
+            if (!explodeTimer.hasMSPassed((long) explodeDelay.getValue())) {
+                return;
             }
+
+            // Get our current slot so we can switch back
+            int antiWeaknessSlot = mc.player.inventory.currentItem;
+
+            // Check we want to apply anti weakness
+            if (!antiWeakness.getCurrentMode().equals(AntiWeakness.OFF)) {
+                // Check we have the weakness effect
+                if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                    // If we want to fake opening our inventory, send the opening inventory packet
+                    if (strictInventory.isEnabled()) {
+                        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+                    }
+
+                    // Get the best sword
+                    int hotbarSwordSlot = InventoryUtil.getItemInHotbar(Items.DIAMOND_SWORD);
+
+                    // If we have found a sword, switch to it
+                    if (hotbarSwordSlot != -1) {
+                        InventoryUtil.switchToSlot(hotbarSwordSlot, antiWeakness.getCurrentMode().equals(AntiWeakness.SILENT));
+                    }
+                }
+            }
+
+            // Get our original rotation before rotating to the crystal
+            Vec2f originalPlayerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
+
+            // Check we want to rotate
+            if (!explodeRotate.getCurrentMode().equals(Rotate.NONE)) {
+                // Get rotation
+                Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
+
+                Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, explodeRotate.getCurrentMode(), RotationPriority.HIGHEST);
+
+                // Send rotation
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            }
+
+            if (packetExplode.isEnabled()) {
+                // Explode with a packet
+                mc.player.connection.sendPacket(new CPacketUseEntity(currentCrystal.getCrystal()));
+            } else {
+                // Attack crystal
+                mc.playerController.attackEntity(mc.player, currentCrystal.getCrystal());
+            }
+
+            // If we want to set the crystal to dead as soon as we attack, do that
+            if (explodeSetDead.getCurrentMode().equals(SetDead.ATTACK)) {
+                currentCrystal.getCrystal().setDead();
+            }
+
+            // Remove it from our self placed crystals
+            selfPlacedCrystals.remove(currentCrystal.getCrystal().getPosition());
+
+            // Swing our arm
+            swing(explodeSwing.getCurrentMode());
+
+            // Rotate back to our original rotation
+            if (!explodeRotate.getCurrentMode().equals(Rotate.NONE) && explodeRotateBack.isEnabled()) {
+                Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getCurrentMode(), RotationPriority.HIGH);
+
+                // Send rotation
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            }
+
+            // Check we want to switch
+            if (!antiWeakness.getCurrentMode().equals(AntiWeakness.OFF)) {
+                // Check we have weakness
+                if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                    // Fake opening inventory
+                    if (strictInventory.isEnabled()) {
+                        mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+                    }
+
+                    // Switch to slot
+                    if (antiWeaknessSlot != -1) {
+                        InventoryUtil.switchToSlot(antiWeaknessSlot, antiWeakness.getCurrentMode().equals(AntiWeakness.SILENT));
+                    }
+                }
+            }
+
+            explodeTimer.reset();
         }
     }
 
@@ -514,103 +508,101 @@ public class AutoCrystal extends Module {
      * Places a crystal at the searched position
      */
     public void placeSearchedPosition() {
-        // Check we have a position to place at, we are holding crystals, and the place timer has passed the required time
-        if (currentPlacement != null) {
-            if (!placeTimer.hasMSPassed((long) placeDelay.getValue())) {
-                return;
-            }
+        // Check the place timer has passed the required time
+        if (!placeTimer.hasMSPassed((long) placeDelay.getValue())) {
+            return;
+        }
 
-            boolean hasSwitched = false;
-            int oldSlot = mc.player.inventory.currentItem;
+        boolean hasSwitched = false;
+        int oldSlot = mc.player.inventory.currentItem;
 
-            switch (placeWhen.getCurrentMode()) {
-                case HOLDING:
-                    hasSwitched = InventoryUtil.isHolding(Items.END_CRYSTAL);
+        switch (placeWhen.getCurrentMode()) {
+            case HOLDING:
+                hasSwitched = InventoryUtil.isHolding(Items.END_CRYSTAL);
+                break;
+            case SWITCH:
+                int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
+
+                if (crystalSlot == -1) {
                     break;
+                } else {
+                    InventoryUtil.switchToSlot(crystalSlot, false);
+                    hasSwitched = true;
+                }
+
+                break;
+            case SILENT_SWITCH:
+                int silentCrystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
+
+                if (silentCrystalSlot == -1) {
+                    break;
+                } else {
+                    InventoryUtil.switchToSlot(silentCrystalSlot, true);
+                    hasSwitched = true;
+                }
+
+                break;
+        }
+
+        if (!hasSwitched) {
+            return;
+        }
+
+        // Get our current rotation
+        Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
+
+        // Check we want to rotate
+        if (!placeRotate.getCurrentMode().equals(Rotate.NONE)) {
+            // Get rotation
+            Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
+
+            Rotation rotation = new Rotation(placeRotation.x, placeRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGHEST);
+            Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+        }
+
+        // Let's call this, it fixes the packet place bug, and it shouldn't do anything bad afaik.
+        ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
+
+        if (placePacket.isEnabled()) {
+            // Send place packet
+            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND, (float) currentPlacement.facingVec.x, (float) currentPlacement.facingVec.y, (float) currentPlacement.facingVec.z));
+        } else {
+            // Place crystal
+            mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND);
+        }
+
+        // Swing arm
+        swing(placeSwing.getCurrentMode());
+
+        // Add position to our self placed crystals
+        selfPlacedCrystals.add(currentPlacement.getPosition().up());
+
+        // Check we want to rotate back
+        if (!placeRotate.getCurrentMode().equals(Rotate.NONE) && placeRotateBack.isEnabled()) {
+            // Rotate back
+            Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGH);
+            Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+        }
+
+        if (placeWhenSwitchBack.isEnabled()) {
+            switch (placeWhen.getCurrentMode()) {
                 case SWITCH:
-                    int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
-
-                    if (crystalSlot == -1) {
-                        break;
-                    } else {
-                        InventoryUtil.switchToSlot(crystalSlot, false);
-                        hasSwitched = true;
-                    }
-
+                    InventoryUtil.switchToSlot(oldSlot, false);
                     break;
                 case SILENT_SWITCH:
-                    int silentCrystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
-
-                    if (silentCrystalSlot == -1) {
-                        break;
-                    } else {
-                        InventoryUtil.switchToSlot(silentCrystalSlot, true);
-                        hasSwitched = true;
-                    }
-
+                    InventoryUtil.switchToSlot(oldSlot, true);
                     break;
             }
-
-            if (!hasSwitched) {
-                return;
-            }
-
-            // Get our current rotation
-            Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
-
-            // Check we want to rotate
-            if (!placeRotate.getCurrentMode().equals(Rotate.NONE)) {
-                // Get rotation
-                Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
-
-                Rotation rotation = new Rotation(placeRotation.x, placeRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGHEST);
-                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
-            }
-
-            // Let's call this, it fixes the packet place bug, and it shouldn't do anything bad afaik.
-            ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
-
-            if (placePacket.isEnabled()) {
-                // Send place packet
-                mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND, (float) currentPlacement.facingVec.x, (float) currentPlacement.facingVec.y, (float) currentPlacement.facingVec.z));
-            } else {
-                // Place crystal
-                mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND);
-            }
-
-            // Swing arm
-            swing(placeSwing.getCurrentMode());
-
-            // Add position to our self placed crystals
-            selfPlacedCrystals.add(currentPlacement.getPosition().up());
-
-            // Check we want to rotate back
-            if (!placeRotate.getCurrentMode().equals(Rotate.NONE) && placeRotateBack.isEnabled()) {
-                // Rotate back
-                Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getCurrentMode(), RotationPriority.HIGH);
-                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
-            }
-
-            if (placeWhenSwitchBack.isEnabled()) {
-                switch (placeWhen.getCurrentMode()) {
-                    case SWITCH:
-                        InventoryUtil.switchToSlot(oldSlot, false);
-                        break;
-                    case SILENT_SWITCH:
-                        InventoryUtil.switchToSlot(oldSlot, true);
-                        break;
-                }
-            }
-
-            placeTimer.reset();
         }
+
+        placeTimer.reset();
     }
 
     /**
      * Finds the best crystal to attack
      * @return The best crystal to attack
      */
-    public Crystal findBestCrystal() {
+    public Crystal findBestCrystal(boolean overriding) {
         // The best crystal (we will return this)
         Crystal crystal = null;
 
@@ -627,7 +619,9 @@ public class AutoCrystal extends Module {
 
                     // We have already tried to explode this crystal
                     if (inhibitMap.containsKey(entity.getEntityId()) && inhibitMap.get(entity.getEntityId()) > inhibitMax.getValue()) {
-                        continue;
+                        if (!overriding && !ignoreInhibit.isEnabled()) {
+                            continue;
+                        }
                     } else {
                         inhibitMap.put(entity.getEntityId(), inhibitMap.getOrDefault(entity.getEntityId(), 0) + 1);
                     }
@@ -653,48 +647,46 @@ public class AutoCrystal extends Module {
                     // Position of crystal
                     CrystalPosition crystalPos = new CrystalPosition(calculatedCrystal.getCrystal().getPosition(), null, new Vec3d(0, 0, 0), calculatedCrystal.getTargetDamage(), calculatedCrystal.getSelfDamage());
 
-                    if (!isOverriding(currentTarget)) {
-                        // Check it meets our filter
-                        switch (explodeFilter.getCurrentMode()) {
-                            case SELF:
-                                // Check it's in our self placed crystals
-                                if (!selfPlacedCrystals.contains(crystalPos.getPosition())) {
-                                    continue;
-                                }
+                    // Check it meets our filter
+                    switch (explodeFilter.getCurrentMode()) {
+                        case SELF:
+                            // Check it's in our self placed crystals
+                            if (!selfPlacedCrystals.contains(crystalPos.getPosition())) {
+                                continue;
+                            }
 
-                                break;
+                            break;
 
-                            case SELF_SMART:
-                                // Check it's in our self placed crystals
-                                if (!selfPlacedCrystals.contains(crystalPos.getPosition())) {
-                                    continue;
-                                }
+                        case SELF_SMART:
+                            // Check it's in our self placed crystals
+                            if (!selfPlacedCrystals.contains(crystalPos.getPosition())) {
+                                continue;
+                            }
 
-                                // Check it meets our max local requirement
-                                if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
-                                    continue;
-                                }
+                            // Check it meets our max local requirement
+                            if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
+                                continue;
+                            }
 
-                                // Check it meets our minimum damage requirement
-                                if (calculatedCrystal.getTargetDamage() < explodeMinDamage.getValue()) {
-                                    continue;
-                                }
+                            // Check it meets our minimum damage requirement
+                            if (calculatedCrystal.getTargetDamage() < explodeMinDamage.getValue() && !overriding) {
+                                continue;
+                            }
 
-                                break;
+                            break;
 
-                            case SMART:
-                                // Check it meets our max local requirement
-                                if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
-                                    continue;
-                                }
+                        case SMART:
+                            // Check it meets our max local requirement
+                            if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
+                                continue;
+                            }
 
-                                // Check it meets our minimum damage requirement
-                                if (calculatedCrystal.getTargetDamage() < explodeMinDamage.getValue()) {
-                                    continue;
-                                }
+                            // Check it meets our minimum damage requirement
+                            if (calculatedCrystal.getTargetDamage() < explodeMinDamage.getValue() && !overriding) {
+                                continue;
+                            }
 
-                                break;
-                        }
+                            break;
                     }
 
                     // Set the crystal to this if: the current best crystal is null, or this crystal's target damage is higher than the last crystal checked
@@ -712,9 +704,8 @@ public class AutoCrystal extends Module {
      * Finds the best position to place at
      * @return The best position to place at
      */
-    public CrystalPosition findBestPosition() {
-        // The best placement (we will return this)
-        CrystalPosition bestPlacement = null;
+    public CrystalPosition findBestPosition(boolean overriding) {
+        List<CrystalPosition> crystalPositions = new ArrayList<>();
 
         // Check we want to place
         if (place.isEnabled()) {
@@ -753,7 +744,7 @@ public class AutoCrystal extends Module {
                     facingVec = new Vec3d(rayTraceResult.hitVec.x - pos.getX(), rayTraceResult.hitVec.y - pos.getY(), rayTraceResult.hitVec.z - pos.getZ());
                 }
 
-                // Check we can raytrace to it
+                // Check we can see the position
                 if (placeRaytrace.isEnabled()) {
                     if (!BlockUtil.canSeePos(pos)) {
                         continue;
@@ -769,25 +760,26 @@ public class AutoCrystal extends Module {
                 }
 
                 // Check we aren't overriding
-                if (!isOverriding(currentTarget)) {
+                if (!overriding) {
                     // Check it's above or equal to our minimum damage requirement
                     if (crystalPosition.getTargetDamage() < placeMinDamage.getValue()) {
                         continue;
                     }
                 }
 
-                // Set it to our best placement if it does more damage to the target than our last position
-                if (bestPlacement == null || calculateHeuristic(crystalPosition, heuristic.getCurrentMode()) > calculateHeuristic(bestPlacement, heuristic.getCurrentMode())) {
-                    bestPlacement = crystalPosition;
-                }
+                crystalPositions.add(crystalPosition);
             }
         }
 
-        // Set our backlog placement
-        backlogPlacement = bestPlacement;
+        crystalPositions.sort(Comparator.comparingDouble(position -> calculateHeuristic(position, heuristic.getCurrentMode())));
+        Collections.reverse(crystalPositions);
 
-        // Return our best placement
-        return bestPlacement;
+        if (!crystalPositions.isEmpty()) {
+            backlogPlacement = crystalPositions.get(0);
+            return crystalPositions.get(0);
+        }
+
+        return null;
     }
 
     public boolean isOverriding(EntityPlayer player) {
@@ -797,6 +789,10 @@ public class AutoCrystal extends Module {
                 if (EntityUtil.getEntityHealth(player) <= overrideHealthValue.getValue()) {
                     return true;
                 }
+            }
+
+            if (forceOverride.getKeyCode() != 0) {
+                return Keyboard.isKeyDown(forceOverride.getKeyCode());
             }
 
             if (overrideTotalArmour.isEnabled()) {
