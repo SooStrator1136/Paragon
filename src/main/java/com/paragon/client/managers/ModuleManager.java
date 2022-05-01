@@ -52,6 +52,7 @@ public class ModuleManager {
                 // Render
                 new BlockHighlight(),
                 new Breadcrumbs(),
+                new ChinaHat(),
                 new ESP(),
                 new Fullbright(),
                 new HoleESP(),
