@@ -43,6 +43,7 @@ public class ModuleManager {
                 // Movement
                 new ElytraFlight(),
                 new Flight(),
+                new NoFall(),
                 new NoSlow(),
                 new ReverseStep(),
                 new Sprint(),

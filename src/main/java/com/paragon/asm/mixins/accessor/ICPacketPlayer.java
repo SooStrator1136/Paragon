@@ -19,4 +19,10 @@ public interface ICPacketPlayer {
     @Accessor("pitch")
     float getPitch();
 
+    @Accessor("y")
+    void setY(double y);
+
+    @Accessor("onGround")
+    void setOnGround(boolean onGround);
+
 }

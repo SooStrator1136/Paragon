@@ -41,8 +41,9 @@ public class InventoryUtil implements Wrapper {
         for(int i = 0; i < 9; i++) {
             Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
 
-            if(itemInInv == itemIn)
+            if (itemInInv == itemIn) {
                 return i;
+            }
         }
 
         return -1;
