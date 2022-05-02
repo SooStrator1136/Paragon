@@ -342,7 +342,7 @@ public class RenderUtil implements Wrapper {
 
     public static void renderText(String text, float x, float y, int colour) {
         if (ClientFont.INSTANCE.isEnabled()) {
-            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x, y - 3.5f, colour);
+            Paragon.INSTANCE.getFontManager().getFontRenderer().drawString(text, x, y - 3.5f, colour, false);
             return;
         }
 

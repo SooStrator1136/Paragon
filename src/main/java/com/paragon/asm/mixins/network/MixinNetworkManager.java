@@ -33,4 +33,16 @@ public class MixinNetworkManager {
         }
     }
 
+    @Inject(method = "channelRead0*", at = @At("TAIL"))
+    public void onPacketReceivedPost(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
+        PacketEvent.PostReceive postReceive = new PacketEvent.PostReceive(packet);
+        Paragon.INSTANCE.getEventBus().post(postReceive);
+    }
+
+    @Inject(method = "sendPacket*", at = @At("TAIL"))
+    public void onPacketSendPost(Packet<?> packetIn, CallbackInfo ci) {
+        PacketEvent.PostSend postSend = new PacketEvent.PostSend(packetIn);
+        Paragon.INSTANCE.getEventBus().post(postSend);
+    }
+
 }
