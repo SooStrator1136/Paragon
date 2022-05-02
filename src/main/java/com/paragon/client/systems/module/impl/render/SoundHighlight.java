@@ -27,7 +27,7 @@ public class SoundHighlight extends Module {
     private final Map<Vec3d, Pair<String, Long>> soundMap = new ConcurrentHashMap<>();
 
     public SoundHighlight() {
-        super("SoundHighlight", ModuleCategory.RENDER, "");
+        super("SoundHighlight", ModuleCategory.RENDER, "Highlights the positions of sounds in the world");
     }
 
     @Override
