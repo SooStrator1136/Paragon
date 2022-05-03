@@ -38,6 +38,7 @@ public class ModuleManager {
                 new Aura(),
                 new AutoCrystal(),
                 new Blink(),
+                new Criticals(),
                 new Offhand(),
 
                 // Movement

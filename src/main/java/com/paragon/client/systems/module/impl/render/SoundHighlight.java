@@ -17,6 +17,8 @@ import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.lwjgl.opengl.GL11.glScalef;
+
 /**
  * @author Wolfsurge
  * @since 02/05/2022
@@ -52,7 +54,7 @@ public class SoundHighlight extends Module {
             SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
             // Add sound to map
-            soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(packet.getSound().getSoundName().getResourcePath(), 255L));
+            soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(packet.getSound().getSoundName().getPath(), 255L));
         }
     }
 

@@ -58,7 +58,7 @@ public class ChinaHat extends Module {
         glBegin(GL_TRIANGLE_STRIP);
 
         // Get the vector to start drawing the hat
-        Vec3d vec = EntityUtil.getInterpolatedPosition(player).addVector(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY + player.getEyeHeight() + 0.5 + (player.isSneaking() ? -0.2 : 0), -mc.getRenderManager().viewerPosZ);
+        Vec3d vec = EntityUtil.getInterpolatedPosition(player).add(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY + player.getEyeHeight() + 0.5 + (player.isSneaking() ? -0.2 : 0), -mc.getRenderManager().viewerPosZ);
 
         // Add vertices for each point
         for (float i = 0; i < Math.PI * 2; i += Math.PI * 4 / 128) {

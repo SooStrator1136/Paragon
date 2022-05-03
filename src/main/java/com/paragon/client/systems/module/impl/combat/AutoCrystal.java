@@ -726,8 +726,8 @@ public class AutoCrystal extends Module {
                 // Get the direction we want to face
                 EnumFacing facing = EnumFacing.getDirectionFromEntityLiving(pos, mc.player);
                 Vec3d facingVec = null;
-                RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).addVector(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);;
-                RayTraceResult laxResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+                RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).add(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);;
+                RayTraceResult laxResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).add(0.5, 0.5, 0.5));
 
                 // Check we hit a block
                 if (laxResult != null && laxResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
@@ -940,7 +940,7 @@ public class AutoCrystal extends Module {
             double v = (1.0D - distancedSize) * blockDensity;
             float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * (double) doubleExplosionSize + 1.0D));
 
-            int diff = mc.world.getDifficulty().getDifficultyId();
+            int diff = mc.world.getDifficulty().getId();
             finalDamage = getBlastReduction(entity, damage * (diff == 0 ? 0 : (diff == 2 ? 1 : (diff == 1 ? 0.5f : 1.5f))), new Explosion(mc.world, null, vec.x, vec.y, vec.z, 6F, false, true));
         } catch (NullPointerException ignored){
         }

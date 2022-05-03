@@ -21,16 +21,16 @@ import java.util.List;
  */
 public class CommandManager implements Wrapper {
 
-    public static String prefix = ">>";
+    public static String prefix = "$";
 
     private static ArrayList<Command> commands = new ArrayList<>();
 
     public CommandManager() {
         MinecraftForge.EVENT_BUS.register(this);
 
+        commands.add(new HelpCommand());
         commands.add(new SocialCommand());
         commands.add(new SyntaxCommand());
-        commands.add(new HelpCommand());
 
         Paragon.INSTANCE.getLogger().info("Loaded Command Manager");
     }
