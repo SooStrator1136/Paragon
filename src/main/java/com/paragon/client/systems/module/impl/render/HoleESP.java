@@ -22,13 +22,13 @@ import java.util.ArrayList;
 public class HoleESP extends Module {
 
     private final BooleanSetting obsidian = new BooleanSetting("Obsidian", "Highlight obsidian holes", true);
-    private final ColourSetting obsidianColour = (ColourSetting) new ColourSetting("Colour", "The colour for obsidian holes", Color.RED).setParentSetting(obsidian);
+    private final ColourSetting obsidianColour = (ColourSetting) new ColourSetting("Colour", "The colour for obsidian holes", ColourUtil.integrateAlpha(Color.RED, 130)).setParentSetting(obsidian);
 
     private final BooleanSetting mixed = new BooleanSetting("Mixed", "Highlight mixed holes (holes that are a mix of obsidian and bedrock)", true);
-    private final ColourSetting mixedColour = (ColourSetting) new ColourSetting("Colour", "The colour for mixed holes", Color.ORANGE).setParentSetting(mixed);
+    private final ColourSetting mixedColour = (ColourSetting) new ColourSetting("Colour", "The colour for mixed holes", ColourUtil.integrateAlpha(Color.ORANGE, 130)).setParentSetting(mixed);
 
     private final BooleanSetting bedrock = new BooleanSetting("Bedrock", "Highlight bedrock holes", true);
-    private final ColourSetting bedrockColour = (ColourSetting) new ColourSetting("Colour", "The colour for bedrock holes", Color.GREEN).setParentSetting(bedrock);
+    private final ColourSetting bedrockColour = (ColourSetting) new ColourSetting("Colour", "The colour for bedrock holes", ColourUtil.integrateAlpha(Color.GREEN, 130)).setParentSetting(bedrock);
 
     private final NumberSetting range = new NumberSetting("Range", "The range to search for holes", 5, 2, 20, 1);
 
@@ -82,11 +82,11 @@ public class HoleESP extends Module {
             AxisAlignedBB modifiedBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + renderHeight.getValue(), blockBB.maxZ);
 
             if (fill.isEnabled()) {
-                RenderUtil.drawFilledBox(modifiedBB, ColourUtil.integrateAlpha(hole.getHoleColour(), 180));
+                RenderUtil.drawFilledBox(modifiedBB, hole.getHoleColour());
             }
 
             if (outline.isEnabled()) {
-                RenderUtil.drawBoundingBox(modifiedBB, outlineWidth.getValue(), hole.getHoleColour());
+                RenderUtil.drawBoundingBox(modifiedBB, outlineWidth.getValue(), ColourUtil.integrateAlpha(hole.getHoleColour(), 255));
             }
         });
     }

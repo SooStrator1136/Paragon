@@ -4,9 +4,7 @@ import com.paragon.api.util.Wrapper;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.*;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.EnumHand;
 

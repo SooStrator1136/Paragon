@@ -65,6 +65,7 @@ public class ModuleManager {
                 new SoundHighlight(),
                 new StorageESP(),
                 new Tracers(),
+                new Trajectories(),
                 new ViewModel(),
                 new Xray(),
 
