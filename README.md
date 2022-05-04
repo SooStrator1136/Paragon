@@ -3,7 +3,7 @@
 # Paragon
 A 1.12.2 Anarchy Client
 
-Created by Wolfsurge and TeleTofu
+Created by Wolfsurge,TeleTofu and the amazing NotRocky/Master7720
 
 # Build instructions
 Windows:
