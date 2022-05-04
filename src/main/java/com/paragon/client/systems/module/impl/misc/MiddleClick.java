@@ -17,6 +17,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -26,6 +27,9 @@ public class MiddleClick extends Module {
 
     private final BooleanSetting friend = new BooleanSetting("Friend", "Add a friend when you middle click on an entity", true);
     private final BooleanSetting pearl = new BooleanSetting("Pearl", "Throw an ender pearl when you do not middle click on an entity", true);
+
+    // To prevent excessive spam
+    private boolean hasClicked = false;
 
     public MiddleClick() {
         super("MiddleClick", ModuleCategory.MISC, "Allows you to perform actions when you middle click");
@@ -38,35 +42,43 @@ public class MiddleClick extends Module {
             return;
         }
 
-        // Check that middle click button is pressed
+        // Check that middle click button is pressed, and we haven't just clicked
         if (Mouse.isButtonDown(2)) {
-            // If the type of hit is a player
-            if (mc.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY && mc.objectMouseOver.entityHit instanceof EntityPlayer && friend.isEnabled()) {
-                // Create new player object
-                Player player = new Player(mc.objectMouseOver.entityHit.getName(), Relationship.FRIEND);
+            if (!hasClicked) {
+                // If the type of hit is a player
+                if (mc.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY && mc.objectMouseOver.entityHit instanceof EntityPlayer && friend.isEnabled()) {
+                    // Create new player object
+                    Player player = new Player(mc.objectMouseOver.entityHit.getName(), Relationship.FRIEND);
 
-                if (Paragon.INSTANCE.getSocialManager().isFriend(player.getName())) {
-                    // Remove player from social list
-                    Paragon.INSTANCE.getSocialManager().removePlayer(player.getName());
-                    CommandManager.sendClientMessage(TextFormatting.RED + "Removed player " + TextFormatting.GRAY + player.getName() + TextFormatting.RED + " from your socials list!", false);
-                } else {
-                    // Add player to social list
-                    Paragon.INSTANCE.getSocialManager().addPlayer(player);
-                    CommandManager.sendClientMessage(TextFormatting.GREEN + "Added player " + TextFormatting.GRAY + player.getName() + TextFormatting.GREEN + " to your friends list!", false);
-                }
-            } else if (pearl.isEnabled())  {
-                // The last slot we were on
-                int prevSlot = mc.player.inventory.currentItem;
+                    if (Paragon.INSTANCE.getSocialManager().isFriend(player.getName())) {
+                        // Remove player from social list
+                        Paragon.INSTANCE.getSocialManager().removePlayer(player.getName());
+                        CommandManager.sendClientMessage(TextFormatting.RED + "Removed player " + TextFormatting.GRAY + player.getName() + TextFormatting.RED + " from your socials list!", false);
+                    } else {
+                        // Add player to social list
+                        Paragon.INSTANCE.getSocialManager().addPlayer(player);
+                        CommandManager.sendClientMessage(TextFormatting.GREEN + "Added player " + TextFormatting.GRAY + player.getName() + TextFormatting.GREEN + " to your friends list!", false);
+                    }
+                } else if (pearl.isEnabled()) {
+                    // The last slot we were on
+                    int prevSlot = mc.player.inventory.currentItem;
 
-                // Switch to pearl, if we can
-                if (InventoryUtil.switchToItem(Items.ENDER_PEARL, false)) {
-                    // Throw pearl
-                    mc.playerController.processRightClick(mc.player, mc.world, EnumHand.MAIN_HAND);
+                    // Switch to pearl, if we can
+                    if (InventoryUtil.switchToItem(Items.ENDER_PEARL, false)) {
+                        // Throw pearl
+                        mc.playerController.processRightClick(mc.player, mc.world, EnumHand.MAIN_HAND);
 
-                    // Switch back to old slot
-                    InventoryUtil.switchToSlot(prevSlot, false);
+                        // Switch back to old slot
+                        InventoryUtil.switchToSlot(prevSlot, false);
+                    }
                 }
             }
+
+            // We have clicked
+            this.hasClicked = true;
+        } else {
+            // Reset hasClicked
+            this.hasClicked = false;
         }
     }
 }
