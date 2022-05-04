@@ -33,6 +33,7 @@
 
     "render.gui.MixinGuiMainMenu",
     "render.gui.MixinGuiMultiplayer",
+    "render.gui.MixinGuiScreen",
 
     "render.tileentity.MixinTileEntityRendererDispatcher",
 

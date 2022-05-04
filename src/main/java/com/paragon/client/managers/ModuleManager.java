@@ -62,6 +62,7 @@ public class ModuleManager {
                 new Nametags(),
                 new NoRender(),
                 new Shader(),
+                new ShulkerViewer(),
                 new SoundHighlight(),
                 new StorageESP(),
                 new Tracers(),
