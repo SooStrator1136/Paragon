@@ -14,7 +14,7 @@ Master7720
 Doogie13
 
 ## Other Credits
-Tigermouthbear, linustouchtips - Animation class
+Tigermouthbear, linustouchtips - Animation class <br>
 linustouchtips / Cosmos - GL Shader code, Font renderer
 
 # Build instructions
