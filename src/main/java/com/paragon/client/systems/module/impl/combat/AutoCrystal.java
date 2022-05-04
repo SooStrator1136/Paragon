@@ -122,7 +122,8 @@ public class AutoCrystal extends Module {
     public final BooleanSetting render = new BooleanSetting("Render", "Render the placement", true);
     public final ModeSetting<Render> renderMode = (ModeSetting<Render>) new ModeSetting<>("Mode", "How to render placement", Render.BOTH).setParentSetting(render);
     public final NumberSetting renderOutlineWidth = (NumberSetting) new NumberSetting("Outline Width", "The width of the lines", 0.5f, 0.1f, 2, 0.1f).setParentSetting(render);
-    public final ColourSetting renderColour = (ColourSetting) new ColourSetting("Colour", "The colour of the render", new Color(185, 19, 255)).setParentSetting(render);
+    public final ColourSetting renderColour = (ColourSetting) new ColourSetting("Colour", "The colour of the render", new Color(185, 19, 255, 130)).setParentSetting(render);
+    public final ColourSetting renderOutlineColour = (ColourSetting) new ColourSetting("Outline Colour", "The colour of the outline", new Color(185, 19, 255)).setParentSetting(render);
 
     // The current player we are targeting
     private EntityPlayer currentTarget;
@@ -196,6 +197,7 @@ public class AutoCrystal extends Module {
 
         // Don't do anything if we don't have a target
         if (currentTarget == null) {
+            reset();
             return;
         }
 
@@ -278,12 +280,12 @@ public class AutoCrystal extends Module {
             if (currentPlacement != null && place.isEnabled()) {
                 // Render fill
                 if (renderMode.getCurrentMode().equals(Render.FILL) || renderMode.getCurrentMode().equals(Render.BOTH)) {
-                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), ColourUtil.integrateAlpha(renderColour.getColour(), renderColour.getColour().getAlpha()));
+                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderColour.getColour());
                 }
 
                 // Render outline
                 if (renderMode.getCurrentMode().equals(Render.OUTLINE) || renderMode.getCurrentMode().equals(Render.BOTH)) {
-                    RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderOutlineWidth.getValue(), ColourUtil.integrateAlpha(renderColour.getColour().darker(), 255));
+                    RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderOutlineWidth.getValue(), renderOutlineColour.getColour());
                 }
             }
         }
