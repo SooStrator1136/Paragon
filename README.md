@@ -3,7 +3,19 @@
 # Paragon
 A 1.12.2 Anarchy Client
 
-Created by Wolfsurge,TeleTofu and the amazing NotRocky/Master7720
+# Contributors
+Head Developer - Wolfsurge
+Head Not-Development - Teletofu
+
+## Developers
+Master7720
+
+## Other contributors
+Doogie13
+
+## Other Credits
+Tigermouthbear, linustouchtips - Animation class
+linustouchtips / Cosmos - GL Shader code, Font renderer
 
 # Build instructions
 Windows:
@@ -19,9 +31,6 @@ Linux/Mac:
 `./gradlew setupDecompWorkspace`
 
 `./gradlew build`
-
-# Credits
-Most if not all files should have an @author tag at the top so you can see who wrote the file. (It's mostly Wolfsurge)
 
 # Using the Custom Font
 A directory is created in the Paragon config folder (/.minecraft/paragon), called "font". In here, upon first opening the client, two files will be present.
