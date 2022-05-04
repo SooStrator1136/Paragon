@@ -47,10 +47,10 @@ public class Step extends Module {
                 // Set our position if we are: collided, on ground, not falling, not on a ladder, and not jumping
                 if (mc.player.collidedHorizontally && mc.player.onGround && mc.player.fallDistance == 0.0f && !mc.player.isOnLadder() && !mc.player.movementInput.jump) {
                     // Send packet
-                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1, mc.player.posZ, true));
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + .42, mc.player.posZ, true));
 
                     // Set position
-                    mc.player.setPosition(mc.player.posX, mc.player.posY + 1, mc.player.posZ);
+                    mc.player.setPosition(mc.player.posX, mc.player.posY + .75, mc.player.posZ);
 
                     // We want to move a tiny bit forwards
                     PlayerUtil.move(0.01f);
