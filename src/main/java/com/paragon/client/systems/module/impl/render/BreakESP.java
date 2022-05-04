@@ -11,6 +11,7 @@ import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
@@ -49,8 +50,8 @@ public class BreakESP extends Module {
 
                 // Check block is within range
                 if (blockPos.getDistance((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ) <= range.getValue()) {
-                    // Block damage
-                    int damage = progress.getPartialBlockDamage();
+                    // Block damage. Clamping this as it can go above 8 for other players, breaking the colour and throwing an exception
+                    int damage = MathHelper.clamp(progress.getPartialBlockDamage(), 0, 8);
 
                     // Block bounding box
                     AxisAlignedBB bb = BlockUtil.getBlockBox(blockPos);
