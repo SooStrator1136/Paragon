@@ -39,7 +39,7 @@ minecraft {
     runDir = "run"
     mappings = "stable_39"
     coreMod = "com.paragon.asm.MixinLoader"
-    makeObfSourceJar = false
+    makeObfSourceJar = true
 }
 
 repositories {
