@@ -15,12 +15,14 @@ import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author Wolfsurge
  */
 public class HoleESP extends Module {
 
+    // Hole filters and colours
     private final BooleanSetting obsidian = new BooleanSetting("Obsidian", "Highlight obsidian holes", true);
     private final ColourSetting obsidianColour = (ColourSetting) new ColourSetting("Colour", "The colour for obsidian holes", ColourUtil.integrateAlpha(Color.RED, 130)).setParentSetting(obsidian);
 
@@ -32,18 +34,25 @@ public class HoleESP extends Module {
 
     private final NumberSetting range = new NumberSetting("Range", "The range to search for holes", 5, 2, 20, 1);
 
-    private final NumberSetting renderHeight = new NumberSetting("Render Height", "The height of the box", 0.3f, 0, 1, 0.01f);
-
+    // Render settings
     private final BooleanSetting fill = new BooleanSetting("Fill", "Fill the hole with a colour", true);
+    private final NumberSetting fillHeight = (NumberSetting) new NumberSetting("Height", "How tall the fill is", 0, 0, 2, 0.01f).setParentSetting(fill);
 
     private final BooleanSetting outline = new BooleanSetting("Outline", "Outline the hole", true);
-    private final NumberSetting outlineWidth = (NumberSetting) new NumberSetting("Width", "The width of the outlines", 1, 1, 3, 1).setParentSetting(outline).setVisiblity(outline::isEnabled);
+    private final NumberSetting outlineWidth = (NumberSetting) new NumberSetting("Width", "The width of the outlines", 1, 1, 3, 1).setParentSetting(outline);
+    private final NumberSetting outlineHeight = (NumberSetting) new NumberSetting("Height", "How tall the outline is", 0, 0, 2, 0.01f).setParentSetting(outline);
 
+    private final BooleanSetting glow = new BooleanSetting("Gradient", "Renders a glow effect above the box", true);
+    private final NumberSetting glowHeight = (NumberSetting) new NumberSetting("Height", "How tall the glow is", 1, 0, 2, 0.01f).setParentSetting(glow);
+
+    private final BooleanSetting hideCurrent = new BooleanSetting("Hide Current", "Doesn't render the hole if you are standing in it", false);
+
+    // List of holes to render
     private final ArrayList<Hole> holes = new ArrayList<>();
 
     public HoleESP() {
         super("HoleESP", ModuleCategory.RENDER, "Highlights holes to stand in when crystalling");
-        this.addSettings(obsidian, mixed, bedrock, range, renderHeight, fill, outline);
+        this.addSettings(obsidian, mixed, bedrock, range, fill, outline, glow, hideCurrent);
     }
 
     @Override
@@ -62,9 +71,15 @@ public class HoleESP extends Module {
             return;
         }
 
+        // Refresh holes list
         holes.clear();
 
         BlockUtil.getSphere(range.getValue(), false).forEach(blockPos -> {
+            // Hide it if it's the hole we are standing in
+            if (hideCurrent.isEnabled() && blockPos.equals(new BlockPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ))) {
+                return;
+            }
+
             if (isSurroundedByBlock(blockPos, Blocks.OBSIDIAN) && obsidian.isEnabled()) {
                 holes.add(new Hole(blockPos, HoleType.OBSIDIAN));
             } else if (isSurroundedByBlock(blockPos, Blocks.BEDROCK) && bedrock.isEnabled()) {
@@ -79,14 +94,20 @@ public class HoleESP extends Module {
     public void onRender3D() {
         holes.forEach(hole -> {
             AxisAlignedBB blockBB = BlockUtil.getBlockBox(hole.getHolePosition());
-            AxisAlignedBB modifiedBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + renderHeight.getValue(), blockBB.maxZ);
 
             if (fill.isEnabled()) {
-                RenderUtil.drawFilledBox(modifiedBB, hole.getHoleColour());
+                AxisAlignedBB fillBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + fillHeight.getValue(), blockBB.maxZ);
+                RenderUtil.drawFilledBox(fillBB, hole.getHoleColour());
             }
 
             if (outline.isEnabled()) {
-                RenderUtil.drawBoundingBox(modifiedBB, outlineWidth.getValue(), ColourUtil.integrateAlpha(hole.getHoleColour(), 255));
+                AxisAlignedBB outlineBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + outlineHeight.getValue(), blockBB.maxZ);
+                RenderUtil.drawBoundingBox(outlineBB, outlineWidth.getValue(), ColourUtil.integrateAlpha(hole.getHoleColour(), 255));
+            }
+
+            if (glow.isEnabled()) {
+                AxisAlignedBB glowBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + glowHeight.getValue(), blockBB.maxZ);
+                RenderUtil.drawGradientBox(glowBB, new Color(0, 0, 0, 0), hole.getHoleColour());
             }
         });
     }
@@ -107,6 +128,23 @@ public class HoleESP extends Module {
     public boolean isSurroundedByBlock(BlockPos pos, Block blockCheck) {
         return BlockUtil.getBlockAtPos(pos) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.north()) == blockCheck && BlockUtil.getBlockAtPos(pos.south()) == blockCheck && BlockUtil.getBlockAtPos(pos.east()) == blockCheck && BlockUtil.getBlockAtPos(pos.west()) == blockCheck
                 && BlockUtil.getBlockAtPos(pos.up()) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.up().up()) == Blocks.AIR && BlockUtil.getBlockAtPos(pos.down()) != Blocks.AIR;
+    }
+
+    public enum HoleType {
+        /**
+         * A hole made of obsidian
+         */
+        OBSIDIAN,
+
+        /**
+         * A hole made of bedrock or obsidian
+         */
+        MIXED,
+
+        /**
+         * A hole made of bedrock
+         */
+        BEDROCK
     }
 
     public class Hole {
@@ -144,22 +182,5 @@ public class HoleESP extends Module {
 
             return Color.WHITE;
         }
-    }
-
-    public enum HoleType {
-        /**
-         * A hole made of obsidian
-         */
-        OBSIDIAN,
-
-        /**
-         * A hole made of bedrock or obsidian
-         */
-        MIXED,
-
-        /**
-         * A hole made of bedrock
-         */
-        BEDROCK
     }
 }

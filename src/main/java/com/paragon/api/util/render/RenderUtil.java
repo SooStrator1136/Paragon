@@ -12,10 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
-
 import java.awt.*;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderUtil implements Wrapper {
@@ -164,7 +161,7 @@ public class RenderUtil implements Wrapper {
         width *= scale;
         height *= scale;
 
-        GL11.glScissor((int) x, (int) (y - height), (int) width, (int) height);
+        glScissor((int) x, (int) (y - height), (int) width, (int) height);
     }
 
     /**
@@ -265,17 +262,103 @@ public class RenderUtil implements Wrapper {
      * @param colour The colour of the outline
      */
     public static void drawFilledBox(AxisAlignedBB axisAlignedBB, Color colour) {
-        GL11.glBlendFunc(770, 771);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glLineWidth(1);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        glBlendFunc(770, 771);
+        glEnable(GL_BLEND);
+        glLineWidth(1);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(false);
         RenderGlobal.renderFilledBox(axisAlignedBB, colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue() / 255f, colour.getAlpha() / 255f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
-        GL11.glDisable(GL11.GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glDisable(GL_BLEND);
+    }
+    
+    public static void drawGradientBox(AxisAlignedBB axisAlignedBB, Color top, Color bottom) {
+        glBlendFunc(770, 771);
+        glEnable(GL_BLEND);
+        glLineWidth(1);
+        glColor4d(0, 1, 0, 0.15F);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(false);
+        glColor4d(0, 0, 1, 0.5F);
+
+        glPushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.enableDepth();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask(false);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        GlStateManager.disableCull();
+        GlStateManager.disableAlpha();
+        GlStateManager.shadeModel(GL_SMOOTH);
+
+        bufferBuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        addGradientBoxVertices(bufferBuilder, axisAlignedBB, bottom, top);
+        tessellator.draw();
+
+        GlStateManager.enableCull();
+        GlStateManager.enableAlpha();
+        GlStateManager.shadeModel(GL_FLAT);
+        glDisable(GL_LINE_SMOOTH);
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glDisable(GL_BLEND);
+    }
+
+    public static void addGradientBoxVertices(BufferBuilder builder, AxisAlignedBB bb, Color topColour, Color bottomColour) {
+        double minX = bb.minX;
+        double minY = bb.minY;
+        double minZ = bb.minZ;
+        double maxX = bb.maxX;
+        double maxY = bb.maxY;
+        double maxZ = bb.maxZ;
+
+        float red = topColour.getRed() / 255f;
+        float green = topColour.getGreen() / 255f;
+        float blue = topColour.getBlue() / 255f;
+        float alpha = topColour.getAlpha() / 255f;
+
+        float red1 = bottomColour.getRed() / 255f;
+        float green1 = bottomColour.getGreen() / 255f;
+        float blue1 = bottomColour.getBlue() / 255f;
+        float alpha1 = bottomColour.getAlpha() / 255f;
+
+        builder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        builder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex();
+        builder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex();
     }
 
     public static void drawNametagText(String text, Vec3d location, int textColour) {
