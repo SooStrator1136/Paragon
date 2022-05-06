@@ -95,18 +95,24 @@ public class Nametags extends Module implements TextRenderer {
             GlStateManager.disableDepth();
             GlStateManager.enableBlend();
 
-            // Get ping and pop count
-            int playerPing = mc.player.connection.getPlayerInfo(player.getUniqueID()).getResponseTime();
-            int popCount = (player instanceof EntityFakePlayer ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
+            StringBuilder stringBuilder = new StringBuilder(player.getName());
 
-            // Build string
-            String renderString = player.getName() +
-                    (health.isEnabled() ? " " + EntityUtil.getTextColourFromEntityHealth(player) + Math.round(EntityUtil.getEntityHealth(player)) : "")
-                    + (ping.isEnabled() ? " " + getPingColour(playerPing) + playerPing : "")
-                    + (pops.isEnabled() ? " " + TextFormatting.GOLD + "-" + popCount : "");
+            if (health.isEnabled()) {
+                stringBuilder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player)).append(Math.round(EntityUtil.getEntityHealth(player)));
+            }
+
+            if (ping.isEnabled() && mc.getConnection() != null) {
+                if (mc.getConnection().getPlayerInfo(player.getUniqueID()) != null) {
+                    stringBuilder.append(" ").append(getPingColour(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime())).append(String.valueOf(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime()));
+                }
+            }
+
+            if (pops.isEnabled()) {
+                stringBuilder.append(" " + TextFormatting.GOLD + "-").append((player instanceof EntityFakePlayer) ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
+            }
 
             // Get nametag width
-            float width = getStringWidth(renderString) + 4;
+            float width = getStringWidth(stringBuilder.toString()) + 4;
 
             // Center nametag
             glTranslated(-width / 2, -20, 0);
@@ -116,7 +122,7 @@ public class Nametags extends Module implements TextRenderer {
             RenderUtil.drawBorder(0, 0, width, getFontHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), 0.5f, -1);
 
             // Render string
-            renderText(renderString, 2, 2, -1);
+            renderText(stringBuilder.toString(), 2, 2, -1);
 
             // Render armour
             if (armour.isEnabled()) {
