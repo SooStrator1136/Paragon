@@ -71,7 +71,6 @@ public class AutoCrystal extends Module {
     // Place settings
     public final BooleanSetting place = new BooleanSetting("Place", "Automatically place crystals", true);
     public final ModeSetting<When> placeWhen = (ModeSetting<When>) new ModeSetting<>("When", "When to place", When.HOLDING).setParentSetting(place);
-    public final BooleanSetting placeWhenSwitchBack = (BooleanSetting) new BooleanSetting("Switch Back", "Switch back to your original item", true).setParentSetting(place).setVisiblity(() -> placeWhen.getCurrentMode().equals(When.SWITCH) || placeWhen.getCurrentMode().equals(When.SILENT_SWITCH));
     public final NumberSetting placeRange = (NumberSetting) new NumberSetting("Range", "The range to place", 5, 1, 7, 1).setParentSetting(place);
     public final NumberSetting placeDelay = (NumberSetting) new NumberSetting("Delay", "The delay between placing crystals", 10, 0, 500, 1).setParentSetting(place);
     public final ModeSetting<Rotate> placeRotate = (ModeSetting<Rotate>) new ModeSetting<>("Rotate", "Rotate to the position you are placing at", Rotate.PACKET).setParentSetting(place);
@@ -110,6 +109,7 @@ public class AutoCrystal extends Module {
     public final NumberSetting overrideTotalArmourValue = (NumberSetting) new NumberSetting("Armour Value", "The value which we will start to override at (in %)", 10, 0, 100, 1).setParentSetting(override);
     public final KeybindSetting forceOverride = (KeybindSetting) new KeybindSetting("Force Override", "Force override when you press a key", Keyboard.KEY_NONE).setParentSetting(override);
     public final BooleanSetting ignoreInhibit = (BooleanSetting) new BooleanSetting("Ignore Inhibit", "Do not inhibit if we are overriding", true).setParentSetting(override).setVisiblity(inhibit::isEnabled);
+    public final BooleanSetting ignoreMaxLocal = (BooleanSetting) new BooleanSetting("Ignore Max Local", "Place or explode even if the damage done to us is larger than the max local damage", true).setParentSetting(override);
 
     // Pause settings
     public final BooleanSetting pause = new BooleanSetting("Pause", "Pause if certain things are happening", true);
@@ -117,6 +117,7 @@ public class AutoCrystal extends Module {
     public final BooleanSetting pauseDrinking = (BooleanSetting) new BooleanSetting("Drinking", "Pause when drinking", true).setParentSetting(pause);
     public final BooleanSetting pauseHealth = (BooleanSetting) new BooleanSetting("Health", "Pause when your health is below a specified value", true).setParentSetting(pause);
     public final NumberSetting pauseHealthValue = (NumberSetting) new NumberSetting("Health Value", "The health to pause at", 10, 1, 20, 1).setParentSetting(pause).setVisiblity(pauseHealth::isEnabled);
+    public final BooleanSetting antiSuicide = (BooleanSetting) new BooleanSetting("Anti Suicide", "Does not explode / place the crystal if it will pop or kill you", true).setParentSetting(pause);
 
     // Render settings
     public final BooleanSetting render = new BooleanSetting("Render", "Render the placement", true);
@@ -124,6 +125,7 @@ public class AutoCrystal extends Module {
     public final NumberSetting renderOutlineWidth = (NumberSetting) new NumberSetting("Outline Width", "The width of the lines", 0.5f, 0.1f, 2, 0.1f).setParentSetting(render);
     public final ColourSetting renderColour = (ColourSetting) new ColourSetting("Colour", "The colour of the render", new Color(185, 19, 255, 130)).setParentSetting(render);
     public final ColourSetting renderOutlineColour = (ColourSetting) new ColourSetting("Outline Colour", "The colour of the outline", new Color(185, 19, 255)).setParentSetting(render);
+    public final BooleanSetting renderDamageNametag = (BooleanSetting) new BooleanSetting("Damage Nametag", "Render the damage nametag", true).setParentSetting(render);
 
     // The current player we are targeting
     private EntityPlayer currentTarget;
@@ -287,6 +289,11 @@ public class AutoCrystal extends Module {
                 if (renderMode.getCurrentMode().equals(Render.OUTLINE) || renderMode.getCurrentMode().equals(Render.BOTH)) {
                     RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderOutlineWidth.getValue(), renderOutlineColour.getColour());
                 }
+
+                // Render damage nametag
+                if (renderDamageNametag.isEnabled()) {
+                    RenderUtil.drawNametagText("[" + (int) currentPlacement.getTargetDamage() + ", " + (int) currentPlacement.getSelfDamage() + "]", new Vec3d(currentPlacement.getPosition().getX() + 0.5, currentPlacement.getPosition().getY() + 0.5, currentPlacement.getPosition().getZ() + 0.5), -1);
+                }
             }
         }
     }
@@ -423,6 +430,11 @@ public class AutoCrystal extends Module {
                 return;
             }
 
+            // AntiSuicide
+            if (currentCrystal.getSelfDamage() > EntityUtil.getEntityHealth(mc.player) && antiSuicide.isEnabled()) {
+                return;
+            }
+
             // Get our current slot so we can switch back
             int antiWeaknessSlot = mc.player.inventory.currentItem;
 
@@ -515,6 +527,11 @@ public class AutoCrystal extends Module {
             return;
         }
 
+        // AntiSuicide
+        if (currentPlacement.getSelfDamage() > EntityUtil.getEntityHealth(mc.player) && antiSuicide.isEnabled()) {
+            return;
+        }
+
         boolean hasSwitched = false;
         int oldSlot = mc.player.inventory.currentItem;
 
@@ -522,30 +539,22 @@ public class AutoCrystal extends Module {
             case HOLDING:
                 hasSwitched = InventoryUtil.isHolding(Items.END_CRYSTAL);
                 break;
+
             case SWITCH:
-                int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
-
-                if (crystalSlot == -1) {
-                    break;
-                } else {
-                    InventoryUtil.switchToSlot(crystalSlot, false);
-                    hasSwitched = true;
-                }
-
-                break;
             case SILENT_SWITCH:
                 int silentCrystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
 
                 if (silentCrystalSlot == -1) {
                     break;
                 } else {
-                    InventoryUtil.switchToSlot(silentCrystalSlot, true);
+                    InventoryUtil.switchToSlot(silentCrystalSlot, false);
                     hasSwitched = true;
                 }
 
                 break;
         }
 
+        // We haven't switched, don't place
         if (!hasSwitched) {
             return;
         }
@@ -568,13 +577,16 @@ public class AutoCrystal extends Module {
         if (placePacket.isEnabled()) {
             // Send place packet
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND, (float) currentPlacement.facingVec.x, (float) currentPlacement.facingVec.y, (float) currentPlacement.facingVec.z));
+
+            // Swing arm
+            swing(placeSwing.getCurrentMode());
         } else {
             // Place crystal
-            mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND);
+            if (mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeWhen.getCurrentMode().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND).equals(EnumActionResult.SUCCESS)) {
+                // Swing arm
+                swing(placeSwing.getCurrentMode());
+            }
         }
-
-        // Swing arm
-        swing(placeSwing.getCurrentMode());
 
         // Add position to our self placed crystals
         selfPlacedCrystals.add(currentPlacement.getPosition().up());
@@ -586,15 +598,8 @@ public class AutoCrystal extends Module {
             Paragon.INSTANCE.getRotationManager().addRotation(rotation);
         }
 
-        if (placeWhenSwitchBack.isEnabled()) {
-            switch (placeWhen.getCurrentMode()) {
-                case SWITCH:
-                    InventoryUtil.switchToSlot(oldSlot, false);
-                    break;
-                case SILENT_SWITCH:
-                    InventoryUtil.switchToSlot(oldSlot, true);
-                    break;
-            }
+        if (placeWhen.getCurrentMode().equals(When.SILENT_SWITCH)) {
+            InventoryUtil.switchToSlot(oldSlot, false);
         }
 
         placeTimer.reset();
@@ -667,7 +672,9 @@ public class AutoCrystal extends Module {
 
                             // Check it meets our max local requirement
                             if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
-                                continue;
+                                if (!(overriding && ignoreMaxLocal.isEnabled())) {
+                                    continue;
+                                }
                             }
 
                             // Check it meets our minimum damage requirement
@@ -680,7 +687,9 @@ public class AutoCrystal extends Module {
                         case SMART:
                             // Check it meets our max local requirement
                             if (calculatedCrystal.getSelfDamage() > explodeMaxLocal.getValue()) {
-                                continue;
+                                if (!(overriding && ignoreMaxLocal.isEnabled())) {
+                                    continue;
+                                }
                             }
 
                             // Check it meets our minimum damage requirement
@@ -758,7 +767,9 @@ public class AutoCrystal extends Module {
 
                 // Check it's below or equal to our maximum local damage requirement
                 if (crystalPosition.getSelfDamage() > placeMaxLocal.getValue()) {
-                    continue;
+                    if (!(overriding && ignoreMaxLocal.isEnabled())) {
+                        continue;
+                    }
                 }
 
                 // Check we aren't overriding
