@@ -48,13 +48,16 @@ public class SoundHighlight extends Module {
     }
 
     @Listener
-    public void onPacketRecieve(PacketEvent.PostReceive event) {
+    public void onPacketReceive(PacketEvent.PostReceive event) {
         // Packet is a sound packet
         if (event.getPacket() instanceof SPacketSoundEffect) {
             SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
-            // Add sound to map
-            soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(packet.getSound().getSoundName().getPath(), 255L));
+            // Don't add multiple sounds for the same position
+            if (!soundMap.containsKey(new Vec3d(packet.getX(), packet.getY(), packet.getZ()))) {
+                // Add sound to map
+                soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(packet.getSound().getSoundName().getPath(), 255L));
+            }
         }
     }
 

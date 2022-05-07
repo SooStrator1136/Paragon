@@ -28,12 +28,9 @@ public class FastUse extends Module {
     private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
             .setDescription("Place crystals fast");
 
-    private final Setting<Boolean> blocks = new Setting<>("Blocks", false)
-            .setDescription("Place blocks fast");
-
     public FastUse() {
         super("FastUse", ModuleCategory.MISC, "Allows you to use items quicker than you would be able to in vanilla");
-        this.addSettings(xp, crystals, blocks);
+        this.addSettings(xp, crystals);
     }
 
     @Override
@@ -43,7 +40,9 @@ public class FastUse extends Module {
         }
 
         // Check we want to set the delay timer to 0
-        if (xp.getValue() && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) || blocks.getValue() && (mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock || mc.player.getHeldItemOffhand().getItem() instanceof ItemBlock) || crystals.getValue() && InventoryUtil.isHolding(Items.END_CRYSTAL)) {
+        if (xp.getValue() && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) ||
+                crystals.getValue() && InventoryUtil.isHolding(Items.END_CRYSTAL)) {
+
             ((IMinecraft) mc).setRightClickDelayTimer(0);
         }
     }

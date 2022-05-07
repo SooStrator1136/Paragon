@@ -28,6 +28,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -186,15 +187,12 @@ public class Nametags extends Module implements TextRenderer {
                         GlStateManager.scale(0.5D, 0.5D, 0.5D);
                         GlStateManager.disableDepth();
 
-                        float yOffset = 25;
+                        List<String> itemInfo = new ArrayList<>();
 
                         // Render the armour's durability
                         if (armourDurability.getValue() && stack.getItem() instanceof ItemArmor || stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool) {
-                            float green = ((float) stack.getMaxDamage() - (float) stack.getItemDamage()) / (float) stack.getMaxDamage();
-                            float red = 1 - green;
-                            int damage = 100 - (int) (red * 100);
-                            renderText(damage + "%", armourX * 2 + 4, y - yOffset, (new Color(red, green, 0)).getRGB());
-                            yOffset -= getFontHeight();
+                            float damage = 1 - (float) stack.getItemDamage() / (float) stack.getMaxDamage();
+                            itemInfo.add((int) (damage * 100) + "%");
                         }
 
                         // Render enchants
@@ -218,9 +216,23 @@ public class Nametags extends Module implements TextRenderer {
                                 String enchantmentName = enchantment.getTranslatedName(level).substring(0, 4) + (level == 1 ? "" : level);
 
                                 // Render the enchantment's name and level
-                                renderText(enchantmentName, armourX * 2 + 4, y - yOffset, 0xFFFFFF);
-                                yOffset -= getFontHeight();
+                                itemInfo.add(enchantmentName);
                             }
+                        }
+
+                        float yOffset = -(itemInfo.size() * getFontHeight()) + 15;
+                        for (String info : itemInfo) {
+                            int colour = -1;
+
+                            if (info.equals(itemInfo.get(0))) {
+                                float green = ((float) stack.getMaxDamage() - (float) stack.getItemDamage()) / (float) stack.getMaxDamage();
+                                float red = 1 - green;
+
+                                colour = new Color(red, green, 0, 1).getRGB();
+                            }
+
+                            renderText(info, armourX * 2 + 4, y + yOffset, colour);
+                            yOffset += getFontHeight();
                         }
 
                         // Re enable depth
