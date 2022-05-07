@@ -6,8 +6,7 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
 
@@ -19,8 +18,11 @@ import java.util.function.Function;
 
 public class ArrayListHUD extends Module implements TextRenderer {
 
-    public static final NumberSetting animationSpeed = new NumberSetting("Animation", "The speed of the animation", 200, 0, 1000, 10);
-    public static final ModeSetting<ArrayListColour> arrayListColour = new ModeSetting<>("Colour", "What colour to render the modules in", ArrayListColour.RAINBOW_WAVE);
+    public static final Setting<Float> animationSpeed = new Setting<>("Animation", 200f, 0f, 1000f, 10f)
+            .setDescription("The speed of the animation");
+
+    public static final Setting<ArrayListColour> arrayListColour = new Setting<>("Colour", ArrayListColour.RAINBOW_WAVE)
+            .setDescription("What colour to render the modules in");
 
     public ArrayListHUD() {
         super("ArrayList", ModuleCategory.HUD, "Renders the enabled modules on screen");
@@ -47,7 +49,7 @@ public class ArrayListHUD extends Module implements TextRenderer {
         Collections.reverse(modules);
 
         for(Module module : modules) {
-            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getCurrentMode().getColour(index * 150));
+            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getValue().getColour(index * 150));
             y -= 11 * module.animation.getAnimationFactor();
             index++;
         }
@@ -62,9 +64,9 @@ public class ArrayListHUD extends Module implements TextRenderer {
         /**
          * Permanent static colour
          */
-        SYNC((addition) -> Colours.mainColour.getColour().getRGB());
+        SYNC((addition) -> Colours.mainColour.getValue().getRGB());
 
-        private Function<Integer, Integer> colour;
+        private final Function<Integer, Integer> colour;
 
         ArrayListColour(Function<Integer, Integer> colour) {
             this.colour = colour;

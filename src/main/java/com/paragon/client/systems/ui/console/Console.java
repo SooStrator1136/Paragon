@@ -55,10 +55,10 @@ public class Console implements Wrapper, TextRenderer {
         renderText(getTitle(), ((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f)) + 3, ((scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f)) + 3, -1);
 
         // Border
-        RenderUtil.drawBorder((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f), getWidth(), getHeight(), 1, Colours.mainColour.getColour().getRGB());
+        RenderUtil.drawBorder((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f), getWidth(), getHeight(), 1, Colours.mainColour.getValue().getRGB());
 
         // Separator
-        RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 13, getWidth(), 1, Colours.mainColour.getColour().getRGB());
+        RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 13, getWidth(), 1, Colours.mainColour.getValue().getRGB());
 
         // Scissor
         RenderUtil.startGlScissor((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 13, getWidth(), getHeight() - 26.5f);

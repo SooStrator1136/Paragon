@@ -3,19 +3,25 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
 
 public class CustomWorld extends Module {
 
-    private final BooleanSetting customWeather = new BooleanSetting("Custom Weather", "Set the world weather to a custom value", true);
-    private final ModeSetting<Weather> weather = (ModeSetting<Weather>) new ModeSetting<>("Weather", "The weather to display", Weather.CLEAR).setParentSetting(customWeather);
+    private final Setting<Boolean> customWeather = new Setting<>("Custom Weather", true)
+            .setDescription("Set the world weather to a custom value");
 
-    private final BooleanSetting customTime = new BooleanSetting("Custom Time", "Set the world time to a custom value", true);
-    private final NumberSetting time = (NumberSetting) new NumberSetting("Time", "The time of day", 1000, 0, 24000, 1).setParentSetting(customTime);
+    private final Setting<Weather> weather = new Setting<>("Weather", Weather.CLEAR)
+            .setDescription( "The weather to display")
+            .setParentSetting(customWeather);
+
+    private final Setting<Boolean> customTime = new Setting<>("Custom Time", true)
+            .setDescription("Set the world time to a custom value");
+
+    private final Setting<Float> time = new Setting<>("Time", 1000f, 0f, 24000f, 1f)
+            .setDescription("The time of day")
+            .setParentSetting(customTime);
 
     public CustomWorld() {
         super("CustomWorld", ModuleCategory.MISC, "Changes the way the world is shown client side");
@@ -28,8 +34,8 @@ public class CustomWorld extends Module {
             return;
         }
 
-        mc.world.setRainStrength(weather.getCurrentMode().getRainStrength());
-        mc.world.setWorldTime((long) time.getValue());
+        mc.world.setRainStrength(weather.getValue().getRainStrength());
+        mc.world.setWorldTime(time.getValue().longValue());
     }
 
     @Listener

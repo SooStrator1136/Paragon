@@ -65,7 +65,7 @@ public class FontRenderer implements Wrapper {
         if (text.isEmpty())
             return (int) x;
 
-        GlStateManager.translate((double) x - 1.5, (double) y + 0.5, 0.0);
+        GlStateManager.translate((double) x - 1.5, (double) y + 0.5, 0);
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

@@ -5,9 +5,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -15,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * @author Wolfsurge
@@ -23,29 +20,58 @@ import java.util.Objects;
 public class HoleESP extends Module {
 
     // Hole filters and colours
-    private final BooleanSetting obsidian = new BooleanSetting("Obsidian", "Highlight obsidian holes", true);
-    private final ColourSetting obsidianColour = (ColourSetting) new ColourSetting("Colour", "The colour for obsidian holes", ColourUtil.integrateAlpha(Color.RED, 130)).setParentSetting(obsidian);
+    private final Setting<Boolean> obsidian = new Setting<>("Obsidian", true)
+            .setDescription("Highlight obsidian holes");
 
-    private final BooleanSetting mixed = new BooleanSetting("Mixed", "Highlight mixed holes (holes that are a mix of obsidian and bedrock)", true);
-    private final ColourSetting mixedColour = (ColourSetting) new ColourSetting("Colour", "The colour for mixed holes", ColourUtil.integrateAlpha(Color.ORANGE, 130)).setParentSetting(mixed);
+    private final Setting<Color> obsidianColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.RED, 130))
+            .setDescription("Colour of obsidian holes")
+            .setParentSetting(obsidian);
 
-    private final BooleanSetting bedrock = new BooleanSetting("Bedrock", "Highlight bedrock holes", true);
-    private final ColourSetting bedrockColour = (ColourSetting) new ColourSetting("Colour", "The colour for bedrock holes", ColourUtil.integrateAlpha(Color.GREEN, 130)).setParentSetting(bedrock);
+    private final Setting<Boolean> mixed = new Setting<>("Mixed", true)
+            .setDescription("Highlight mixed holes (holes that are a mix of obsidian and bedrock)");
 
-    private final NumberSetting range = new NumberSetting("Range", "The range to search for holes", 5, 2, 20, 1);
+    private final Setting<Color> mixedColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.ORANGE, 130))
+            .setDescription("The colour for mixed holes")
+            .setParentSetting(mixed);
+
+    private final Setting<Boolean> bedrock = new Setting<>("Bedrock", true)
+            .setDescription("Highlight bedrock holes");
+
+    private final Setting<Color> bedrockColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.GREEN, 130))
+            .setDescription("The colour for bedrock holes")
+            .setParentSetting(bedrock);
+
+    private final Setting<Float> range = new Setting<>("Range", 5f, 2f, 20f, 1f)
+            .setDescription("The range to search for holes");
 
     // Render settings
-    private final BooleanSetting fill = new BooleanSetting("Fill", "Fill the hole with a colour", true);
-    private final NumberSetting fillHeight = (NumberSetting) new NumberSetting("Height", "How tall the fill is", 0, 0, 2, 0.01f).setParentSetting(fill);
+    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+            .setDescription("Fill the holes ;)");
 
-    private final BooleanSetting outline = new BooleanSetting("Outline", "Outline the hole", true);
-    private final NumberSetting outlineWidth = (NumberSetting) new NumberSetting("Width", "The width of the outlines", 1, 1, 3, 1).setParentSetting(outline);
-    private final NumberSetting outlineHeight = (NumberSetting) new NumberSetting("Height", "How tall the outline is", 0, 0, 2, 0.01f).setParentSetting(outline);
+    private final Setting<Float> fillHeight = new Setting<>("Height", 0f, 0f, 2f, 0.01f)
+            .setDescription("How tall the fill is")
+            .setParentSetting(fill);
 
-    private final BooleanSetting glow = new BooleanSetting("Gradient", "Renders a glow effect above the box", true);
-    private final NumberSetting glowHeight = (NumberSetting) new NumberSetting("Height", "How tall the glow is", 1, 0, 2, 0.01f).setParentSetting(glow);
+    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+            .setDescription("Outline the hole");
 
-    private final BooleanSetting hideCurrent = new BooleanSetting("Hide Current", "Doesn't render the hole if you are standing in it", false);
+    private final Setting<Float> outlineWidth = new Setting<>("Width", 1f, 1f, 3f, 1f)
+            .setDescription("The width of the outlines")
+            .setParentSetting(outline);
+
+    private final Setting<Float> outlineHeight = new Setting<>("Height", 0f, 0f, 2f, 0.01f)
+            .setDescription("How tall the outline is")
+            .setParentSetting(outline);
+
+    private final Setting<Boolean> glow = new Setting<>("Gradient", true)
+            .setDescription("Renders a glow effect above the box");
+
+    private final Setting<Float> glowHeight = new Setting<>("Height", 1f, 0f, 2f, 0.01f)
+            .setDescription("How tall the glow is")
+            .setParentSetting(glow);
+
+    private final Setting<Boolean> hideCurrent = new Setting<>("Hide Current", false)
+            .setDescription("Doesn't render the hole if you are standing in it");
 
     // List of holes to render
     private final ArrayList<Hole> holes = new ArrayList<>();
@@ -76,15 +102,15 @@ public class HoleESP extends Module {
 
         BlockUtil.getSphere(range.getValue(), false).forEach(blockPos -> {
             // Hide it if it's the hole we are standing in
-            if (hideCurrent.isEnabled() && blockPos.equals(new BlockPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ))) {
+            if (hideCurrent.getValue() && blockPos.equals(new BlockPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ))) {
                 return;
             }
 
-            if (isSurroundedByBlock(blockPos, Blocks.OBSIDIAN) && obsidian.isEnabled()) {
+            if (isSurroundedByBlock(blockPos, Blocks.OBSIDIAN) && obsidian.getValue()) {
                 holes.add(new Hole(blockPos, HoleType.OBSIDIAN));
-            } else if (isSurroundedByBlock(blockPos, Blocks.BEDROCK) && bedrock.isEnabled()) {
+            } else if (isSurroundedByBlock(blockPos, Blocks.BEDROCK) && bedrock.getValue()) {
                 holes.add(new Hole(blockPos, HoleType.BEDROCK));
-            } else if (isHoleMixed(blockPos) && mixed.isEnabled()) {
+            } else if (isHoleMixed(blockPos) && mixed.getValue()) {
                 holes.add(new Hole(blockPos, HoleType.MIXED));
             }
         });
@@ -95,17 +121,17 @@ public class HoleESP extends Module {
         holes.forEach(hole -> {
             AxisAlignedBB blockBB = BlockUtil.getBlockBox(hole.getHolePosition());
 
-            if (fill.isEnabled()) {
+            if (fill.getValue()) {
                 AxisAlignedBB fillBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + fillHeight.getValue(), blockBB.maxZ);
                 RenderUtil.drawFilledBox(fillBB, hole.getHoleColour());
             }
 
-            if (outline.isEnabled()) {
+            if (outline.getValue()) {
                 AxisAlignedBB outlineBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + outlineHeight.getValue(), blockBB.maxZ);
                 RenderUtil.drawBoundingBox(outlineBB, outlineWidth.getValue(), ColourUtil.integrateAlpha(hole.getHoleColour(), 255));
             }
 
-            if (glow.isEnabled()) {
+            if (glow.getValue()) {
                 AxisAlignedBB glowBB = new AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + glowHeight.getValue(), blockBB.maxZ);
                 RenderUtil.drawGradientBox(glowBB, new Color(0, 0, 0, 0), hole.getHoleColour());
             }
@@ -173,11 +199,11 @@ public class HoleESP extends Module {
         public Color getHoleColour() {
             switch (holeType) {
                 case OBSIDIAN:
-                    return obsidianColour.getColour();
+                    return obsidianColour.getValue();
                 case MIXED:
-                    return mixedColour.getColour();
+                    return mixedColour.getValue();
                 case BEDROCK:
-                    return bedrockColour.getColour();
+                    return bedrockColour.getValue();
             }
 
             return Color.WHITE;

@@ -3,21 +3,25 @@ package com.paragon.client.systems.module.impl.movement;
 import com.paragon.api.event.world.PlayerCollideWithBlockEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 /**
  * @author Wolfsurge
  */
 public class NoSlow extends Module {
 
-    private final BooleanSetting soulSand = new BooleanSetting("Soul Sand", "Stop soul sand from slowing you down", true);
-    private final BooleanSetting slime = new BooleanSetting("Slime", "Stop slime blocks from slowing you down", true);
-    private final BooleanSetting items = new BooleanSetting("Items", "Stop items from slowing you down", true);
+    private final Setting<Boolean> soulSand = new Setting<>("Soul Sand", true)
+            .setDescription("Stop soul sand from slowing you down");
+
+    private final Setting<Boolean> slime = new Setting<>("Slime", true)
+            .setDescription("Stop slime blocks from slowing you down");
+
+    private final Setting<Boolean> items = new Setting<>("Items", true)
+            .setDescription("Stop items from slowing you down");
 
     public NoSlow() {
         super("NoSlow", ModuleCategory.MOVEMENT, "Stop certain blocks and actions from slowing you down");
@@ -30,7 +34,7 @@ public class NoSlow extends Module {
             return;
         }
 
-        if (items.isEnabled() && mc.player.isHandActive() && !mc.player.isRiding()) {
+        if (items.getValue() && mc.player.isHandActive() && !mc.player.isRiding()) {
             mc.player.movementInput.moveForward *= 5;
             mc.player.movementInput.moveStrafe *= 5;
         }
@@ -38,7 +42,7 @@ public class NoSlow extends Module {
 
     @Listener
     public void onCollideWithBlock(PlayerCollideWithBlockEvent event) {
-        if (event.getBlockType() == Blocks.SOUL_SAND && soulSand.isEnabled() || event.getBlockType() == Blocks.SLIME_BLOCK && slime.isEnabled()) {
+        if (event.getBlockType() == Blocks.SOUL_SAND && soulSand.getValue() || event.getBlockType() == Blocks.SLIME_BLOCK && slime.getValue()) {
             event.cancel();
         }
     }

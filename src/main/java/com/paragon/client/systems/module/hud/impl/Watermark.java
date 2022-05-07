@@ -13,7 +13,7 @@ public class Watermark extends HUDModule {
 
     @Override
     public void render() {
-        renderText("Paragon " + TextFormatting.GRAY + Paragon.modVersion, getX(), getY(), Colours.mainColour.getColour().getRGB());
+        renderText("Paragon " + TextFormatting.GRAY + Paragon.modVersion, getX(), getY(), Colours.mainColour.getValue().getRGB());
     }
 
     @Override

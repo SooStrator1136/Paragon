@@ -1,21 +1,21 @@
 package com.paragon.client.managers;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.managers.alt.Alt;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.hud.HUDModule;
-import com.paragon.client.systems.module.settings.Setting;
-import com.paragon.client.systems.module.settings.impl.*;
+import com.paragon.client.systems.module.setting.Setting;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.awt.*;
 import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Wolfsurge
@@ -52,50 +52,35 @@ public class StorageManager {
                     jsonObject.put("y position", ((HUDModule) moduleIn).getY());
                 }
 
-                for (Setting setting : moduleIn.getSettings()) {
-                    if (setting instanceof BooleanSetting) {
-                        jsonObject.put(setting.getName(), ((BooleanSetting) setting).isEnabled());
-                    } else if (setting instanceof NumberSetting) {
-                        jsonObject.put(setting.getName(), ((NumberSetting) setting).getValue());
-                    } else if (setting instanceof ModeSetting) {
-                        jsonObject.put(setting.getName(), ((ModeSetting) setting).getCurrentMode());
-                    } else if (setting instanceof ColourSetting) {
-                        jsonObject.put(setting.getName(), ((ColourSetting) setting).getColour().getRGB());
-                        jsonObject.put(setting.getName() + "-alpha", ((ColourSetting) setting).getColour().getAlpha());
-                        jsonObject.put(setting.getName() + "-rainbow", ((ColourSetting) setting).isRainbow());
-                        jsonObject.put(setting.getName() + "-rainbow-speed", ((ColourSetting) setting).getRainbowSpeed());
-                        jsonObject.put(setting.getName() + "-rainbow-saturation", ((ColourSetting) setting).getRainbowSaturation());
-                        jsonObject.put(setting.getName() + "-sync", ((ColourSetting) setting).isSync());
-                    } else if (setting instanceof KeybindSetting) {
-                        jsonObject.put(setting.getName(), ((KeybindSetting) setting).getKeyCode());
+                for (Setting<?> setting : moduleIn.getSettings()) {
+                    if (setting.getValue() instanceof Color) {
+                        jsonObject.put(setting.getName(), ((Color) setting.getValue()).getRed() + ":" + ((Color) setting.getValue()).getGreen() + ":" + ((Color) setting.getValue()).getBlue() + ":" + ((Color) setting.getValue()).getAlpha() + ":" + setting.isRainbow() + ":" + setting.getRainbowSpeed() + ":" + setting.getRainbowSaturation() + ":" + setting.isSync());
+                    }
+
+                    else if (setting.getValue() instanceof AtomicInteger) {
+                        jsonObject.put(setting.getName(), ((AtomicInteger) setting.getValue()).get());
+                    }
+
+                    else {
+                        jsonObject.put(setting.getName(), setting.getValue());
                     }
 
                     if (!setting.getSubsettings().isEmpty()) {
-                        setting.getSubsettings().forEach(setting1 -> {
-                            String settingName = setting1.getParentSetting().getName() + "-" + setting1.getName();
+                        for (Setting<?> subsetting : setting.getSubsettings()) {
+                            String name = subsetting.getParentSetting().getName() + " " + subsetting.getName();
 
-                            try {
-                                if (setting1 instanceof BooleanSetting) {
-                                    jsonObject.put(settingName, ((BooleanSetting) setting1).isEnabled());
-                                } else if (setting1 instanceof NumberSetting) {
-                                    jsonObject.put(settingName, ((NumberSetting) setting1).getValue());
-                                } else if (setting1 instanceof ModeSetting<?>) {
-                                    jsonObject.put(settingName, ((ModeSetting<?>) setting1).getCurrentMode().toString());
-                                } else if (setting1 instanceof ColourSetting) {
-                                    jsonObject.put(settingName, ((ColourSetting) setting1).getColour().getRGB());
-                                    jsonObject.put(settingName + "-alpha", ((ColourSetting) setting1).getColour().getAlpha());
-                                    jsonObject.put(settingName + "-rainbow", ((ColourSetting) setting1).isRainbow());
-                                    jsonObject.put(settingName + "-rainbow-speed", ((ColourSetting) setting1).getRainbowSpeed());
-                                    jsonObject.put(settingName + "-rainbow-saturation", ((ColourSetting) setting1).getRainbowSaturation());
-                                    jsonObject.put(settingName + "-sync", ((ColourSetting) setting1).isSync());
-                                } else if (setting1 instanceof KeybindSetting) {
-                                    jsonObject.put(settingName, ((KeybindSetting) setting1).getKeyCode());
-                                }
-                            } catch (Exception e) {
-                                System.out.println("Failed to save setting " + settingName);
-                                e.printStackTrace();
+                            if (subsetting.getValue() instanceof Color) {
+                                jsonObject.put(name, ((Color) subsetting.getValue()).getRed() + ":" + ((Color) subsetting.getValue()).getGreen() + ":" + ((Color) subsetting.getValue()).getBlue() + ":" + ((Color) subsetting.getValue()).getAlpha() + ":" + subsetting.isRainbow() + ":" + subsetting.getRainbowSpeed() + ":" + subsetting.getRainbowSaturation() + ":" + subsetting.isSync());
                             }
-                        });
+
+                            else if (subsetting.getValue() instanceof AtomicInteger) {
+                                jsonObject.put(name, ((AtomicInteger) subsetting.getValue()).get());
+                            }
+
+                            else {
+                                jsonObject.put(name, subsetting.getValue());
+                            }
+                        }
                     }
                 }
 
@@ -134,51 +119,89 @@ public class StorageManager {
                 ((HUDModule) moduleIn).setY(jsonObject.getFloat("y position"));
             }
 
-            for (Setting setting : moduleIn.getSettings()) {
+            for (Setting<?> setting : moduleIn.getSettings()) {
                 try {
-                    if (setting instanceof BooleanSetting) {
-                        ((BooleanSetting) setting).setEnabled(jsonObject.getBoolean(setting.getName()));
-                    } else if (setting instanceof NumberSetting) {
-                        ((NumberSetting) setting).setValue(jsonObject.getFloat(setting.getName()));
-                    } else if (setting instanceof ModeSetting<?>) {
-                        Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) setting).getCurrentMode()).getClass(), jsonObject.getString(setting.getName()));
-                        ((ModeSetting<Enum<?>>) setting).setCurrentMode(newValue);
-                    } else if (setting instanceof ColourSetting) {
-                        ((ColourSetting) setting).setColour(ColourUtil.integrateAlpha(new Color(jsonObject.getInt(setting.getName())), jsonObject.getFloat(setting.getName() + "-alpha")));
-                        ((ColourSetting) setting).setRainbow(jsonObject.getBoolean(setting.getName() + "-rainbow"));
-                        ((ColourSetting) setting).setRainbowSpeed(jsonObject.getFloat(setting.getName() + "-rainbow-speed"));
-                        ((ColourSetting) setting).setRainbowSaturation(jsonObject.getFloat(setting.getName() + "-rainbow-saturation"));
-                        ((ColourSetting) setting).setSync(jsonObject.getBoolean(setting.getName() + "-sync"));
-                    } else if (setting instanceof KeybindSetting) {
-                        ((KeybindSetting) setting).setKeyCode(jsonObject.getInt(setting.getName()));
+                    if (setting.getValue() instanceof Boolean) {
+                        ((Setting<Boolean>) setting).setValue(jsonObject.getBoolean(setting.getName()));
+                    }
+
+                    else if (setting.getValue() instanceof AtomicInteger) {
+                        ((Setting<AtomicInteger>) setting).getValue().set(jsonObject.getInt(setting.getName()));
+                    }
+
+                    else if (setting.getValue() instanceof Float) {
+                        ((Setting<Float>) setting).setValue(jsonObject.getFloat(setting.getName()));
+                    }
+
+                    else if (setting.getValue() instanceof Double) {
+                        ((Setting<Double>) setting).setValue(jsonObject.getDouble(setting.getName()));
+                    }
+
+                    else if (setting.getValue() instanceof Enum<?>) {
+                        Enum<?> value = Enum.valueOf(((Enum) setting.getValue()).getClass(), jsonObject.getString(setting.getName()));
+                        ((Setting<Enum<?>>) setting).setValue(value);
+                    }
+
+                    else if (setting.getValue() instanceof Color) {
+                        String[] values = jsonObject.getString(setting.getName()).split(":");
+
+                        Color colour = new Color(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+
+                        ((Setting<Color>) setting).setValue(colour);
+                        setting.setAlpha(colour.getAlpha());
+                        setting.setRainbow(Boolean.parseBoolean(values[4]));
+                        setting.setRainbowSpeed(Float.parseFloat(values[5]));
+                        setting.setRainbowSaturation(Float.parseFloat(values[6]));
+                        setting.setSync(Boolean.parseBoolean(values[7]));
                     }
                 } catch (Exception e) {
+                    System.out.println("Failed to load setting " + setting.getName());
                     e.printStackTrace();
                 }
 
-                try {
-                    for (Setting subSetting : setting.getSubsettings()) {
-                        String settingName = subSetting.getParentSetting().getName() + "-" + subSetting.getName();
+                if (!setting.getSubsettings().isEmpty()) {
+                    for (Setting<?> subsetting : setting.getSubsettings()) {
+                        String name = setting.getName() + " " + subsetting.getName();
 
-                        if (subSetting instanceof BooleanSetting) {
-                            ((BooleanSetting) subSetting).setEnabled(jsonObject.getBoolean(settingName));
-                        } else if (subSetting instanceof NumberSetting) {
-                            ((NumberSetting) subSetting).setValue(jsonObject.getFloat(settingName));
-                        } else if (subSetting instanceof ModeSetting<?>) {
-                            Enum newValue = Enum.valueOf(((Enum<?>) ((ModeSetting<?>) subSetting).getCurrentMode()).getClass(), jsonObject.getString(settingName));
-                            ((ModeSetting<Enum<?>>) subSetting).setCurrentMode(newValue);
-                        } else if (subSetting instanceof ColourSetting) {
-                            ((ColourSetting) subSetting).setColour(ColourUtil.integrateAlpha(new Color(jsonObject.getInt(settingName)), jsonObject.getFloat(settingName + "-alpha")));
-                            ((ColourSetting) subSetting).setRainbow(jsonObject.getBoolean(settingName + "-rainbow"));
-                            ((ColourSetting) subSetting).setRainbowSpeed(jsonObject.getFloat(settingName + "-rainbow-speed"));
-                            ((ColourSetting) subSetting).setRainbowSaturation(jsonObject.getFloat(settingName + "-rainbow-saturation"));
-                            ((ColourSetting) subSetting).setSync(jsonObject.getBoolean(settingName + "-sync"));
-                        } else if (subSetting instanceof KeybindSetting) {
-                            ((KeybindSetting) subSetting).setKeyCode(jsonObject.getInt(settingName));
+                        try {
+                            if (subsetting.getValue() instanceof Boolean) {
+                                ((Setting<Boolean>) subsetting).setValue(jsonObject.getBoolean(name));
+                            }
+
+                            else if (subsetting.getValue() instanceof AtomicInteger) {
+                                ((Setting<AtomicInteger>) subsetting).getValue().set(jsonObject.getInt(name));
+                            }
+
+                            else if (subsetting.getValue() instanceof Float) {
+                                ((Setting<Float>) subsetting).setValue(jsonObject.getFloat(name));
+                            }
+
+                            else if (subsetting.getValue() instanceof Double) {
+                                ((Setting<Double>) subsetting).setValue(jsonObject.getDouble(name));
+                            }
+
+                            else if (subsetting.getValue() instanceof Enum<?>) {
+                                Enum<?> value = Enum.valueOf(((Enum) subsetting.getValue()).getClass(), jsonObject.getString(name));
+                                ((Setting<Enum<?>>) subsetting).setValue(value);
+                            }
+
+                            else if (subsetting.getValue() instanceof Color) {
+                                String[] values = jsonObject.getString(name).split(":");
+
+                                Color colour = new Color(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+
+                                ((Setting<Color>) subsetting).setValue(colour);
+                                subsetting.setAlpha(colour.getAlpha());
+                                subsetting.setRainbow(Boolean.parseBoolean(values[4]));
+                                subsetting.setRainbowSpeed(Float.parseFloat(values[5]));
+                                subsetting.setRainbowSaturation(Float.parseFloat(values[6]));
+                                subsetting.setSync(Boolean.parseBoolean(values[7]));
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Failed to load setting " + name);
+                            e.printStackTrace();
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
 

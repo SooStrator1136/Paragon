@@ -14,8 +14,8 @@ public class CombatInfo extends HUDModule {
 
     @Override
     public void render() {
-        renderText("KA " + (Aura.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY(), Colours.mainColour.getColour().getRGB());
-        renderText("CA " + (AutoCrystal.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + 10, Colours.mainColour.getColour().getRGB());
+        renderText("KA " + (Aura.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY(), Colours.mainColour.getValue().getRGB());
+        renderText("CA " + (AutoCrystal.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + 10, Colours.mainColour.getValue().getRGB());
     }
 
     @Override

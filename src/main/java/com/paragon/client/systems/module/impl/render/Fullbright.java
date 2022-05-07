@@ -2,13 +2,14 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 
 public class Fullbright extends Module {
 
-    private ModeSetting<Mode> mode = new ModeSetting<>("Mode", "What mode to use", Mode.GAMMA);
+    private Setting<Mode> mode = new Setting<>("Mode", Mode.GAMMA)
+            .setDescription("What mode to use");
 
     public Fullbright() {
         super("Fullbright", ModuleCategory.RENDER, "Makes the world appear brighter");
@@ -20,7 +21,7 @@ public class Fullbright extends Module {
             return;
         }
 
-        switch (mode.getCurrentMode()) {
+        switch (mode.getValue()) {
             case GAMMA:
                 // Increase gamma
                 mc.gameSettings.gammaSetting = 50000;

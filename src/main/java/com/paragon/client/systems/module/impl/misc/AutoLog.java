@@ -2,9 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.gui.GuiMainMenu;
 
 /**
@@ -12,9 +10,14 @@ import net.minecraft.client.gui.GuiMainMenu;
  */
 public class AutoLog extends Module {
 
-    private final ModeSetting<DisconnectMode> logMode = new ModeSetting<>("Log Mode", "How to log you out of the server", DisconnectMode.DISCONNECT);
-    private final NumberSetting health = new NumberSetting("Health", "The health to log you out at", 6, 1, 20, 1);
-    private final BooleanSetting autoDisable = new BooleanSetting("Auto Disable", "Disables the module after logging you out", true);
+    private final Setting<DisconnectMode> logMode = new Setting<>("Log Mode", DisconnectMode.DISCONNECT)
+            .setDescription("How to log you out of the server");
+
+    private final Setting<Float> health = new Setting<>("Health", 6f, 1f, 20f, 1f)
+            .setDescription("The health to log you out at");
+
+    private final Setting<Boolean> autoDisable = new Setting<>("Auto Disable", true)
+            .setDescription("Disables the module after logging you out");
 
     public AutoLog() {
         super("AutoLog", ModuleCategory.MISC, "Automatically logs you out when you reach a certain health");
@@ -28,7 +31,7 @@ public class AutoLog extends Module {
         }
 
         if (mc.player.getHealth() <= health.getValue()) {
-            switch (logMode.getCurrentMode()) {
+            switch (logMode.getValue()) {
                 case KICK:
                     // Set current item to an invalid number
                     mc.player.inventory.currentItem = -1;
@@ -41,7 +44,7 @@ public class AutoLog extends Module {
                     break;
             }
 
-            if (autoDisable.isEnabled()) {
+            if (autoDisable.getValue()) {
                 // Toggle module state
                 toggle();
             }

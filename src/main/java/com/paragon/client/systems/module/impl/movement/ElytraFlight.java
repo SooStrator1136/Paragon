@@ -7,12 +7,9 @@ import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * @author Wolfsurge
@@ -20,26 +17,58 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ElytraFlight extends Module {
 
     // Mode for elytra flight
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "The mode to use", Mode.CONTROL);
+    private final Setting<Mode> mode = new Setting<>("Mode", Mode.CONTROL)
+            .setDescription("The mode to use");
 
     // Strict settings
-    private final NumberSetting ascendPitch = (NumberSetting) new NumberSetting("Ascend Pitch", "What value to set your pitch to when ascending", -45, -90, 90, 1).setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode() == Mode.STRICT);
-    private final NumberSetting descendPitch = (NumberSetting) new NumberSetting("Descend Pitch", "What value to set your pitch to when descending", 45, -90, 90, 1).setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode() == Mode.STRICT);
-    private final BooleanSetting lockPitch = (BooleanSetting) new BooleanSetting("Lock Pitch", "Lock your pitch when you are not ascending or descending", true).setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode() == Mode.STRICT);
-    private final NumberSetting lockPitchVal = (NumberSetting) new NumberSetting("Locked Pitch", "The pitch to lock you to when you are not ascending or descending", 0, -90, 90, 1).setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode() == Mode.STRICT);
+    private final Setting<Float> ascendPitch = new Setting<>("Ascend Pitch", -45f, -90f, 90f, 1f)
+            .setDescription("What value to set your pitch to when ascending")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
+
+    private final Setting<Float> descendPitch = new Setting<>("Descend Pitch", 45f, -90f, 90f, 1f)
+            .setDescription("What value to set your pitch to when descending")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
+
+    private final Setting<Boolean> lockPitch = new Setting<>("Lock Pitch", true)
+            .setDescription("Lock your pitch when you are not ascending or descending")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
+
+    private final Setting<Float> lockPitchVal = new Setting<>("Locked Pitch", 0f, -90f, 90f, 1f)
+            .setDescription("The pitch to lock you to when you are not ascending or descending")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
     // Boost settings
-    private final BooleanSetting cancelMotion = (BooleanSetting) new BooleanSetting("Cancel Motion", "Stop motion when not moving", false).setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode() == Mode.BOOST);
+    private final Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
+            .setDescription("Stop motion when not moving")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.BOOST));
 
     // Global settings
-    private final NumberSetting flySpeed = new NumberSetting("Fly Speed", "How fast to fly", 1, 0.1f, 2f, 0.1f);
-    private final NumberSetting ascend = (NumberSetting) new NumberSetting("Ascend Speed", "How fast to ascend", 1, 0.1f, 2f, 0.1f).setVisiblity(() -> mode.getCurrentMode() == Mode.CONTROL || mode.getCurrentMode() == Mode.STRICT);
-    private final NumberSetting descend = (NumberSetting) new NumberSetting("Descend Speed", "How fast to descend", 1, 0.1f, 2f, 0.1f).setVisiblity(() -> mode.getCurrentMode() == Mode.CONTROL || mode.getCurrentMode() == Mode.STRICT);
-    private final NumberSetting fallSpeed = new NumberSetting("Fall Speed", "How fast to fall", 0, 0, 0.1f, 0.01f);
+    private final Setting<Float> flySpeed = new Setting<>("Fly Speed", 1f, 0.1f, 2f, 0.1f)
+            .setDescription("The speed to fly at");
+
+    private final Setting<Float> ascend = new Setting<>("Ascend Speed", 1f, 0.1f, 2f, 0.1f)
+            .setDescription("How fast to ascend")
+            .setVisibility(() -> !mode.getValue().equals(Mode.BOOST));
+
+    private final Setting<Float> descend = new Setting<>("Descend Speed", 1f, 0.1f, 2f, 0.1f)
+            .setDescription("How fast to descend")
+            .setVisibility(() -> !mode.getValue().equals(Mode.BOOST));
+
+    private final Setting<Float> fallSpeed = new Setting<>("Fall Speed", 0f, 0f, 0.1f, 0.01f)
+            .setDescription("How fast to fall");
 
     // Takeoff settings
-    private final BooleanSetting takeOff = new BooleanSetting("Takeoff", "Automatically take off when you enable the module", true);
-    private final NumberSetting takeOffTimer = (NumberSetting) new NumberSetting("Timer", "How long a tick lasts for", 0.2f, 0.1f, 1, 0.1f).setParentSetting(takeOff);
+    private final Setting<Boolean> takeOff = new Setting<>("Takeoff", true)
+            .setDescription("Automatically take off when you enable the module");
+
+    private final Setting<Float> takeOffTimer = new Setting<>("Timer", 0.2f, 0.1f, 1f, 0.1f)
+            .setDescription("How long a tick lasts for")
+            .setParentSetting(takeOff);
 
     public ElytraFlight() {
         super("ElytraFlight", ModuleCategory.MOVEMENT, "Allows for easier flight with an elytra");
@@ -52,7 +81,7 @@ public class ElytraFlight extends Module {
             return;
         }
 
-        if (takeOff.isEnabled()) {
+        if (takeOff.getValue()) {
             // Make sure we aren't elytra flying
             if (!mc.player.isElytraFlying()) {
                 // Make the game slower
@@ -85,14 +114,14 @@ public class ElytraFlight extends Module {
             // Set us to normal speed if we are flying
             ((ITimer) ((IMinecraft) mc).getTimer()).setTickLength(50);
 
-            if (mode.getCurrentMode() != Mode.BOOST) {
+            if (mode.getValue() != Mode.BOOST) {
                 // Cancel motion
                 travelEvent.cancel();
 
                 // Make us fall
                 PlayerUtil.stopMotion(-fallSpeed.getValue());
             } else {
-                if (cancelMotion.isEnabled()) {
+                if (cancelMotion.getValue()) {
                     // Cancel motion
                     travelEvent.cancel();
 
@@ -101,7 +130,7 @@ public class ElytraFlight extends Module {
                 }
             }
 
-            switch (mode.getCurrentMode()) {
+            switch (mode.getValue()) {
                 case CONTROL:
                     // Move
                     PlayerUtil.move(flySpeed.getValue());
@@ -119,7 +148,7 @@ public class ElytraFlight extends Module {
                 case BOOST:
                     if (mc.gameSettings.keyBindForward.isKeyDown()) {
                         // Move forward
-                        PlayerUtil.propel(flySpeed.getValue() * (cancelMotion.isEnabled() ? 1 : 0.015f));
+                        PlayerUtil.propel(flySpeed.getValue() * (cancelMotion.getValue() ? 1 : 0.015f));
                     }
                     break;
             }
@@ -155,7 +184,7 @@ public class ElytraFlight extends Module {
             // Decrease Y
             mc.player.motionY = -descend.getValue();
         } else {
-            if (lockPitch.isEnabled()) {
+            if (lockPitch.getValue()) {
                 // Set pitch if we aren't moving
                 mc.player.rotationPitch = lockPitchVal.getValue();
             }
@@ -164,7 +193,7 @@ public class ElytraFlight extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
+        return " " + EnumFormatter.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

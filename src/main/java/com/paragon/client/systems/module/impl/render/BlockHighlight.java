@@ -6,11 +6,8 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -21,9 +18,15 @@ import java.awt.*;
  */
 public class BlockHighlight extends Module {
 
-    private final ModeSetting<RenderMode> renderMode = new ModeSetting<>("Render Mode", "How to highlight the block", RenderMode.BOTH);
-    private final NumberSetting lineWidth = (NumberSetting) new NumberSetting("Line Width", "The width of the outline", 1, 0.1f, 1.5f, 0.1f).setVisiblity(() -> renderMode.getCurrentMode() == RenderMode.OUTLINE || renderMode.getCurrentMode() == RenderMode.BOTH);
-    private final ColourSetting colour = new ColourSetting("Colour", "What colour to render the block", new Color(185, 19, 211));
+    private final Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
+            .setDescription("How to highlight the block");
+
+    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 1.5f, 0.1f)
+            .setDescription("The width of the outline")
+            .setVisibility(() -> !renderMode.getValue().equals(RenderMode.FILL));
+
+    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 19, 211))
+            .setDescription("What colour to render the block");
 
     public BlockHighlight() {
         super("BlockHighlight", ModuleCategory.RENDER, "Highlights the block you are looking at");
@@ -42,13 +45,13 @@ public class BlockHighlight extends Module {
             AxisAlignedBB bb = BlockUtil.getBlockBox(mc.objectMouseOver.getBlockPos());
 
             // Draw fill
-            if (renderMode.getCurrentMode() == RenderMode.FILL || renderMode.getCurrentMode() == RenderMode.BOTH) {
-                RenderUtil.drawFilledBox(bb, ColourUtil.integrateAlpha(colour.getColour(), 180));
+            if (!renderMode.getValue().equals(RenderMode.OUTLINE)) {
+                RenderUtil.drawFilledBox(bb, ColourUtil.integrateAlpha(colour.getValue(), 180));
             }
 
             // Draw outline
-            if (renderMode.getCurrentMode() == RenderMode.OUTLINE || renderMode.getCurrentMode() == RenderMode.BOTH) {
-                RenderUtil.drawBoundingBox(bb, lineWidth.getValue(), colour.getColour());
+            if (!renderMode.getValue().equals(RenderMode.FILL)) {
+                RenderUtil.drawBoundingBox(bb, lineWidth.getValue(), colour.getValue());
             }
         }
     }

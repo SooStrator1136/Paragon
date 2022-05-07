@@ -2,11 +2,12 @@ package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 
 public class Flight extends Module {
 
-    private final NumberSetting flySpeed = new NumberSetting("Fly Speed", "How fast you fly", 0.05f, 0.01f, 0.1f, 0.01f);
+    private final Setting<Float> flySpeed = new Setting<>("Fly Speed", 0.05f, 0.01f, 0.1f, 0.01f)
+            .setDescription("How fast you fly");
 
     public Flight() {
         super("Flight", ModuleCategory.MOVEMENT, "Allows you to fly in survival mode");

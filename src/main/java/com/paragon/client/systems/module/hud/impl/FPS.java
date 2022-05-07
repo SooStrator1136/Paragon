@@ -13,7 +13,7 @@ public class FPS extends HUDModule {
 
     @Override
     public void render() {
-        renderText(getText(), getX(), getY(), Colours.mainColour.getColour().getRGB());
+        renderText(getText(), getX(), getY(), Colours.mainColour.getValue().getRGB());
     }
 
     @Override

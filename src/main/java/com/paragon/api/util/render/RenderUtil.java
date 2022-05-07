@@ -367,7 +367,6 @@ public class RenderUtil implements Wrapper {
         float scale = 0.02666667f;
 
         GlStateManager.translate(location.x - mc.getRenderManager().viewerPosX, location.y - mc.getRenderManager().viewerPosY, location.z - mc.getRenderManager().viewerPosZ);
-        GlStateManager.glNormal3f(0, 1, 0);
         GlStateManager.rotate(-mc.player.rotationYaw, 0, 1, 0);
 
         // Rotate based on the view

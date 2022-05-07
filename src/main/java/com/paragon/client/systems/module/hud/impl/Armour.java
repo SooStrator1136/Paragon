@@ -3,9 +3,8 @@ package com.paragon.client.systems.module.hud.impl;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
@@ -16,7 +15,8 @@ import java.util.List;
 
 public class Armour extends HUDModule {
 
-    private final BooleanSetting waterOffset = new BooleanSetting("Water Offset", "Position higher when you are underwater", true);
+    private final Setting<Boolean> waterOffset = new Setting<>("Water Offset", true)
+            .setDescription("Position higher when you are underwater");
 
     public Armour() {
         super("Armour", "Displays your armour on screen");
@@ -30,7 +30,7 @@ public class Armour extends HUDModule {
         Collections.reverse(armourList);
 
         GL11.glPushMatrix();
-        GL11.glTranslatef(0, waterOffset.isEnabled() &&
+        GL11.glTranslatef(0, waterOffset.getValue() &&
                 // We do this rather than mc.player.isInWater() because we only want to offset if we can see the bubbles (top and bottom half of player is in water)
                 // This checks that the top half of the player is in water
                 BlockUtil.getBlockAtPos(mc.player.getPosition().up()).equals(Blocks.WATER) ? -10 : 0, 0);

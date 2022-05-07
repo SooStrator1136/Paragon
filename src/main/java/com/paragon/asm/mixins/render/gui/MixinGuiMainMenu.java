@@ -18,7 +18,7 @@ public class MixinGuiMainMenu {
     @Inject(method = "drawScreen", at = @At("TAIL"))
     public void renderWatermark(int mouseX, int mouseY, float partialTicks, CallbackInfo info) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, 2, sr.getScaledHeight() - 50, Colours.mainColour.getColour().getRGB());
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, 2, sr.getScaledHeight() - 50, Colours.mainColour.getValue().getRGB());
     }
 
 }

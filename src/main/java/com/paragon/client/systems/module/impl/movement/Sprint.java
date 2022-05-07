@@ -4,17 +4,19 @@ import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
+import com.paragon.client.systems.module.setting.Setting;
 
 /**
  * @author Wolfsurge
  */
 public class Sprint extends Module {
 
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "The mode to sprint in", Mode.LEGIT);
+    private final Setting<Mode> mode = new Setting<>("Mode", Mode.LEGIT)
+            .setDescription("The mode to sprint in");
 
-    private final BooleanSetting onlyWhenMoving = (BooleanSetting) new BooleanSetting("When Moving", "Only omni sprint when actually moving", true).setVisiblity(() -> mode.getCurrentMode() == Mode.OMNI);
+    private final Setting<Boolean> onlyWhenMoving = new Setting<>("When Moving", true)
+            .setDescription("Only omni sprint when actually moving")
+            .setVisibility(() -> mode.getValue().equals(Mode.OMNI));
 
     public Sprint() {
         super("Sprint", ModuleCategory.MOVEMENT, "Automatically sprint");
@@ -33,9 +35,9 @@ public class Sprint extends Module {
             return;
         }
 
-        switch (mode.getCurrentMode()) {
+        switch (mode.getValue()) {
             case OMNI:
-                if (onlyWhenMoving.isEnabled()) {
+                if (onlyWhenMoving.getValue()) {
                     // If we aren't moving, do not make us sprint
                     if (!PlayerUtil.isMoving()) {
                         return;
@@ -54,7 +56,7 @@ public class Sprint extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
+        return " " + EnumFormatter.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

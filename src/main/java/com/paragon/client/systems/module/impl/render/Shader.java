@@ -8,10 +8,7 @@ import com.paragon.client.shader.shaders.FluidShader;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -30,46 +27,74 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
+import java.util.Set;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class Shader extends Module {
 
-    private final BooleanSetting passive = new BooleanSetting("Passive", "Apply shader to passive entities", true);
-    private final BooleanSetting mobs = new BooleanSetting("Mobs", "Apply shader to hostile entities", true);
-    private final BooleanSetting players = new BooleanSetting("Players", "Apply shader to player entities", true);
-    private final BooleanSetting crystals = new BooleanSetting("Crystals", "Apply shader to crystals", true);
-    private final BooleanSetting items = new BooleanSetting("Items", "Apply shader to items", true);
+    private final Setting<Boolean> passive = new Setting<>("Passive", true)
+            .setDescription("Apply shader to passive entities");
 
-    private final BooleanSetting chests = new BooleanSetting("Chests", "Apply shader to chests", true);
-    private final BooleanSetting shulkers = new BooleanSetting("Shulkers", "Apply shader to shulkers", true);
-    private final BooleanSetting enderChests = new BooleanSetting("Ender Chests", "Apply shader to ender chests", true);
+    private final Setting<Boolean> mobs = new Setting<>("Mobs", true)
+            .setDescription("Apply shader to hostile entities");
 
-    private final ModeSetting<ShaderType> shaderType = new ModeSetting<>("Shader Type", "The shader to use", ShaderType.DIAMONDS);
+    private final Setting<Boolean> players = new Setting<>("Players", true)
+            .setDescription("Apply shader to player entities");
+
+    private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
+            .setDescription("Apply shader to crystals");
+
+    private final Setting<Boolean> items = new Setting<>("Items", true)
+            .setDescription("Apply shader to items");
+
+    private final Setting<Boolean> chests = new Setting<>("Chests", true)
+            .setDescription("Apply shader to chests");
+
+    private final Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
+            .setDescription("Apply shader to shulkers");
+
+    private final Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
+            .setDescription("Apply shader to ender chests");
+
+    private final Setting<ShaderType> shaderType = new Setting<>("Shader Type", ShaderType.DIAMONDS)
+            .setDescription("The shader to use");
 
     // DIAMONDS
-    private final NumberSetting diamondSpacing = (NumberSetting) new NumberSetting("Spacing", "The spacing between diamonds", 4, 1, 16, 0.5f)
-            .setParentSetting(shaderType).setVisiblity(() -> shaderType.getCurrentMode().equals(ShaderType.DIAMONDS));
+    private final Setting<Float> diamondSpacing = new Setting<>("Spacing", 4f, 1f, 16f, 0.5f)
+            .setDescription("The spacing between diamonds")
+            .setParentSetting(shaderType)
+            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAMONDS));
 
-    private final NumberSetting diamondSize = (NumberSetting) new NumberSetting("Size", "The size of the diamonds", 1, 0.1f, 10, 0.1f)
-            .setParentSetting(shaderType).setVisiblity(() -> shaderType.getCurrentMode().equals(ShaderType.DIAMONDS));
+    private final Setting<Float> diamondSize = new  Setting<>("Size", 1f, 0.1f, 10f, 0.1f)
+            .setDescription("The size of the diamonds")
+            .setParentSetting(shaderType)
+            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAMONDS));
 
     // OUTLINE
-    private final NumberSetting outlineWidth = (NumberSetting) new NumberSetting("Width", "The width of the outline", 1, 1, 5, 0.5f)
-            .setParentSetting(shaderType).setVisiblity(() -> shaderType.getCurrentMode().equals(ShaderType.OUTLINE));
+    private final Setting<Float> outlineWidth = new Setting<>("Width", 1f, 1f, 5f, 0.5f)
+            .setParentSetting(shaderType)
+            .setVisibility(() -> shaderType.getValue().equals(ShaderType.OUTLINE));
 
-    private final BooleanSetting outlineFill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(shaderType).setVisiblity(() -> shaderType.getCurrentMode().equals(ShaderType.OUTLINE));
+    private final Setting<Boolean> outlineFill = new Setting<>("Fill", true)
+            .setDescription("Fill the outline")
+            .setParentSetting(shaderType)
+            .setVisibility(() -> shaderType.getValue().equals(ShaderType.OUTLINE));
 
     // DIAGONAL
-    private final NumberSetting diagonalSpacing = (NumberSetting) new NumberSetting("Spacing", "The spacing between lines", 4, 1, 16, 0.5f)
-            .setParentSetting(shaderType).setVisiblity(() -> shaderType.getCurrentMode().equals(ShaderType.DIAGONAL));
+    private final Setting<Float> diagonalSpacing = new Setting<>("Spacing", 4f, 1f, 16f, 0.5f)
+            .setDescription("The spacing between lines")
+            .setParentSetting(shaderType)
+            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAGONAL));
 
-    private final NumberSetting diagonalWidth = (NumberSetting) new NumberSetting("Width", "The width of the lines", 1, 1, 16, 0.5f)
-            .setParentSetting(shaderType).setVisiblity(() -> shaderType.getCurrentMode().equals(ShaderType.DIAGONAL));
+    private final Setting<Float> diagonalWidth = new Setting<>("Width", 1f, 1f, 16f, 0.5f)
+            .setDescription("The width of the lines")
+            .setParentSetting(shaderType)
+            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAGONAL));
 
-    private final ColourSetting colour = new ColourSetting("Colour", "The colour of the shader", new Color(185, 17, 255));
+    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+            .setDescription("The colour of the shader");
 
     private final OutlineShader outlineShader = new OutlineShader();
     private final DiagonalShader diagonalShader = new DiagonalShader();
@@ -142,22 +167,22 @@ public class Shader extends Module {
             GlStateManager.pushMatrix();
 
             // Render shaders
-            switch (shaderType.getCurrentMode()) {
+            switch (shaderType.getValue()) {
                 case DIAMONDS:
-                    diamondsShader.setColor(colour.getColour());
+                    diamondsShader.setColor(colour.getValue());
                     diamondsShader.setSpacing(diamondSpacing.getValue());
                     diamondsShader.setSize(diamondSize.getValue());
                     diamondsShader.startShader();
                     break;
                 case OUTLINE:
-                    outlineShader.setColour(colour.getColour());
+                    outlineShader.setColour(colour.getValue());
                     outlineShader.setWidth(outlineWidth.getValue());
-                    outlineShader.setFill(outlineFill.isEnabled() ? 1 : 0);
+                    outlineShader.setFill(outlineFill.getValue() ? 1 : 0);
                     outlineShader.setOutline(1);
                     outlineShader.startShader();
                     break;
                 case DIAGONAL:
-                    diagonalShader.setColour(colour.getColour());
+                    diagonalShader.setColour(colour.getValue());
                     diagonalShader.setWidth(diagonalWidth.getValue());
                     diagonalShader.setSpacing(diagonalSpacing.getValue());
                     diagonalShader.startShader();
@@ -194,20 +219,24 @@ public class Shader extends Module {
     }
 
     private boolean isEntityValid(Entity entityIn) {
-        return entityIn instanceof EntityOtherPlayerMP && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
+        return entityIn instanceof EntityOtherPlayerMP && players.getValue() ||
+                entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.getValue() ||
+                entityIn instanceof EntityMob && mobs.getValue() ||
+                entityIn instanceof EntityEnderCrystal && crystals.getValue() ||
+                entityIn instanceof EntityItem && items.getValue();
     }
 
     public boolean isStorageValid(TileEntity tileEntity) {
         if (tileEntity instanceof TileEntityChest) {
-            return chests.isEnabled();
+            return chests.getValue();
         }
 
         if (tileEntity instanceof TileEntityShulkerBox) {
-            return shulkers.isEnabled();
+            return shulkers.getValue();
         }
 
         if (tileEntity instanceof TileEntityEnderChest) {
-            return enderChests.isEnabled();
+            return enderChests.getValue();
         }
 
         return false;
@@ -215,7 +244,7 @@ public class Shader extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(shaderType.getCurrentMode());
+        return " " + EnumFormatter.getFormattedText(shaderType.getValue());
     }
 
     public enum ShaderType {

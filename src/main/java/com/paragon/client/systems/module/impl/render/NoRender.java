@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.render;
 import com.paragon.api.event.render.entity.RenderEatingEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.SoundEvents;
@@ -15,13 +15,26 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoRender extends Module {
 
-    private final BooleanSetting fire = new BooleanSetting("Fire", "Cancel rendering the fire overlay", true);
-    private final BooleanSetting water = new BooleanSetting("Water", "Cancel rendering the water overlay", true);
-    private final BooleanSetting bossInfo = new BooleanSetting("Boss Info", "Cancel rendering the boss info overlay", true);
-    private final BooleanSetting potions = new BooleanSetting("Potion Icons", "Cancel rendering the potion icons", false);
-    private final BooleanSetting portal = new BooleanSetting("Portal", "Cancel rendering the portal effect", true);
-    private final BooleanSetting bats = new BooleanSetting("Bats", "Cancel rendering bats", true);
-    private final BooleanSetting eatingAnimation = new BooleanSetting("Eating animation", "Stops rendering the eating animation", false);
+    private final Setting<Boolean> fire = new Setting<>("Fire", true)
+            .setDescription("Cancel rendering the fire overlay");
+
+    private final Setting<Boolean> water = new Setting<>("Water", true)
+            .setDescription("Cancel rendering the water overlay");
+
+    private final Setting<Boolean> bossInfo = new Setting<>("Boss Info", true)
+            .setDescription("Cancel rendering the boss info overlay");
+
+    private final Setting<Boolean> potions = new Setting<>("Potion Icons", false)
+            .setDescription("Cancel rendering the potion icons");
+
+    private final Setting<Boolean> portal = new Setting<>("Portal", true)
+            .setDescription("Cancel rendering the portal effect");
+
+    private final Setting<Boolean> bats = new Setting<>("Bats", true)
+            .setDescription("Cancel rendering bats");
+
+    private final Setting<Boolean> eatingAnimation = new Setting<>("Eating animation", false)
+            .setDescription("Stops rendering the eating animation");
 
     public NoRender() {
         super("NoRender", ModuleCategory.RENDER, "Cancels rendering certain things");
@@ -34,15 +47,15 @@ public class NoRender extends Module {
             return;
         }
 
-        if (bossInfo.isEnabled() && event.getType() == RenderGameOverlayEvent.ElementType.BOSSINFO) {
+        if (bossInfo.getValue() && event.getType() == RenderGameOverlayEvent.ElementType.BOSSINFO) {
             event.setCanceled(true);
         }
 
-        if (potions.isEnabled() && event.getType() == RenderGameOverlayEvent.ElementType.POTION_ICONS) {
+        if (potions.getValue() && event.getType() == RenderGameOverlayEvent.ElementType.POTION_ICONS) {
             event.setCanceled(true);
         }
 
-        if (portal.isEnabled() && event.getType() == RenderGameOverlayEvent.ElementType.PORTAL) {
+        if (portal.getValue() && event.getType() == RenderGameOverlayEvent.ElementType.PORTAL) {
             event.setCanceled(true);
         }
     }
@@ -53,7 +66,7 @@ public class NoRender extends Module {
             return;
         }
 
-        if (bats.isEnabled() && event.getEntity() instanceof EntityBat) {
+        if (bats.getValue() && event.getEntity() instanceof EntityBat) {
             event.setCanceled(true);
         }
     }
@@ -61,7 +74,7 @@ public class NoRender extends Module {
     @SubscribeEvent
     public void onPlaySound(PlaySoundAtEntityEvent event) {
         if(nullCheck()) return;
-        if (bats.isEnabled() && event.getSound().equals(SoundEvents.ENTITY_BAT_AMBIENT) || event.getSound().equals(SoundEvents.ENTITY_BAT_DEATH) || event.getSound().equals(SoundEvents.ENTITY_BAT_HURT) || event.getSound().equals(SoundEvents.ENTITY_BAT_LOOP) || event.getSound().equals(SoundEvents.ENTITY_BAT_TAKEOFF)) {
+        if (bats.getValue() && event.getSound().equals(SoundEvents.ENTITY_BAT_AMBIENT) || event.getSound().equals(SoundEvents.ENTITY_BAT_DEATH) || event.getSound().equals(SoundEvents.ENTITY_BAT_HURT) || event.getSound().equals(SoundEvents.ENTITY_BAT_LOOP) || event.getSound().equals(SoundEvents.ENTITY_BAT_TAKEOFF)) {
             event.setVolume(0.0f);
             event.setPitch(0.0f);
             event.setCanceled(true);
@@ -70,18 +83,18 @@ public class NoRender extends Module {
 
     @SubscribeEvent
     public void onBlockOverlay(RenderBlockOverlayEvent event) {
-        if (fire.isEnabled() && event.getOverlayType() == RenderBlockOverlayEvent.OverlayType.FIRE) {
+        if (fire.getValue() && event.getOverlayType() == RenderBlockOverlayEvent.OverlayType.FIRE) {
             event.setCanceled(true);
         }
 
-        if (water.isEnabled() && event.getOverlayType() == RenderBlockOverlayEvent.OverlayType.WATER) {
+        if (water.getValue() && event.getOverlayType() == RenderBlockOverlayEvent.OverlayType.WATER) {
             event.setCanceled(true);
         }
     }
 
     @Listener
     public void onRenderEating(RenderEatingEvent event) {
-        if (eatingAnimation.isEnabled()) {
+        if (eatingAnimation.getValue()) {
             event.cancel();
         }
     }

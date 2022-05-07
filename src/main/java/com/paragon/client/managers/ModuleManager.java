@@ -119,7 +119,7 @@ public class ModuleManager {
             }
 
             getModules().forEach(module -> {
-                if (module.getKeyCode().getKeyCode() == Keyboard.getEventKey()) {
+                if (module.getKeyCode().getValue().get() == Keyboard.getEventKey()) {
                     module.toggle();
                 }
             });

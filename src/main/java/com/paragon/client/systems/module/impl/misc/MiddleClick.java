@@ -5,19 +5,16 @@ import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
-import com.paragon.client.managers.social.SocialManager;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 /**
@@ -25,8 +22,11 @@ import org.lwjgl.input.Mouse;
  */
 public class MiddleClick extends Module {
 
-    private final BooleanSetting friend = new BooleanSetting("Friend", "Add a friend when you middle click on an entity", true);
-    private final BooleanSetting pearl = new BooleanSetting("Pearl", "Throw an ender pearl when you do not middle click on an entity", true);
+    private final Setting<Boolean> friend = new Setting<>("Friend", true)
+            .setDescription( "Add a friend when you middle click on an player");
+
+    private final Setting<Boolean> pearl = new Setting<>("Pearl", true)
+            .setDescription("Throw an ender pearl when you do not middle click on an entity");
 
     // To prevent excessive spam
     private boolean hasClicked = false;
@@ -46,7 +46,7 @@ public class MiddleClick extends Module {
         if (Mouse.isButtonDown(2)) {
             if (!hasClicked) {
                 // If the type of hit is a player
-                if (mc.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY && mc.objectMouseOver.entityHit instanceof EntityPlayer && friend.isEnabled()) {
+                if (mc.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY && mc.objectMouseOver.entityHit instanceof EntityPlayer && friend.getValue()) {
                     // Create new player object
                     Player player = new Player(mc.objectMouseOver.entityHit.getName(), Relationship.FRIEND);
 
@@ -59,7 +59,7 @@ public class MiddleClick extends Module {
                         Paragon.INSTANCE.getSocialManager().addPlayer(player);
                         CommandManager.sendClientMessage(TextFormatting.GREEN + "Added player " + TextFormatting.GRAY + player.getName() + TextFormatting.GREEN + " to your friends list!", false);
                     }
-                } else if (pearl.isEnabled()) {
+                } else if (pearl.getValue()) {
                     // The last slot we were on
                     int prevSlot = mc.player.inventory.currentItem;
 

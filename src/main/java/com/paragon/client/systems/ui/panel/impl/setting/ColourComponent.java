@@ -6,12 +6,10 @@ import com.paragon.api.util.calculations.MathUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -27,31 +25,42 @@ import java.util.List;
 /**
  * @author Wolfsurge
  */
-public class ColourComponent extends SettingComponent {
+public class ColourComponent extends SettingComponent<Color> {
 
-    private final NumberSetting hue;
-    private final NumberSetting alpha;
-    private final BooleanSetting rainbow;
-    private final NumberSetting rainbowSpeed;
-    private final NumberSetting rainbowSaturation;
-    private final BooleanSetting sync;
+    private final Setting<Number> hue;
+    private final Setting<Number> alpha;
+    private final Setting<Boolean> rainbow;
+    private final Setting<Number> rainbowSpeed;
+    private final Setting<Number> rainbowSaturation;
+    private final Setting<Boolean> sync;
 
     private Color finalColour;
-    private final List<SettingComponent> components = new ArrayList<>();
+    private final List<SettingComponent<?>> components = new ArrayList<>();
     private final Animation animation = new Animation(200, false);
     private boolean dragging = false;
 
-    public ColourComponent(ModuleButton moduleButton, ColourSetting setting, float offset, float height) {
+    public ColourComponent(ModuleButton moduleButton, Setting<Color> setting, float offset, float height) {
         super(moduleButton, setting, offset, height);
 
-        float[] hsbColour = Color.RGBtoHSB(setting.getColour().getRed(), setting.getColour().getGreen(), setting.getColour().getBlue(), null);
+        float[] hsbColour = Color.RGBtoHSB(setting.getValue().getRed(), setting.getValue().getGreen(), setting.getValue().getBlue(), null);
 
-        this.hue = new NumberSetting("Hue", "The hue of the colour", hsbColour[0] * 360, 0, 360, 1);
-        this.alpha = new NumberSetting("Alpha", "The alpha (transparency) of the colour", setting.getColour().getAlpha(), 0, 255, 1);
-        this.rainbow = new BooleanSetting("Rainbow", "Use a rainbow effect", setting.isRainbow());
-        this.rainbowSpeed = new NumberSetting("Rainbow Speed", "The speed of the rainbow effect", setting.getRainbowSpeed(), 0.1f, 10, 0.1f);
-        this.rainbowSaturation = new NumberSetting("Rainbow Saturation", "The saturation of the rainbow effect", setting.getRainbowSaturation(), 0, 100, 1);
-        this.sync = new BooleanSetting("Sync", "Sync the colour to the client's colour", setting.isSync());
+        this.hue = new Setting<Number>("Hue", (int) (hsbColour[0] * 360f), 0f, 360f, 1f)
+                .setDescription("The hue of the colour");
+
+        this.alpha = new Setting<Number>("Alpha", (float) setting.getValue().getAlpha(), 0f, 255f, 1f)
+                .setDescription("The alpha of the colour");
+
+        this.rainbow = new Setting<>("Rainbow", setting.isRainbow())
+                .setDescription("Whether the colour is a rainbow");
+
+        this.rainbowSpeed = new Setting<Number>("Rainbow Speed", setting.getRainbowSpeed(), 0.1f, 10f, 0.1f)
+                .setDescription("The speed of the rainbow");
+
+        this.rainbowSaturation = new Setting<Number>("Rainbow Saturation", setting.getRainbowSaturation(), 0f, 100f, 1f)
+                .setDescription("The saturation of the rainbow");
+
+        this.sync = new Setting<>("Sync", setting.isSync())
+                .setDescription("Whether the colour is synced to the client's main colour");
 
         components.add(new SliderComponent(moduleButton, hue, offset + (height * 2), height));
         components.add(new SliderComponent(moduleButton, alpha, offset + (height * 3), height));
@@ -60,7 +69,7 @@ public class ColourComponent extends SettingComponent {
         components.add(new SliderComponent(moduleButton, rainbowSaturation, offset + (height * 6), height));
         components.add(new BooleanComponent(moduleButton, sync, offset + (height * 8), height));
 
-        finalColour = setting.getColour();
+        finalColour = setting.getValue();
     }
 
     @Override
@@ -79,10 +88,10 @@ public class ColourComponent extends SettingComponent {
         GL11.glPopMatrix();
 
         RenderUtil.drawBorder(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, 0.5f, -1);
-        RenderUtil.drawRect(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, ((ColourSetting) getSetting()).getColour().getRGB());
+        RenderUtil.drawRect(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, getSetting().getValue().getRGB());
 
         float off = getOffset() + 12;
-        for (SettingComponent settingComponent : components) {
+        for (SettingComponent<?> settingComponent : components) {
             settingComponent.setOffset(off);
             off += 12;
         }
@@ -97,17 +106,18 @@ public class ColourComponent extends SettingComponent {
             // Render sliders
             components.forEach(settingComponent -> settingComponent.renderSetting(mouseX, mouseY));
 
-            ((ColourSetting) getSetting()).setRainbow(this.rainbow.isEnabled());
-            ((ColourSetting) getSetting()).setRainbowSaturation(this.rainbowSaturation.getValue());
-            ((ColourSetting) getSetting()).setRainbowSpeed(this.rainbowSpeed.getValue());
-            ((ColourSetting) getSetting()).setSync(this.sync.isEnabled());
+            getSetting().setAlpha(this.alpha.getValue().floatValue());
+            getSetting().setRainbow(this.rainbow.getValue());
+            getSetting().setRainbowSaturation(this.rainbowSaturation.getValue().floatValue());
+            getSetting().setRainbowSpeed(this.rainbowSpeed.getValue().floatValue());
+            getSetting().setSync(this.sync.getValue());
 
-            float hue = this.hue.getValue();
+            float hue = this.hue.getValue().floatValue();
 
             float x = getModuleButton().getPanel().getX() + 4;
             float y = getModuleButton().getOffset() + getOffset() + (components.size() * 12) + 15.5f;
             float dimension = 87;
-            float height = dimension * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) animation.getAnimationFactor());
+            float height = dimension * ClickGUI.animation.getValue().getAnimationFactor((float) animation.getAnimationFactor());
 
             Color colour = Color.getHSBColor(hue / 360, 1, 1);
 
@@ -145,9 +155,10 @@ public class ColourComponent extends SettingComponent {
             RenderUtil.drawBorder(x, y, dimension, height, 0.5f, -1);
 
             // awful thing to check if we are dragging the hue slider
-            for (SettingComponent settingComponent : components) {
-                if (settingComponent.getSetting() == this.hue && ((SliderComponent) settingComponent).isDragging()) {
-                    hue = ((NumberSetting) settingComponent.getSetting()).getValue();
+            for (SettingComponent<?> settingComponent : components) {
+                if (settingComponent.getSetting() == this.hue && ((SliderComponent) settingComponent).isDragging() && settingComponent.getSetting().getValue() instanceof Number) {
+                    hue = ((Number) settingComponent.getSetting().getValue()).floatValue();
+
                     float[] hsb2 = Color.RGBtoHSB(finalColour.getRed(), finalColour.getGreen(), finalColour.getBlue(), null);
                     finalColour = new Color(Color.HSBtoRGB(hue / 360, hsb2[1], hsb2[2]));
                 }
@@ -190,13 +201,12 @@ public class ColourComponent extends SettingComponent {
             float pickerY = y + (1 - (finHSB[2])) * height;
 
             // Draw picker highlight
-
             RenderUtil.drawRect(pickerX - 1.5f, pickerY - 1.5f, 3, 3, -1);
             RenderUtil.drawRect(pickerX - 1, pickerY - 1, 2, 2, finalColour.getRGB());
         }
 
         // Set final colour
-        ((ColourSetting) getSetting()).setColour(ColourUtil.integrateAlpha(finalColour, alpha.getValue()));
+        getSetting().setValue(ColourUtil.integrateAlpha(finalColour, alpha.getValue().floatValue()));
 
         super.renderSetting(mouseX, mouseY);
     }

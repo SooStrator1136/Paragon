@@ -5,16 +5,16 @@ import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.feature.Feature;
 import com.paragon.client.systems.module.hud.impl.ArrayListHUD;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import com.paragon.client.systems.ui.animation.Animation;
-import com.paragon.client.systems.module.settings.Setting;
-import com.paragon.client.systems.module.settings.impl.KeybindSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Module extends Feature implements Wrapper {
 
@@ -25,14 +25,17 @@ public class Module extends Feature implements Wrapper {
     private boolean enabled;
 
     // Whether the module is visible in the Array List or not
-    private final BooleanSetting visible = new BooleanSetting("Visible", "Whether the module is visible in the array list or not", true);
+    private final Setting<Boolean> visible = new Setting<>("Visible", true)
+            .setDescription("Whether the module is visible in the array list or not");
 
     // Whether the module is constantly enabled or not
     private final boolean constant = getClass().isAnnotationPresent(Constant.class);
 
     // Module Settings
-    private final List<Setting> settings = new ArrayList<>();
-    private final KeybindSetting keyCode = new KeybindSetting("Keybind", "The keybind of the module", 0);
+    private final List<Setting<?>> settings = new ArrayList<>();
+
+    private final Setting<AtomicInteger> keyCode = new Setting<>("Keybind", new AtomicInteger(Keyboard.KEY_NONE))
+            .setDescription("The keybind of the module");
 
     // Arraylist animation
     public Animation animation = new Animation(100, false);
@@ -57,7 +60,7 @@ public class Module extends Feature implements Wrapper {
             this.enabled = true;
         }
 
-        this.keyCode.setKeyCode(keyBind);
+        this.keyCode.getValue().set(keyBind);
         addSettings(keyCode);
         addSettings(visible);
     }
@@ -66,7 +69,7 @@ public class Module extends Feature implements Wrapper {
      * Add settings to the module
      * @param settings An undefined amount of settings to add
      */
-    public void addSettings(Setting... settings) {
+    public void addSettings(Setting<?>... settings) {
         this.settings.addAll(Arrays.asList(settings)); // Add settings
         this.settings.sort(Comparator.comparingInt(s -> s == visible ? 1 : 0)); // Make visible be second to last
         this.settings.sort(Comparator.comparingInt(s -> s == keyCode ? 1 : 0)); // Make keybind be last
@@ -150,7 +153,7 @@ public class Module extends Feature implements Wrapper {
      * @return The module's visibility
      */
     public boolean isVisible() {
-        return visible.isEnabled();
+        return visible.getValue();
     }
 
     /**
@@ -158,7 +161,7 @@ public class Module extends Feature implements Wrapper {
      * @param visible The module's new visibility
      */
     public void setVisible(boolean visible) {
-        this.visible.setEnabled(visible);
+        this.visible.setValue(visible);
     }
 
     /**
@@ -173,7 +176,7 @@ public class Module extends Feature implements Wrapper {
      * Gets a list of the module's settings
      * @return The module's settings
      */
-    public List<Setting> getSettings() {
+    public List<Setting<?>> getSettings() {
         return settings;
     }
 
@@ -181,7 +184,7 @@ public class Module extends Feature implements Wrapper {
      * Gets the key code of the module
      * @return The key code of the module
      */
-    public KeybindSetting getKeyCode() {
+    public Setting<AtomicInteger> getKeyCode() {
         return keyCode;
     }
 }

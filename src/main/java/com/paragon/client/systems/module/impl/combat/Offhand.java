@@ -5,9 +5,7 @@ import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
@@ -21,25 +19,54 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 public class Offhand extends Module {
 
     // Swap settings
-    private final ModeSetting<ItemMode> priority = new ModeSetting<>("Priority", "The item we most want to use in the offhand", ItemMode.CRYSTAL);
-    private final ModeSetting<ItemMode> secondary = new ModeSetting<>("Secondary", "The item we want to use if we cannot find the main item", ItemMode.TOTEM);
-    private final BooleanSetting gappleSword = new BooleanSetting("Gapple Sword", "Swap to a gapple when wielding a sword", true);
+    private final Setting<ItemMode> priority = new Setting<>("Priority", ItemMode.CRYSTAL)
+            .setDescription("The item we most want to use in the offhand");
+
+    private final Setting<ItemMode> secondary = new Setting<>("Secondary", ItemMode.TOTEM)
+            .setDescription("The item we want to use if we cannot find the main item");
+
+    private final Setting<Boolean> gappleSword = new Setting<>("Gapple Sword", true)
+            .setDescription("Swap to a gapple when wielding a sword");
 
     // Safety settings
-    private final BooleanSetting safety = new BooleanSetting("Safety", "Switch to a totem in certain scenarios", true);
-    private final BooleanSetting elytra = (BooleanSetting) new BooleanSetting("Elytra", "Switch to a totem when elytra flying", true).setParentSetting(safety);
-    private final BooleanSetting falling = (BooleanSetting) new BooleanSetting("Falling", "Switch to a totem when you are falling more than 3 blocks (you will take damage)", true).setParentSetting(safety);
-    private final BooleanSetting health = (BooleanSetting) new BooleanSetting("Health", "Switch to a totem when you are below a value", true).setParentSetting(safety);
-    private final NumberSetting healthValue = (NumberSetting) new NumberSetting("Health Value", "The value we want to switch to a totem when you are below", 10, 0, 20, 1).setParentSetting(safety).setVisiblity(health::isEnabled);
-    private final BooleanSetting lava = (BooleanSetting) new BooleanSetting("Lava", "Switch to a totem when you are in lava", true).setParentSetting(safety);
-    private final BooleanSetting fire = (BooleanSetting) new BooleanSetting("Fire", "Switch to a totem when you are on fire", false).setParentSetting(safety);
+    private final Setting<Boolean> safety = new Setting<>("Safety", true)
+            .setDescription("Switch to a totem in certain scenarios");
+
+    private final Setting<Boolean> elytra = new Setting<>("Elytra", true)
+            .setDescription("Switch to a totem when elytra flying")
+            .setParentSetting(safety);
+
+    private final Setting<Boolean> falling = new Setting<>("Falling", true)
+            .setDescription("Switch to a totem when you will take fall damage")
+            .setParentSetting(safety);
+
+    private final Setting<Boolean> health = new Setting<>("Health", true)
+            .setDescription("Switch to a totem when you are below a value")
+            .setParentSetting(safety);
+
+    private final Setting<Float> healthValue = new Setting<>("Health Value", 10f, 0f, 20f, 1f)
+            .setDescription("The value we want to switch to a totem when you are below")
+            .setParentSetting(safety)
+            .setVisibility(health::getValue);
+
+    private final Setting<Boolean> lava = new Setting<>("Lava", true)
+            .setDescription("Switch to a totem when you are in lava")
+            .setParentSetting(safety);
+
+    private final Setting<Boolean> fire = new Setting<>("Fire", false)
+            .setDescription("Switch to a totem when you are on fire")
+            .setParentSetting(safety);
 
     // Delay
-    private final NumberSetting delay = new NumberSetting("Delay", "The delay between switching items", 0, 0, 200, 1);
+    private final Setting<Double> delay = new Setting<>("Delay", 0D, 0D, 200D, 1D)
+            .setDescription("The delay between switching items");
 
     // Bypass settings
-    private final BooleanSetting inventorySpoof = new BooleanSetting("Inventory Spoof", "Spoof opening your inventory", true);
-    private final BooleanSetting cancelMotion = new BooleanSetting("Cancel Motion", "Cancel the motion of the player when switching items", false);
+    private final Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
+            .setDescription("Spoof opening your inventory");
+
+    private final Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
+            .setDescription("Cancel the motion of the player when switching items");
 
     // The timer to determine when to switch
     private final Timer switchTimer = new Timer();
@@ -56,19 +83,19 @@ public class Offhand extends Module {
         }
 
         // Check time has passed
-        if (switchTimer.hasMSPassed((long) delay.getValue() * 10)) {
+        if (switchTimer.hasMSPassed(delay.getValue().longValue() * 10)) {
             // Get slot to switch to
             int switchItemSlot = getSwapSlot();
 
             // Check we have a slot to switch
             if (switchItemSlot != -1) {
                 // Spoof inventory
-                if (inventorySpoof.isEnabled()) {
-                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+                if (inventorySpoof.getValue() && mc.getConnection() != null) {
+                    mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
                 }
 
                 // Cancel motion
-                if (cancelMotion.isEnabled()) {
+                if (cancelMotion.getValue()) {
                     mc.player.motionX = 0;
                     mc.player.motionZ = 0;
                     mc.player.setVelocity(0, mc.player.motionY, 0);
@@ -78,8 +105,8 @@ public class Offhand extends Module {
                 swapOffhand(switchItemSlot);
 
                 // Close inventory
-                if (inventorySpoof.isEnabled()) {
-                    mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+                if (inventorySpoof.getValue() && mc.getConnection() != null && mc.player.inventoryContainer != null) {
+                    mc.getConnection().sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
                 }
             }
 
@@ -118,16 +145,16 @@ public class Offhand extends Module {
      */
     public int getSwapSlot() {
         // Get priority slot
-        Item swap = priority.getCurrentMode().getItem();
+        Item swap = priority.getValue().getItem();
 
         // Apply gapple sword
-        if (gappleSword.isEnabled() && InventoryUtil.isHoldingSword()) {
+        if (gappleSword.getValue() && InventoryUtil.isHoldingSword()) {
             swap = Items.GOLDEN_APPLE;
         }
 
         // Apply safety
-        if (safety.isEnabled()) {
-            if (elytra.isEnabled() && mc.player.isElytraFlying() || falling.isEnabled() && mc.player.fallDistance > 3 || health.isEnabled() && mc.player.getHealth() < healthValue.getValue() || lava.isEnabled() && mc.player.isInLava() || fire.isEnabled() && mc.player.isBurning()) {
+        if (safety.getValue()) {
+            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() < healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
                 swap = Items.TOTEM_OF_UNDYING;
             }
         }
@@ -142,7 +169,7 @@ public class Offhand extends Module {
 
         // Get secondary slot if we couldn't find the priority slot
         if (swapSlot == -1) {
-            swapSlot = InventoryUtil.getItemSlot(secondary.getCurrentMode().getItem());
+            swapSlot = InventoryUtil.getItemSlot(secondary.getValue().getItem());
         }
 
         // Return slot
@@ -151,7 +178,7 @@ public class Offhand extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(priority.getCurrentMode()) + ", " + InventoryUtil.getCountOfItem(secondary.getCurrentMode().getItem(), false, true);
+        return " " + EnumFormatter.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true);
     }
 
     public enum ItemMode {

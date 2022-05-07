@@ -4,20 +4,20 @@ import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.calculations.MathUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class SliderComponent extends SettingComponent {
+public class SliderComponent extends SettingComponent<Number> {
 
     private boolean dragging = false;
 
-    public SliderComponent(ModuleButton moduleButton, NumberSetting setting, float offset, float height) {
+    public SliderComponent(ModuleButton moduleButton, Setting<Number> setting, float offset, float height) {
         super(moduleButton, setting, offset, height);
     }
 
@@ -30,31 +30,35 @@ public class SliderComponent extends SettingComponent {
         // Set values
         float diff = Math.min(88, Math.max(0, mouseX - (getModuleButton().getPanel().getX() + 6)));
 
-        float min = ((NumberSetting) getSetting()).getMin();
-        float max = ((NumberSetting) getSetting()).getMax();
+        float min = getSetting().getMin().floatValue();
+        float max = getSetting().getMax().floatValue();
 
-        renderWidth = 88 * (((NumberSetting) getSetting()).getValue() - min) / (max - min);
+        renderWidth = 88 * (getSetting().getValue().floatValue() - min) / (max - min);
 
         if (!Mouse.isButtonDown(0))
             dragging = false;
 
         if (dragging) {
             if (diff == 0) {
-                ((NumberSetting) getSetting()).setValue(((NumberSetting) getSetting()).getMin());
+                getSetting().setValue(getSetting().getMin());
             } else {
                 float newValue = (float) MathUtil.roundDouble(((diff / 88) * (max - min) + min), 2);
-                ((NumberSetting) getSetting()).setValue(newValue);
+
+                float precision = 1 / getSetting().getIncrementation().floatValue();
+                newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
+
+                getSetting().setValue(newValue);
             }
         }
 
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
         float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName() + formatCode(TextFormatting.GRAY) + " " + ((NumberSetting) getSetting()).getValue(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
+        renderText(getSetting().getName() + formatCode(TextFormatting.GRAY) + " " + getSetting().getValue(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
         GL11.glPopMatrix();
 
         RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, 88, 1, new Color(30, 30, 30).getRGB());
-        RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, renderWidth, 1, Colours.mainColour.getColour().getRGB());
+        RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, renderWidth, 1, Colours.mainColour.getValue().getRGB());
         RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4 + renderWidth - 0.5f, getModuleButton().getOffset() + getOffset() + 9.5f, 2, 2, -1);
 
         super.renderSetting(mouseX, mouseY);

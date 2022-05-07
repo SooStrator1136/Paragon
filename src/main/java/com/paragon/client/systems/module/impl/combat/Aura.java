@@ -11,9 +11,7 @@ import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,21 +36,40 @@ public class Aura extends Module {
     public static Aura INSTANCE;
 
     // How to sort the targets
-    private final ModeSetting<Sort> sort = new ModeSetting<>("Sort", "How to sort the targets", Sort.DISTANCE);
+    private final Setting<Sort> sort = new Setting<>("Sort", Sort.DISTANCE)
+            .setDescription("How to sort the targets");
 
     // Filters
-    private final BooleanSetting players = new BooleanSetting("Players", "Attack players", true);
-    private final BooleanSetting mobs = new BooleanSetting("Mobs", "Attack mobs", true);
-    private final BooleanSetting passives = new BooleanSetting("Passives", "Attack passives", true);
+    private final Setting<Boolean> players = new Setting<>("Players", true)
+            .setDescription("Attack players");
+
+    private final Setting<Boolean> mobs = new Setting<>("Mobs", true)
+            .setDescription("Attack mobs");
+
+    private final Setting<Boolean> passives = new Setting<>("Passives", true)
+            .setDescription("Attack passives");
 
     // Main settings
-    private final NumberSetting range = new NumberSetting("Range", "The range to attack", 5, 0, 5, 1);
-    private final NumberSetting delay = new NumberSetting("Delay", "The delay between attacking in milliseconds", 700, 0, 2000, 1);
-    private final ModeSetting<When> when = new ModeSetting<>("When", "When to attack", When.HOLDING);
-    private final ModeSetting<Rotate> rotate = new ModeSetting<>("Rotate", "How to rotate to the target", Rotate.PACKET);
-    private final BooleanSetting rotateBack = (BooleanSetting) new BooleanSetting("Rotate Back", "Rotate back to your original rotation", true).setParentSetting(rotate);
-    private final ModeSetting<Where> where = new ModeSetting<>("Where", "Where to attack", Where.BODY);
-    private final BooleanSetting packetAttack = new BooleanSetting("Packet Attack", "Attack with a packet", false);
+    private final Setting<Float> range = new Setting<>("Range", 5f, 0f, 5f, 0.1f)
+            .setDescription("The range to attack");
+
+    private final Setting<Double> delay = new Setting<>("Delay", 700D, 0D, 2000D, 1D)
+            .setDescription("The delay between attacking in milliseconds");
+
+    private final Setting<When> when = new Setting<>("When", When.HOLDING)
+            .setDescription("When to attack");
+
+    private final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
+            .setDescription("How to rotate to the target");
+
+    private final Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+            .setDescription("Rotate back to your original rotation").setParentSetting(rotate);
+
+    private final Setting<Where> where = new Setting<>("Where", Where.BODY)
+            .setDescription("Where to attack");
+
+    private final Setting<Boolean> packetAttack = new Setting<>("Packet Attack", false)
+            .setDescription("Attack with a packet");
 
     private final Timer attackTimer = new Timer();
     private EntityLivingBase target;
@@ -73,15 +90,15 @@ public class Aura extends Module {
         target = null;
 
         // Check the delay has passed
-        if (attackTimer.hasMSPassed((long) delay.getValue())) {
+        if (attackTimer.hasMSPassed(delay.getValue().longValue())) {
             // Filter entities
             List<Entity> entities = mc.world.loadedEntityList.stream().filter(EntityLivingBase.class::isInstance).collect(Collectors.toList());
 
             // Filter entities based on settings
-            entities = entities.stream().filter(entity -> entity.getDistance(mc.player) <= range.getValue() && entity != mc.player && !entity.isDead && (EntityUtil.isEntityAllowed(entity, players.isEnabled(), mobs.isEnabled(), passives.isEnabled()) || entity instanceof EntityFakePlayer) && (!(entity instanceof EntityPlayer) || !Paragon.INSTANCE.getSocialManager().isFriend(entity.getName()))).collect(Collectors.toList());
+            entities = entities.stream().filter(entity -> entity.getDistance(mc.player) <= range.getValue() && entity != mc.player && !entity.isDead && (EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), passives.getValue()) || entity instanceof EntityFakePlayer) && (!(entity instanceof EntityPlayer) || !Paragon.INSTANCE.getSocialManager().isFriend(entity.getName()))).collect(Collectors.toList());
 
             // Sort entities
-            entities.sort(Comparator.comparingDouble(entityLivingBase -> sort.getCurrentMode().getSort((EntityLivingBase) entityLivingBase)));
+            entities.sort(Comparator.comparingDouble(entityLivingBase -> sort.getValue().getSort((EntityLivingBase) entityLivingBase)));
 
             // Check we have targets
             if (!entities.isEmpty()) {
@@ -94,7 +111,7 @@ public class Aura extends Module {
                 int oldSlot = mc.player.inventory.currentItem;
 
                 // Check we want to attack
-                switch (when.getCurrentMode()) {
+                switch (when.getValue()) {
                     case SWITCH:
                         // If we aren't holding a sword, switch to it
                         if (!InventoryUtil.isHoldingSword()) {
@@ -118,14 +135,14 @@ public class Aura extends Module {
                 Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
                 // Get our target rotation
-                Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(entityLivingBase.posX, entityLivingBase.posY + where.getCurrentMode().getWhere(entityLivingBase), entityLivingBase.posZ));
-                Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, rotate.getCurrentMode(), RotationPriority.HIGH);
+                Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(entityLivingBase.posX, entityLivingBase.posY + where.getValue().getWhere(entityLivingBase), entityLivingBase.posZ));
+                Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, rotate.getValue(), RotationPriority.HIGH);
 
                 // Rotate to the target
                 Paragon.INSTANCE.getRotationManager().addRotation(rotation);
 
                 // Attack the target
-                if (packetAttack.isEnabled()) {
+                if (packetAttack.getValue()) {
                     mc.player.connection.sendPacket(new CPacketUseEntity(entityLivingBase, EnumHand.MAIN_HAND));
                 } else {
                     mc.playerController.attackEntity(mc.player, entityLivingBase);
@@ -138,8 +155,8 @@ public class Aura extends Module {
                 mc.player.resetCooldown();
 
                 // Rotate back to the original rotation
-                if (rotateBack.isEnabled() && !rotate.getCurrentMode().equals(Rotate.NONE)) {
-                    Rotation rotationBack = new Rotation(originalRotation.x, originalRotation.y, rotate.getCurrentMode(), RotationPriority.NORMAL);
+                if (rotateBack.getValue() && !rotate.getValue().equals(Rotate.NONE)) {
+                    Rotation rotationBack = new Rotation(originalRotation.x, originalRotation.y, rotate.getValue(), RotationPriority.NORMAL);
 
                     Paragon.INSTANCE.getRotationManager().addRotation(rotationBack);
                 }

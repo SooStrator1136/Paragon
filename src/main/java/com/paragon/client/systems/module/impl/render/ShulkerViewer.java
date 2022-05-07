@@ -50,13 +50,13 @@ public class ShulkerViewer extends Module implements TextRenderer {
                     RenderUtil.drawRect(event.getX() + 2, y, 168, 71, new Color(23, 23, 25).getRGB());
 
                     // Border
-                    RenderUtil.drawBorder(event.getX() + 2, y, 168, 71, 1, Colours.mainColour.getColour().getRGB());
+                    RenderUtil.drawBorder(event.getX() + 2, y, 168, 71, 1, Colours.mainColour.getValue().getRGB());
 
                     // Shulker box name
                     renderText(event.getStack().getDisplayName(), event.getX() + 6, y + 2.5f, -1);
 
                     // Separator thing
-                    RenderUtil.drawRect(event.getX() + 2, y + 13, 168, 1, Colours.mainColour.getColour().getRGB());
+                    RenderUtil.drawRect(event.getX() + 2, y + 13, 168, 1, Colours.mainColour.getValue().getRGB());
 
                     // Item X and Y
                     float itemX = event.getX() + 5;

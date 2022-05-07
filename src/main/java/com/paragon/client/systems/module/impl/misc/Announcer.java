@@ -4,10 +4,8 @@ import com.paragon.api.event.network.PlayerEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -17,10 +15,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class Announcer extends Module {
 
     // Event settings
-    private final NumberSetting chatTimer = new NumberSetting("Chat Timer", "The amount of time in seconds between each chat message", 5, 1, 60, 1);
-    private final BooleanSetting breakBlocks = new BooleanSetting("Break Blocks", "Announce when blocks are broken", true);
-    private final BooleanSetting playerJoin = new BooleanSetting("Player Join", "Announce when players join the server", true);
-    private final BooleanSetting playerLeave = new BooleanSetting("Player Leave", "Announce when players leave the server", true);
+    private final Setting<Float> chatTimer = new Setting<>("Chat Timer", 5f, 1f, 60f, 1f)
+            .setDescription("The amount of time in seconds between each chat message");
+
+    private final Setting<Boolean> breakBlocks = new Setting<>("Break Blocks", true)
+            .setDescription("Announce when a block is broken");
+
+    private final Setting<Boolean> playerJoin = new Setting<>("Player Join", true)
+            .setDescription("Announce when players join the server");
+
+    private final Setting<Boolean> playerLeave = new Setting<>("Player Leave", true)
+            .setDescription("Announce when players leave the server");
 
     // Timer to determine when we should send the message
     private final Timer timer = new Timer();
@@ -39,7 +44,7 @@ public class Announcer extends Module {
             return;
         }
 
-        if (timer.hasMSPassed((long) chatTimer.getValue() * 1000) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
+        if (timer.hasMSPassed(chatTimer.getValue().longValue() * 1000) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
             mc.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2]);
             announceComponents = new String[] { "", "0", ""};
 
@@ -49,7 +54,7 @@ public class Announcer extends Module {
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (breakBlocks.isEnabled()) {
+        if (breakBlocks.getValue()) {
             String first = "I just broke ";
             String third = " blocks!";
 
@@ -63,7 +68,7 @@ public class Announcer extends Module {
 
     @Listener
     public void onPlayerJoin(PlayerEvent.PlayerJoinEvent event) {
-        if (playerJoin.isEnabled()) {
+        if (playerJoin.getValue()) {
             if (!event.getName().equals(mc.player.getName())) {
                 mc.player.sendChatMessage("Welcome to the server, " + event.getName() + "!");
             }
@@ -72,7 +77,7 @@ public class Announcer extends Module {
 
     @Listener
     public void onPlayerLeave(PlayerEvent.PlayerLeaveEvent event) {
-        if (playerLeave.isEnabled()) {
+        if (playerLeave.getValue()) {
             if (!event.getName().equals(mc.player.getName())) {
                 mc.player.sendChatMessage("See you later, " + event.getName() + "!");
             }

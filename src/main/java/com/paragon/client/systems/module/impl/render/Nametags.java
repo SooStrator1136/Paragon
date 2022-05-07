@@ -10,12 +10,10 @@ import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.ClientFont;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -39,16 +37,28 @@ import static org.lwjgl.opengl.GL11.*;
 public class Nametags extends Module implements TextRenderer {
 
     // Render settings
-    private final BooleanSetting health = new BooleanSetting("Health", "Render the player's health", true);
-    private final BooleanSetting ping = new BooleanSetting("Ping", "Render the player's ping", true);
-    private final BooleanSetting pops = new BooleanSetting("Pops", "Render the player's totem pop count", true);
+    private final Setting<Boolean> health = new Setting<>("Health", true)
+            .setDescription("Render the player's health");
 
-    private final BooleanSetting armour = new BooleanSetting("Armour", "Render the player's armour", true);
-    private final BooleanSetting armourDurability = (BooleanSetting) new BooleanSetting("Durability", "Render the player's armour durability", true).setParentSetting(armour);
+    private final Setting<Boolean> ping = new Setting<>("Ping", true)
+            .setDescription("Render the player's ping");
+
+    private final Setting<Boolean> pops = new Setting<>("Pops", true)
+            .setDescription("Render the player's totem pop count");
+
+    private final Setting<Boolean> armour = new Setting<>("Armour", true)
+            .setDescription("Render the player's armour");
+
+    private final Setting<Boolean> armourDurability = new Setting<>("Durability", true)
+            .setDescription("Render the player's armour durability")
+            .setParentSetting(armour);
 
     // Scaling
-    private final NumberSetting scaleFactor = new NumberSetting("Scale", "The scale of the nametag", 0.2f, 0.1f, 1f, 0.1f);
-    private final BooleanSetting distanceScale = new BooleanSetting("Distance Scale", "Scale the nametag based on your distance from the player", true);
+    private final Setting<Float> scaleFactor = new Setting<>("Scale", 0.2f, 0.1f, 1f, 0.1f)
+            .setDescription("The scale of the nametag");
+
+    private final Setting<Boolean> distanceScale = new Setting<>("Distance Scale", true)
+            .setDescription("Scale the nametag based on your distance from the player");
 
     public Nametags() {
         super("Nametags", ModuleCategory.RENDER, "Draws nametags above players");
@@ -78,7 +88,7 @@ public class Nametags extends Module implements TextRenderer {
             double distance = mc.player.getDistance(renderVec.x, renderVec.y, renderVec.z);
             float scale = (scaleFactor.getValue() * 5) / 50f;
 
-            if (distanceScale.isEnabled()) {
+            if (distanceScale.getValue()) {
                 scale = (float) (Math.max(scaleFactor.getValue() * 5, scaleFactor.getValue() * distance) / 50);
             }
 
@@ -97,17 +107,17 @@ public class Nametags extends Module implements TextRenderer {
 
             StringBuilder stringBuilder = new StringBuilder(player.getName());
 
-            if (health.isEnabled()) {
+            if (health.getValue()) {
                 stringBuilder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player)).append(Math.round(EntityUtil.getEntityHealth(player)));
             }
 
-            if (ping.isEnabled() && mc.getConnection() != null) {
+            if (ping.getValue() && mc.getConnection() != null) {
                 if (mc.getConnection().getPlayerInfo(player.getUniqueID()) != null) {
                     stringBuilder.append(" ").append(getPingColour(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime())).append(String.valueOf(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime()));
                 }
             }
 
-            if (pops.isEnabled()) {
+            if (pops.getValue()) {
                 stringBuilder.append(" " + TextFormatting.GOLD + "-").append((player instanceof EntityFakePlayer) ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
             }
 
@@ -125,7 +135,7 @@ public class Nametags extends Module implements TextRenderer {
             renderText(stringBuilder.toString(), 2, 2, -1);
 
             // Render armour
-            if (armour.isEnabled()) {
+            if (armour.getValue()) {
                 // Get the items we want to render
                 ArrayList<ItemStack> stacks = new ArrayList<>();
                 stacks.add(player.getHeldItemMainhand());
@@ -179,7 +189,7 @@ public class Nametags extends Module implements TextRenderer {
                         float yOffset = 25;
 
                         // Render the armour's durability
-                        if (armourDurability.isEnabled() && stack.getItem() instanceof ItemArmor || stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool) {
+                        if (armourDurability.getValue() && stack.getItem() instanceof ItemArmor || stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool) {
                             float green = ((float) stack.getMaxDamage() - (float) stack.getItemDamage()) / (float) stack.getMaxDamage();
                             float red = 1 - green;
                             int damage = 100 - (int) (red * 100);

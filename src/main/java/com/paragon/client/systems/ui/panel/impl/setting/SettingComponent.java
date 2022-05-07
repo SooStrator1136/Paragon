@@ -8,28 +8,29 @@ import com.paragon.client.systems.ui.panel.PanelGUI;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.client.systems.module.settings.Setting;
-import com.paragon.client.systems.module.settings.impl.*;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Wolfsurge
  */
-public class SettingComponent implements TextRenderer {
+public class SettingComponent<T> implements TextRenderer {
 
     private final ModuleButton moduleButton;
-    private final Setting setting;
+    private final Setting<T> setting;
     private float offset;
     private final float height;
 
-    private final ArrayList<SettingComponent> settingComponents = new ArrayList<>();
+    private final ArrayList<SettingComponent<?>> settingComponents = new ArrayList<>();
 
     public Animation animation;
 
-    public SettingComponent(ModuleButton moduleButton, Setting setting, float offset, float height) {
+    public SettingComponent(ModuleButton moduleButton, Setting<T> setting, float offset, float height) {
         this.moduleButton = moduleButton;
         this.setting = setting;
         this.offset = offset;
@@ -38,27 +39,27 @@ public class SettingComponent implements TextRenderer {
         float settingOffset = getOffset() - 1;
 
         if (!setting.getSubsettings().isEmpty()) {
-            for (Setting setting1 : setting.getSubsettings()) {
-                if (setting1 instanceof BooleanSetting) {
-                    getSettingComponents().add(new BooleanComponent(getModuleButton(), (BooleanSetting) setting1, settingOffset, 12));
+            for (Setting<?> setting1 : setting.getSubsettings()) {
+                if (setting1.getValue() instanceof Boolean) {
+                    getSettingComponents().add(new BooleanComponent(getModuleButton(), (Setting<Boolean>) setting1, settingOffset, 12));
                     settingOffset += 12;
-                } else if (setting1 instanceof NumberSetting) {
-                    getSettingComponents().add(new SliderComponent(getModuleButton(), (NumberSetting) setting1, settingOffset, 12));
+                } else if (setting1.getValue() instanceof AtomicInteger) {
+                    getSettingComponents().add(new KeybindComponent(getModuleButton(), (Setting<AtomicInteger>) setting1, settingOffset, 12));
                     settingOffset += 12;
-                } else if (setting1 instanceof ModeSetting) {
-                    getSettingComponents().add(new ModeComponent(getModuleButton(), (ModeSetting) setting1, settingOffset, 12));
+                } else if (setting1.getValue() instanceof Number) {
+                    getSettingComponents().add(new SliderComponent(getModuleButton(), (Setting<Number>) setting1, settingOffset, 12));
                     settingOffset += 12;
-                } else if (setting1 instanceof ColourSetting) {
-                    getSettingComponents().add(new ColourComponent(getModuleButton(), (ColourSetting) setting1, settingOffset, 12));
+                } else if (setting1.getValue() instanceof Enum<?>) {
+                    getSettingComponents().add(new ModeComponent(getModuleButton(), (Setting<Enum<?>>) setting1, settingOffset, 12));
                     settingOffset += 12;
-                } else if (setting1 instanceof KeybindSetting) {
-                    getSettingComponents().add(new KeybindComponent(getModuleButton(), (KeybindSetting) setting1, settingOffset, 12));
+                } else if (setting1.getValue() instanceof Color) {
+                    getSettingComponents().add(new ColourComponent(getModuleButton(), (Setting<Color>) setting1, settingOffset, 12));
                     settingOffset += 12;
                 }
             }
         }
 
-        animation = new Animation(100, false);
+        animation = new Animation(200, false);
     }
 
     public void renderSetting(int mouseX, int mouseY) {
@@ -79,20 +80,17 @@ public class SettingComponent implements TextRenderer {
                 }
             });
 
-            for (SettingComponent settingComponent : settingComponents) {
+            for (SettingComponent<?> settingComponent : settingComponents) {
                 if (settingComponent.getSetting().isVisible()) {
-                    RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + settingComponent.getOffset(), 2, settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight(), Colours.mainColour.getColour().getRGB());
+                    RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + settingComponent.getOffset(), 2, settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight(), Colours.mainColour.getValue().getRGB());
                 }
             }
         }
 
         if (isMouseOver(mouseX, mouseY) && !(this instanceof ColourComponent)) {
             PanelGUI.tooltip = setting.getDescription();
-
-            if (this instanceof ModeComponent) {
-                PanelGUI.tooltip = setting.getDescription() + "\n" + ((ModeSetting<?>) setting).getModeDescription().get();
-            }
         }
+
         // If it's a colour component, we only want to render if the mouse is over the actual button, not the pickers
         else if (this instanceof ColourComponent) {
             if (GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 13, mouseX, mouseY)) {
@@ -102,7 +100,7 @@ public class SettingComponent implements TextRenderer {
     }
 
     public boolean hasVisibleSubsettings() {
-        for (SettingComponent settingComponent : getSettingComponents()) {
+        for (SettingComponent<?> settingComponent : getSettingComponents()) {
             if (settingComponent.getSetting().isVisible()) {
                 return true;
             }
@@ -124,7 +122,7 @@ public class SettingComponent implements TextRenderer {
     }
 
     public void keyTyped(char typedChar, int keyCode) {
-        for (SettingComponent settingComponent : getSettingComponents()) {
+        for (SettingComponent<?> settingComponent : getSettingComponents()) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.keyTyped(typedChar, keyCode);
             }
@@ -147,7 +145,7 @@ public class SettingComponent implements TextRenderer {
      * Gets the setting
      * @return The setting
      */
-    public Setting getSetting() {
+    public Setting<T> getSetting() {
         return setting;
     }
 
@@ -179,7 +177,7 @@ public class SettingComponent implements TextRenderer {
      * Gets the list of setting components
      * @return The setting components
      */
-    public ArrayList<SettingComponent> getSettingComponents() {
+    public ArrayList<SettingComponent<?>> getSettingComponents() {
         return settingComponents;
     }
 

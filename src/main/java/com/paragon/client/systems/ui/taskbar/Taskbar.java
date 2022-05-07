@@ -35,9 +35,9 @@ public class Taskbar implements Wrapper, TextRenderer {
 
         if (open) {
             RenderUtil.drawRect(0, scaledResolution.getScaledHeight() - 21, scaledResolution.getScaledWidth(), 21, new Color(20, 20, 20).getRGB());
-            RenderUtil.drawRect(0, scaledResolution.getScaledHeight() - 23, scaledResolution.getScaledWidth(), 2, Colours.mainColour.getColour().getRGB());
+            RenderUtil.drawRect(0, scaledResolution.getScaledHeight() - 23, scaledResolution.getScaledWidth(), 2, Colours.mainColour.getValue().getRGB());
 
-            renderText("Paragon", 2, scaledResolution.getScaledHeight() - 15, Colours.mainColour.getColour().getRGB());
+            renderText("Paragon", 2, scaledResolution.getScaledHeight() - 15, Colours.mainColour.getValue().getRGB());
 
             for (Icon icon : icons) {
                 icon.draw(mouseX, mouseY);

@@ -4,8 +4,7 @@ import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
@@ -21,12 +20,18 @@ import static org.lwjgl.opengl.GL11.*;
 public class ChinaHat extends Module {
 
     // Colours
-    private final ColourSetting topColour = new ColourSetting("Top Colour", "The top colour of the hat", new Color(185, 17, 255, 180));
-    private final ColourSetting bottomColour = new ColourSetting("Bottom Colour", "The bottom colour of the hat", new Color(185, 17, 255, 180));
+    private final Setting<Color> topColour = new Setting<>("Top Colour", new Color(185, 17, 255, 180))
+            .setDescription("The top colour of the hat");
+
+    private final Setting<Color> bottomColour = new Setting<>("Bottom Colour", new Color(185, 17, 255, 180))
+            .setDescription("The bottom colour of the hat");
 
     // Settings
-    private final BooleanSetting firstPerson = new BooleanSetting("First Person", "Render the hat in first person", false);
-    private final BooleanSetting others = new BooleanSetting("Others", "Render the hat on other players", true);
+    private final Setting<Boolean> firstPerson = new Setting<>("First Person", false)
+            .setDescription("Render the hat in first person");
+
+    private final Setting<Boolean> others = new Setting<>("Others", true)
+            .setDescription("Render the hat on other players");
 
     public ChinaHat() {
         super("ChinaHat", ModuleCategory.RENDER, "-69420 social credit :((");
@@ -38,7 +43,7 @@ public class ChinaHat extends Module {
         // Iterate through all players
         mc.world.playerEntities.forEach(player -> {
             // We don't want to render the hat
-            if (player == mc.player && !firstPerson.isEnabled() && mc.gameSettings.thirdPersonView == 0 || !others.isEnabled() && player != mc.player) {
+            if (player == mc.player && !firstPerson.getValue() && mc.gameSettings.thirdPersonView == 0 || !others.getValue() && player != mc.player) {
                 return;
             }
 
@@ -69,13 +74,13 @@ public class ChinaHat extends Module {
             double hatZ = vec.z + 0.65 * Math.sin(i);
 
             // Set bottom colour
-            ColourUtil.setColour(bottomColour.getColour().getRGB());
+            ColourUtil.setColour(bottomColour.getValue().getRGB());
 
             // Add bottom point
             glVertex3d(hatX, vec.y - 0.25, hatZ);
 
             // Set top colour
-            ColourUtil.setColour(topColour.getColour().getRGB());
+            ColourUtil.setColour(topColour.getValue().getRGB());
 
             // Add top point
             glVertex3d(vec.x, vec.y, vec.z);

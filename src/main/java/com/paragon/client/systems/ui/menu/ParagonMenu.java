@@ -51,7 +51,7 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
         {
             float scaleFactor = 1 / 2.5f;
 
-            renderCenteredString("Paragon", (width / 2f) * scaleFactor, (height / 2f - 30) * scaleFactor, Colours.mainColour.getColour().getRGB(), true);
+            renderCenteredString("Paragon", (width / 2f) * scaleFactor, (height / 2f - 30) * scaleFactor, Colours.mainColour.getValue().getRGB(), true);
 
             glScalef(scaleFactor, scaleFactor, scaleFactor);
         }

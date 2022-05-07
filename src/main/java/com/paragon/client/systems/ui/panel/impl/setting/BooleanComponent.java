@@ -3,16 +3,16 @@ package com.paragon.client.systems.ui.panel.impl.setting;
 import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class BooleanComponent extends SettingComponent {
+public class BooleanComponent extends SettingComponent<Boolean> {
 
-    public BooleanComponent(ModuleButton moduleButton, BooleanSetting setting, float offset, float height) {
+    public BooleanComponent(ModuleButton moduleButton, Setting<Boolean> setting, float offset, float height) {
         super(moduleButton, setting, offset, height);
     }
 
@@ -25,7 +25,7 @@ public class BooleanComponent extends SettingComponent {
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
         float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4f) * scaleFactor, ((BooleanSetting) getSetting()).isEnabled() ? Colours.mainColour.getColour().getRGB() : -1);
+        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4f) * scaleFactor, getSetting().getValue() ? Colours.mainColour.getValue().getRGB() : -1);
         GL11.glPopMatrix();
 
         super.renderSetting(mouseX, mouseY);
@@ -36,7 +36,7 @@ public class BooleanComponent extends SettingComponent {
         if (mouseButton == 0) {
             if (isMouseOver(mouseX, mouseY)) {
                 // Toggle setting
-                ((BooleanSetting) getSetting()).setEnabled(!((BooleanSetting) getSetting()).isEnabled());
+                getSetting().setValue(!getSetting().getValue());
 
                 SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
                 Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);

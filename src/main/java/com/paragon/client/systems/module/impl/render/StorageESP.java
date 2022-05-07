@@ -10,10 +10,7 @@ import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -29,25 +26,37 @@ import java.awt.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
-@SuppressWarnings("unchecked")
 public class StorageESP extends Module {
 
-    private final BooleanSetting chests = new BooleanSetting("Chests", "Highlight chests", true);
-    private final BooleanSetting shulkers = new BooleanSetting("Shulkers", "Highlight shulker boxes", true);
-    private final BooleanSetting enderChests = new BooleanSetting("Ender Chests", "Highlight Ender Chests", true);
+    private final Setting<Boolean> chests = new Setting<>("Chests", true)
+            .setDescription("Highlight chests");
+
+    private final Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
+            .setDescription("Highlight shulker boxes");
+
+    private final Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
+            .setDescription("Highlight Ender Chests");
 
     // Render settings
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.SHADER);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 1, 0.1f, 8, 0.1f);
+    private final Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
+            .setDescription("How to render the entities");
+
+    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 8f, 0.1f)
+            .setDescription("How thick to render the outlines");
 
     // Outline shader
-    private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the fill", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
+    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+            .setDescription("Outline the fill")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
+    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+            .setDescription("Fill the outline")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
+    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+            .setDescription("The colour to highlight items in");
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
@@ -62,15 +71,15 @@ public class StorageESP extends Module {
 
     @Override
     public void onRender3D() {
-        if (mode.getCurrentMode().equals(Mode.BOX)) {
+        if (mode.getValue().equals(Mode.BOX)) {
             mc.world.loadedTileEntityList.forEach(tileEntity -> {
                if (isStorageValid(tileEntity)) {
-                   if (fill.isEnabled()) {
-                       RenderUtil.drawFilledBox(BlockUtil.getBlockBox(tileEntity.getPos()), colour.getColour());
+                   if (fill.getValue()) {
+                       RenderUtil.drawFilledBox(BlockUtil.getBlockBox(tileEntity.getPos()), colour.getValue());
                    }
 
-                   if (outline.isEnabled()) {
-                       RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(tileEntity.getPos()), lineWidth.getValue(), ColourUtil.integrateAlpha(colour.getColour(), 255));
+                   if (outline.getValue()) {
+                       RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(tileEntity.getPos()), lineWidth.getValue(), ColourUtil.integrateAlpha(colour.getValue(), 255));
                    }
                }
             });
@@ -79,7 +88,7 @@ public class StorageESP extends Module {
 
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getCurrentMode().equals(Mode.SHADER)) {
+        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getValue().equals(Mode.SHADER)) {
             // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
             // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
 
@@ -130,10 +139,10 @@ public class StorageESP extends Module {
             GlStateManager.pushMatrix();
 
             // Render shader
-            outlineShader.setColour(colour.getColour());
+            outlineShader.setColour(colour.getValue());
             outlineShader.setWidth(lineWidth.getValue());
-            outlineShader.setFill(fill.isEnabled() ? 1 : 0);
-            outlineShader.setOutline(outline.isEnabled() ? 1 : 0);
+            outlineShader.setFill(fill.getValue() ? 1 : 0);
+            outlineShader.setOutline(outline.getValue() ? 1 : 0);
             outlineShader.startShader();
 
             mc.entityRenderer.setupOverlayRendering();
@@ -163,7 +172,7 @@ public class StorageESP extends Module {
 
     @Listener
     public void onTileEntityRender(RenderTileEntityEvent event) {
-        if (mode.getCurrentMode().equals(Mode.OUTLINE) && isStorageValid(event.getTileEntityIn())) {
+        if (mode.getValue().equals(Mode.OUTLINE) && isStorageValid(event.getTileEntityIn())) {
             TileEntity tileEntityIn = event.getTileEntityIn();
             float partialTicks = event.getPartialTicks();
             BlockPos blockpos = tileEntityIn.getPos();
@@ -174,7 +183,7 @@ public class StorageESP extends Module {
             OutlineUtil.renderTwo();
             event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderThree();
-            OutlineUtil.renderFour(colour.getColour());
+            OutlineUtil.renderFour(colour.getValue());
             event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderFive();
         }
@@ -182,15 +191,15 @@ public class StorageESP extends Module {
 
     public boolean isStorageValid(TileEntity tileEntity) {
         if (tileEntity instanceof TileEntityChest) {
-            return chests.isEnabled();
+            return chests.getValue();
         }
 
         if (tileEntity instanceof TileEntityShulkerBox) {
-            return shulkers.isEnabled();
+            return shulkers.getValue();
         }
 
         if (tileEntity instanceof TileEntityEnderChest) {
-            return enderChests.isEnabled();
+            return enderChests.getValue();
         }
 
         return false;
@@ -198,7 +207,7 @@ public class StorageESP extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
+        return " " + EnumFormatter.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

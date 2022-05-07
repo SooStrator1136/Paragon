@@ -3,19 +3,20 @@ package com.paragon.client.systems.ui.panel.impl.setting;
 import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
-import com.paragon.client.systems.module.settings.impl.KeybindSetting;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class KeybindComponent extends SettingComponent {
+public class KeybindComponent extends SettingComponent<AtomicInteger> {
 
     private boolean isListening = false;
 
-    public KeybindComponent(ModuleButton moduleButton, KeybindSetting setting, float offset, float height) {
+    public KeybindComponent(ModuleButton moduleButton, Setting<AtomicInteger> setting, float offset, float height) {
         super(moduleButton, setting, offset, height);
     }
 
@@ -23,7 +24,7 @@ public class KeybindComponent extends SettingComponent {
     public void renderSetting(int mouseX, int mouseY) {
         RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), isMouseOver(mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
-        String key = Keyboard.getKeyName(((KeybindSetting) getSetting()).getKeyCode());
+        String key = Keyboard.getKeyName(getSetting().getValue().get());
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
         float scaleFactor = 1 / 0.65f;
@@ -61,11 +62,11 @@ public class KeybindComponent extends SettingComponent {
             isListening = false;
 
             if (keyCode == Keyboard.KEY_DELETE || keyCode == Keyboard.KEY_BACK) {
-                ((KeybindSetting) getSetting()).setKeyCode(0);
+                getSetting().getValue().set(0);
                 return;
             }
 
-            ((KeybindSetting) getSetting()).setKeyCode(keyCode);
+            getSetting().getValue().set(keyCode);
         }
 
         if (isExpanded()) {

@@ -4,14 +4,15 @@ import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 
 /**
  * @author Wolfsurge
  */
 public class Timer extends Module {
 
-    private final NumberSetting timer = new NumberSetting("Timer Speed", "How much to multiply the timer speed by", 1.25f, 0.01f, 20, 0.01f);
+    private final Setting<Float> timer = new Setting<>("Timer Speed", 1.25f, 0.01f, 20f, 0.01f)
+            .setDescription("How much to multiply the timer speed by");
 
     public Timer() {
         super("Timer", ModuleCategory.MISC, "Modifies how long each tick takes");

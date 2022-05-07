@@ -5,9 +5,7 @@ import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -22,13 +20,19 @@ import java.awt.*;
 public class BreakESP extends Module {
 
     // Render settings
-    private final ModeSetting<RenderMode> renderMode = new ModeSetting<>("Render Mode", "How to render the highlight", RenderMode.BOTH);
-    private final NumberSetting lineWidth = (NumberSetting) new NumberSetting("Line Width", "The width of the outline", 1.0f, 0.1f, 3f, 0.1f)
-            .setVisiblity(() -> renderMode.getCurrentMode().equals(RenderMode.OUTLINE) || renderMode.getCurrentMode().equals(RenderMode.BOTH));
+    private final Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
+            .setDescription("How to render the highlight");
+
+    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3f, 0.1f)
+            .setDescription("The width of the outline")
+            .setVisibility(() -> !renderMode.getValue().equals(RenderMode.FILL));
 
     // Other settings
-    private final NumberSetting range = new NumberSetting("Range", "The maximum distance a highlighted block can be", 20, 1, 50, 1);
-    private final BooleanSetting percent = new BooleanSetting("Percent", "Show the percentage of how much the block has been broken", true);
+    private final Setting<Float> range = new Setting<>("Range", 20f, 1f, 50f, 1f)
+            .setDescription("The maximum distance a highlighted block can be");
+
+    private final Setting<Boolean> percent = new Setting<>("Percent", true)
+            .setDescription("Show the percentage of how much the block has been broken");
 
     public BreakESP() {
         super("BreakESP", ModuleCategory.RENDER, "Highlights blocks that are currently being broken");
@@ -72,7 +76,7 @@ public class BreakESP extends Module {
                     int colour = damage * 255 / 8;
 
                     // Draw the highlight
-                    switch (renderMode.getCurrentMode()) {
+                    switch (renderMode.getValue()) {
                         case FILL:
                             RenderUtil.drawFilledBox(highlightBB, new Color(255 - colour, colour, 0, 150));
                             break;
@@ -88,7 +92,7 @@ public class BreakESP extends Module {
                     }
 
                     // Draw the percentage
-                    if (percent.isEnabled()) {
+                    if (percent.getValue()) {
                         RenderUtil.drawNametagText(damage * 100 / 8 + "%", new Vec3d(blockPos.getX() + 0.5f, blockPos.getY() + 0.5f, blockPos.getZ() + 0.5f), -1);
                     }
                 }

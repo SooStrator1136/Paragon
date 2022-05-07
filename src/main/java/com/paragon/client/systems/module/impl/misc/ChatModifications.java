@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -12,8 +12,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class ChatModifications extends Module {
 
-    private final BooleanSetting coloured = new BooleanSetting("Coloured", "Adds a '>' before the message", false);
-    private final BooleanSetting suffix = new BooleanSetting("Suffix", "Adds a Paragon suffix to the end of the message", true);
+    private final Setting<Boolean> coloured = new Setting<>("Coloured", false)
+            .setDescription("Adds a '>' before the message");
+
+    private final Setting<Boolean> suffix = new Setting<>("Suffix", true)
+            .setDescription("Adds a Paragon suffix to the end of the message");
 
     public ChatModifications() {
         super("ChatModifications", ModuleCategory.MISC, "Changes the way you send messages");
@@ -26,11 +29,11 @@ public class ChatModifications extends Module {
             return;
         }
 
-        if (coloured.isEnabled()) {
+        if (coloured.getValue()) {
             event.setMessage(">" + event.getMessage());
         }
 
-        if (suffix.isEnabled()) {
+        if (suffix.getValue()) {
             event.setMessage(event.getMessage() + " | Paragon");
         }
     }

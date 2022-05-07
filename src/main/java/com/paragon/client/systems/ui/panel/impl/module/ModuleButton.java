@@ -10,13 +10,13 @@ import com.paragon.client.systems.ui.panel.impl.setting.*;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.client.systems.module.settings.Setting;
-import com.paragon.client.systems.module.settings.impl.*;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Wolfsurge
@@ -36,7 +36,7 @@ public class ModuleButton implements TextRenderer {
     public float offset, height;
 
     // A list of all setting components
-    private final ArrayList<SettingComponent> settingComponents = new ArrayList<>();
+    private final ArrayList<SettingComponent<?>> settingComponents = new ArrayList<>();
 
     public ModuleButton(Panel panel, Module module, float offset, float height) {
         this.panel = panel;
@@ -47,21 +47,21 @@ public class ModuleButton implements TextRenderer {
         float settingOffset = height;
 
         // Add settings. Please make a PR if you want to make this look better.
-        for (Setting setting : getModule().getSettings()) {
-            if (setting instanceof BooleanSetting) {
-                settingComponents.add(new BooleanComponent(this, (BooleanSetting) setting, 13 + settingOffset, 12));
+        for (Setting<?> setting : getModule().getSettings()) {
+            if (setting.getValue() instanceof Boolean) {
+                settingComponents.add(new BooleanComponent(this, (Setting<Boolean>) setting, 13 + settingOffset, 12));
                 settingOffset += 12;
-            } else if (setting instanceof NumberSetting) {
-                settingComponents.add(new SliderComponent(this, (NumberSetting) setting, settingOffset, 12));
+            } else if (setting.getValue() instanceof AtomicInteger) {
+                settingComponents.add(new KeybindComponent(this, (Setting<AtomicInteger>) setting, 13 + settingOffset, 12));
                 settingOffset += 12;
-            } else if (setting instanceof ModeSetting) {
-                settingComponents.add(new ModeComponent(this, (ModeSetting) setting, 13 + settingOffset, 12));
+            } else if (setting.getValue() instanceof Number) {
+                settingComponents.add(new SliderComponent(this, (Setting<Number>) setting, settingOffset, 12));
                 settingOffset += 12;
-            } else if (setting instanceof ColourSetting) {
-                settingComponents.add(new ColourComponent(this, (ColourSetting) setting, 13 + settingOffset, 12));
+            } else if (setting.getValue() instanceof Enum<?>) {
+                settingComponents.add(new ModeComponent(this, (Setting<Enum<?>>) setting, 13 + settingOffset, 12));
                 settingOffset += 12;
-            } else if (setting instanceof KeybindSetting) {
-                settingComponents.add(new KeybindComponent(this, (KeybindSetting) setting, 13 + settingOffset, 12));
+            } else if (setting.getValue() instanceof Color) {
+                settingComponents.add(new ColourComponent(this, (Setting<Color>) setting, 13 + settingOffset, 12));
                 settingOffset += 12;
             }
         }
@@ -83,7 +83,7 @@ public class ModuleButton implements TextRenderer {
         float scaleFactor = 1.25f;
 
         // Render the module's name
-        renderText(getModule().getName(), (getPanel().getX() + 3) * scaleFactor, (getOffset() + 3.5f) * scaleFactor, getModule().isEnabled() ? Colours.mainColour.getColour().getRGB() : -1);
+        renderText(getModule().getName(), (getPanel().getX() + 3) * scaleFactor, (getOffset() + 3.5f) * scaleFactor, getModule().isEnabled() ? Colours.mainColour.getValue().getRGB() : -1);
 
         // Render some dots at the side if we have more settings than just the keybind
         if (module.getSettings().size() > 1) {
@@ -100,7 +100,7 @@ public class ModuleButton implements TextRenderer {
             settingComponents.forEach(settingComponent -> {
                 if (settingComponent.getSetting().isVisible()) {
                     settingComponent.renderSetting(mouseX, mouseY);
-                    RenderUtil.drawRect(getPanel().getX(), getOffset() + settingComponent.getOffset(), 1, (settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight()), Colours.mainColour.getColour().getRGB());
+                    RenderUtil.drawRect(getPanel().getX(), getOffset() + settingComponent.getOffset(), 1, (settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight()), Colours.mainColour.getValue().getRGB());
                 }
             });
         }
@@ -135,7 +135,7 @@ public class ModuleButton implements TextRenderer {
 
         if (animation.getAnimationFactor() > 0) {
             // Mouse clicked
-            for (SettingComponent settingComponent : settingComponents) {
+            for (SettingComponent<?> settingComponent : settingComponents) {
                 if (settingComponent.getSetting().isVisible()) {
                     settingComponent.mouseClicked(mouseX, mouseY, mouseButton);
                 }
@@ -144,7 +144,7 @@ public class ModuleButton implements TextRenderer {
     }
 
     public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
-        for (SettingComponent settingComponent : settingComponents) {
+        for (SettingComponent<?> settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.mouseReleased(mouseX, mouseY, mouseButton);
             }
@@ -152,7 +152,7 @@ public class ModuleButton implements TextRenderer {
     }
 
     public void keyTyped(char keyTyped, int keyCode) {
-        for (SettingComponent settingComponent : settingComponents) {
+        for (SettingComponent<?> settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.keyTyped(keyTyped, keyCode);
             }
@@ -162,17 +162,17 @@ public class ModuleButton implements TextRenderer {
     public void refreshSettingOffsets() {
         float settingOffset = 12;
 
-        for (SettingComponent settingComponent : settingComponents) {
+        for (SettingComponent<?> settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.setOffset(settingOffset);
-                settingOffset += settingComponent.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) animation.getAnimationFactor());
+                settingOffset += settingComponent.getHeight() * ClickGUI.animation.getValue().getAnimationFactor((float) animation.getAnimationFactor());
 
                 if (settingComponent.animation.getAnimationFactor() > 0) {
                     float subsettingOffset = settingComponent.getOffset() + settingComponent.getHeight();
-                    for (SettingComponent settingComponent1 : settingComponent.getSettingComponents()) {
+                    for (SettingComponent<?> settingComponent1 : settingComponent.getSettingComponents()) {
                         if (settingComponent1.getSetting().isVisible()) {
                             settingComponent1.setOffset(subsettingOffset);
-                            subsettingOffset += settingComponent1.getHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) settingComponent.animation.getAnimationFactor());
+                            subsettingOffset += settingComponent1.getHeight() * ClickGUI.animation.getValue().getAnimationFactor((float) settingComponent.animation.getAnimationFactor());
                             settingOffset += settingComponent1.getHeight() * settingComponent.animation.getAnimationFactor();
                         }
                     }
@@ -220,12 +220,12 @@ public class ModuleButton implements TextRenderer {
     public float getAbsoluteHeight() {
         float settingHeight = 0;
 
-        for (SettingComponent settingComponent : settingComponents) {
+        for (SettingComponent<?> settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingHeight += settingComponent.getHeight();
 
                 if (settingComponent.animation.getAnimationFactor() > 0) {
-                    for (SettingComponent settingComponent1 : settingComponent.getSettingComponents()) {
+                    for (SettingComponent<?> settingComponent1 : settingComponent.getSettingComponents()) {
                         if (settingComponent1.getSetting().isVisible()) {
                             settingHeight += settingComponent1.getHeight() * settingComponent.animation.getAnimationFactor();
                         }

@@ -6,8 +6,7 @@ import com.paragon.asm.mixins.accessor.ICPacketPlayer;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ModeSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayer;
@@ -19,13 +18,16 @@ import net.minecraft.world.GameType;
  */
 public class NoFall extends Module {
 
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to prevent fall damage", Mode.VANILLA);
+    private final Setting<Mode> mode = new Setting<>("Mode", Mode.VANILLA)
+            .setDescription("How to prevent fall damage");
 
-    private final BooleanSetting spoofFall = (BooleanSetting) new BooleanSetting("Spoof Fall", "Spoof fall distance", false)
-            .setVisiblity(() -> mode.getCurrentMode().equals(Mode.RUBBERBAND));
+    private final Setting<Boolean> spoofFall = new Setting<>("Spoof Fall", false)
+            .setDescription("Spoof fall distance")
+            .setVisibility(() -> mode.getValue().equals(Mode.RUBBERBAND));
 
-    private final BooleanSetting ignoreElytra = (BooleanSetting) new BooleanSetting("Ignore Elytra", "Don't attempt to place a water bucket when flying with an elytra", true)
-            .setVisiblity(() -> mode.getCurrentMode().equals(Mode.BUCKET));
+    private final Setting<Boolean> ignoreElytra = new Setting<>("Ignore Elytra", true)
+            .setDescription("Don't attempt to place a water bucket when flying with an elytra")
+            .setVisibility(() -> mode.getValue().equals(Mode.BUCKET));
 
     public NoFall() {
         super("NoFall", ModuleCategory.MOVEMENT, "Disables fall damage");
@@ -39,13 +41,13 @@ public class NoFall extends Module {
         }
 
         // Ignore if we are flying with an elytra, or we are in creative mode
-        if (mc.player.isElytraFlying() && ignoreElytra.isEnabled() || mc.playerController.getCurrentGameType().equals(GameType.CREATIVE)) {
+        if (mc.player.isElytraFlying() && ignoreElytra.getValue() || mc.playerController.getCurrentGameType().equals(GameType.CREATIVE)) {
             return;
         }
 
         // We are going to take damage from falling, and we aren't over water
         if (mc.player.fallDistance > 3 && !mc.player.isOverWater()) {
-            switch (mode.getCurrentMode()) {
+            switch (mode.getValue()) {
                 case VANILLA:
                     // Send a packet that says that we are on the ground
                     mc.player.connection.sendPacket(new CPacketPlayer(true));
@@ -56,7 +58,7 @@ public class NoFall extends Module {
                     mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.motionX, 0, mc.player.motionZ, true));
 
                     // Set the fall distance to 0
-                    if (spoofFall.isEnabled()) {
+                    if (spoofFall.getValue()) {
                         mc.player.fallDistance = 0;
                     }
 
@@ -87,13 +89,13 @@ public class NoFall extends Module {
     @Listener
     public void onPacketSent(PacketEvent.PreSend event) {
         // Ignore if we are flying with an elytra, or we are in creative mode
-        if (mc.player.isElytraFlying() && ignoreElytra.isEnabled() || mc.playerController.getCurrentGameType().equals(GameType.CREATIVE)) {
+        if (mc.player.isElytraFlying() && ignoreElytra.getValue() || mc.playerController.getCurrentGameType().equals(GameType.CREATIVE)) {
             return;
         }
 
         // Packet is a CPacketPlayer
         if (event.getPacket() instanceof CPacketPlayer) {
-            if (mode.getCurrentMode().equals(Mode.PACKET_MODIFY)) {
+            if (mode.getValue().equals(Mode.PACKET_MODIFY)) {
                 // Set packet Y
                 ((ICPacketPlayer) event.getPacket()).setY(mc.player.posY + 1);
 

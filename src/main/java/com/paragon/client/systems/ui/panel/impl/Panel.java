@@ -94,8 +94,8 @@ public class Panel implements TextRenderer {
 
         RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
 
-        if (ClickGUI.panelHeaderSeparator.isEnabled()) {
-            RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getColour().getRGB());
+        if (ClickGUI.panelHeaderSeparator.getValue()) {
+            RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getValue().getRGB());
         }
     }
 
@@ -153,7 +153,7 @@ public class Panel implements TextRenderer {
 
         for (ModuleButton moduleButton : moduleButtons) {
             moduleButton.offset = y;
-            y += moduleButton.getAbsoluteHeight() * ClickGUI.animation.getCurrentMode().getAnimationFactor((float) animation.getAnimationFactor());
+            y += moduleButton.getAbsoluteHeight(); // * ClickGUI.animation.getValue().getAnimationFactor((float) animation.getAnimationFactor());
         }
     }
 

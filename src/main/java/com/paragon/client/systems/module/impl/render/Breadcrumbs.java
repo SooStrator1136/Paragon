@@ -1,12 +1,9 @@
 package com.paragon.client.systems.module.impl.render;
 
-import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
@@ -19,11 +16,21 @@ import static org.lwjgl.opengl.GL11.*;
 public class Breadcrumbs extends Module {
 
     // Settings
-    private final BooleanSetting infinite = new BooleanSetting("Infinite", "Breadcrumbs last forever", false);
-    private final NumberSetting lifespanValue = (NumberSetting) new NumberSetting("Lifespan", "The lifespan of the positions in ticks", 100, 1, 1000, 1).setVisiblity(() -> !infinite.isEnabled());
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "The width of the lines", 1, 0.1f, 5, 0.1f);
-    private final ColourSetting colour = new ColourSetting("Colour", "The colour of the breadcrumbs", new Color(185, 17, 255));
-    private final BooleanSetting rainbow = new BooleanSetting("Rainbow", "Makes the trail a rainbow", true);
+    private final Setting<Boolean> infinite = new Setting<>("Infinite", false)
+            .setDescription("Breadcrumbs last forever");
+
+    private final Setting<Float> lifespanValue = new Setting<>("Lifespan", 100f, 1f, 1000f, 1f)
+            .setDescription("The lifespan of the positions in ticks")
+            .setVisibility(() -> !infinite.getValue());
+
+    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 5f, 0.1f)
+            .setDescription("The width of the lines");
+
+    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+            .setDescription("The colour of the breadcrumbs");
+
+    private final Setting<Boolean> rainbow = new Setting<>("Rainbow", true)
+            .setDescription("Makes the trail a rainbow");
 
     private final LinkedList<Position> positions = new LinkedList<>();
     private int colourHue = 0;
@@ -58,7 +65,7 @@ public class Breadcrumbs extends Module {
         positions.forEach(Position::update);
 
         // Remove old positions
-        positions.removeIf(p -> !p.isAlive() && !infinite.isEnabled());
+        positions.removeIf(p -> !p.isAlive() && !infinite.getValue());
     }
 
     @Override
@@ -83,7 +90,7 @@ public class Breadcrumbs extends Module {
             double renderPosY = mc.getRenderManager().viewerPosY;
             double renderPosZ = mc.getRenderManager().viewerPosZ;
 
-            ColourUtil.setColour(rainbow.isEnabled() ? pos.getColour().getRGB() : colour.getColour().getRGB());
+            ColourUtil.setColour(rainbow.getValue() ? pos.getColour().getRGB() : colour.getValue().getRGB());
             glVertex3d(pos.getPosition().x - renderPosX, pos.getPosition().y - renderPosY, pos.getPosition().z - renderPosZ);
         }
 
@@ -104,7 +111,7 @@ public class Breadcrumbs extends Module {
         private final Vec3d position;
 
         // Position's lifespan
-        private long lifespan = (long) lifespanValue.getValue();
+        private long lifespan = lifespanValue.getValue().longValue();
 
         // Position's colour
         private final Color colour;

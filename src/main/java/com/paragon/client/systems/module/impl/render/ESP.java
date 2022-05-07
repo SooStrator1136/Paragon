@@ -13,9 +13,8 @@ import com.paragon.asm.mixins.accessor.IShaderGroup;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.*;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.shader.Framebuffer;
@@ -40,28 +39,44 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 /**
  * @author Wolfsurge, with shader stuff from Cosmos (first time using shaders / glsl lel)
  */
-@SuppressWarnings("unchecked")
 public class ESP extends Module {
 
     /* Entity settings */
-    private final BooleanSetting passive = new BooleanSetting("Passives", "Highlight passive entities", true);
-    private final BooleanSetting mobs = new BooleanSetting("Mobs", "Highlight mobs", true);
-    private final BooleanSetting players = new BooleanSetting("Players", "Highlight player entities", true);
-    private final BooleanSetting items = new BooleanSetting("Items", "Highlight items", true);
-    private final BooleanSetting crystals = new BooleanSetting("Crystals", "Highlight end crystals", true);
+    private final Setting<Boolean> passive = new Setting<>("Passives", true)
+            .setDescription("Highlight passive entities");
+
+    private final Setting<Boolean> mobs = new Setting<>("Mobs", true)
+            .setDescription("Highlight mobs");
+
+    private final Setting<Boolean> players = new Setting<>("Players", true)
+            .setDescription("Highlight player entities");
+
+    private final Setting<Boolean> items = new Setting<>("Items", true)
+            .setDescription("Highlight items");
+
+    private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
+            .setDescription("Highlight crystals");
 
     // Render settings
-    private final ModeSetting<Mode> mode = new ModeSetting<>("Mode", "How to render the entities", Mode.SHADER);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", "How thick to render the outlines", 1, 0.1f, 8, 0.1f);
+    private final Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
+            .setDescription("How to render the entities");
+
+    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 3f, 0.1f)
+            .setDescription("How thick to render the outlines");
 
     // Outline shader
-    private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the fill", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
+    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+            .setDescription("Outline the fill")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the outline", true)
-            .setParentSetting(mode).setVisiblity(() -> mode.getCurrentMode().equals(Mode.SHADER));
+    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+            .setDescription("Fill the outline")
+            .setParentSetting(mode)
+            .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final ColourSetting colour = new ColourSetting("Colour", "The colour to highlight items in", new Color(185, 17, 255));
+    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+            .setDescription("The colour to highlight items in");
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
@@ -87,7 +102,7 @@ public class ESP extends Module {
 
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getCurrentMode().equals(Mode.SHADER)) {
+        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getValue().equals(Mode.SHADER)) {
             // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
             // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
 
@@ -140,10 +155,10 @@ public class ESP extends Module {
             GlStateManager.pushMatrix();
 
             // Render shader
-            outlineShader.setColour(colour.getColour());
+            outlineShader.setColour(colour.getValue());
             outlineShader.setWidth(lineWidth.getValue());
-            outlineShader.setFill(fill.isEnabled() ? 1 : 0);
-            outlineShader.setOutline(outline.isEnabled() ? 1 : 0);
+            outlineShader.setFill(fill.getValue() ? 1 : 0);
+            outlineShader.setOutline(outline.getValue() ? 1 : 0);
             outlineShader.startShader();
 
             mc.entityRenderer.setupOverlayRendering();
@@ -173,14 +188,14 @@ public class ESP extends Module {
 
     @Listener
     public void onRenderEntity(RenderEntityEvent event) {
-        if(isEntityValid(event.getEntity()) && mode.getCurrentMode() == Mode.OUTLINE) {
+        if(isEntityValid(event.getEntity()) && mode.getValue() == Mode.OUTLINE) {
             OutlineUtil.renderOne(lineWidth.getValue());
             event.renderModel();
             OutlineUtil.renderTwo();
             event.renderModel();
             OutlineUtil.renderThree();
             event.renderModel();
-            OutlineUtil.renderFour(colour.getColour());
+            OutlineUtil.renderFour(colour.getValue());
             event.renderModel();
             OutlineUtil.renderFive();
             event.renderModel();
@@ -196,7 +211,7 @@ public class ESP extends Module {
         }
 
         // Check glow
-        if (mode.getCurrentMode().equals(Mode.GLOW)) {
+        if (mode.getValue().equals(Mode.GLOW)) {
             // Get shaders
             List<Shader> shaders = ((IShaderGroup) ((IRenderGlobal) mc.renderGlobal).getEntityOutlineShader()).getListShaders();
 
@@ -214,8 +229,8 @@ public class ESP extends Module {
 
     @Listener
     public void onShaderColour(ShaderColourEvent event) {
-        if (mode.getCurrentMode().equals(Mode.GLOW)) {
-            event.setColour(colour.getColour());
+        if (mode.getValue().equals(Mode.GLOW)) {
+            event.setColour(colour.getValue());
             event.cancel();
         }
     }
@@ -234,9 +249,9 @@ public class ESP extends Module {
      * @param entityIn The entity to highlight
      */
     public void espEntity(Entity entityIn) {
-        if (mode.getCurrentMode() == Mode.BOX) {
-            RenderUtil.drawBoundingBox(EntityUtil.getEntityBox(entityIn), lineWidth.getValue(), colour.getColour());
-        } else if (mode.getCurrentMode() == Mode.GLOW) {
+        if (mode.getValue().equals(Mode.BOX)) {
+            RenderUtil.drawBoundingBox(EntityUtil.getEntityBox(entityIn), lineWidth.getValue(), colour.getValue());
+        } else if (mode.getValue().equals(Mode.GLOW)) {
             entityIn.setGlowing(true);
         }
     }
@@ -247,12 +262,12 @@ public class ESP extends Module {
      * @return Is the entity valid
      */
     private boolean isEntityValid(Entity entityIn) {
-        return entityIn instanceof EntityPlayer && entityIn != mc.player && players.isEnabled() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.isEnabled() || entityIn instanceof EntityMob && mobs.isEnabled() || entityIn instanceof EntityEnderCrystal && crystals.isEnabled() || entityIn instanceof EntityItem && items.isEnabled();
+        return entityIn instanceof EntityPlayer && entityIn != mc.player && players.getValue() || entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.getValue() || entityIn instanceof EntityMob && mobs.getValue() || entityIn instanceof EntityEnderCrystal && crystals.getValue() || entityIn instanceof EntityItem && items.getValue();
     }
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getCurrentMode());
+        return " " + EnumFormatter.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

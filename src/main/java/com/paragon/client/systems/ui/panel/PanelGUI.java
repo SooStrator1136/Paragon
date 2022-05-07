@@ -14,6 +14,7 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author Wolfsurge
@@ -21,12 +22,12 @@ import java.util.ArrayList;
 public class PanelGUI extends GuiScreen implements TextRenderer {
 
     // List of panels
-    private ArrayList<Panel> panels = new ArrayList<>();
+    private final ArrayList<Panel> panels = new ArrayList<>();
 
     // The tooltip being rendered
     public static String tooltip = "";
 
-    private Animation animation = new Animation(100, false);
+    private final Animation animation = new Animation(100, false);
 
     public PanelGUI() {
         // X position of panel
@@ -48,7 +49,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         tooltip = "";
 
         // Make the background darker
-        if (ClickGUI.darkenBackground.isEnabled()) {
+        if (ClickGUI.darkenBackground.getValue()) {
             drawDefaultBackground();
         }
 
@@ -69,9 +70,9 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
         Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
 
-        if (!tooltip.isEmpty() && ClickGUI.tooltips.isEnabled()) {
+        if (ClickGUI.tooltips.getValue() && !Objects.equals(tooltip, "")) {
             RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
-            RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getColour().getRGB());
+            RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getValue().getRGB());
             renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
         }
 
@@ -141,7 +142,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
     @Override
     public boolean doesGuiPauseGame() {
         // Pause the game if pause is enabled in the GUI settings
-        return ClickGUI.pause.isEnabled();
+        return ClickGUI.pause.getValue();
     }
 
     /**

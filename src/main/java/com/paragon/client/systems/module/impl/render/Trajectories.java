@@ -7,9 +7,7 @@ import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
-import com.paragon.client.systems.module.settings.impl.BooleanSetting;
-import com.paragon.client.systems.module.settings.impl.ColourSetting;
-import com.paragon.client.systems.module.settings.impl.NumberSetting;
+import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.item.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -23,23 +21,52 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
 
 public class Trajectories extends Module {
 
-    private final BooleanSetting line = new BooleanSetting("Line", "Render a line to the projectile's destination", true);
-    private final ColourSetting lineColour = (ColourSetting) new ColourSetting("Line Colour", "The colour of the line", new Color(185, 17, 255)).setParentSetting(line);
-    private final NumberSetting lineWidth = (NumberSetting) new NumberSetting("Line Width", "The width of the line", 1.0f, 0.1f, 3.0f, 0.1f).setParentSetting(line);
+    private final Setting<Boolean> line = new Setting<>("Line", true)
+            .setDescription("Render a line to the projectile's destination");
 
-    private final BooleanSetting box = new BooleanSetting("Box", "Render a box at the projectile's destination", true);
-    private final BooleanSetting fill = (BooleanSetting) new BooleanSetting("Fill", "Fill the box at the end of the line", true).setParentSetting(box);
-    private final BooleanSetting outline = (BooleanSetting) new BooleanSetting("Outline", "Outline the box at the end of the line", true).setParentSetting(box);
-    private final NumberSetting outlineWidth = (NumberSetting) new NumberSetting("Outline Width", "The width of the outline", 1.0f, 0.1f, 3.0f, 0.1f).setParentSetting(box)
-            .setVisiblity(outline::isEnabled);
-    private final ColourSetting boxColour = (ColourSetting) new ColourSetting("Box Colour", "The colour of the box at the end of the line", new Color(185, 17, 255, 130))
-            .setVisiblity(() -> fill.isEnabled() || outline.isEnabled()).setParentSetting(box);
+    private final Setting<Color> lineColour = new Setting<>("Line Colour", new Color(185, 17, 255))
+            .setDescription("The colour of the line")
+            .setParentSetting(line);
 
-    private final BooleanSetting bow = new BooleanSetting("Bow", "Draw the trajectory of the bow", true);
-    private final BooleanSetting snowball = new BooleanSetting("Snowball", "Draw the trajectory of snowballs", true);
-    private final BooleanSetting egg = new BooleanSetting("Egg", "Draw the trajectory of eggs", true);
-    private final BooleanSetting exp = new BooleanSetting("EXP", "Draw the trajectory of EXP bottles", true);
-    private final BooleanSetting potion = new BooleanSetting("Potion", "Draw the trajectory of splash potions", true);
+    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3.0f, 0.1f)
+            .setDescription("The width of the line")
+            .setParentSetting(line);
+
+    private final Setting<Boolean> box = new Setting<>("Box", true)
+            .setDescription("Render a box at the projectile's destination");
+
+    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+            .setDescription("Fill the box at the end of the line")
+            .setParentSetting(box);
+
+    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+            .setDescription("Outline the box at the end of the line")
+            .setParentSetting(box);
+
+    private final Setting<Float> outlineWidth = new Setting<>("Outline Width", 1.0f, 0.1f, 3.0f, 0.1f)
+            .setDescription("The width of the outline")
+            .setParentSetting(box)
+            .setVisibility(outline::getValue);
+
+    private final Setting<Color> boxColour = new Setting<>("Box Colour", new Color(185, 17, 255, 130))
+            .setDescription("The colour of the box at the end of the line")
+            .setVisibility(() -> fill.getValue() || outline.getValue())
+            .setParentSetting(box);
+
+    private final Setting<Boolean> bow = new Setting<>("Bow", true)
+            .setDescription("Draw the trajectory of the bow");
+
+    private final Setting<Boolean> snowball = new Setting<>("Snowball", true)
+            .setDescription("Draw the trajectory of snowballs");
+
+    private final Setting<Boolean> egg = new Setting<>("Egg", true)
+            .setDescription("Draw the trajectory of eggs");
+
+    private final Setting<Boolean> exp = new Setting<>("EXP", true)
+            .setDescription("Draw the trajectory of EXP bottles");
+
+    private final Setting<Boolean> potion = new Setting<>("Potion", true)
+            .setDescription("Draw the trajectory of splash potions");
 
     public Trajectories() {
         super("Trajectories", ModuleCategory.RENDER, "Shows where projectiles will land");
@@ -55,7 +82,7 @@ public class Trajectories extends Module {
         ItemStack stack = mc.player.getHeldItemMainhand();
 
         // Check the item we are holding is a projectile (or a bow) and that projectile is enabled
-        if (stack.getItem() instanceof ItemBow && bow.isEnabled() || stack.getItem() instanceof ItemSnowball && snowball.isEnabled() || stack.getItem() instanceof ItemEgg && egg.isEnabled() || stack.getItem() instanceof ItemSplashPotion && potion.isEnabled() || stack.getItem() instanceof ItemExpBottle && exp.isEnabled()) {
+        if (stack.getItem() instanceof ItemBow && bow.getValue() || stack.getItem() instanceof ItemSnowball && snowball.getValue() || stack.getItem() instanceof ItemEgg && egg.getValue() || stack.getItem() instanceof ItemSplashPotion && potion.getValue() || stack.getItem() instanceof ItemExpBottle && exp.getValue()) {
             // If we are holding a bow, make sure we are charging
             if (stack.getItem() instanceof ItemBow && !mc.player.isHandActive()) {
                 return;
@@ -100,7 +127,7 @@ public class Trajectories extends Module {
             }
 
             // Check we want to draw the line
-            if (line.isEnabled()) {
+            if (line.getValue()) {
                 // GL render 3D
                 glPushMatrix();
                 glDisable(GL_TEXTURE_2D);
@@ -112,12 +139,12 @@ public class Trajectories extends Module {
 
                 // Set line width
                 glLineWidth(1);
-                ColourUtil.setColour(lineColour.getColour().getRGB());
+                ColourUtil.setColour(lineColour.getValue().getRGB());
 
                 glBegin(GL_LINE_STRIP);
 
                 // Add vertices to the line whilst we haven't hit a target
-                for (int i = 0; i < 100000; i++) {
+                for (int i = 0; i < 1000; i++) {
                     // Add vertex
                     glVertex3d(position.x - ((IRenderManager) mc.getRenderManager()).getRenderX(), position.y - ((IRenderManager) mc.getRenderManager()).getRenderY(), position.z - ((IRenderManager) mc.getRenderManager()).getRenderZ());
 
@@ -127,6 +154,7 @@ public class Trajectories extends Module {
 
                     // Check if we hit a target
                     RayTraceResult result = mc.world.rayTraceBlocks(EntityUtil.getInterpolatedPosition(mc.player).add(0, mc.player.getEyeHeight(), 0), new Vec3d(position.x, position.y, position.z));
+
                     if (result != null && result.typeOfHit != RayTraceResult.Type.MISS) {
                         break;
                     }
@@ -145,19 +173,19 @@ public class Trajectories extends Module {
             }
 
             // Check we want to draw the box
-            if (box.isEnabled()) {
+            if (box.getValue()) {
                 // Get highlight bb
                 AxisAlignedBB bb = new AxisAlignedBB((position.x - ((IRenderManager) mc.getRenderManager()).getRenderX()) - 0.25, (position.y - ((IRenderManager) mc.getRenderManager()).getRenderY()) - 0.25, (position.z - ((IRenderManager) mc.getRenderManager()).getRenderZ()) - 0.25,
                         (position.x - ((IRenderManager) mc.getRenderManager()).getRenderX()) + 0.25, (position.y - ((IRenderManager) mc.getRenderManager()).getRenderY()) + 0.25, (position.z - ((IRenderManager) mc.getRenderManager()).getRenderZ()) + 0.25);
 
                 // Draw filled box
-                if (fill.isEnabled()) {
-                    RenderUtil.drawFilledBox(bb, boxColour.getColour());
+                if (fill.getValue()) {
+                    RenderUtil.drawFilledBox(bb, boxColour.getValue());
                 }
 
                 // Draw outline box
-                if (outline.isEnabled()) {
-                    RenderUtil.drawBoundingBox(bb, outlineWidth.getValue(), ColourUtil.integrateAlpha(boxColour.getColour(), 255));
+                if (outline.getValue()) {
+                    RenderUtil.drawBoundingBox(bb, outlineWidth.getValue(), ColourUtil.integrateAlpha(boxColour.getValue(), 255));
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.paragon.client.systems.module.impl.movement;
 
-import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 
