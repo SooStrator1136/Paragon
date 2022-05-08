@@ -40,6 +40,7 @@ public class ModuleManager {
                 new Blink(),
                 new Criticals(),
                 new Offhand(),
+                new Surround(),
 
                 // Movement
                 new ElytraFlight(),

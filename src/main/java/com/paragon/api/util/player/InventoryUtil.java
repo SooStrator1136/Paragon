@@ -2,6 +2,7 @@ package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
+import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.*;
@@ -93,5 +94,21 @@ public class InventoryUtil implements Wrapper {
 
     public static boolean isHoldingSword() {
         return mc.player.getHeldItemMainhand().getItem() instanceof ItemSword;
+    }
+
+    public static int getHotbarBlockSlot(Block block) {
+        int slot = -1;
+
+        for (int i = 0; i < 9; i++) {
+            Item item = mc.player.inventory.getStackInSlot(i).getItem();
+
+            if (item instanceof ItemBlock && ((ItemBlock) item).getBlock().equals(block)) {
+                slot = i;
+
+                break;
+            }
+        }
+
+        return slot;
     }
 }

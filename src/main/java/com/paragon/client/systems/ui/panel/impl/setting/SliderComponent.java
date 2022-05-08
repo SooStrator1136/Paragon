@@ -25,29 +25,57 @@ public class SliderComponent extends SettingComponent<Number> {
     public void renderSetting(int mouseX, int mouseY) {
         RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), isMouseOver(mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
-        float renderWidth;
+        float renderWidth = 0;
 
-        // Set values
-        float diff = Math.min(88, Math.max(0, mouseX - (getModuleButton().getPanel().getX() + 6)));
+        if (getSetting().getValue() instanceof Float) {
+            // Set values
+            float diff = Math.min(88, Math.max(0, mouseX - (getModuleButton().getPanel().getX() + 6)));
 
-        float min = getSetting().getMin().floatValue();
-        float max = getSetting().getMax().floatValue();
+            float min = getSetting().getMin().floatValue();
+            float max = getSetting().getMax().floatValue();
 
-        renderWidth = 88 * (getSetting().getValue().floatValue() - min) / (max - min);
+            renderWidth = 88 * (getSetting().getValue().floatValue() - min) / (max - min);
 
-        if (!Mouse.isButtonDown(0))
-            dragging = false;
+            if (!Mouse.isButtonDown(0)) {
+                dragging = false;
+            }
 
-        if (dragging) {
-            if (diff == 0) {
-                getSetting().setValue(getSetting().getMin());
-            } else {
-                float newValue = (float) MathUtil.roundDouble(((diff / 88) * (max - min) + min), 2);
+            if (dragging) {
+                if (diff == 0) {
+                    getSetting().setValue(getSetting().getMin());
+                } else {
+                    float newValue = (float) MathUtil.roundDouble(((diff / 88) * (max - min) + min), 2);
 
-                float precision = 1 / getSetting().getIncrementation().floatValue();
-                newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
+                    float precision = 1 / getSetting().getIncrementation().floatValue();
+                    newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
 
-                getSetting().setValue(newValue);
+                    getSetting().setValue(newValue);
+                }
+            }
+        } else if (getSetting().getValue() instanceof Double) {
+            // Set values
+            double diff = Math.min(88, Math.max(0, mouseX - (getModuleButton().getPanel().getX() + 6)));
+
+            double min = getSetting().getMin().doubleValue();
+            double max = getSetting().getMax().doubleValue();
+
+            renderWidth = (float) (88 * (getSetting().getValue().doubleValue() - min) / (max - min));
+
+            if (!Mouse.isButtonDown(0)) {
+                dragging = false;
+            }
+
+            if (dragging) {
+                if (diff == 0) {
+                    getSetting().setValue(getSetting().getMin());
+                } else {
+                    double newValue = MathUtil.roundDouble(((diff / 88) * (max - min) + min), 2);
+
+                    double precision = 1 / getSetting().getIncrementation().floatValue();
+                    newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
+
+                    getSetting().setValue(newValue);
+                }
             }
         }
 
@@ -100,7 +128,7 @@ public class SliderComponent extends SettingComponent<Number> {
     public float getAbsoluteHeight() {
         float subsettingHeight = 0;
 
-        for (SettingComponent settingComponent : getSettingComponents()) {
+        for (SettingComponent<?> settingComponent : getSettingComponents()) {
             subsettingHeight += settingComponent.getHeight();
         }
 

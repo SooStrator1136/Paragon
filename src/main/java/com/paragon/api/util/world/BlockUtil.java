@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -63,7 +64,18 @@ public class BlockUtil implements Wrapper {
     }
 
     public static boolean canSeePos(BlockPos pos) {
-        return mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + (double) mc.player.getEyeHeight(), mc.player.posZ), new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), false, true, false) == null;
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + (double) mc.player.getEyeHeight(), mc.player.posZ),
+                    new Vec3d(pos.offset(facing).getX() + 0.5, pos.offset(facing).getY() + 1, pos.offset(facing).getZ() + 0.5),
+                    false, true, false) == null) {
+
+                return true;
+            }
+        }
+
+        return mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + (double) mc.player.getEyeHeight(), mc.player.posZ),
+                new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5),
+                false, true, false) == null;
     }
 
 }

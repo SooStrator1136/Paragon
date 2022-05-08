@@ -61,7 +61,7 @@ public class Console implements Wrapper, TextRenderer {
         RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 13, getWidth(), 1, Colours.mainColour.getValue().getRGB());
 
         // Scissor
-        RenderUtil.startGlScissor((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 13, getWidth(), getHeight() - 26.5f);
+        RenderUtil.startGlScissor((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 14.5, getWidth(), getHeight() - 26.5f);
 
         float lineY = (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + getHeight() - 26;
 
