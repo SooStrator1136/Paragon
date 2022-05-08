@@ -32,9 +32,13 @@ public abstract class MixinRenderLivingBase<T extends EntityLivingBase> extends 
         super(renderManager);
     }
 
-    @Inject(method = "renderModel", at = @At("TAIL"))
+    @Inject(method = "renderModel", at = @At("TAIL"), cancellable = true)
     public void renderModel(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, CallbackInfo ci) {
         RenderEntityEvent renderEntityEvent = new RenderEntityEvent(mainModel, entitylivingbaseIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         Paragon.INSTANCE.getEventBus().post(renderEntityEvent);
+
+        if (renderEntityEvent.isCancelled()) {
+            ci.cancel();
+        }
     }
 }

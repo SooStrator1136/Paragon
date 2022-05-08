@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class Announcer extends Module {
 
     // Event settings
-    private final Setting<Float> chatTimer = new Setting<>("Chat Timer", 5f, 1f, 60f, 1f)
+    private final Setting<Double> chatTimer = new Setting<>("Chat Timer", 5D, 1D, 60D, 1D)
             .setDescription("The amount of time in seconds between each chat message");
 
     private final Setting<Boolean> breakBlocks = new Setting<>("Break Blocks", true)
@@ -44,7 +44,7 @@ public class Announcer extends Module {
             return;
         }
 
-        if (timer.hasMSPassed(chatTimer.getValue().longValue() * 1000) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
+        if (timer.hasMSPassed(chatTimer.getValue() * 1000) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
             mc.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2]);
             announceComponents = new String[] { "", "0", ""};
 

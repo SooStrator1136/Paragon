@@ -83,7 +83,7 @@ public class Offhand extends Module {
         }
 
         // Check time has passed
-        if (switchTimer.hasMSPassed(delay.getValue().longValue() * 10)) {
+        if (switchTimer.hasMSPassed(delay.getValue() * 10)) {
             // Get slot to switch to
             int switchItemSlot = getSwapSlot();
 

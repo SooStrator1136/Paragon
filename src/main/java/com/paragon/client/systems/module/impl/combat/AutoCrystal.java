@@ -590,7 +590,7 @@ public class AutoCrystal extends Module {
         // Check we want to explode
         if (explode.getValue()) {
             // Check the timer has passed the required value
-            if (!explodeTimer.hasMSPassed(explodeDelay.getValue().longValue())) {
+            if (!explodeTimer.hasMSPassed(explodeDelay.getValue())) {
                 return;
             }
 
@@ -687,7 +687,7 @@ public class AutoCrystal extends Module {
      */
     public void placeSearchedPosition() {
         // Check the place timer has passed the required time
-        if (!placeTimer.hasMSPassed(placeDelay.getValue().longValue())) {
+        if (!placeTimer.hasMSPassed(placeDelay.getValue())) {
             return;
         }
 
@@ -802,7 +802,7 @@ public class AutoCrystal extends Module {
                 // Check the entity is a crystal
                 if (entity instanceof EntityEnderCrystal && !entity.isDead) {
                     // Check the crystal is old enough
-                    if (entity.ticksExisted < explodeTicksExisted.getValue()) {
+                    if (entity.ticksExisted < explodeTicksExisted.getValue().intValue()) {
                         continue;
                     }
 

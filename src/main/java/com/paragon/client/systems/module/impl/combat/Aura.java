@@ -90,7 +90,7 @@ public class Aura extends Module {
         target = null;
 
         // Check the delay has passed
-        if (attackTimer.hasMSPassed(delay.getValue().longValue())) {
+        if (attackTimer.hasMSPassed(delay.getValue())) {
             // Filter entities
             List<Entity> entities = mc.world.loadedEntityList.stream().filter(EntityLivingBase.class::isInstance).collect(Collectors.toList());
 
