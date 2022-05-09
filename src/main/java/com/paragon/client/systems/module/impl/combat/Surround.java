@@ -34,11 +34,14 @@ public class Surround extends Module {
     private final Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
             .setDescription("When to automatically disable the module");
 
-    private final Setting<Double> blocksPerTick = new Setting<>("Blocks Per Tick", 4D, 1D, 4D, 1D)
+    private final Setting<Double> blocksPerTick = new Setting<>("Blocks Per Tick", 4D, 1D, 10D, 1D)
             .setDescription("The maximum amount of blocks to be placed per tick");
 
     private final Setting<Center> center = new Setting<>("Center", Center.MOTION)
             .setDescription("Center the player on the block when enabled");
+
+    private final Setting<Air> air = new Setting<>("Air", Air.SUPPORT)
+            .setDescription("Place blocks beneath where we are placing");
 
     // Rotate settings
     private final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
@@ -61,7 +64,7 @@ public class Surround extends Module {
 
     public Surround() {
         super("Surround", ModuleCategory.COMBAT, "Places obsidian around you to protect you from crystals");
-        this.addSettings(disable, blocksPerTick, center, rotate, render);
+        this.addSettings(disable, blocksPerTick, center, air, rotate, render);
     }
 
     @Override
@@ -122,11 +125,26 @@ public class Surround extends Module {
             // Get position
             BlockPos pos = playerPos.add(x, 0, 0);
 
-            // Check if we can place obsidian
-            if (canPlaceBlock(pos)) {
-                // Get the way we need to face to place obsidian
+            // Check if we need to support the block
+            if (canPlaceBlock(pos.down()) && air.getValue().equals(Air.SUPPORT)) {
+                // Get offset
                 for (EnumFacing facing : EnumFacing.values()) {
+                    // Make sure we can place on offset
+                    if (BlockUtil.getBlockAtPos(pos.down().offset(facing)) != Blocks.AIR) {
+                        // Add block
+                        blocks.put(pos.down(), facing);
+                        break;
+                    }
+                }
+            }
+
+            // We can place the block or we are supporting it
+            if (canPlaceBlock(pos) || air.getValue().equals(Air.SUPPORT) && canPlaceBlock(pos.down())) {
+                // Get offset
+                for (EnumFacing facing : EnumFacing.values()) {
+                    // Make sure we can place on offset
                     if (BlockUtil.getBlockAtPos(pos.offset(facing)) != Blocks.AIR) {
+                        // Add block
                         blocks.put(pos, facing);
                         break;
                     }
@@ -142,11 +160,26 @@ public class Surround extends Module {
                 // Get position
                 pos = playerPos.add(0, 0, z);
 
-                // Check if we can place obsidian
-                if (canPlaceBlock(pos)) {
-                    // Get the way we need to face to place obsidian
+                // Check if we need to support the block
+                if (canPlaceBlock(pos.down()) && air.getValue().equals(Air.SUPPORT)) {
+                    // Get offset
                     for (EnumFacing facing : EnumFacing.values()) {
+                        // Make sure we can place on offset
+                        if (BlockUtil.getBlockAtPos(pos.down().offset(facing)) != Blocks.AIR) {
+                            // Add block
+                            blocks.put(pos.down(), facing);
+                            break;
+                        }
+                    }
+                }
+
+                // We can place the block or we are supporting it
+                if (canPlaceBlock(pos) || air.getValue().equals(Air.SUPPORT) && canPlaceBlock(pos.down())) {
+                    // Get offset
+                    for (EnumFacing facing : EnumFacing.values()) {
+                        // Make sure we can place on offset
                         if (BlockUtil.getBlockAtPos(pos.offset(facing)) != Blocks.AIR) {
+                            // Add block
                             blocks.put(pos, facing);
                             break;
                         }
@@ -155,8 +188,10 @@ public class Surround extends Module {
             }
         }
 
+        // Set render blocks
         this.renderBlocks = blocks;
 
+        // Get our original rotation
         Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
         // Place blocks until either:
@@ -254,7 +289,12 @@ public class Surround extends Module {
         }
 
         // There is a block we can place on
-        return BlockUtil.getBlockAtPos(pos.down()) != Blocks.AIR || BlockUtil.getBlockAtPos(pos.up()) != Blocks.AIR || BlockUtil.getBlockAtPos(pos.north()) != Blocks.AIR || BlockUtil.getBlockAtPos(pos.south()) != Blocks.AIR || BlockUtil.getBlockAtPos(pos.east()) != Blocks.AIR || BlockUtil.getBlockAtPos(pos.west()) != Blocks.AIR;
+        return BlockUtil.getBlockAtPos(pos.down()) != Blocks.AIR ||
+                BlockUtil.getBlockAtPos(pos.up()) != Blocks.AIR ||
+                BlockUtil.getBlockAtPos(pos.north()) != Blocks.AIR ||
+                BlockUtil.getBlockAtPos(pos.south()) != Blocks.AIR ||
+                BlockUtil.getBlockAtPos(pos.east()) != Blocks.AIR ||
+                BlockUtil.getBlockAtPos(pos.west()) != Blocks.AIR;
     }
 
     public enum Disable {
@@ -284,6 +324,18 @@ public class Surround extends Module {
          * Don't center the player
          */
         OFF
+    }
+
+    public enum Air {
+        /**
+         * Place blocks below air blocks, so we can place on top of them
+         */
+        SUPPORT,
+
+        /**
+         * Do not place on air blocks
+         */
+        IGNORE
     }
 
 }
