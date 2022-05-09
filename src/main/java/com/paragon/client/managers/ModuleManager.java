@@ -102,6 +102,7 @@ public class ModuleManager {
                 new Coordinates(),
                 new FPS(),
                 new HUD(),
+                new Ping(),
                 new Totems(),
                 new Watermark()
         );

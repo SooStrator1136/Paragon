@@ -7,11 +7,16 @@ import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.stream.Collectors;
 
 /**
  * @author Wolfsurge
@@ -38,6 +43,10 @@ public class Offhand extends Module {
 
     private final Setting<Boolean> falling = new Setting<>("Falling", true)
             .setDescription("Switch to a totem when you will take fall damage")
+            .setParentSetting(safety);
+
+    private final Setting<Boolean> crystal = new Setting<>("Crystal", true)
+            .setDescription("Switch to a totem when you can die from a crystal")
             .setParentSetting(safety);
 
     private final Setting<Boolean> health = new Setting<>("Health", true)
@@ -156,6 +165,16 @@ public class Offhand extends Module {
         if (safety.getValue()) {
             if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() < healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
                 swap = Items.TOTEM_OF_UNDYING;
+            }
+
+            if (crystal.getValue()) {
+                // Check for crystal
+                for (Entity crystal : mc.world.loadedEntityList.stream().filter(entity -> entity instanceof EntityEnderCrystal && entity.getDistance(mc.player) <= 6).collect(Collectors.toList())) {
+                    // Crystal does too much damage for us to take
+                    if (AutoCrystal.INSTANCE.calculateDamage(new Vec3d(crystal.posX, crystal.posY, crystal.posZ), mc.player) >= mc.player.getHealth()) {
+                        swap = Items.TOTEM_OF_UNDYING;
+                    }
+                }
             }
         }
 
