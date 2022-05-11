@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,11 +28,11 @@ import java.util.List;
  */
 public class ColourComponent extends SettingComponent<Color> {
 
-    private final Setting<Number> hue;
-    private final Setting<Number> alpha;
+    private final Setting<Float> hue;
+    private final Setting<Float> alpha;
     private final Setting<Boolean> rainbow;
-    private final Setting<Number> rainbowSpeed;
-    private final Setting<Number> rainbowSaturation;
+    private final Setting<Float> rainbowSpeed;
+    private final Setting<Float> rainbowSaturation;
     private final Setting<Boolean> sync;
 
     private Color finalColour;
@@ -44,30 +45,44 @@ public class ColourComponent extends SettingComponent<Color> {
 
         float[] hsbColour = Color.RGBtoHSB(setting.getValue().getRed(), setting.getValue().getGreen(), setting.getValue().getBlue(), null);
 
-        this.hue = new Setting<Number>("Hue", (int) (hsbColour[0] * 360f), 0f, 360f, 1f)
+        this.hue = new Setting<>("Hue", hsbColour[0] * 360f, 0f, 360f, 1f)
                 .setDescription("The hue of the colour");
 
-        this.alpha = new Setting<Number>("Alpha", (float) setting.getValue().getAlpha(), 0f, 255f, 1f)
+        this.alpha = new Setting<>("Alpha", (float) setting.getValue().getAlpha(), 0f, 255f, 1f)
                 .setDescription("The alpha of the colour");
 
         this.rainbow = new Setting<>("Rainbow", setting.isRainbow())
                 .setDescription("Whether the colour is a rainbow");
 
-        this.rainbowSpeed = new Setting<Number>("Rainbow Speed", setting.getRainbowSpeed(), 0.1f, 10f, 0.1f)
+        this.rainbowSpeed = new Setting<>("Rainbow Speed", setting.getRainbowSpeed(), 0.1f, 10f, 0.1f)
                 .setDescription("The speed of the rainbow");
 
-        this.rainbowSaturation = new Setting<Number>("Rainbow Saturation", setting.getRainbowSaturation(), 0f, 100f, 1f)
+        this.rainbowSaturation = new Setting<>("Rainbow Saturation", setting.getRainbowSaturation(), 0f, 100f, 1f)
                 .setDescription("The saturation of the rainbow");
 
         this.sync = new Setting<>("Sync", setting.isSync())
                 .setDescription("Whether the colour is synced to the client's main colour");
 
-        components.add(new SliderComponent(moduleButton, hue, offset + (height * 2), height));
-        components.add(new SliderComponent(moduleButton, alpha, offset + (height * 3), height));
-        components.add(new BooleanComponent(moduleButton, rainbow, offset + (height * 4), height));
-        components.add(new SliderComponent(moduleButton, rainbowSpeed, offset + (height * 5), height));
-        components.add(new SliderComponent(moduleButton, rainbowSaturation, offset + (height * 6), height));
-        components.add(new BooleanComponent(moduleButton, sync, offset + (height * 8), height));
+        List<Setting<?>> settings = new ArrayList<>();
+        settings.add(hue);
+        settings.add(alpha);
+        settings.add(rainbow);
+        settings.add(rainbowSpeed);
+        settings.add(rainbowSaturation);
+        settings.add(sync);
+
+        // I hate this btw
+        float count = 2;
+        for (Setting<?> setting1 : settings) {
+            if (setting1.getValue() instanceof Boolean) {
+                components.add(new BooleanComponent(moduleButton, (Setting<Boolean>) setting1, offset + (height * count), height));
+            }
+            else if (setting1.getValue() instanceof Float || setting1.getValue() instanceof Double) {
+                components.add(new SliderComponent(moduleButton, (Setting<Number>) setting1, offset + (height * count), height));
+            }
+
+            count++;
+        }
 
         finalColour = setting.getValue();
     }
@@ -106,10 +121,10 @@ public class ColourComponent extends SettingComponent<Color> {
             // Render sliders
             components.forEach(settingComponent -> settingComponent.renderSetting(mouseX, mouseY));
 
-            getSetting().setAlpha(this.alpha.getValue().floatValue());
+            getSetting().setAlpha(this.alpha.getValue());
             getSetting().setRainbow(this.rainbow.getValue());
-            getSetting().setRainbowSaturation(this.rainbowSaturation.getValue().floatValue());
-            getSetting().setRainbowSpeed(this.rainbowSpeed.getValue().floatValue());
+            getSetting().setRainbowSaturation(this.rainbowSaturation.getValue());
+            getSetting().setRainbowSpeed(this.rainbowSpeed.getValue());
             getSetting().setSync(this.sync.getValue());
 
             float hue = this.hue.getValue().floatValue();
@@ -156,7 +171,7 @@ public class ColourComponent extends SettingComponent<Color> {
 
             // awful thing to check if we are dragging the hue slider
             for (SettingComponent<?> settingComponent : components) {
-                if (settingComponent.getSetting() == this.hue && ((SliderComponent) settingComponent).isDragging() && settingComponent.getSetting().getValue() instanceof Number) {
+                if (settingComponent.getSetting() == this.hue && ((SliderComponent) settingComponent).isDragging()) {
                     hue = ((Number) settingComponent.getSetting().getValue()).floatValue();
 
                     float[] hsb2 = Color.RGBtoHSB(finalColour.getRed(), finalColour.getGreen(), finalColour.getBlue(), null);
