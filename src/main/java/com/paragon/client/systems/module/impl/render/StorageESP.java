@@ -167,6 +167,8 @@ public class StorageESP extends Module {
 
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
+
+            mc.entityRenderer.setupOverlayRendering();
         }
     }
 

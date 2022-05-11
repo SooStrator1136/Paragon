@@ -111,7 +111,7 @@ public class Shader extends Module {
 
     @SubscribeEvent
     public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType().equals(RenderGameOverlayEvent.ElementType.CROSSHAIRS)) {
+        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR)) {
             // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
             // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
 
@@ -215,6 +215,8 @@ public class Shader extends Module {
 
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
+
+            mc.entityRenderer.setupOverlayRendering();
         }
     }
 

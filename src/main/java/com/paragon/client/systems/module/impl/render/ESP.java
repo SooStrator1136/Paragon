@@ -135,13 +135,7 @@ public class ESP extends Module {
 
             for (Entity entity : mc.world.loadedEntityList) {
                 if (entity != null && entity != mc.player && isEntityValid(entity)) {
-                    try {
-                        mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
-                    }
-                    // ok i actually have no idea why this is happening but it is
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
                 }
             }
 
@@ -183,6 +177,8 @@ public class ESP extends Module {
 
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
+
+            mc.entityRenderer.setupOverlayRendering();
         }
     }
 
