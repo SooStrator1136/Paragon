@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.CPacketUseEntity;
@@ -11,14 +12,22 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Wolfsurge
+ */
 public class AutoEZ extends Module {
 
     public static AutoEZ INSTANCE;
 
+    private final Setting<Double> maximumRange = new Setting<>("Max Range", 10.0D, 1.0D, 20.0D, 0.1D)
+            .setDescription("The furthest distance from the player to target");
+
+    // List of targeted players
     private final List<EntityPlayer> targeted = new ArrayList<>();
 
     public AutoEZ() {
         super("AutoEZ", ModuleCategory.MISC, "Automatically sends a message when you kill an opponent");
+        this.addSettings(maximumRange);
 
         INSTANCE = this;
     }
@@ -29,14 +38,13 @@ public class AutoEZ extends Module {
             return;
         }
 
-        mc.world.loadedEntityList.forEach(entity -> {
-            if (entity instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer) entity;
+        targeted.removeIf(player -> !(player.getDistance(mc.player) <= maximumRange.getValue()));
 
-                if (player.getHealth() <= 0 && targeted.contains(player)) {
-                    mc.player.sendChatMessage(player.getName() + ", did you really just die to the worst client?!");
-                    targeted.remove(player);
-                }
+        // Iterate through entities
+        targeted.forEach(player -> {
+            if (player.getHealth() <= 0 && targeted.contains(player)) {
+                mc.player.sendChatMessage(player.getName() + ", did you really just die to the worst client?!");
+                targeted.remove(player);
             }
         });
     }
@@ -71,7 +79,9 @@ public class AutoEZ extends Module {
     }
 
     public static void addTarget(String name) {
-        INSTANCE.targeted.add(mc.world.getPlayerEntityByName(name));
+        if (!INSTANCE.targeted.contains(mc.world.getPlayerEntityByName(name))) {
+            INSTANCE.targeted.add(mc.world.getPlayerEntityByName(name));
+        }
     }
 
 }
