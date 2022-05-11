@@ -1,6 +1,5 @@
 package com.paragon.client.systems.module.impl.combat;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
@@ -100,6 +99,12 @@ public class Surround extends Module {
     @Override
     public void onTick() {
         if (nullCheck()) {
+            return;
+        }
+
+        // Check we are in air
+        if (disable.getValue().equals(Disable.AIR) && !mc.player.onGround) {
+            toggle();
             return;
         }
 
@@ -306,7 +311,12 @@ public class Surround extends Module {
         /**
          * Never disable
          */
-        NEVER
+        NEVER,
+
+        /**
+         * Disable when the player is in air
+         */
+        AIR
     }
 
     public enum Center {
