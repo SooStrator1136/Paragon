@@ -37,7 +37,6 @@ public class ModuleManager {
                 // Combat
                 new Aura(),
                 new AutoCrystal(),
-                new Blink(),
                 new Criticals(),
                 new Offhand(),
                 new Surround(),
@@ -75,6 +74,7 @@ public class ModuleManager {
                 new Announcer(),
                 new AutoEZ(),
                 new AutoLog(),
+                new Blink(),
                 new BuildHeight(),
                 new ChatModifications(),
                 new CustomWorld(),
@@ -86,7 +86,7 @@ public class ModuleManager {
                 new Notifier(),
                 new NoTrace(),
                 new OnDeath(),
-                new Timer(),
+                new TimerModule(),
                 new XCarry(),
 
                 // Client
