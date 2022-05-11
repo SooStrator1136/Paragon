@@ -10,6 +10,7 @@ import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
+import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
@@ -267,6 +268,15 @@ public class AutoCrystal extends Module {
             .setDescription("Does not explode / place the crystal if it will pop or kill you")
             .setParentSetting(pause);
 
+    private final Setting<Boolean> randomPause = new Setting<>("Random Pause", false)
+            .setDescription("Randomly pauses to try and prevent you from being kicked")
+            .setParentSetting(pause);
+
+    private final Setting<Float> randomChance = new Setting<>("Chance", 50f, 2f, 100f, 1f)
+            .setDescription("The chance to pause")
+            .setParentSetting(pause)
+            .setVisibility(randomPause::getValue);
+
 
     // Render settings
     public final Setting<Boolean> render = new Setting<>("Render", true)
@@ -354,6 +364,12 @@ public class AutoCrystal extends Module {
 
             // Pause if we are drinking
             if (pauseDrinking.getValue() && PlayerUtil.isPlayerDrinking()) {
+                return;
+            }
+
+            Random random = new Random();
+
+            if (randomPause.getValue() && random.nextInt(randomChance.getValue().intValue()) == 1) {
                 return;
             }
         }
