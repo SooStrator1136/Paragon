@@ -7,7 +7,7 @@ The discord can be joined here:
 https://discord.gg/zSn2a5AZNq
 
 # Contributors
-Head Developer - Wolfsurge
+Head Developer - Wolfsurge <br>
 Head Not-Development - Teletofu
 
 ## Developers
@@ -29,7 +29,7 @@ Windows:
 
 `gradlew build`
 
-Linux/Mac (or any other based UNIX/UNIX-LIKE OS:
+Linux/Mac (or any other based UNIX/UNIX-LIKE OS):
 
 `chmod +x gradlew`
 
