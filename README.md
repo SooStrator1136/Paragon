@@ -29,7 +29,7 @@ Windows:
 
 `gradlew build`
 
-Linux/Mac:
+Linux/Mac (or any other based UNIX/UNIX-LIKE OS:
 
 `chmod +x gradlew`
 
