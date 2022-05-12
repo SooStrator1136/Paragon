@@ -1,7 +1,10 @@
 ![ParagonBanner1](https://user-images.githubusercontent.com/85251388/154859895-65627d8d-0753-43ea-91c4-d8c092e478c3.png)
 
 # Paragon
-A 1.12.2 Anarchy Client
+A 1.12.2 Anarchy Client. Still in development.
+
+The discord can be joined here:
+https://discord.gg/zSn2a5AZNq
 
 # Contributors
 Head Developer - Wolfsurge
@@ -16,6 +19,8 @@ Doogie13
 ## Other Credits
 Tigermouthbear, linustouchtips - Animation class <br>
 linustouchtips / Cosmos - GL Shader code, Font renderer
+
+If I have not credited something, please let me know. (Although I am pretty sure I have)
 
 # Build instructions
 Windows:
