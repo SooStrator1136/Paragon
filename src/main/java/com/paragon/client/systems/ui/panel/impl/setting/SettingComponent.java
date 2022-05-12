@@ -36,30 +36,30 @@ public class SettingComponent<T> implements TextRenderer {
         this.offset = offset;
         this.height = height;
 
-        float settingOffset = getOffset() - 1;
+        float settingOffset = getOffset();
 
         if (!setting.getSubsettings().isEmpty()) {
             for (Setting<?> setting1 : setting.getSubsettings()) {
                 if (setting1.getValue() instanceof Boolean) {
-                    getSettingComponents().add(new BooleanComponent(getModuleButton(), (Setting<Boolean>) setting1, settingOffset, 12));
-                    settingOffset += 12;
+                    getSettingComponents().add(new BooleanComponent(getModuleButton(), (Setting<Boolean>) setting1, settingOffset, height));
+                    settingOffset += height;
                 } else if (setting1.getValue() instanceof AtomicInteger) {
-                    getSettingComponents().add(new KeybindComponent(getModuleButton(), (Setting<AtomicInteger>) setting1, settingOffset, 12));
-                    settingOffset += 12;
+                    getSettingComponents().add(new KeybindComponent(getModuleButton(), (Setting<AtomicInteger>) setting1, settingOffset, height));
+                    settingOffset += height;
                 } else if (setting1.getValue() instanceof Number) {
-                    getSettingComponents().add(new SliderComponent(getModuleButton(), (Setting<Number>) setting1, settingOffset, 12));
-                    settingOffset += 12;
+                    getSettingComponents().add(new SliderComponent(getModuleButton(), (Setting<Number>) setting1, settingOffset, height));
+                    settingOffset += height;
                 } else if (setting1.getValue() instanceof Enum<?>) {
-                    getSettingComponents().add(new ModeComponent(getModuleButton(), (Setting<Enum<?>>) setting1, settingOffset, 12));
-                    settingOffset += 12;
+                    getSettingComponents().add(new ModeComponent(getModuleButton(), (Setting<Enum<?>>) setting1, settingOffset, height));
+                    settingOffset += height;
                 } else if (setting1.getValue() instanceof Color) {
-                    getSettingComponents().add(new ColourComponent(getModuleButton(), (Setting<Color>) setting1, settingOffset, 12));
-                    settingOffset += 12;
+                    getSettingComponents().add(new ColourComponent(getModuleButton(), (Setting<Color>) setting1, settingOffset, height));
+                    settingOffset += height;
                 }
             }
         }
 
-        animation = new Animation(200, false);
+        animation = new Animation(200, false, ClickGUI.easing::getValue);
     }
 
     public void renderSetting(int mouseX, int mouseY) {
@@ -69,7 +69,7 @@ public class SettingComponent<T> implements TextRenderer {
         if (!getSettingComponents().isEmpty() && hasVisibleSubsettings()) {
             GL11.glPushMatrix();
             GL11.glScalef(0.5f, 0.5f, 0.5f);
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 3.5f) * 2, -1);
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 4f) * 2, -1);
             GL11.glPopMatrix();
         }
 
@@ -82,7 +82,7 @@ public class SettingComponent<T> implements TextRenderer {
 
             for (SettingComponent<?> settingComponent : settingComponents) {
                 if (settingComponent.getSetting().isVisible()) {
-                    RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + settingComponent.getOffset(), 2, settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight(), Colours.mainColour.getValue().getRGB());
+                    RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + settingComponent.getOffset(), 2, settingComponent instanceof ColourComponent ? getHeight() : settingComponent.getHeight(), Colours.mainColour.getValue().getRGB());
                 }
             }
         }

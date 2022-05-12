@@ -44,7 +44,7 @@ public class Taskbar implements Wrapper, TextRenderer {
             }
         }
 
-        renderText(open ? "Close" : "Open", scaledResolution.getScaledWidth() - getStringWidth(open ? "Close" : "Open") - 3, scaledResolution.getScaledHeight() - getFontHeight() - (ClientFont.INSTANCE.isEnabled() ? 3 : 5), -1);
+        renderText(open ? "Close" : "Open", scaledResolution.getScaledWidth() - getStringWidth(open ? "Close" : "Open") - 3, scaledResolution.getScaledHeight() - getFontHeight() - (ClientFont.INSTANCE.isEnabled() ? 2 : 5), -1);
     }
 
     public void mouseClicked(int mouseX, int mouseY) {

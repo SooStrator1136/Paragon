@@ -22,7 +22,7 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
     private boolean creditsExpanded = false;
 
     // Credits expand animation
-    private final Animation creditsAnimation = new Animation(500, false);
+    private final Animation creditsAnimation = new Animation(500, false, () -> Animation.Easing.EXPO_IN_OUT);
 
     @Override
     public void initGui() {

@@ -27,8 +27,6 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
     // The tooltip being rendered
     public static String tooltip = "";
 
-    private final Animation animation = new Animation(100, false);
-
     public PanelGUI() {
         // X position of panel
         float x = (RenderUtil.getScreenWidth() / 2) - ((ModuleCategory.values().length * 100) / 2f);

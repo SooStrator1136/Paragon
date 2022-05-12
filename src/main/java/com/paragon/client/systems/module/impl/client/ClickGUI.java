@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.client.systems.ui.animation.Animation;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -20,15 +21,18 @@ public class ClickGUI extends Module {
     public static Setting<Boolean> panelHeaderSeparator = new Setting<>("Header Separator", false)
             .setDescription("Draw a separator between the header and the module buttons");
 
-    public static Setting<Animation> animation = new Setting<>("Animation", Animation.STATIC)
+    public static Setting<AnimationType> animation = new Setting<>("Animation", AnimationType.STATIC)
             .setDescription("The type of animation");
 
     public static Setting<Float> cornerRadius = new Setting<>("Corner Radius", 5f, 1f, 7f, 1f)
             .setDescription("The radius of the corners");
 
 
-    public static Setting<Float> animationSpeed = new Setting<>("Animation Speed", 100f, 0f, 1000f, 10f)
+    public static Setting<Float> animationSpeed = new Setting<>("Animation Speed", 200f, 0f, 1000f, 10f)
             .setDescription("How fast animations are");
+
+    public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
+            .setDescription("The easing type of the animation");
 
     // Shared settings
     public static Setting<Boolean> darkenBackground = new Setting<>("Darken Background", true)
@@ -39,7 +43,7 @@ public class ClickGUI extends Module {
 
     public ClickGUI() {
         super("ClickGUI", ModuleCategory.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
-        this.addSettings(scrollSpeed, tooltips, panelHeaderSeparator, animation, cornerRadius, animationSpeed, darkenBackground, pause);
+        this.addSettings(scrollSpeed, tooltips, panelHeaderSeparator, animation, cornerRadius, animationSpeed, easing, darkenBackground, pause);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class ClickGUI extends Module {
         return Paragon.INSTANCE.getPanelGUI();
     }
 
-    public enum Animation {
+    public enum AnimationType {
         /**
          * Leave the components in the same place
          */

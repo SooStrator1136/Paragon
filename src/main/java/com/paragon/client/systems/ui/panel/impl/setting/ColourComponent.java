@@ -37,7 +37,7 @@ public class ColourComponent extends SettingComponent<Color> {
 
     private Color finalColour;
     private final List<SettingComponent<?>> components = new ArrayList<>();
-    private final Animation animation = new Animation(200, false);
+    private final Animation animation = new Animation(200, false, () -> ClickGUI.easing.getValue());
     private boolean dragging = false;
 
     public ColourComponent(ModuleButton moduleButton, Setting<Color> setting, float offset, float height) {
@@ -45,7 +45,7 @@ public class ColourComponent extends SettingComponent<Color> {
 
         float[] hsbColour = Color.RGBtoHSB(setting.getValue().getRed(), setting.getValue().getGreen(), setting.getValue().getBlue(), null);
 
-        this.hue = new Setting<>("Hue", hsbColour[0] * 360f, 0f, 360f, 1f)
+        this.hue = new Setting<>("Hue", (float) ((int) (hsbColour[0] * 360f)), 0f, 360f, 1f)
                 .setDescription("The hue of the colour");
 
         this.alpha = new Setting<>("Alpha", (float) setting.getValue().getAlpha(), 0f, 255f, 1f)
@@ -91,12 +91,12 @@ public class ColourComponent extends SettingComponent<Color> {
     public void renderSetting(int mouseX, int mouseY) {
         this.animation.time = ClickGUI.animationSpeed.getValue();
 
-        RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 12, mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
+        RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 13, mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
         float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4) * scaleFactor, -1);
+        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
         GL11.glScalef(scaleFactor, scaleFactor, scaleFactor);
         GL11.glScalef(0.5f, 0.5f, 0.5f);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 3.5f) * 2, -1);
@@ -105,10 +105,10 @@ public class ColourComponent extends SettingComponent<Color> {
         RenderUtil.drawBorder(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, 0.5f, -1);
         RenderUtil.drawRect(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, getSetting().getValue().getRGB());
 
-        float off = getOffset() + 12;
+        float off = getOffset() + 13;
         for (SettingComponent<?> settingComponent : components) {
             settingComponent.setOffset(off);
-            off += 12;
+            off += 13;
         }
 
         // ???
@@ -127,10 +127,10 @@ public class ColourComponent extends SettingComponent<Color> {
             getSetting().setRainbowSpeed(this.rainbowSpeed.getValue());
             getSetting().setSync(this.sync.getValue());
 
-            float hue = this.hue.getValue().floatValue();
+            float hue = this.hue.getValue();
 
             float x = getModuleButton().getPanel().getX() + 4;
-            float y = getModuleButton().getOffset() + getOffset() + (components.size() * 12) + 15.5f;
+            float y = getModuleButton().getOffset() + getOffset() + (components.size() * 13) + 15.5f;
             float dimension = 87;
             float height = dimension * ClickGUI.animation.getValue().getAnimationFactor((float) animation.getAnimationFactor());
 
@@ -221,20 +221,20 @@ public class ColourComponent extends SettingComponent<Color> {
         }
 
         // Set final colour
-        getSetting().setValue(ColourUtil.integrateAlpha(finalColour, alpha.getValue().floatValue()));
+        getSetting().setValue(ColourUtil.integrateAlpha(finalColour, alpha.getValue()));
 
         super.renderSetting(mouseX, mouseY);
     }
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 12, mouseX, mouseY)) {
+        if (GuiUtil.mouseOver(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth(), getModuleButton().getOffset() + getOffset() + 13, mouseX, mouseY)) {
             // Toggle open state
             animation.setState(!isExpanded());
         }
 
         float x = getModuleButton().getPanel().getX() + 4;
-        float y = getModuleButton().getOffset() + getOffset() + (components.size() * 12) + 15.5f;
+        float y = getModuleButton().getOffset() + getOffset() + (components.size() * 13) + 15.5f;
         float dimension = 87;
 
         if (GuiUtil.mouseOver(x, y, x + dimension, y + dimension, mouseX, mouseY)) {
@@ -266,7 +266,7 @@ public class ColourComponent extends SettingComponent<Color> {
 
     @Override
     public float getHeight() {
-        return (float) (12 + (((components.size() * 12) + 94.5f) * animation.getAnimationFactor()));
+        return (float) (13 + (((components.size() * 13) + 94.5f) * animation.getAnimationFactor()));
     }
 
     @Override

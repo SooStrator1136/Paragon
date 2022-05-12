@@ -7,6 +7,7 @@ import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.client.systems.ui.animation.Animation;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
 
@@ -24,9 +25,12 @@ public class ArrayListHUD extends Module implements TextRenderer {
     public static final Setting<ArrayListColour> arrayListColour = new Setting<>("Colour", ArrayListColour.RAINBOW_WAVE)
             .setDescription("What colour to render the modules in");
 
+    public static final Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
+            .setDescription("The easing type of the animation");
+
     public ArrayListHUD() {
         super("ArrayList", ModuleCategory.HUD, "Renders the enabled modules on screen");
-        this.addSettings(animationSpeed, arrayListColour);
+        this.addSettings(animationSpeed, arrayListColour, easing);
     }
 
     @Override

@@ -49,24 +49,24 @@ public class ModuleButton implements TextRenderer {
         // Add settings. Please make a PR if you want to make this look better.
         for (Setting<?> setting : getModule().getSettings()) {
             if (setting.getValue() instanceof Boolean) {
-                settingComponents.add(new BooleanComponent(this, (Setting<Boolean>) setting, 13 + settingOffset, 12));
-                settingOffset += 12;
+                settingComponents.add(new BooleanComponent(this, (Setting<Boolean>) setting, settingOffset, height));
+                settingOffset += height;
             } else if (setting.getValue() instanceof AtomicInteger) {
-                settingComponents.add(new KeybindComponent(this, (Setting<AtomicInteger>) setting, 13 + settingOffset, 12));
-                settingOffset += 12;
+                settingComponents.add(new KeybindComponent(this, (Setting<AtomicInteger>) setting, settingOffset, height));
+                settingOffset += height;
             } else if (setting.getValue() instanceof Number) {
-                settingComponents.add(new SliderComponent(this, (Setting<Number>) setting, settingOffset, 12));
-                settingOffset += 12;
+                settingComponents.add(new SliderComponent(this, (Setting<Number>) setting, settingOffset, height));
+                settingOffset += height;
             } else if (setting.getValue() instanceof Enum<?>) {
-                settingComponents.add(new ModeComponent(this, (Setting<Enum<?>>) setting, 13 + settingOffset, 12));
-                settingOffset += 12;
+                settingComponents.add(new ModeComponent(this, (Setting<Enum<?>>) setting, settingOffset, height));
+                settingOffset += height;
             } else if (setting.getValue() instanceof Color) {
-                settingComponents.add(new ColourComponent(this, (Setting<Color>) setting, 13 + settingOffset, 12));
-                settingOffset += 12;
+                settingComponents.add(new ColourComponent(this, (Setting<Color>) setting, settingOffset, height));
+                settingOffset += height;
             }
         }
 
-        animation = new Animation(100, false);
+        animation = new Animation(100, false, () -> ClickGUI.easing.getValue());
     }
 
     public void renderModuleButton(int mouseX, int mouseY) {
@@ -83,7 +83,7 @@ public class ModuleButton implements TextRenderer {
         float scaleFactor = 1.25f;
 
         // Render the module's name
-        renderText(getModule().getName(), (getPanel().getX() + 3) * scaleFactor, (getOffset() + 3.5f) * scaleFactor, getModule().isEnabled() ? Colours.mainColour.getValue().getRGB() : -1);
+        renderText(getModule().getName(), (getPanel().getX() + 3) * scaleFactor, (getOffset() + 4f) * scaleFactor, getModule().isEnabled() ? Colours.mainColour.getValue().getRGB() : -1);
 
         // Render some dots at the side if we have more settings than just the keybind
         if (module.getSettings().size() > 1) {
@@ -100,7 +100,7 @@ public class ModuleButton implements TextRenderer {
             settingComponents.forEach(settingComponent -> {
                 if (settingComponent.getSetting().isVisible()) {
                     settingComponent.renderSetting(mouseX, mouseY);
-                    RenderUtil.drawRect(getPanel().getX(), getOffset() + settingComponent.getOffset(), 1, (settingComponent instanceof ColourComponent ? 12 : settingComponent.getHeight()), Colours.mainColour.getValue().getRGB());
+                    RenderUtil.drawRect(getPanel().getX(), getOffset() + settingComponent.getOffset(), 1, (settingComponent instanceof ColourComponent ? getHeight() : settingComponent.getHeight()), Colours.mainColour.getValue().getRGB());
                 }
             });
         }
@@ -160,8 +160,9 @@ public class ModuleButton implements TextRenderer {
     }
 
     public void refreshSettingOffsets() {
-        float settingOffset = 12;
+        float settingOffset = height;
 
+        // EW
         for (SettingComponent<?> settingComponent : settingComponents) {
             if (settingComponent.getSetting().isVisible()) {
                 settingComponent.setOffset(settingOffset);

@@ -51,13 +51,13 @@ public class Panel implements TextRenderer {
 
         // Add a new module button for each module in the category
         for (Module module : Paragon.INSTANCE.getModuleManager().getModulesInCategory(getCategory())) {
-            moduleButtons.add(new ModuleButton(this, module, offset, 12));
+            moduleButtons.add(new ModuleButton(this, module, offset, 13));
 
             // Increase offset
-            offset += 12;
+            offset += 13;
         }
 
-        animation = new Animation(300, true);
+        animation = new Animation(300, true, () -> ClickGUI.easing.getValue());
     }
 
     public void renderPanel(int mouseX, int mouseY) {
@@ -153,7 +153,7 @@ public class Panel implements TextRenderer {
 
         for (ModuleButton moduleButton : moduleButtons) {
             moduleButton.offset = y;
-            y += moduleButton.getAbsoluteHeight(); // * ClickGUI.animation.getValue().getAnimationFactor((float) animation.getAnimationFactor());
+            y += moduleButton.getAbsoluteHeight() * ClickGUI.animation.getValue().getAnimationFactor((float) animation.getAnimationFactor());
         }
     }
 

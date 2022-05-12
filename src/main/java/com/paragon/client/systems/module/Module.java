@@ -5,6 +5,7 @@ import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.feature.Feature;
 import com.paragon.client.systems.module.hud.impl.ArrayListHUD;
+import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +39,7 @@ public class Module extends Feature implements Wrapper {
             .setDescription("The keybind of the module");
 
     // Arraylist animation
-    public Animation animation = new Animation(100, false);
+    public Animation animation = new Animation(100, false, ArrayListHUD.easing::getValue);
 
     public Module(String name, ModuleCategory category, String description) {
         super(name, description);
