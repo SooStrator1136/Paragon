@@ -1,18 +1,20 @@
 package com.paragon.client.systems.module.impl.render;
 
+import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.awt.*;
 
+/**
+ * @author Wolfsurge
+ */
 public class Tracers extends Module {
 
     private final Setting<Boolean> passive = new Setting<>("Passives", true)
@@ -53,22 +55,11 @@ public class Tracers extends Module {
 
     @SubscribeEvent
     public void onRenderWorld(RenderWorldLastEvent event) {
-        for(Entity entity : mc.world.loadedEntityList) {
-            if(isEntityValid(entity))
+        mc.world.loadedEntityList.forEach(entity -> {
+            if (EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), passive.getValue()) || entity instanceof EntityEnderCrystal && crystals.getValue()) {
                 RenderUtil.drawTracer(entity, lineWidth.getValue(), getColourByEntity(entity));
-        }
-    }
-
-    /**
-     * Checks if an entity is valid
-     * @param entityIn The entity to check
-     * @return Is the entity valid
-     */
-    private boolean isEntityValid(Entity entityIn) {
-        if(entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.getValue()) return true;
-        else if(entityIn instanceof EntityMob && mobs.getValue()) return true;
-        else if(entityIn instanceof EntityPlayer && entityIn != mc.player && players.getValue()) return true;
-        else return entityIn instanceof EntityEnderCrystal && crystals.getValue();
+            }
+        });
     }
 
     /**
@@ -77,11 +68,23 @@ public class Tracers extends Module {
      * @return The entity's colour
      */
     private Color getColourByEntity(Entity entityIn) {
-        if(entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob)) return passiveColour.getValue();
-        else if(entityIn instanceof EntityMob) return mobColour.getValue();
-        else if(entityIn instanceof EntityPlayer && entityIn != mc.player) return playerColour.getValue();
-        else if(entityIn instanceof EntityEnderCrystal) return crystalColour.getValue();
-        else return new Color(0);
+        if (EntityUtil.isPassive(entityIn)) {
+            return passiveColour.getValue();
+        }
+
+        if (EntityUtil.isMonster(entityIn)) {
+            return mobColour.getValue();
+        }
+
+        if (entityIn instanceof EntityPlayer) {
+            return playerColour.getValue();
+        }
+
+        if (entityIn instanceof EntityEnderCrystal) {
+            return crystalColour.getValue();
+        }
+
+        return passiveColour.getValue();
     }
 
 }
