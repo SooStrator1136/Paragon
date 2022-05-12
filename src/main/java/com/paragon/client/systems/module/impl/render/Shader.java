@@ -99,6 +99,7 @@ public class Shader extends Module {
     private final DiamondsShader diamondsShader = new DiamondsShader();
     private final FluidShader fluidShader = new FluidShader();
     private final LiquidShader liquidShader = new LiquidShader();
+    private final SmokeShader smokeShader = new SmokeShader();
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
@@ -199,6 +200,12 @@ public class Shader extends Module {
                     liquidShader.setColour(colour.getValue());
                     liquidShader.startShader();
                     break;
+
+                case SMOKE:
+                    smokeShader.setTime(smokeShader.getTime() + 0.001f);
+                    smokeShader.setColour(colour.getValue());
+                    smokeShader.startShader();
+                    break;
             }
 
             mc.entityRenderer.setupOverlayRendering();
@@ -281,7 +288,12 @@ public class Shader extends Module {
         /**
          * Liquid shader
          */
-        LIQUID
+        LIQUID,
+
+        /**
+         * Smoke shader
+         */
+        SMOKE
     }
 
 }
