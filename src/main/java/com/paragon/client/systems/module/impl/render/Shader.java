@@ -2,10 +2,7 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
-import com.paragon.client.shader.shaders.DiagonalShader;
-import com.paragon.client.shader.shaders.DiamondsShader;
-import com.paragon.client.shader.shaders.FluidShader;
-import com.paragon.client.shader.shaders.OutlineShader;
+import com.paragon.client.shader.shaders.*;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.ModuleCategory;
 import com.paragon.client.systems.module.setting.Setting;
@@ -93,6 +90,7 @@ public class Shader extends Module {
             .setParentSetting(shaderType)
             .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAGONAL));
 
+    // Colour
     private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour of the shader");
 
@@ -100,6 +98,7 @@ public class Shader extends Module {
     private final DiagonalShader diagonalShader = new DiagonalShader();
     private final DiamondsShader diamondsShader = new DiamondsShader();
     private final FluidShader fluidShader = new FluidShader();
+    private final LiquidShader liquidShader = new LiquidShader();
 
     private Framebuffer framebuffer;
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
@@ -174,6 +173,7 @@ public class Shader extends Module {
                     diamondsShader.setSize(diamondSize.getValue());
                     diamondsShader.startShader();
                     break;
+
                 case OUTLINE:
                     outlineShader.setColour(colour.getValue());
                     outlineShader.setWidth(outlineWidth.getValue());
@@ -181,15 +181,23 @@ public class Shader extends Module {
                     outlineShader.setOutline(1);
                     outlineShader.startShader();
                     break;
+
                 case DIAGONAL:
                     diagonalShader.setColour(colour.getValue());
                     diagonalShader.setWidth(diagonalWidth.getValue());
                     diagonalShader.setSpacing(diagonalSpacing.getValue());
                     diagonalShader.startShader();
                     break;
+
                 case FLUID:
                     fluidShader.setTime(fluidShader.getTime() + 0.01);
                     fluidShader.startShader();
+                    break;
+
+                case LIQUID:
+                    liquidShader.setTime(liquidShader.getTime() + 0.01);
+                    liquidShader.setColour(colour.getValue());
+                    liquidShader.startShader();
                     break;
             }
 
@@ -268,7 +276,12 @@ public class Shader extends Module {
         /**
          * Fluid Shader
          */
-        FLUID
+        FLUID,
+
+        /**
+         * Liquid shader
+         */
+        LIQUID
     }
 
 }

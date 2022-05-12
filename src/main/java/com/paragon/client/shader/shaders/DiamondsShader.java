@@ -31,8 +31,6 @@ public class DiamondsShader extends Shader {
     @Override
     public void setupUniforms() {
         setupUniform("texture");
-        setupUniform("texelSize");
-        setupUniform("resolution");
         setupUniform("time");
 
         setupUniform("size");
@@ -43,8 +41,6 @@ public class DiamondsShader extends Shader {
     @Override
     public void updateUniforms() {
         glUniform1i(getUniform("texture"), 0);
-        glUniform2f(getUniform("texelSize"), 1F / mc.displayWidth, 1F / mc.displayHeight);
-        glUniform2f(getUniform("resolution"), mc.displayWidth, mc.displayHeight);
         glUniform1f(getUniform("time"), (float) getTime());
 
         glUniform4f(getUniform("colour"), colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue() / 255f, colour.getAlpha() / 255f);

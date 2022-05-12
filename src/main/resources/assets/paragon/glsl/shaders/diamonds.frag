@@ -1,11 +1,6 @@
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
+#version 120
 
 uniform sampler2D texture;
-uniform vec2 texelSize;
-uniform vec2 resolution;
 
 uniform vec4 colour;
 

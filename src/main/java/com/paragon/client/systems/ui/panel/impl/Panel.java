@@ -76,7 +76,7 @@ public class Panel implements TextRenderer {
         }
 
         // Header
-        RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.cornerRadius.getValue(), ClickGUI.cornerRadius.getValue(), 1, 1, new Color(23, 23, 23).darker().getRGB());
+        RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.cornerRadius.getValue(), ClickGUI.cornerRadius.getValue(), 1, 1, isMouseOverHeader(mouseX, mouseY) ? new Color(28, 28, 28).getRGB() : new Color(23, 23, 23).darker().getRGB());
         renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
 
         refreshOffsets();
@@ -92,7 +92,7 @@ public class Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
+        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, isMouseOverHeader(mouseX, mouseY) ? new Color(28, 28, 28).getRGB() : new Color(23, 23, 23).darker().getRGB());
 
         if (ClickGUI.panelHeaderSeparator.getValue()) {
             RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getValue().getRGB());

@@ -1,11 +1,11 @@
 #version 120
 
 uniform sampler2D texture;
-uniform vec2 texelSize;
+uniform vec2 resolution;
 
 // Colour and width
 uniform vec4 colour;
-uniform float radius;
+uniform float width;
 
 uniform int fill;
 uniform int outline;
@@ -20,23 +20,18 @@ void main() {
             gl_FragColor = vec4(0, 0, 0, 0);
         }
     } else if (outline == 1) {
-        float closest = radius * 2.0F + 2.0F;
+        float alpha = 0.0F;
 
-        for (float x = -radius; x <= radius; x++) {
-            for (float y = -radius; y <= radius; y++) {
+        for (float x = -width; x <= width; x++) {
+            for (float y = -width; y <= width; y++) {
+                vec4 pointColour = texture2D(texture, gl_TexCoord[0].xy + vec2(resolution.x * x, resolution.y * y));
 
-                vec4 currentcolour = texture2D(texture, gl_TexCoord[0].xy + vec2(texelSize.x * x, texelSize.y * y));
-
-                if (currentcolour.a > 0) {
-                    float currentDist = sqrt(x * x + y * y);
-
-                    if (currentDist < closest) {
-                        closest = currentDist;
-                    }
+                if (pointColour.a > 0) {
+                    alpha = 1.0F;
                 }
             }
         }
 
-        gl_FragColor = vec4(colour.x, colour.y, colour.z, (radius - (closest - radius)) / radius);
+        gl_FragColor = vec4(colour.x, colour.y, colour.z, alpha);
     }
 }

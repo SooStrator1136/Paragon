@@ -2,7 +2,6 @@
 
 uniform sampler2D texture;
 
-uniform vec2 texelSize;
 uniform float time;
 
 void main() {
@@ -16,9 +15,9 @@ void main() {
             uv.y += i * 0.35 / 5.0 + uv.x * 2.0 / i * -1.5 + (time * 0.01);
         }
 
-        float r = abs(sin(uv.x / 3.2));
-        float g = abs(sin(uv.x / 2.0));
-        float b = abs(sin(uv.x / 1.35));
+        float r = sin(uv.x / 3.2);
+        float g = sin(uv.x / 2.0);
+        float b = sin(uv.x / 1.35);
 
         gl_FragColor = vec4(r, g, b, 1.0);
     } else {

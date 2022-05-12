@@ -102,8 +102,8 @@ public class ColourComponent extends SettingComponent<Color> {
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 3.5f) * 2, -1);
         GL11.glPopMatrix();
 
-        RenderUtil.drawBorder(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, 0.5f, -1);
-        RenderUtil.drawRect(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2, 8, 8, getSetting().getValue().getRGB());
+        RenderUtil.drawBorder(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2.5f, 8, 8, 0.5f, -1);
+        RenderUtil.drawRect(getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 20, getModuleButton().getOffset() + getOffset() + 2.5f, 8, 8, getSetting().getValue().getRGB());
 
         float off = getOffset() + 13;
         for (SettingComponent<?> settingComponent : components) {
