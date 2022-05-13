@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.util.math.Vec3d;
 
@@ -36,7 +36,7 @@ public class Breadcrumbs extends Module {
     private int colourHue = 0;
 
     public Breadcrumbs() {
-        super("Breadcrumbs", ModuleCategory.RENDER, "Draws a trail behind you");
+        super("Breadcrumbs", Category.RENDER, "Draws a trail behind you");
         this.addSettings(infinite, lifespanValue, lineWidth, colour, rainbow);
     }
 

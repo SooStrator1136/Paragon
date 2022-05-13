@@ -1,7 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 
 public class Flight extends Module {
@@ -10,7 +10,7 @@ public class Flight extends Module {
             .setDescription("How fast you fly");
 
     public Flight() {
-        super("Flight", ModuleCategory.MOVEMENT, "Allows you to fly in survival mode");
+        super("Flight", Category.MOVEMENT, "Allows you to fly in survival mode");
         this.addSettings(flySpeed);
     }
 

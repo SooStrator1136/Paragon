@@ -1,7 +1,7 @@
 package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
@@ -12,7 +12,7 @@ public class Fullbright extends Module {
             .setDescription("What mode to use");
 
     public Fullbright() {
-        super("Fullbright", ModuleCategory.RENDER, "Makes the world appear brighter");
+        super("Fullbright", Category.RENDER, "Makes the world appear brighter");
         this.addSettings(mode);
     }
 

@@ -8,7 +8,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
@@ -62,7 +62,7 @@ public class Nametags extends Module implements TextRenderer {
             .setDescription("Scale the nametag based on your distance from the player");
 
     public Nametags() {
-        super("Nametags", ModuleCategory.RENDER, "Draws nametags above players");
+        super("Nametags", Category.RENDER, "Draws nametags above players");
         this.addSettings(health, ping, pops, armour, scaleFactor, distanceScale);
     }
 

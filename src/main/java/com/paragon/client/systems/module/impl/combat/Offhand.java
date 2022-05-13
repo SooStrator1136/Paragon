@@ -4,7 +4,7 @@ import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
@@ -81,7 +81,7 @@ public class Offhand extends Module {
     private final Timer switchTimer = new Timer();
 
     public Offhand() {
-        super("Offhand", ModuleCategory.COMBAT, "Manages the item in your offhand");
+        super("Offhand", Category.COMBAT, "Manages the item in your offhand");
         this.addSettings(priority, secondary, gappleSword, safety, delay, inventorySpoof, cancelMotion);
     }
 

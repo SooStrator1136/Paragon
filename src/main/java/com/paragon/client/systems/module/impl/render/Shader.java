@@ -4,7 +4,7 @@ import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.client.shader.shaders.*;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,10 +21,10 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
-import java.util.Set;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -105,11 +105,11 @@ public class Shader extends Module {
     private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
 
     public Shader() {
-        super("Shader", ModuleCategory.RENDER, "Apply a shader to entities and storages");
+        super("Shader", Category.RENDER, "Apply a shader to entities and storages");
         this.addSettings(passive, mobs, players, crystals, items, chests, shulkers, enderChests, shaderType, colour);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
         if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR)) {
             // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)

@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +26,7 @@ public class AutoEZ extends Module {
     private final List<EntityPlayer> targeted = new ArrayList<>();
 
     public AutoEZ() {
-        super("AutoEZ", ModuleCategory.MISC, "Automatically sends a message when you kill an opponent");
+        super("AutoEZ", Category.MISC, "Automatically sends a message when you kill an opponent");
         this.addSettings(maximumRange);
 
         INSTANCE = this;

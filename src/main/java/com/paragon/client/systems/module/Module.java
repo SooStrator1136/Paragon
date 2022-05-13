@@ -5,7 +5,6 @@ import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.feature.Feature;
 import com.paragon.client.systems.module.hud.impl.ArrayListHUD;
-import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Module extends Feature implements Wrapper {
 
     // The category the module is in
-    private final ModuleCategory category;
+    private final Category category;
 
     // Whether the module is enabled
     private boolean enabled;
@@ -41,7 +40,7 @@ public class Module extends Feature implements Wrapper {
     // Arraylist animation
     public Animation animation = new Animation(100, false, ArrayListHUD.easing::getValue);
 
-    public Module(String name, ModuleCategory category, String description) {
+    public Module(String name, Category category, String description) {
         super(name, description);
         this.category = category;
 
@@ -53,7 +52,7 @@ public class Module extends Feature implements Wrapper {
         addSettings(visible);
     }
 
-    public Module(String name, ModuleCategory category, String description, int keyBind) {
+    public Module(String name, Category category, String description, int keyBind) {
         super(name, description);
         this.category = category;
 
@@ -137,7 +136,7 @@ public class Module extends Feature implements Wrapper {
      * Gets the module's category
      * @return The module's category
      */
-    public ModuleCategory getCategory() {
+    public Category getCategory() {
         return category;
     }
 

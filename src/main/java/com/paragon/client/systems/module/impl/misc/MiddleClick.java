@@ -6,7 +6,7 @@ import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -32,7 +32,7 @@ public class MiddleClick extends Module {
     private boolean hasClicked = false;
 
     public MiddleClick() {
-        super("MiddleClick", ModuleCategory.MISC, "Allows you to perform actions when you middle click");
+        super("MiddleClick", Category.MISC, "Allows you to perform actions when you middle click");
         this.addSettings(friend, pearl);
     }
 

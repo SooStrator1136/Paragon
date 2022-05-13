@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.api.event.network.PlayerEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraftforge.event.world.BlockEvent;
@@ -34,7 +34,7 @@ public class Announcer extends Module {
     private String[] announceComponents = new String[] { "", "0", ""};
 
     public Announcer() {
-        super("Announcer", ModuleCategory.MISC, "Announces events to the chat");
+        super("Announcer", Category.MISC, "Announces events to the chat");
         this.addSettings(chatTimer, breakBlocks, playerJoin, playerLeave);
     }
 

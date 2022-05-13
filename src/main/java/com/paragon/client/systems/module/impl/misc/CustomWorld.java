@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
@@ -24,7 +24,7 @@ public class CustomWorld extends Module {
             .setParentSetting(customTime);
 
     public CustomWorld() {
-        super("CustomWorld", ModuleCategory.MISC, "Changes the way the world is shown client side");
+        super("CustomWorld", Category.MISC, "Changes the way the world is shown client side");
         this.addSettings(customWeather, customTime);
     }
 

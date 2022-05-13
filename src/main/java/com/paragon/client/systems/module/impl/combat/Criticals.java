@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.CPacketPlayer;
@@ -14,7 +14,7 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 public class Criticals extends Module {
 
     public Criticals() {
-        super("Criticals", ModuleCategory.COMBAT, "Makes all your hits critical hits");
+        super("Criticals", Category.COMBAT, "Makes all your hits critical hits");
     }
 
     @Listener

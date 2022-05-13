@@ -3,11 +3,8 @@ package com.paragon.client.systems.module.impl.render;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.init.Blocks;
-import net.minecraft.network.play.server.SPacketBlockChange;
-import net.minecraft.network.play.server.SPacketCustomSound;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -16,8 +13,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static org.lwjgl.opengl.GL11.glScalef;
 
 /**
  * @author Wolfsurge
@@ -29,7 +24,7 @@ public class SoundHighlight extends Module {
     private final Map<Vec3d, Pair<String, Long>> soundMap = new ConcurrentHashMap<>();
 
     public SoundHighlight() {
-        super("SoundHighlight", ModuleCategory.RENDER, "Highlights the positions of sounds in the world");
+        super("SoundHighlight", Category.RENDER, "Highlights the positions of sounds in the world");
     }
 
     @Override

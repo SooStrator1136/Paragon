@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.event.render.entity.RenderEatingEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.passive.EntityBat;
@@ -37,7 +37,7 @@ public class NoRender extends Module {
             .setDescription("Stops rendering the eating animation");
 
     public NoRender() {
-        super("NoRender", ModuleCategory.RENDER, "Cancels rendering certain things");
+        super("NoRender", Category.RENDER, "Cancels rendering certain things");
         this.addSettings(fire, water, bossInfo, potions, portal, bats, eatingAnimation);
     }
 

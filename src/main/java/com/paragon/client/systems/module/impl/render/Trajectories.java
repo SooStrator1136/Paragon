@@ -6,7 +6,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.item.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -69,7 +69,7 @@ public class Trajectories extends Module {
             .setDescription("Draw the trajectory of splash potions");
 
     public Trajectories() {
-        super("Trajectories", ModuleCategory.RENDER, "Shows where projectiles will land");
+        super("Trajectories", Category.RENDER, "Shows where projectiles will land");
         this.addSettings(line, box, bow, snowball, egg, exp, potion);
     }
 

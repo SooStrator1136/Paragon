@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.asm.mixins.accessor.ICPacketCloseWindow;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 
@@ -13,7 +13,7 @@ import net.minecraft.network.play.client.CPacketCloseWindow;
 public class XCarry extends Module {
 
     public XCarry() {
-        super("XCarry", ModuleCategory.MISC, "Lets you carry items in your crafting grid");
+        super("XCarry", Category.MISC, "Lets you carry items in your crafting grid");
     }
 
     @Listener

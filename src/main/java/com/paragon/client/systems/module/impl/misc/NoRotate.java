@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.asm.mixins.accessor.ISPacketPlayerPosLook;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 
@@ -13,7 +13,7 @@ import net.minecraft.network.play.server.SPacketPlayerPosLook;
 public class NoRotate extends Module {
 
     public NoRotate() {
-        super("NoRotate", ModuleCategory.MISC, "Stops the server from rotating your head");
+        super("NoRotate", Category.MISC, "Stops the server from rotating your head");
     }
 
     @Listener

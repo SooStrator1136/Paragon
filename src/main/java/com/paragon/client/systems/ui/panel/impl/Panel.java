@@ -8,10 +8,9 @@ import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class Panel implements TextRenderer {
     private final float barHeight;
 
     // The panel's category
-    private final ModuleCategory category;
+    private final Category category;
 
     // List of module buttons
     private final ArrayList<ModuleButton> moduleButtons = new ArrayList<>();
@@ -40,7 +39,7 @@ public class Panel implements TextRenderer {
     private boolean dragging = false;
     private float lastX, lastY;
 
-    public Panel(float x, float y, float width, float barHeight, ModuleCategory category) {
+    public Panel(float x, float y, float width, float barHeight, Category category) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -193,7 +192,7 @@ public class Panel implements TextRenderer {
      * Gets the category
      * @return The category
      */
-    public ModuleCategory getCategory() {
+    public Category getCategory() {
         return category;
     }
 

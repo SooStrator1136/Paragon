@@ -4,7 +4,7 @@ import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Items;
@@ -37,7 +37,7 @@ public class FastUse extends Module {
             .setParentSetting(randomPause);
 
     public FastUse() {
-        super("FastUse", ModuleCategory.MISC, "Allows you to use items quicker than you would be able to in vanilla");
+        super("FastUse", Category.MISC, "Allows you to use items quicker than you would be able to in vanilla");
         this.addSettings(xp, crystals, randomPause);
     }
 

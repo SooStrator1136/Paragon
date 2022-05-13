@@ -1,7 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 
 /**
  * @author Wolfsurge
@@ -9,7 +9,7 @@ import com.paragon.client.systems.module.ModuleCategory;
 public class ReverseStep extends Module {
 
     public ReverseStep() {
-        super("ReverseStep", ModuleCategory.MOVEMENT, "Moves you down when you walk off of a block");
+        super("ReverseStep", Category.MOVEMENT, "Moves you down when you walk off of a block");
     }
 
     @Override

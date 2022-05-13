@@ -1,14 +1,10 @@
 package com.paragon.api.util.render;
 
 import com.paragon.Paragon;
-import com.paragon.client.managers.FontManager;
 import com.paragon.client.systems.module.impl.client.ClientFont;
-import com.paragon.font.FontRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
-
-import java.awt.*;
-import java.io.InputStream;
 
 public interface TextRenderer {
 
@@ -52,6 +48,10 @@ public interface TextRenderer {
         }
 
         return Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+    }
+
+    default FontRenderer getMCFontRenderer() {
+        return Minecraft.getMinecraft().fontRenderer;
     }
 
     default String formatCode(TextFormatting textFormatting) {

@@ -2,9 +2,10 @@ package com.paragon.client.systems.module.impl.client;
 
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Animation;
+import com.paragon.client.systems.ui.window.WindowGUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -42,7 +43,7 @@ public class ClickGUI extends Module {
             .setDescription("Pause the game whilst in the GUI");
 
     public ClickGUI() {
-        super("ClickGUI", ModuleCategory.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
+        super("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
         this.addSettings(scrollSpeed, tooltips, panelHeaderSeparator, animation, cornerRadius, animationSpeed, easing, darkenBackground, pause);
     }
 
@@ -57,6 +58,8 @@ public class ClickGUI extends Module {
      * @return The GUI to switch to
      */
     public static GuiScreen getGUI() {
+        // return new WindowGUI();
+
         return Paragon.INSTANCE.getPanelGUI();
     }
 

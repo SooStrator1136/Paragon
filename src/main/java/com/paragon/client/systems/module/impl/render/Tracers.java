@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.render;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
@@ -49,14 +49,14 @@ public class Tracers extends Module {
             .setDescription("How thick to render the lines");
 
     public Tracers() {
-        super("Tracers", ModuleCategory.RENDER, "Draws lines to entities in the world");
+        super("Tracers", Category.RENDER, "Draws lines to entities in the world");
         this.addSettings(passive, mobs, players, crystals, lineWidth);
     }
 
     @SubscribeEvent
     public void onRenderWorld(RenderWorldLastEvent event) {
         mc.world.loadedEntityList.forEach(entity -> {
-            if (EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), passive.getValue()) || entity instanceof EntityEnderCrystal && crystals.getValue()) {
+            if (EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), passive.getValue()) && entity != mc.player || entity instanceof EntityEnderCrystal && crystals.getValue()) {
                 RenderUtil.drawTracer(entity, lineWidth.getValue(), getColourByEntity(entity));
             }
         });

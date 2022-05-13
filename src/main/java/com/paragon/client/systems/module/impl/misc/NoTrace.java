@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.player.RaytraceEntityEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Items;
@@ -26,7 +26,7 @@ public class NoTrace extends Module {
             .setDescription("Ignores entities when you are holding crystals");
 
     public NoTrace() {
-        super("NoTrace", ModuleCategory.MISC, "Ignores raytraced entities");
+        super("NoTrace", Category.MISC, "Ignores raytraced entities");
         this.addSettings(pickaxe, blocks, crystals);
     }
 

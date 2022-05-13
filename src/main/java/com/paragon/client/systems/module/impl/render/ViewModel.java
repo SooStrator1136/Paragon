@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.event.player.RenderItemEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
@@ -69,7 +69,7 @@ public class ViewModel extends Module {
             .setParentSetting(offhand);
 
     public ViewModel() {
-        super("ViewModel", ModuleCategory.RENDER, "Changes the way items are rendered in your hand");
+        super("ViewModel", Category.RENDER, "Changes the way items are rendered in your hand");
         this.addSettings(main, offhand);
     }
 

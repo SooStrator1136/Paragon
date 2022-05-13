@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.world.PlayerCollideWithBlockEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Blocks;
@@ -24,7 +24,7 @@ public class NoSlow extends Module {
             .setDescription("Stop items from slowing you down");
 
     public NoSlow() {
-        super("NoSlow", ModuleCategory.MOVEMENT, "Stop certain blocks and actions from slowing you down");
+        super("NoSlow", Category.MOVEMENT, "Stop certain blocks and actions from slowing you down");
         this.addSettings(soulSand, slime, items);
     }
 

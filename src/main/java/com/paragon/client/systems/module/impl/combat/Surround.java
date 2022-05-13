@@ -8,7 +8,7 @@ import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -62,7 +62,7 @@ public class Surround extends Module {
     private Map<BlockPos, EnumFacing> renderBlocks = new HashMap<>();
 
     public Surround() {
-        super("Surround", ModuleCategory.COMBAT, "Places obsidian around you to protect you from crystals");
+        super("Surround", Category.COMBAT, "Places obsidian around you to protect you from crystals");
         this.addSettings(disable, blocksPerTick, center, air, rotate, render);
     }
 

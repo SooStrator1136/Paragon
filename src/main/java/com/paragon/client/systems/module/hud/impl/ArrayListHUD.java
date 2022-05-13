@@ -4,7 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Animation;
@@ -29,7 +29,7 @@ public class ArrayListHUD extends Module implements TextRenderer {
             .setDescription("The easing type of the animation");
 
     public ArrayListHUD() {
-        super("ArrayList", ModuleCategory.HUD, "Renders the enabled modules on screen");
+        super("ArrayList", Category.HUD, "Renders the enabled modules on screen");
         this.addSettings(animationSpeed, arrayListColour, easing);
     }
 

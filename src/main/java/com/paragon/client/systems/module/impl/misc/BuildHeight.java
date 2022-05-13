@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
@@ -13,7 +13,7 @@ import net.minecraft.util.EnumFacing;
 public class BuildHeight extends Module {
 
     public BuildHeight() {
-        super("BuildHeight", ModuleCategory.MISC, "Lets you interact with blocks at the maximum build height");
+        super("BuildHeight", Category.MISC, "Lets you interact with blocks at the maximum build height");
     }
 
     @Listener

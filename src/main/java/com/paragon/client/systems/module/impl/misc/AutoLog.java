@@ -1,7 +1,7 @@
 package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.gui.GuiMainMenu;
 
@@ -20,7 +20,7 @@ public class AutoLog extends Module {
             .setDescription("Disables the module after logging you out");
 
     public AutoLog() {
-        super("AutoLog", ModuleCategory.MISC, "Automatically logs you out when you reach a certain health");
+        super("AutoLog", Category.MISC, "Automatically logs you out when you reach a certain health");
         this.addSettings(logMode, health, autoDisable);
     }
 

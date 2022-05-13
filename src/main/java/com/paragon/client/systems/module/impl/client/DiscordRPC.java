@@ -2,12 +2,12 @@ package com.paragon.client.systems.module.impl.client;
 
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 
 public class DiscordRPC extends Module {
 
     public DiscordRPC() {
-        super("DiscordRPC", ModuleCategory.CLIENT, "Changes your Discord presence to reflect the client's current state");
+        super("DiscordRPC", Category.CLIENT, "Changes your Discord presence to reflect the client's current state");
     }
 
     @Override

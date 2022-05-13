@@ -4,7 +4,7 @@ import com.paragon.api.event.render.gui.RenderTooltipEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.Colours;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,7 +22,7 @@ import java.awt.*;
 public class ShulkerViewer extends Module implements TextRenderer {
 
     public ShulkerViewer() {
-        super("ShulkerViewer", ModuleCategory.RENDER, "Shows the contents of a shulker box in your inventory without having to open it");
+        super("ShulkerViewer", Category.RENDER, "Shows the contents of a shulker box in your inventory without having to open it");
     }
 
     @Listener

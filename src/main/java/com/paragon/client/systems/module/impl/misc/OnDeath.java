@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +22,7 @@ public class OnDeath extends Module {
             .setDescription("Respawns you after death");
 
     public OnDeath() {
-        super("OnDeath", ModuleCategory.MISC, "Do certain actions when you die");
+        super("OnDeath", Category.MISC, "Do certain actions when you die");
         this.addSettings(printCoords, respawn);
     }
 

@@ -4,7 +4,7 @@ import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import net.minecraft.util.math.MathHelper;
 
 public abstract class HUDModule extends Module implements TextRenderer {
@@ -14,7 +14,7 @@ public abstract class HUDModule extends Module implements TextRenderer {
     private boolean dragging;
 
     public HUDModule(String name, String description) {
-        super(name, ModuleCategory.HUD, description);
+        super(name, Category.HUD, description);
         this.setVisible(false);
     }
 

@@ -10,13 +10,12 @@ import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
-import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
@@ -327,7 +326,7 @@ public class AutoCrystal extends Module {
     private final Map<Integer, Integer> inhibitMap = new HashMap<>();
 
     public AutoCrystal() {
-        super("AutoCrystal", ModuleCategory.COMBAT, "Automatically places and explodes crystals");
+        super("AutoCrystal", Category.COMBAT, "Automatically places and explodes crystals");
         this.addSettings(order, heuristic, timing, place, explode, targeting, override, pause, render);
 
         INSTANCE = this;

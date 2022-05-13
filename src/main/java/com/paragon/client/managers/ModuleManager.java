@@ -2,7 +2,7 @@ package com.paragon.client.managers;
 
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.hud.impl.*;
 import com.paragon.client.systems.module.impl.client.*;
@@ -39,6 +39,7 @@ public class ModuleManager {
                 new AutoCrystal(),
                 new Criticals(),
                 new Offhand(),
+                new Replenish(),
                 new Surround(),
 
                 // Movement
@@ -141,7 +142,7 @@ public class ModuleManager {
      * @param moduleCategory The module category to get modules in
      * @return The modules in the given category
      */
-    public List<Module> getModulesInCategory(ModuleCategory moduleCategory) {
+    public List<Module> getModulesInCategory(Category moduleCategory) {
         List<Module> modulesInCategory = new ArrayList<>();
 
         getModules().forEach(module -> {

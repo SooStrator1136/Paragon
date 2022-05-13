@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -45,7 +45,7 @@ public class Blink extends Module {
     private final Timer timer = new Timer();
 
     public Blink() {
-        super("Blink", ModuleCategory.MISC, "Cancels sending packets for a length of time");
+        super("Blink", Category.MISC, "Cancels sending packets for a length of time");
         this.addSettings(mode);
     }
 

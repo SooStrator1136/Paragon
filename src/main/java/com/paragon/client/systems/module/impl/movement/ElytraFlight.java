@@ -6,7 +6,7 @@ import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -71,7 +71,7 @@ public class ElytraFlight extends Module {
             .setParentSetting(takeOff);
 
     public ElytraFlight() {
-        super("ElytraFlight", ModuleCategory.MOVEMENT, "Allows for easier flight with an elytra");
+        super("ElytraFlight", Category.MOVEMENT, "Allows for easier flight with an elytra");
         this.addSettings(mode, flySpeed, ascend, descend, fallSpeed, takeOff);
     }
 

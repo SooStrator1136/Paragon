@@ -10,7 +10,7 @@ import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -75,7 +75,7 @@ public class Aura extends Module {
     private EntityLivingBase target;
 
     public Aura() {
-        super("Aura", ModuleCategory.COMBAT, "Automatically attacks entities");
+        super("Aura", Category.COMBAT, "Automatically attacks entities");
         this.addSettings(sort, players, mobs, passives, range, delay, when, rotate, packetAttack, where);
 
         INSTANCE = this;

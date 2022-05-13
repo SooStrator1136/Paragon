@@ -1,6 +1,6 @@
 package com.paragon.client.systems.module;
 
-public enum ModuleCategory {
+public enum Category {
 
     /**
      * PVP related modules, e.g. Aura, AutoCrystal
@@ -34,7 +34,7 @@ public enum ModuleCategory {
 
     private String name;
 
-    ModuleCategory(String name) {
+    Category(String name) {
         this.name = name;
     }
 

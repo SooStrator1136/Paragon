@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 
 /**
@@ -15,7 +15,7 @@ public class TimerModule extends Module {
             .setDescription("How much to multiply the timer speed by");
 
     public TimerModule() {
-        super("Timer", ModuleCategory.MISC, "Modifies how long each tick takes");
+        super("Timer", Category.MISC, "Modifies how long each tick takes");
         this.addSettings(timer);
     }
 

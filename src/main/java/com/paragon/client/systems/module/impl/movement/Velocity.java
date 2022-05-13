@@ -4,7 +4,7 @@ import com.paragon.api.event.network.PacketEvent;
 import com.paragon.asm.mixins.accessor.ISPacketEntityVelocity;
 import com.paragon.asm.mixins.accessor.ISPacketExplosion;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -28,7 +28,7 @@ public class Velocity extends Module {
             .setDescription("The vertical modifier");
 
     public Velocity() {
-        super("Velocity", ModuleCategory.MOVEMENT, "Stops crystals and mobs from causing you knockback");
+        super("Velocity", Category.MOVEMENT, "Stops crystals and mobs from causing you knockback");
         this.addSettings(velocityPacket, explosions, horizontal, vertical);
     }
 

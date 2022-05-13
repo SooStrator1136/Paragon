@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.movement;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,7 +24,7 @@ public class Step extends Module {
             .setVisibility(() -> mode.getValue().equals(Mode.VANILLA));
 
     public Step() {
-        super("Step", ModuleCategory.MOVEMENT, "Lets you instantly step up blocks");
+        super("Step", Category.MOVEMENT, "Lets you instantly step up blocks");
         this.addSettings(mode, stepHeight);
     }
 

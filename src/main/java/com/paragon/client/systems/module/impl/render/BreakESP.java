@@ -4,7 +4,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -35,7 +35,7 @@ public class BreakESP extends Module {
             .setDescription("Show the percentage of how much the block has been broken");
 
     public BreakESP() {
-        super("BreakESP", ModuleCategory.RENDER, "Highlights blocks that are currently being broken");
+        super("BreakESP", Category.RENDER, "Highlights blocks that are currently being broken");
         this.addSettings(renderMode, lineWidth, range, percent);
     }
 

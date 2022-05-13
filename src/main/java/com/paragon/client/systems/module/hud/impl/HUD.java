@@ -3,12 +3,12 @@ package com.paragon.client.systems.module.hud.impl;
 import com.paragon.Paragon;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 
 public class HUD extends Module implements TextRenderer {
 
     public HUD() {
-        super("HUD", ModuleCategory.HUD, "Render the client's HUD on screen");
+        super("HUD", Category.HUD, "Render the client's HUD on screen");
     }
 
     @Override

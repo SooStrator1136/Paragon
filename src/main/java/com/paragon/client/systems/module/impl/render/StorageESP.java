@@ -9,7 +9,7 @@ import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
@@ -65,7 +65,7 @@ public class StorageESP extends Module {
     private final OutlineShader outlineShader = new OutlineShader();
 
     public StorageESP() {
-        super("StorageESP", ModuleCategory.RENDER, "Highlights storage blocks in the world");
+        super("StorageESP", Category.RENDER, "Highlights storage blocks in the world");
         this.addSettings(chests, shulkers, enderChests, mode, lineWidth, colour);
     }
 

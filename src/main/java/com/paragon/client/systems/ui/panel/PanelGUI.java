@@ -4,9 +4,8 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.impl.Panel;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.GuiScreen;
@@ -29,10 +28,10 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     public PanelGUI() {
         // X position of panel
-        float x = (RenderUtil.getScreenWidth() / 2) - ((ModuleCategory.values().length * 100) / 2f);
+        float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 100) / 2f);
 
         // Add a panel for every category
-        for (ModuleCategory category : ModuleCategory.values()) {
+        for (Category category : Category.values()) {
             // Add panel
             panels.add(new Panel(x, 30, 95, 16, category));
 

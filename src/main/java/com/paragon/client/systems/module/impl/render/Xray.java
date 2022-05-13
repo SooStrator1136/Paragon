@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.render;
 import com.paragon.api.event.render.world.*;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -36,7 +36,7 @@ public class Xray extends Module {
     );
 
     public Xray() {
-        super("Xray", ModuleCategory.RENDER, "Lets you see ores and liquids through blocks");
+        super("Xray", Category.RENDER, "Lets you see ores and liquids through blocks");
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -77,7 +77,7 @@ public class HoleESP extends Module {
     private final ArrayList<Hole> holes = new ArrayList<>();
 
     public HoleESP() {
-        super("HoleESP", ModuleCategory.RENDER, "Highlights holes to stand in when crystalling");
+        super("HoleESP", Category.RENDER, "Highlights holes to stand in when crystalling");
         this.addSettings(obsidian, mixed, bedrock, range, fill, outline, glow, hideCurrent);
     }
 

@@ -6,7 +6,7 @@ import com.paragon.api.event.combat.PlayerDeathEvent;
 import com.paragon.api.event.combat.TotemPopEvent;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.util.text.TextFormatting;
@@ -30,7 +30,7 @@ public class Notifier extends Module {
             .setParentSetting(death);
 
     public Notifier() {
-        super("Notifier", ModuleCategory.MISC, "Notifies you when events happen");
+        super("Notifier", Category.MISC, "Notifies you when events happen");
         this.addSettings(moduleEnabled, pop, death);
     }
 

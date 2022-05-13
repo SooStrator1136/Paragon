@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 
 /**
  * @author Wolfsurge
@@ -12,7 +12,7 @@ public class FakePlayer extends Module {
     private EntityFakePlayer fakePlayer;
 
     public FakePlayer() {
-        super("FakePlayer", ModuleCategory.MISC, "Spawns a fake client side player");
+        super("FakePlayer", Category.MISC, "Spawns a fake client side player");
     }
 
     @Override

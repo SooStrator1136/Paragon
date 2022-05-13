@@ -5,7 +5,7 @@ import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.asm.mixins.accessor.ICPacketPlayer;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Items;
@@ -30,7 +30,7 @@ public class NoFall extends Module {
             .setVisibility(() -> mode.getValue().equals(Mode.BUCKET));
 
     public NoFall() {
-        super("NoFall", ModuleCategory.MOVEMENT, "Disables fall damage");
+        super("NoFall", Category.MOVEMENT, "Disables fall damage");
         this.addSettings(mode, spoofFall);
     }
 

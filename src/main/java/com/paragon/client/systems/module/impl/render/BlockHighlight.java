@@ -5,7 +5,7 @@ import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -29,7 +29,7 @@ public class BlockHighlight extends Module {
             .setDescription("What colour to render the block");
 
     public BlockHighlight() {
-        super("BlockHighlight", ModuleCategory.RENDER, "Highlights the block you are looking at");
+        super("BlockHighlight", Category.RENDER, "Highlights the block you are looking at");
         this.addSettings(renderMode, lineWidth, colour);
     }
 

@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.movement;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 
 /**
@@ -19,7 +19,7 @@ public class Sprint extends Module {
             .setVisibility(() -> mode.getValue().equals(Mode.OMNI));
 
     public Sprint() {
-        super("Sprint", ModuleCategory.MOVEMENT, "Automatically sprint");
+        super("Sprint", Category.MOVEMENT, "Automatically sprint");
         this.addSettings(mode, onlyWhenMoving);
     }
 

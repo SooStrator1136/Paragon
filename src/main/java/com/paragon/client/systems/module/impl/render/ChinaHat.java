@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.render;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +34,7 @@ public class ChinaHat extends Module {
             .setDescription("Render the hat on other players");
 
     public ChinaHat() {
-        super("ChinaHat", ModuleCategory.RENDER, "-69420 social credit :((");
+        super("ChinaHat", Category.RENDER, "-69420 social credit :((");
         this.addSettings(topColour, bottomColour, firstPerson, others);
     }
 

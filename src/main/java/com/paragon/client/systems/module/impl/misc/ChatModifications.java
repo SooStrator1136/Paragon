@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -19,7 +19,7 @@ public class ChatModifications extends Module {
             .setDescription("Adds a Paragon suffix to the end of the message");
 
     public ChatModifications() {
-        super("ChatModifications", ModuleCategory.MISC, "Changes the way you send messages");
+        super("ChatModifications", Category.MISC, "Changes the way you send messages");
         this.addSettings(coloured, suffix);
     }
 

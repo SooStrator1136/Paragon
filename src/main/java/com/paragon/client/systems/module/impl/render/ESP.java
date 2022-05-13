@@ -12,7 +12,7 @@ import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.asm.mixins.accessor.IShaderGroup;
 import com.paragon.client.shader.shaders.OutlineShader;
 import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.ModuleCategory;
+import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
@@ -85,7 +85,7 @@ public class ESP extends Module {
     private final OutlineShader outlineShader = new OutlineShader();
 
     public ESP() {
-        super("ESP", ModuleCategory.RENDER, "Highlights entities in the world");
+        super("ESP", Category.RENDER, "Highlights entities in the world");
         this.addSettings(passive, mobs, players, items, crystals, mode, lineWidth, colour);
     }
 
