@@ -87,7 +87,7 @@ public class Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, isMouseOverHeader(mouseX, mouseY) ? new Color(28, 28, 28).getRGB() : new Color(23, 23, 23).darker().getRGB());
+        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
 
         if (ClickGUI.panelHeaderSeparator.getValue()) {
             RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getValue().getRGB());

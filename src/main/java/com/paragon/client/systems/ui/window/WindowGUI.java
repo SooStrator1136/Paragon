@@ -1,5 +1,6 @@
 package com.paragon.client.systems.ui.window;
 
+import com.paragon.Paragon;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.ui.window.impl.Window;
 import com.paragon.client.systems.ui.window.impl.windows.ModuleWindow;
@@ -9,10 +10,9 @@ import java.io.IOException;
 
 public class WindowGUI extends GuiScreen {
 
-    private Window window;
+    private final Window window;
 
-    @Override
-    public void initGui() {
+    public WindowGUI() {
         window = new ModuleWindow();
     }
 
@@ -46,6 +46,13 @@ public class WindowGUI extends GuiScreen {
         window.keyTyped(typedChar, keyCode);
 
         super.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        Paragon.INSTANCE.getModuleManager().getModules().forEach(module -> {
+            Paragon.INSTANCE.getStorageManager().saveModuleConfiguration(module);
+        });
     }
 
     @Override

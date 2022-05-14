@@ -69,6 +69,7 @@ public class ModuleManager {
                 new StorageESP(),
                 new Tracers(),
                 new Trajectories(),
+                new ViewClip(),
                 new ViewModel(),
                 new Xray(),
 

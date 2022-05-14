@@ -3,12 +3,14 @@ package com.paragon.asm.mixins.render.entity;
 import com.google.common.base.Predicate;
 import com.paragon.Paragon;
 import com.paragon.api.event.player.RaytraceEntityEvent;
+import com.paragon.api.event.render.entity.CameraClipEvent;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.ArrayList;
@@ -27,6 +29,30 @@ public abstract class MixinEntityRenderer {
         } else {
             return world.getEntitiesInAABBexcluding(entity, axisAlignedBB, predicate);
         }
+    }
+
+    @ModifyVariable(method = "orientCamera", at = @At("STORE"), ordinal = 3)
+    public double orientCameraX(double distance) {
+        CameraClipEvent cameraClipEvent = new CameraClipEvent(distance);
+        Paragon.INSTANCE.getEventBus().post(cameraClipEvent);
+
+        if (cameraClipEvent.isCancelled()) {
+            return cameraClipEvent.getDistance();
+        }
+
+        return distance;
+    }
+
+    @ModifyVariable(method = "orientCamera", at = @At("STORE"), ordinal = 7)
+    public double orientCameraZ(double distance) {
+        CameraClipEvent cameraClipEvent = new CameraClipEvent(distance);
+        Paragon.INSTANCE.getEventBus().post(cameraClipEvent);
+
+        if (cameraClipEvent.isCancelled()) {
+            return cameraClipEvent.getDistance();
+        }
+
+        return distance;
     }
 
 }
