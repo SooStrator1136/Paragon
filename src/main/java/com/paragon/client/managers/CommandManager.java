@@ -35,16 +35,6 @@ public class CommandManager implements Wrapper {
         Paragon.INSTANCE.getLogger().info("Loaded Command Manager");
     }
 
-    @SubscribeEvent
-    public void onChatMessage(ClientChatEvent event) {
-        // Check if the message starts with the prefix
-        if (event.getMessage().startsWith(prefix)) {
-            event.setCanceled(true);
-
-            handleCommands(event.getMessage().substring(prefix.length()), false);
-        }
-    }
-
     public static void handleCommands(String message, boolean fromConsole) {
         if (message.split(" ").length > 0) {
             boolean commandFound = false;
@@ -73,8 +63,19 @@ public class CommandManager implements Wrapper {
         Paragon.INSTANCE.getConsole().addLine(TextFormatting.LIGHT_PURPLE + "Paragon " + TextFormatting.WHITE + "> " + message);
     }
 
+    @SubscribeEvent
+    public void onChatMessage(ClientChatEvent event) {
+        // Check if the message starts with the prefix
+        if (event.getMessage().startsWith(prefix)) {
+            event.setCanceled(true);
+
+            handleCommands(event.getMessage().substring(prefix.length()), false);
+        }
+    }
+
     /**
      * Gets the commands
+     *
      * @return The commands
      */
     public List<Command> getCommands() {

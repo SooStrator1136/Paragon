@@ -1,4 +1,3 @@
-
 package com.paragon.client.systems.ui.panel.impl.setting;
 
 import com.paragon.Paragon;

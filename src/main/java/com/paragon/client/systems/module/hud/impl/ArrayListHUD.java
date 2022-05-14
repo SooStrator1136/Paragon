@@ -52,7 +52,7 @@ public class ArrayListHUD extends Module implements TextRenderer {
         modules.sort(Comparator.comparingDouble(module -> getStringWidth(module.getName() + module.getArrayListInfo())));
         Collections.reverse(modules);
 
-        for(Module module : modules) {
+        for (Module module : modules) {
             renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getValue().getColour(index * 150));
             y -= 11 * module.animation.getAnimationFactor();
             index++;
@@ -78,6 +78,7 @@ public class ArrayListHUD extends Module implements TextRenderer {
 
         /**
          * Gets the colour
+         *
          * @param addition The addition to the colour
          * @return The colour
          */

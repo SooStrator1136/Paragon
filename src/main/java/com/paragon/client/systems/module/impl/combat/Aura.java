@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  * Basic Aura module.
+ *
  * @author Wolfsurge
  */
 public class Aura extends Module {
@@ -171,6 +172,11 @@ public class Aura extends Module {
         }
     }
 
+    @Override
+    public String getArrayListInfo() {
+        return " " + (target == null ? "No target" : target.getName());
+    }
+
     public enum Sort {
         /**
          * Sort by distance
@@ -204,16 +210,12 @@ public class Aura extends Module {
 
         /**
          * Gets the function to sort by
+         *
          * @return The function to sort by
          */
         public float getSort(EntityLivingBase entityLivingBase) {
             return function.apply(entityLivingBase);
         }
-    }
-
-    @Override
-    public String getArrayListInfo() {
-        return " " + (target == null ? "No target" : target.getName());
     }
 
     public enum When {
@@ -258,6 +260,7 @@ public class Aura extends Module {
 
         /**
          * Gets the height to add to the rotation
+         *
          * @param entityLivingBase The entity to get the height for
          * @return The height to add to the rotation
          */

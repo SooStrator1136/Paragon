@@ -13,14 +13,15 @@ import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class AltManagerGUI extends GuiScreen implements TextRenderer {
 
-    private final ArrayList<AltEntry> altEntries = new ArrayList<>();
     public static AltEntry selectedAltEntry;
     public static String renderString = TextFormatting.GRAY + "Idle";
+    private final ArrayList<AltEntry> altEntries = new ArrayList<>();
 
     @Override
     public void initGui() {

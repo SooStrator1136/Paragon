@@ -17,6 +17,7 @@ public class SideRenderBlockEvent extends CancellableEvent {
 
     /**
      * Gets the pos
+     *
      * @return The pos
      */
     public BlockPos getPos() {
@@ -25,6 +26,7 @@ public class SideRenderBlockEvent extends CancellableEvent {
 
     /**
      * Gets the return value
+     *
      * @return The return value
      */
     public boolean getReturnValue() {
@@ -33,6 +35,7 @@ public class SideRenderBlockEvent extends CancellableEvent {
 
     /**
      * Sets the return value
+     *
      * @param returnValue The return value
      */
     public void setReturnValue(boolean returnValue) {

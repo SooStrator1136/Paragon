@@ -24,10 +24,9 @@ public class Paragon {
 
     @Mod.Instance
     public static Paragon INSTANCE = new Paragon();
-
+    private final EventBus eventBus = new EventBus();
     // Client stuff
     private Logger logger;
-    private final EventBus eventBus = new EventBus();
     private DiscordPresenceManager presenceManager = new DiscordPresenceManager();
 
     // Managers
@@ -84,6 +83,7 @@ public class Paragon {
 
     /**
      * Gets the logger
+     *
      * @return The logger
      */
     public Logger getLogger() {
@@ -92,6 +92,7 @@ public class Paragon {
 
     /**
      * Gets the event bus
+     *
      * @return The event bus
      */
     public EventBus getEventBus() {
@@ -100,6 +101,7 @@ public class Paragon {
 
     /**
      * Gets the presence manager
+     *
      * @return The presence manager
      */
     public DiscordPresenceManager getPresenceManager() {
@@ -108,6 +110,7 @@ public class Paragon {
 
     /**
      * Gets the font manager
+     *
      * @return The font manager
      */
     public FontManager getFontManager() {
@@ -116,6 +119,7 @@ public class Paragon {
 
     /**
      * Gets the storage manager
+     *
      * @return The storage manager
      */
     public StorageManager getStorageManager() {
@@ -124,6 +128,7 @@ public class Paragon {
 
     /**
      * Gets the module manager
+     *
      * @return The client's module manager
      */
     public ModuleManager getModuleManager() {
@@ -132,6 +137,7 @@ public class Paragon {
 
     /**
      * Gets the command manager
+     *
      * @return The command manager
      */
     public CommandManager getCommandManager() {
@@ -140,6 +146,7 @@ public class Paragon {
 
     /**
      * Gets the event parser
+     *
      * @return The event parser
      */
     public EventParser getEventParser() {
@@ -148,6 +155,7 @@ public class Paragon {
 
     /**
      * Gets the pop manager
+     *
      * @return The pop manager
      */
     public PopManager getPopManager() {
@@ -156,6 +164,7 @@ public class Paragon {
 
     /**
      * Gets the social manager
+     *
      * @return The social manager
      */
     public SocialManager getSocialManager() {
@@ -164,6 +173,7 @@ public class Paragon {
 
     /**
      * Gets the alt manager
+     *
      * @return The alt manager
      */
     public AltManager getAltManager() {
@@ -172,6 +182,7 @@ public class Paragon {
 
     /**
      * Gets the rotation manager
+     *
      * @return The rotation manager
      */
     public RotationManager getRotationManager() {
@@ -180,6 +191,7 @@ public class Paragon {
 
     /**
      * Gets the taskbar
+     *
      * @return The taskbar
      */
     public Taskbar getTaskbar() {
@@ -188,6 +200,7 @@ public class Paragon {
 
     /**
      * Gets the panel GUI
+     *
      * @return The panel GUI
      */
     public PanelGUI getPanelGUI() {
@@ -196,6 +209,7 @@ public class Paragon {
 
     /**
      * Gets the console
+     *
      * @return The console
      */
     public Console getConsole() {

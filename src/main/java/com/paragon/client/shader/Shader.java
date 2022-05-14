@@ -3,11 +3,13 @@ package com.paragon.client.shader;
 import com.paragon.api.util.Wrapper;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.lwjgl.opengl.GL20.*;
 
 /**
@@ -72,8 +74,11 @@ public class Shader implements Wrapper {
         updateUniforms();
     }
 
-    public void setupUniforms() {}
-    public void updateUniforms() {}
+    public void setupUniforms() {
+    }
+
+    public void updateUniforms() {
+    }
 
     private int createShader(String source, int type) {
         int shader = 0;

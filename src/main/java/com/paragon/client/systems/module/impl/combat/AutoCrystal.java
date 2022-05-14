@@ -774,7 +774,6 @@ public class AutoCrystal extends Module {
         /* if (placePacket.getValue()) {
             // Send place packet
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeWhen.getValue().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND, (float) currentPlacement.facingVec.x, (float) currentPlacement.facingVec.y, (float) currentPlacement.facingVec.z));
-
             // Swing arm
             swing(placeSwing.getValue());
         } else {

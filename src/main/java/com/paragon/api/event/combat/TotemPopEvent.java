@@ -16,6 +16,7 @@ public class TotemPopEvent extends Event {
 
     /**
      * Gets the player that popped the totem
+     *
      * @return The player that popped the totem
      */
     public EntityPlayer getPlayer() {

@@ -20,21 +20,17 @@ import java.util.ArrayList;
  */
 public class Panel implements TextRenderer {
 
+    private final float width;
+    private final float barHeight;
+    // The panel's category
+    private final Category category;
+    // List of module buttons
+    private final ArrayList<ModuleButton> moduleButtons = new ArrayList<>();
+    // Opening / Closing animation
+    private final Animation animation;
     // X, Y, Width, and Bar Height
     private float x;
     private float y;
-    private final float width;
-    private final float barHeight;
-
-    // The panel's category
-    private final Category category;
-
-    // List of module buttons
-    private final ArrayList<ModuleButton> moduleButtons = new ArrayList<>();
-
-    // Opening / Closing animation
-    private final Animation animation;
-
     // Variables
     private boolean dragging = false;
     private float lastX, lastY;
@@ -158,6 +154,7 @@ public class Panel implements TextRenderer {
 
     /**
      * Gets the X
+     *
      * @return The X
      */
     public float getX() {
@@ -166,6 +163,7 @@ public class Panel implements TextRenderer {
 
     /**
      * Gets the Y
+     *
      * @return The Y
      */
     public float getY() {
@@ -174,6 +172,7 @@ public class Panel implements TextRenderer {
 
     /**
      * Sets the Y
+     *
      * @param newY The new Y
      */
     public void setY(float newY) {
@@ -182,6 +181,7 @@ public class Panel implements TextRenderer {
 
     /**
      * Gets the width
+     *
      * @return The width
      */
     public float getWidth() {
@@ -190,6 +190,7 @@ public class Panel implements TextRenderer {
 
     /**
      * Gets the category
+     *
      * @return The category
      */
     public Category getCategory() {
@@ -198,6 +199,7 @@ public class Panel implements TextRenderer {
 
     /**
      * Gets whether the animation is expanding / expanded
+     *
      * @return If the panel is expanded
      */
     public boolean isExpanded() {

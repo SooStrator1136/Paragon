@@ -21,6 +21,7 @@ public class EntityUtil implements Wrapper {
 
     /**
      * Gets the interpolated position of a given entity
+     *
      * @param entityIn The given entity
      * @return The interpolated position
      */
@@ -30,7 +31,8 @@ public class EntityUtil implements Wrapper {
 
     /**
      * Gets the interpolated amount of the entity
-     * @param entity The entity in
+     *
+     * @param entity       The entity in
      * @param partialTicks The render partial ticks
      * @return The interpolated amount
      */
@@ -40,6 +42,7 @@ public class EntityUtil implements Wrapper {
 
     /**
      * Gets the text formatting colour based on an entity's health
+     *
      * @param entity The entity
      * @return The colour of the health
      */
@@ -54,7 +57,7 @@ public class EntityUtil implements Wrapper {
             return TextFormatting.GOLD;
         } else if (entity.getHealth() <= 10 && entity.getHealth() > 5) {
             return TextFormatting.RED;
-        } else if(entity.getHealth() <= 5) {
+        } else if (entity.getHealth() <= 5) {
             return TextFormatting.DARK_RED;
         }
 
@@ -63,6 +66,7 @@ public class EntityUtil implements Wrapper {
 
     /**
      * Gets the bounding box of an entity
+     *
      * @param entity The entity
      * @return The bounding box of the entity
      */
@@ -79,7 +83,8 @@ public class EntityUtil implements Wrapper {
 
     /**
      * Checks if a player's distance from us is further than the given maximum range
-     * @param entity The player to check
+     *
+     * @param entity       The player to check
      * @param maximumRange The maximum range they are allowed in
      * @return If the player is too far away from us
      */
@@ -89,7 +94,8 @@ public class EntityUtil implements Wrapper {
 
     /**
      * Checks if an entity can see a block pos
-     * @param entity The entity
+     *
+     * @param entity   The entity
      * @param position The position to check
      * @return Whether the entity can see the block pos
      */
@@ -114,7 +120,7 @@ public class EntityUtil implements Wrapper {
     }
 
     public static boolean isMonster(Entity entity) {
-        return entity.isCreatureType(EnumCreatureType.MONSTER, false) && !(entity instanceof EntityPigZombie || entity instanceof EntityWolf  || entity instanceof EntityEnderman) || entity instanceof EntitySpider;
+        return entity.isCreatureType(EnumCreatureType.MONSTER, false) && !(entity instanceof EntityPigZombie || entity instanceof EntityWolf || entity instanceof EntityEnderman) || entity instanceof EntitySpider;
     }
 
     public static boolean isPassive(Entity entity) {

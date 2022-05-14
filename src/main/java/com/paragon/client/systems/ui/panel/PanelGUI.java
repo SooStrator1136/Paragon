@@ -20,11 +20,10 @@ import java.util.Objects;
  */
 public class PanelGUI extends GuiScreen implements TextRenderer {
 
-    // List of panels
-    private final ArrayList<Panel> panels = new ArrayList<>();
-
     // The tooltip being rendered
     public static String tooltip = "";
+    // List of panels
+    private final ArrayList<Panel> panels = new ArrayList<>();
 
     public PanelGUI() {
         // X position of panel
@@ -144,6 +143,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     /**
      * Gets the panels
+     *
      * @return The panels
      */
     public ArrayList<Panel> getPanels() {

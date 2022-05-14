@@ -8,16 +8,16 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ICPacketPlayer {
 
     @Accessor("yaw")
-    void setYaw(float yaw);
-
-    @Accessor("yaw")
     float getYaw();
 
-    @Accessor("pitch")
-    void setPitch(float pitch);
+    @Accessor("yaw")
+    void setYaw(float yaw);
 
     @Accessor("pitch")
     float getPitch();
+
+    @Accessor("pitch")
+    void setPitch(float pitch);
 
     @Accessor("y")
     void setY(double y);

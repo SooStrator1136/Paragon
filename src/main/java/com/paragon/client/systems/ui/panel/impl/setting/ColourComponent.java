@@ -34,10 +34,9 @@ public class ColourComponent extends SettingComponent<Color> {
     private final Setting<Float> rainbowSpeed;
     private final Setting<Float> rainbowSaturation;
     private final Setting<Boolean> sync;
-
-    private Color finalColour;
     private final List<SettingComponent<?>> components = new ArrayList<>();
     private final Animation animation = new Animation(200, false, () -> ClickGUI.easing.getValue());
+    private Color finalColour;
     private boolean dragging = false;
 
     public ColourComponent(ModuleButton moduleButton, Setting<Color> setting, float offset, float height) {
@@ -76,8 +75,7 @@ public class ColourComponent extends SettingComponent<Color> {
         for (Setting<?> setting1 : settings) {
             if (setting1.getValue() instanceof Boolean) {
                 components.add(new BooleanComponent(moduleButton, (Setting<Boolean>) setting1, offset + (height * count), height));
-            }
-            else if (setting1.getValue() instanceof Float || setting1.getValue() instanceof Double) {
+            } else if (setting1.getValue() instanceof Float || setting1.getValue() instanceof Double) {
                 components.add(new SliderComponent(moduleButton, (Setting<Number>) setting1, offset + (height * count), height));
             }
 

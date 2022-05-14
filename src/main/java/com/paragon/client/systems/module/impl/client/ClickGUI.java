@@ -46,20 +46,21 @@ public class ClickGUI extends Module {
         this.addSettings(scrollSpeed, tooltips, panelHeaderSeparator, animation, cornerRadius, animationSpeed, easing, darkenBackground, pause);
     }
 
-    @Override
-    public void onEnable() {
-        mc.displayGuiScreen(getGUI());
-        toggle();
-    }
-
     /**
      * Gets the GUI to switch to
+     *
      * @return The GUI to switch to
      */
     public static GuiScreen getGUI() {
         // return new WindowGUI();
 
         return Paragon.INSTANCE.getPanelGUI();
+    }
+
+    @Override
+    public void onEnable() {
+        mc.displayGuiScreen(getGUI());
+        toggle();
     }
 
     public enum AnimationType {

@@ -102,6 +102,7 @@ public class Console implements Wrapper, TextRenderer {
 
     /**
      * Gets the title
+     *
      * @return The title
      */
     public String getTitle() {
@@ -110,6 +111,7 @@ public class Console implements Wrapper, TextRenderer {
 
     /**
      * Gets the width
+     *
      * @return The width
      */
     public float getWidth() {
@@ -118,6 +120,7 @@ public class Console implements Wrapper, TextRenderer {
 
     /**
      * Gets the height
+     *
      * @return The height
      */
     public float getHeight() {

@@ -12,7 +12,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+
 import java.awt.*;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderUtil implements Wrapper {
@@ -22,9 +24,10 @@ public class RenderUtil implements Wrapper {
 
     /**
      * Draws a rectangle at the given coordinates
-     * @param x The X (left) coord
-     * @param y The Y (top) coord
-     * @param width The width of the rectangle
+     *
+     * @param x      The X (left) coord
+     * @param y      The Y (top) coord
+     * @param width  The width of the rectangle
      * @param height The height of the rectangle
      * @param colour The colour of the rectangle
      */
@@ -122,9 +125,10 @@ public class RenderUtil implements Wrapper {
 
     /**
      * Starts scissoring a rect
-     * @param x X coord
-     * @param y Y coord
-     * @param width Width of scissor
+     *
+     * @param x      X coord
+     * @param y      Y coord
+     * @param width  Width of scissor
      * @param height Height of scissor
      */
     public static void startGlScissor(double x, double y, double width, double height) {
@@ -145,9 +149,10 @@ public class RenderUtil implements Wrapper {
 
     /**
      * Scissors a rect
-     * @param x X coord
-     * @param y Y coord
-     * @param width Width of scissor
+     *
+     * @param x      X coord
+     * @param y      Y coord
+     * @param width  Width of scissor
      * @param height Height of scissor
      */
     public static void scissorRect(double x, double y, double width, double height) {
@@ -166,15 +171,16 @@ public class RenderUtil implements Wrapper {
 
     /**
      * Draws a line from one pos to another
-     * @param x1 Start X
-     * @param y1 Start Y
-     * @param z1 Start Z
-     * @param x2 End X
-     * @param y2 End Y
-     * @param z2 End Z
-     * @param color The colour of the line
+     *
+     * @param x1           Start X
+     * @param y1           Start Y
+     * @param z1           Start Z
+     * @param x2           End X
+     * @param y2           End Y
+     * @param z2           End Z
+     * @param color        The colour of the line
      * @param disableDepth Disable GL depth
-     * @param lineWidth Width of the line
+     * @param lineWidth    Width of the line
      */
     public static void drawLine3D(double x1, double y1, double z1, double x2, double y2, double z2, int color, boolean disableDepth, float lineWidth) {
         // Enable render 3D
@@ -219,9 +225,10 @@ public class RenderUtil implements Wrapper {
 
     /**
      * Draws a tracer to a given entity
-     * @param e The entity to draw a line to
+     *
+     * @param e         The entity to draw a line to
      * @param lineWidth The width of the line
-     * @param col The colour of the line
+     * @param col       The colour of the line
      */
     public static void drawTracer(Entity e, float lineWidth, Color col) {
         Vec3d vec = EntityUtil.getInterpolatedPosition(e);
@@ -229,18 +236,19 @@ public class RenderUtil implements Wrapper {
         double y = vec.y - mc.getRenderManager().viewerPosY;
         double z = vec.z - mc.getRenderManager().viewerPosZ;
 
-        Vec3d eyes = (new Vec3d(0.0D, 0.0D, 1.0D)).rotatePitch(-((float)Math.toRadians(mc.player.rotationPitch))).rotateYaw( -((float)Math.toRadians(mc.player.rotationYaw)));
+        Vec3d eyes = (new Vec3d(0.0D, 0.0D, 1.0D)).rotatePitch(-((float) Math.toRadians(mc.player.rotationPitch))).rotateYaw(-((float) Math.toRadians(mc.player.rotationYaw)));
 
-        if(col.getAlpha() == 0) return;
+        if (col.getAlpha() == 0) return;
 
         drawLine3D(eyes.x, eyes.y + mc.player.getEyeHeight(), eyes.z, x, y + (e.height / 2), z, col.getRGB(), true, lineWidth);
     }
 
     /**
      * Draws a bounding box around an AABB
+     *
      * @param axisAlignedBB The AABB
      * @param lineThickness The line width
-     * @param colour The colour of the outline
+     * @param colour        The colour of the outline
      */
     public static void drawBoundingBox(AxisAlignedBB axisAlignedBB, float lineThickness, Color colour) {
         glBlendFunc(770, 771);
@@ -258,8 +266,9 @@ public class RenderUtil implements Wrapper {
 
     /**
      * Draws a filled box around an AABB
+     *
      * @param axisAlignedBB The AABB
-     * @param colour The colour of the outline
+     * @param colour        The colour of the outline
      */
     public static void drawFilledBox(AxisAlignedBB axisAlignedBB, Color colour) {
         glBlendFunc(770, 771);
@@ -274,7 +283,7 @@ public class RenderUtil implements Wrapper {
         glDepthMask(true);
         glDisable(GL_BLEND);
     }
-    
+
     public static void drawGradientBox(AxisAlignedBB axisAlignedBB, Color top, Color bottom) {
         glBlendFunc(770, 771);
         glEnable(GL_BLEND);

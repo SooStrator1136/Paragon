@@ -36,6 +36,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the model base
+     *
      * @return The model base
      */
     public ModelBase getModelBase() {
@@ -44,6 +45,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the entity
+     *
      * @return The entity
      */
     public Entity getEntity() {
@@ -52,6 +54,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the limb swing
+     *
      * @return The limb swing
      */
     public float getLimbSwing() {
@@ -60,6 +63,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the limb swing amount
+     *
      * @return The limb swing amount
      */
     public float getLimbSwingAmount() {
@@ -68,6 +72,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the age in ticks
+     *
      * @return The age in ticks
      */
     public float getAgeInTicks() {
@@ -76,6 +81,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the net head yaw
+     *
      * @return The net head yaw
      */
     public float getNetHeadYaw() {
@@ -84,6 +90,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the head pitch
+     *
      * @return The head pitch
      */
     public float getHeadPitch() {
@@ -92,6 +99,7 @@ public class RenderEntityEvent extends CancellableEvent {
 
     /**
      * Gets the scale
+     *
      * @return The scale
      */
     public float getScale() {

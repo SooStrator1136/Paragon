@@ -23,12 +23,10 @@ public class SettingComponent<T> implements TextRenderer {
 
     private final ModuleButton moduleButton;
     private final Setting<T> setting;
-    private float offset;
     private final float height;
-
     private final ArrayList<SettingComponent<?>> settingComponents = new ArrayList<>();
-
     public Animation animation;
+    private float offset;
 
     public SettingComponent(ModuleButton moduleButton, Setting<T> setting, float offset, float height) {
         this.moduleButton = moduleButton;
@@ -135,6 +133,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets the module button
+     *
      * @return The module button
      */
     public ModuleButton getModuleButton() {
@@ -143,6 +142,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets the setting
+     *
      * @return The setting
      */
     public Setting<T> getSetting() {
@@ -151,6 +151,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets the offset
+     *
      * @return The offset
      */
     public float getOffset() {
@@ -159,6 +160,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Sets the offset
+     *
      * @param newOffset The new offset
      */
     public void setOffset(float newOffset) {
@@ -167,6 +169,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets whether the setting component is expanded or not
+     *
      * @return Whether the setting component is expanded or not
      */
     public boolean isExpanded() {
@@ -175,6 +178,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets the list of setting components
+     *
      * @return The setting components
      */
     public ArrayList<SettingComponent<?>> getSettingComponents() {
@@ -183,6 +187,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets the height of the component (without subsettings)
+     *
      * @return The height of the component
      */
     public float getHeight() {
@@ -191,6 +196,7 @@ public class SettingComponent<T> implements TextRenderer {
 
     /**
      * Gets the absolute height of the module
+     *
      * @return The absolute height of the module
      */
     public float getAbsoluteHeight() {

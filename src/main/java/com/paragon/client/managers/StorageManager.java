@@ -28,8 +28,14 @@ public class StorageManager {
     public File modulesFolder = new File("paragon/modules/");
     public File socialFolder = new File("paragon/social");
 
+    @SuppressWarnings("all")
+    public static JSONObject loadExistingConfiguration(File file) throws IOException, JSONException {
+        return new JSONObject(FileUtils.readFileToString(file, Charsets.UTF_8));
+    }
+
     /**
      * Saves a module config to a file
+     *
      * @param moduleIn The module
      */
     public void saveModuleConfiguration(Module moduleIn) {
@@ -55,13 +61,9 @@ public class StorageManager {
                 for (Setting<?> setting : moduleIn.getSettings()) {
                     if (setting.getValue() instanceof Color) {
                         jsonObject.put(setting.getName(), ((Color) setting.getValue()).getRed() + ":" + ((Color) setting.getValue()).getGreen() + ":" + ((Color) setting.getValue()).getBlue() + ":" + ((Color) setting.getValue()).getAlpha() + ":" + setting.isRainbow() + ":" + setting.getRainbowSpeed() + ":" + setting.getRainbowSaturation() + ":" + setting.isSync());
-                    }
-
-                    else if (setting.getValue() instanceof AtomicInteger) {
+                    } else if (setting.getValue() instanceof AtomicInteger) {
                         jsonObject.put(setting.getName(), ((AtomicInteger) setting.getValue()).get());
-                    }
-
-                    else {
+                    } else {
                         jsonObject.put(setting.getName(), setting.getValue());
                     }
 
@@ -71,13 +73,9 @@ public class StorageManager {
 
                             if (subsetting.getValue() instanceof Color) {
                                 jsonObject.put(name, ((Color) subsetting.getValue()).getRed() + ":" + ((Color) subsetting.getValue()).getGreen() + ":" + ((Color) subsetting.getValue()).getBlue() + ":" + ((Color) subsetting.getValue()).getAlpha() + ":" + subsetting.isRainbow() + ":" + subsetting.getRainbowSpeed() + ":" + subsetting.getRainbowSaturation() + ":" + subsetting.isSync());
-                            }
-
-                            else if (subsetting.getValue() instanceof AtomicInteger) {
+                            } else if (subsetting.getValue() instanceof AtomicInteger) {
                                 jsonObject.put(name, ((AtomicInteger) subsetting.getValue()).get());
-                            }
-
-                            else {
+                            } else {
                                 jsonObject.put(name, subsetting.getValue());
                             }
                         }
@@ -123,26 +121,16 @@ public class StorageManager {
                 try {
                     if (setting.getValue() instanceof Boolean) {
                         ((Setting<Boolean>) setting).setValue(jsonObject.getBoolean(setting.getName()));
-                    }
-
-                    else if (setting.getValue() instanceof AtomicInteger) {
+                    } else if (setting.getValue() instanceof AtomicInteger) {
                         ((Setting<AtomicInteger>) setting).getValue().set(jsonObject.getInt(setting.getName()));
-                    }
-
-                    else if (setting.getValue() instanceof Float) {
+                    } else if (setting.getValue() instanceof Float) {
                         ((Setting<Float>) setting).setValue(jsonObject.getFloat(setting.getName()));
-                    }
-
-                    else if (setting.getValue() instanceof Double) {
+                    } else if (setting.getValue() instanceof Double) {
                         ((Setting<Double>) setting).setValue(jsonObject.getDouble(setting.getName()));
-                    }
-
-                    else if (setting.getValue() instanceof Enum<?>) {
+                    } else if (setting.getValue() instanceof Enum<?>) {
                         Enum<?> value = Enum.valueOf(((Enum) setting.getValue()).getClass(), jsonObject.getString(setting.getName()));
                         ((Setting<Enum<?>>) setting).setValue(value);
-                    }
-
-                    else if (setting.getValue() instanceof Color) {
+                    } else if (setting.getValue() instanceof Color) {
                         String[] values = jsonObject.getString(setting.getName()).split(":");
 
                         Color colour = new Color(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
@@ -166,26 +154,16 @@ public class StorageManager {
                         try {
                             if (subsetting.getValue() instanceof Boolean) {
                                 ((Setting<Boolean>) subsetting).setValue(jsonObject.getBoolean(name));
-                            }
-
-                            else if (subsetting.getValue() instanceof AtomicInteger) {
+                            } else if (subsetting.getValue() instanceof AtomicInteger) {
                                 ((Setting<AtomicInteger>) subsetting).getValue().set(jsonObject.getInt(name));
-                            }
-
-                            else if (subsetting.getValue() instanceof Float) {
+                            } else if (subsetting.getValue() instanceof Float) {
                                 ((Setting<Float>) subsetting).setValue(jsonObject.getFloat(name));
-                            }
-
-                            else if (subsetting.getValue() instanceof Double) {
+                            } else if (subsetting.getValue() instanceof Double) {
                                 ((Setting<Double>) subsetting).setValue(jsonObject.getDouble(name));
-                            }
-
-                            else if (subsetting.getValue() instanceof Enum<?>) {
+                            } else if (subsetting.getValue() instanceof Enum<?>) {
                                 Enum<?> value = Enum.valueOf(((Enum) subsetting.getValue()).getClass(), jsonObject.getString(name));
                                 ((Setting<Enum<?>>) subsetting).setValue(value);
-                            }
-
-                            else if (subsetting.getValue() instanceof Color) {
+                            } else if (subsetting.getValue() instanceof Color) {
                                 String[] values = jsonObject.getString(name).split(":");
 
                                 Color colour = new Color(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
@@ -358,11 +336,6 @@ public class StorageManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @SuppressWarnings("all")
-    public static JSONObject loadExistingConfiguration(File file) throws IOException, JSONException {
-        return new JSONObject(FileUtils.readFileToString(file, Charsets.UTF_8));
     }
 
 }

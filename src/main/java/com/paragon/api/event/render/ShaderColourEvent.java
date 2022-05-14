@@ -19,6 +19,7 @@ public class ShaderColourEvent extends CancellableEvent {
 
     /**
      * Gets the colour of the shader
+     *
      * @return The colour of the shader
      */
     public Color getColour() {
@@ -27,6 +28,7 @@ public class ShaderColourEvent extends CancellableEvent {
 
     /**
      * Sets the colour of the shader
+     *
      * @param colour The colour of the shader
      */
     public void setColour(Color colour) {
@@ -35,6 +37,7 @@ public class ShaderColourEvent extends CancellableEvent {
 
     /**
      * Gets the entity that is being rendered
+     *
      * @return The entity that is being rendered
      */
     public Entity getEntity() {
@@ -43,6 +46,7 @@ public class ShaderColourEvent extends CancellableEvent {
 
     /**
      * Sets the entity that is being rendered
+     *
      * @param entity The entity that is being rendered
      */
     public void setEntity(Entity entity) {

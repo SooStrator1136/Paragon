@@ -13,13 +13,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TileEntityRendererDispatcher.class)
 public class MixinTileEntityRendererDispatcher {
 
-    @Shadow public static TileEntityRendererDispatcher instance;
+    @Shadow
+    public static TileEntityRendererDispatcher instance;
 
-    @Shadow public static double staticPlayerX;
+    @Shadow
+    public static double staticPlayerX;
 
-    @Shadow public static double staticPlayerY;
+    @Shadow
+    public static double staticPlayerY;
 
-    @Shadow public static double staticPlayerZ;
+    @Shadow
+    public static double staticPlayerZ;
 
     @Inject(method = "render(Lnet/minecraft/tileentity/TileEntity;FI)V", at = @At("HEAD"))
     public void onRenderTileEntity(TileEntity tileEntity, float partialTicks, int destroyStage, CallbackInfo ci) {

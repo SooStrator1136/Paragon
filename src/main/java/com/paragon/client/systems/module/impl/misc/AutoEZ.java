@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,12 @@ public class AutoEZ extends Module {
         this.addSettings(maximumRange);
 
         INSTANCE = this;
+    }
+
+    public static void addTarget(String name) {
+        if (!INSTANCE.targeted.contains(mc.world.getPlayerEntityByName(name))) {
+            INSTANCE.targeted.add(mc.world.getPlayerEntityByName(name));
+        }
     }
 
     @Override
@@ -75,12 +82,6 @@ public class AutoEZ extends Module {
                 mc.player.sendChatMessage(player.getName() + ", did you really just die to the worst client?!");
                 targeted.remove(player);
             }
-        }
-    }
-
-    public static void addTarget(String name) {
-        if (!INSTANCE.targeted.contains(mc.world.getPlayerEntityByName(name))) {
-            INSTANCE.targeted.add(mc.world.getPlayerEntityByName(name));
         }
     }
 

@@ -125,6 +125,7 @@ public class Offhand extends Module {
 
     /**
      * Swaps the offhand item
+     *
      * @param slot The slot to switch to
      */
     public void swapOffhand(int slot) {
@@ -150,6 +151,7 @@ public class Offhand extends Module {
 
     /**
      * Gets the slot to switch to
+     *
      * @return The slot to switch to
      */
     public int getSwapSlot() {
@@ -225,6 +227,7 @@ public class Offhand extends Module {
 
         /**
          * Gets the item we want to switch to
+         *
          * @return The item we want to switch to
          */
         public Item getItem() {

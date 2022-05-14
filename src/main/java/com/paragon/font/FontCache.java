@@ -34,12 +34,12 @@ public class FontCache {
         return this.lastUsage;
     }
 
-    public boolean isDeleted() {
-        return this.deleted;
-    }
-
     public void setLastUsage(long lastUsage) {
         this.lastUsage = lastUsage;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
     }
 
     public void setDeleted(boolean deleted) {

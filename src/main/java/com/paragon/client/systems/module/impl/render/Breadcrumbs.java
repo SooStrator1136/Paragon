@@ -8,6 +8,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
 import java.util.LinkedList;
+
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -109,12 +110,10 @@ public class Breadcrumbs extends Module {
     class Position {
         // Vec3d of position
         private final Vec3d position;
-
-        // Position's lifespan
-        private long lifespan = lifespanValue.getValue().longValue();
-
         // Position's colour
         private final Color colour;
+        // Position's lifespan
+        private long lifespan = lifespanValue.getValue().longValue();
 
         public Position(Vec3d position, Color colour) {
             this.position = position;
@@ -130,6 +129,7 @@ public class Breadcrumbs extends Module {
 
         /**
          * Checks if the position is alive
+         *
          * @return If the position is alive
          */
         public boolean isAlive() {
@@ -138,6 +138,7 @@ public class Breadcrumbs extends Module {
 
         /**
          * Gets the position
+         *
          * @return The position
          */
         public Vec3d getPosition() {
@@ -146,6 +147,7 @@ public class Breadcrumbs extends Module {
 
         /**
          * Gets the position's colour
+         *
          * @return The position's colour
          */
         public Color getColour() {

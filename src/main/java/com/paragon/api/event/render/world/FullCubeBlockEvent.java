@@ -17,6 +17,7 @@ public class FullCubeBlockEvent extends CancellableEvent {
 
     /**
      * Gets the block
+     *
      * @return The block
      */
     public Block getBlock() {
@@ -25,6 +26,7 @@ public class FullCubeBlockEvent extends CancellableEvent {
 
     /**
      * Gets the return value
+     *
      * @return The return value
      */
     public boolean getReturnValue() {
@@ -33,6 +35,7 @@ public class FullCubeBlockEvent extends CancellableEvent {
 
     /**
      * Sets the return value
+     *
      * @param returnValue The return value
      */
     public void setReturnValue(boolean returnValue) {

@@ -17,6 +17,7 @@ public class EntityRemoveFromWorldEvent extends Event {
 
     /**
      * Gets the entity
+     *
      * @return The entity
      */
     public Entity getEntity() {

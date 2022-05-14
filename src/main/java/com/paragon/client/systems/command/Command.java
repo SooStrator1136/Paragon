@@ -14,6 +14,7 @@ public abstract class Command {
 
     /**
      * Gets the command's name
+     *
      * @return The command's name
      */
     public String getName() {
@@ -22,6 +23,7 @@ public abstract class Command {
 
     /**
      * Gets the command's syntax
+     *
      * @return The command's syntax
      */
     public String getSyntax() {

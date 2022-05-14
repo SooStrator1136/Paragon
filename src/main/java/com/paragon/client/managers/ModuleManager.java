@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -131,6 +132,7 @@ public class ModuleManager {
 
     /**
      * Gets a list of modules
+     *
      * @return The modules
      */
     public List<Module> getModules() {
@@ -139,6 +141,7 @@ public class ModuleManager {
 
     /**
      * Gets the modules in a category
+     *
      * @param moduleCategory The module category to get modules in
      * @return The modules in the given category
      */
@@ -156,6 +159,7 @@ public class ModuleManager {
 
     /**
      * Gets all the HUD modules
+     *
      * @return The HUD modules
      */
     public List<HUDModule> getHUDModules() {

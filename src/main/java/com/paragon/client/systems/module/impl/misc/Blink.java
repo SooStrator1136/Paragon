@@ -9,6 +9,7 @@ import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.BlockPos;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -39,10 +40,8 @@ public class Blink extends Module {
 
     // Using CopyOnWriteArrayList to avoid ConcurrentModificationException
     private final List<CPacketPlayer> packetQueue = new CopyOnWriteArrayList<>();
-
-    private BlockPos lastPosition;
-
     private final Timer timer = new Timer();
+    private BlockPos lastPosition;
 
     public Blink() {
         super("Blink", Category.MISC, "Cancels sending packets for a length of time");

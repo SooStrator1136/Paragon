@@ -1,6 +1,7 @@
 package com.paragon.client.shader.shaders;
 
 import com.paragon.client.shader.Shader;
+
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL40.glUniform1d;
 

@@ -40,14 +40,13 @@ public class Animation {
 
     /**
      * Gets the animation length (0 to 1)
+     *
      * @return The animation length (0 to 1)
      */
     public double getAnimationFactor() {
         if (currentState.equals(State.EXPANDING)) {
             return easing.get().apply(MathHelper.clamp((System.currentTimeMillis() - currentStateStart) / time, 0, 1));
-        }
-
-        else if (currentState.equals(State.RETRACTING)) {
+        } else if (currentState.equals(State.RETRACTING)) {
             return easing.get().apply(MathHelper.clamp(1 - (System.currentTimeMillis() - currentStateStart) / time, 0, 1));
         }
 
@@ -56,6 +55,7 @@ public class Animation {
 
     /**
      * Gets the initial state
+     *
      * @return The initial state
      */
     public boolean getState() {
@@ -64,6 +64,7 @@ public class Animation {
 
     /**
      * Sets the state
+     *
      * @param expand Expand or retract
      */
     public void setState(boolean expand) {
@@ -80,6 +81,7 @@ public class Animation {
 
     /**
      * Sets the state (no animation)
+     *
      * @param expand Expand or retract
      */
     public void setStateHard(boolean expand) {
@@ -89,9 +91,7 @@ public class Animation {
 
             // reset time
             currentStateStart = System.currentTimeMillis();
-        }
-
-        else {
+        } else {
             previousState = State.RETRACTING;
             currentState = State.RETRACTING;
             initialState = false;
