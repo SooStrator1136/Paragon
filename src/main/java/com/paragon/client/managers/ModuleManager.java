@@ -85,6 +85,7 @@ public class ModuleManager {
                 new FastUse(),
                 new LiquidInteract(),
                 new MiddleClick(),
+                new NoGlitchBlocks(),
                 new NoGlobalSounds(),
                 new NoRotate(),
                 new Notifier(),

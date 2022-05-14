@@ -1,28 +1,73 @@
 package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
+import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.client.systems.module.setting.Setting;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 public class Watermark extends HUDModule {
 
+    private final Setting<Display> display = new Setting<>("Display", Display.TEXT)
+            .setDescription("The type of watermark to display");
+
     public Watermark() {
         super("Watermark", "Renders the client's name on screen");
+        this.addSettings(display);
     }
 
     @Override
     public void render() {
-        renderText("Paragon " + TextFormatting.GRAY + Paragon.modVersion, getX(), getY(), Colours.mainColour.getValue().getRGB());
+        switch (display.getValue()) {
+            case TEXT:
+                renderText("Paragon " + TextFormatting.GRAY + Paragon.modVersion, getX(), getY(), Colours.mainColour.getValue().getRGB());
+                break;
+
+            case IMAGE:
+                mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/paragon.png"));
+                RenderUtil.drawModalRectWithCustomSizedTexture(getX(), getY(), 0, 0, 160, 25, 160, 25);
+                break;
+        }
     }
 
     @Override
     public float getWidth() {
-        return getStringWidth("Paragon " + TextFormatting.GRAY + Paragon.modVersion);
+        return display.getValue().getWidth();
     }
 
     @Override
     public float getHeight() {
-        return getFontHeight();
+        return display.getValue().getHeight();
+    }
+
+    public enum Display {
+        /**
+         * Watermark will be text
+         */
+        TEXT(mc.fontRenderer.getStringWidth("Paragon " + Paragon.modVersion), 12),
+
+        /**
+         * Watermark will be an image
+         */
+        IMAGE(160, 25);
+
+        private final float width;
+        private final float height;
+
+        Display(float width, float height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        public float getWidth() {
+            return width;
+        }
+
+        public float getHeight() {
+            return height;
+        }
     }
 }
