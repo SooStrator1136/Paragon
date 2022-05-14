@@ -22,19 +22,12 @@ public class ImageAWT implements Wrapper {
     private static final ArrayList<ImageAWT> activeFontRenderers = new ArrayList<>();
     private static int gcTicks = 0;
     private final Font font;
-    private int fontHeight = -1;
     private final CharLocation[] charLocations;
     private final HashMap<String, FontCache> cachedStrings = new HashMap<>();
+    private int fontHeight = -1;
     private int textureID = 0;
     private int textureWidth = 0;
     private int textureHeight = 0;
-
-    public static void garbageCollectionTick() {
-        if (gcTicks++ > 600) {
-            activeFontRenderers.forEach(ImageAWT::collectGarbage);
-            gcTicks = 0;
-        }
-    }
 
     public ImageAWT(Font font, int startChar, int stopChar) {
         this.font = font;
@@ -45,6 +38,13 @@ public class ImageAWT implements Wrapper {
 
     public ImageAWT(Font font) {
         this(font, 0, 255);
+    }
+
+    public static void garbageCollectionTick() {
+        if (gcTicks++ > 600) {
+            activeFontRenderers.forEach(ImageAWT::collectGarbage);
+            gcTicks = 0;
+        }
     }
 
     private void collectGarbage() {
@@ -125,10 +125,10 @@ public class ImageAWT implements Wrapper {
         float height = ch.height;
         float srcX = ch.x;
         float srcY = ch.y;
-        float renderX = srcX / (float)textureWidth;
-        float renderY = srcY / (float)textureHeight;
-        float renderWidth = width / (float)textureWidth;
-        float renderHeight = height / (float)textureHeight;
+        float renderX = srcX / (float) textureWidth;
+        float renderY = srcY / (float) textureHeight;
+        float renderWidth = width / (float) textureWidth;
+        float renderHeight = height / (float) textureHeight;
         GL11.glTexCoord2f(renderX, renderY);
         GL11.glVertex2f(x, y);
         GL11.glTexCoord2f(renderX, renderY + renderHeight);
@@ -174,7 +174,7 @@ public class ImageAWT implements Wrapper {
 
         textureHeight = charY + rowHeight;
         BufferedImage bufferedImage = new BufferedImage(textureWidth, textureHeight, 2);
-        Graphics2D graphics2D = (Graphics2D)bufferedImage.getGraphics();
+        Graphics2D graphics2D = (Graphics2D) bufferedImage.getGraphics();
         graphics2D.setFont(font);
         graphics2D.setColor(new Color(255, 255, 255, 0));
         graphics2D.fillRect(0, 0, textureWidth, textureHeight);
@@ -205,7 +205,7 @@ public class ImageAWT implements Wrapper {
             charHeight = font.getSize();
 
         BufferedImage fontImage = new BufferedImage(charWidth, charHeight, 2);
-        Graphics2D graphics = (Graphics2D)fontImage.getGraphics();
+        Graphics2D graphics = (Graphics2D) fontImage.getGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         graphics.setFont(font);
         graphics.setColor(Color.WHITE);

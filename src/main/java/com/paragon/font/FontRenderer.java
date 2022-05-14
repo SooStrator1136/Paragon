@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.ResourceLocation;
@@ -17,12 +18,44 @@ import java.util.Random;
  */
 public class FontRenderer implements Wrapper {
 
-    private final ImageAWT defaultFont;
     public final int FONT_HEIGHT;
+    private final ImageAWT defaultFont;
 
     public FontRenderer(Font font) {
         defaultFont = new ImageAWT(font);
         FONT_HEIGHT = (int) getHeight();
+    }
+
+    public static int getColorIndex(char type) {
+        switch (type) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                return type - 48;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+                return type - 97 + 10;
+            case 'k':
+            case 'l':
+            case 'm':
+            case 'n':
+            case 'o':
+                return type - 107 + 16;
+            case 'r':
+                return 21;
+        }
+        return -1;
     }
 
     public float getHeight() {
@@ -144,9 +177,7 @@ public class FontRenderer implements Wrapper {
 
                 width += currentFont.getStringWidth(words);
             }
-        }
-
-        else
+        } else
             defaultFont.drawString(text, 0.0, 0.0, currentColor);
 
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
@@ -180,7 +211,7 @@ public class FontRenderer implements Wrapper {
 
                 String words = part.substring(1);
 
-                currentFont =  defaultFont;
+                currentFont = defaultFont;
                 width += currentFont.getStringWidth(words);
             }
 
@@ -204,60 +235,10 @@ public class FontRenderer implements Wrapper {
 
     }
 
-    public static int getColorIndex(char type) {
-        switch (type) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                return type - 48;
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f':
-                return type - 97 + 10;
-            case 'k':
-            case 'l':
-            case 'm':
-            case 'n':
-            case 'o':
-                return type - 107 + 16;
-            case 'r':
-                return 21;
-        }
-        return -1;
-    }
-
     private static class ColorUtils {
-        public static int[] hexColors = new int[16];
         private static final Random random;
         private static final String magicAllowedCharacters = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■";
-
-        private ColorUtils() {
-
-        }
-
-        public static String randomMagicText(String text) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (char ch : text.toCharArray()) {
-
-                if (!ChatAllowedCharacters.isAllowedCharacter(ch))
-                    continue;
-
-                int index = random.nextInt(magicAllowedCharacters.length());
-                stringBuilder.append(magicAllowedCharacters.charAt(index));
-            }
-
-            return stringBuilder.toString();
-        }
+        public static int[] hexColors = new int[16];
 
         static {
             ColorUtils.hexColors[0] = 0;
@@ -277,6 +258,24 @@ public class FontRenderer implements Wrapper {
             ColorUtils.hexColors[14] = 0xFFFF55;
             ColorUtils.hexColors[15] = 0xFFFFFF;
             random = new Random();
+        }
+
+        private ColorUtils() {
+
+        }
+
+        public static String randomMagicText(String text) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (char ch : text.toCharArray()) {
+
+                if (!ChatAllowedCharacters.isAllowedCharacter(ch))
+                    continue;
+
+                int index = random.nextInt(magicAllowedCharacters.length());
+                stringBuilder.append(magicAllowedCharacters.charAt(index));
+            }
+
+            return stringBuilder.toString();
         }
     }
 }
