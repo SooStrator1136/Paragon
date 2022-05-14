@@ -16,6 +16,7 @@ public class BlockSetOpaqueEvent extends CancellableEvent {
 
     /**
      * Gets the pos
+     *
      * @return The pos
      */
     public BlockPos getPos() {

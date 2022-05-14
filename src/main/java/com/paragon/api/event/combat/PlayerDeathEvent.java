@@ -22,6 +22,7 @@ public class PlayerDeathEvent extends Event {
 
     /**
      * Gets the player that died
+     *
      * @return The player that died
      */
     public EntityPlayer getEntityPlayer() {
@@ -30,6 +31,7 @@ public class PlayerDeathEvent extends Event {
 
     /**
      * Gets the amount of times the player popped totems before dying
+     *
      * @return The amount of times the player popped totems before dying
      */
     public int getPops() {

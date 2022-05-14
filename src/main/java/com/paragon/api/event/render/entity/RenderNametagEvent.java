@@ -16,6 +16,7 @@ public class RenderNametagEvent extends CancellableEvent {
 
     /**
      * Gets the entity
+     *
      * @return The entity
      */
     public Entity getEntity() {

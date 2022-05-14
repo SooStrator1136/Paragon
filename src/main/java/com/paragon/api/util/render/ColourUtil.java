@@ -11,9 +11,10 @@ public class ColourUtil {
 
     /**
      * Creates a rainbow wave
-     * @param time How long for each wave
+     *
+     * @param time       How long for each wave
      * @param saturation The saturation of the colour
-     * @param addition How much hue to add to the wave
+     * @param addition   How much hue to add to the wave
      * @return A rainbow in the RGB format
      */
     public static int getRainbow(float time, float saturation, int addition) {
@@ -23,6 +24,7 @@ public class ColourUtil {
 
     /**
      * Sets the GL colour based on a hex integer
+     *
      * @param colourHex The integer of the hex value
      */
     public static void setColour(int colourHex) {
@@ -35,8 +37,9 @@ public class ColourUtil {
 
     /**
      * Integrates alpha into a colour
+     *
      * @param colour The original colour
-     * @param alpha The new alpha
+     * @param alpha  The new alpha
      * @return The new colour
      */
     public static Color integrateAlpha(Color colour, float alpha) {

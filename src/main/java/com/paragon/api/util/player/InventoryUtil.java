@@ -37,7 +37,7 @@ public class InventoryUtil implements Wrapper {
     }
 
     public static int getItemInHotbar(Item itemIn) {
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
 
             if (itemInInv == itemIn) {
@@ -50,16 +50,17 @@ public class InventoryUtil implements Wrapper {
 
     /**
      * Switches to an item in the player's hotbar
+     *
      * @param itemIn The item to switch to
      * @param silent Switch silently - use packets instead
      * @return Whether the switch was successful
      */
     public static boolean switchToItem(Item itemIn, boolean silent) {
-        if(getItemInHotbar(itemIn) == -1) {
+        if (getItemInHotbar(itemIn) == -1) {
             return false;
         }
 
-        if(silent) {
+        if (silent) {
             mc.getConnection().sendPacket(new CPacketHeldItemChange(getItemInHotbar(itemIn)));
         } else {
             mc.player.inventory.currentItem = getItemInHotbar(itemIn);

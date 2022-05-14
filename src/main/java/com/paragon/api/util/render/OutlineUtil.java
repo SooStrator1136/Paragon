@@ -1,6 +1,7 @@
 package com.paragon.api.util.render;
 
 import java.awt.Color;
+
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTPackedDepthStencil;
 import org.lwjgl.opengl.GL11;

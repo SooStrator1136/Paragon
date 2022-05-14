@@ -47,6 +47,7 @@ public class BlockUtil implements Wrapper {
 
     /**
      * Gets the block at a position
+     *
      * @param pos The position
      * @return The block
      */
@@ -56,6 +57,7 @@ public class BlockUtil implements Wrapper {
 
     /**
      * Gets the bounding box of a block
+     *
      * @param blockPos The block
      * @return The bounding box of the entity
      */

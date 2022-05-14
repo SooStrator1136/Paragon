@@ -9,9 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Minecraft.class)
 public interface IMinecraft {
 
-    @Accessor("session")
-    void setSession(Session newSession);
-
     @Accessor("rightClickDelayTimer")
     void setRightClickDelayTimer(int newTimer);
 
@@ -20,5 +17,8 @@ public interface IMinecraft {
 
     @Accessor("session")
     Session getSession();
+
+    @Accessor("session")
+    void setSession(Session newSession);
 
 }

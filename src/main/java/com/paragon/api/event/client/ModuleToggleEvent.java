@@ -16,6 +16,7 @@ public class ModuleToggleEvent extends CancellableEvent {
 
     /**
      * Gets the module
+     *
      * @return The module
      */
     public Module getModule() {

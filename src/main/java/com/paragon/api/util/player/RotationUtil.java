@@ -11,6 +11,7 @@ public class RotationUtil implements Wrapper {
 
     /**
      * Gets the rotation to a block position
+     *
      * @param pos The block position to calculate angles to
      * @return The calculated angles
      */
@@ -20,6 +21,7 @@ public class RotationUtil implements Wrapper {
 
     /**
      * Gets the yaw and pitch to rotate to a Vec3D
+     *
      * @param vec3d The Vec3D to calculate rotations to
      * @return A Vec2f of the angles
      */

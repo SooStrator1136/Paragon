@@ -16,6 +16,7 @@ public class PlayerCollideWithBlockEvent extends CancellableEvent {
 
     /**
      * Gets the block position
+     *
      * @return The block position
      */
     public BlockPos getPos() {
@@ -24,6 +25,7 @@ public class PlayerCollideWithBlockEvent extends CancellableEvent {
 
     /**
      * Gets the block type
+     *
      * @return The block type
      */
     public Block getBlockType() {
