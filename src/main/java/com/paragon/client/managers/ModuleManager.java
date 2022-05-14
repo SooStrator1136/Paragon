@@ -110,6 +110,7 @@ public class ModuleManager {
                 new Coordinates(),
                 new FPS(),
                 new HUD(),
+                new Inventory(),
                 new Ping(),
                 new Totems(),
                 new Watermark()
