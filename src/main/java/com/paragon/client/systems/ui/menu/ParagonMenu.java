@@ -18,11 +18,10 @@ import static org.lwjgl.opengl.GL11.glScalef;
  */
 public class ParagonMenu extends GuiScreen implements TextRenderer {
 
-    // Whether the credits are displayed or not
-    private boolean creditsExpanded = false;
-
     // Credits expand animation
     private final Animation creditsAnimation = new Animation(500, false, () -> Animation.Easing.EXPO_IN_OUT);
+    // Whether the credits are displayed or not
+    private boolean creditsExpanded = false;
 
     @Override
     public void initGui() {

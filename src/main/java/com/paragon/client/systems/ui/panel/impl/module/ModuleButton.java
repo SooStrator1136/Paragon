@@ -31,12 +31,10 @@ public class ModuleButton implements TextRenderer {
 
     // The module
     private final Module module;
-
-    // The offset and height
-    public float offset, height;
-
     // A list of all setting components
     private final ArrayList<SettingComponent<?>> settingComponents = new ArrayList<>();
+    // The offset and height
+    public float offset, height;
 
     public ModuleButton(Panel panel, Module module, float offset, float height) {
         this.panel = panel;
@@ -112,6 +110,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Check if the mouse is over the module button
+     *
      * @param mouseX The mouse's X
      * @param mouseY The mouse's Y
      * @return If the mouse is over the module button
@@ -184,6 +183,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Gets the parent panel
+     *
      * @return The parent panel
      */
     public Panel getPanel() {
@@ -192,6 +192,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Gets the module
+     *
      * @return The module
      */
     public Module getModule() {
@@ -200,6 +201,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Gets the offset
+     *
      * @return The offset
      */
     public float getOffset() {
@@ -208,6 +210,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Gets the height of the button
+     *
      * @return The height
      */
     public float getHeight() {
@@ -216,6 +219,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Gets the height of the button and it's settings
+     *
      * @return The absolute height
      */
     public float getAbsoluteHeight() {
@@ -240,6 +244,7 @@ public class ModuleButton implements TextRenderer {
 
     /**
      * Gets whether the component is expanded or not
+     *
      * @return Whether the component is expanded or not
      */
     public boolean isExpanded() {

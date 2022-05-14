@@ -30,7 +30,7 @@ public class FakePlayer extends Module {
         // If we can despawn the player, do so
         if (fakePlayer != null) {
             if (mc.world != null && mc.world.loadedEntityList.contains(fakePlayer))
-            fakePlayer.despawn();
+                fakePlayer.despawn();
         }
     }
 }

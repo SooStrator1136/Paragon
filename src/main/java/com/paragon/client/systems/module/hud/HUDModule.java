@@ -21,6 +21,7 @@ public abstract class HUDModule extends Module implements TextRenderer {
     public abstract void render();
 
     public abstract float getWidth();
+
     public abstract float getHeight();
 
     public void updateComponent(int mouseX, int mouseY) {

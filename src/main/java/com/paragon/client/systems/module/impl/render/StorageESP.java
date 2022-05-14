@@ -57,12 +57,10 @@ public class StorageESP extends Module {
 
     private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour to highlight items in");
-
-    private Framebuffer framebuffer;
-    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
-
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
+    private Framebuffer framebuffer;
+    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
 
     public StorageESP() {
         super("StorageESP", Category.RENDER, "Highlights storage blocks in the world");
@@ -73,15 +71,15 @@ public class StorageESP extends Module {
     public void onRender3D() {
         if (mode.getValue().equals(Mode.BOX)) {
             mc.world.loadedTileEntityList.forEach(tileEntity -> {
-               if (isStorageValid(tileEntity)) {
-                   if (fill.getValue()) {
-                       RenderUtil.drawFilledBox(BlockUtil.getBlockBox(tileEntity.getPos()), colour.getValue());
-                   }
+                if (isStorageValid(tileEntity)) {
+                    if (fill.getValue()) {
+                        RenderUtil.drawFilledBox(BlockUtil.getBlockBox(tileEntity.getPos()), colour.getValue());
+                    }
 
-                   if (outline.getValue()) {
-                       RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(tileEntity.getPos()), lineWidth.getValue(), ColourUtil.integrateAlpha(colour.getValue(), 255));
-                   }
-               }
+                    if (outline.getValue()) {
+                        RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(tileEntity.getPos()), lineWidth.getValue(), ColourUtil.integrateAlpha(colour.getValue(), 255));
+                    }
+                }
             });
         }
     }
@@ -100,7 +98,7 @@ public class StorageESP extends Module {
             if (framebuffer != null) {
                 framebuffer.framebufferClear();
 
-                if (lastScaleFactor != event.getResolution().getScaleFactor()|| lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
+                if (lastScaleFactor != event.getResolution().getScaleFactor() || lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
                     framebuffer.deleteFramebuffer();
                     framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
                     framebuffer.framebufferClear();
@@ -179,14 +177,14 @@ public class StorageESP extends Module {
             float partialTicks = event.getPartialTicks();
             BlockPos blockpos = tileEntityIn.getPos();
 
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderOne(lineWidth.getValue());
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderTwo();
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderThree();
             OutlineUtil.renderFour(colour.getValue());
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double)blockpos.getX() - event.getStaticPlayerX(), (double)blockpos.getY() - event.getStaticPlayerY(), (double)blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
+            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
             OutlineUtil.renderFive();
         }
     }

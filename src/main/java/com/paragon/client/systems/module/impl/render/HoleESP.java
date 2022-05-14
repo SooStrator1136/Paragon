@@ -140,6 +140,7 @@ public class HoleESP extends Module {
 
     /**
      * It works... if this can be done in a better way, I'll be glad to hear it.
+     *
      * @param pos The position to check
      * @return Whether the hole is mixed or not
      */

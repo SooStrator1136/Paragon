@@ -23,7 +23,7 @@ import org.lwjgl.input.Mouse;
 public class MiddleClick extends Module {
 
     private final Setting<Boolean> friend = new Setting<>("Friend", true)
-            .setDescription( "Add a friend when you middle click on an player");
+            .setDescription("Add a friend when you middle click on an player");
 
     private final Setting<Boolean> pearl = new Setting<>("Pearl", true)
             .setDescription("Throw an ender pearl when you do not middle click on an entity");

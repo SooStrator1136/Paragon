@@ -77,12 +77,10 @@ public class ESP extends Module {
 
     private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour to highlight items in");
-
-    private Framebuffer framebuffer;
-    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
-
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
+    private Framebuffer framebuffer;
+    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
 
     public ESP() {
         super("ESP", Category.RENDER, "Highlights entities in the world");
@@ -95,7 +93,7 @@ public class ESP extends Module {
             return;
         }
 
-        for(Entity e : mc.world.loadedEntityList) {
+        for (Entity e : mc.world.loadedEntityList) {
             e.setGlowing(false);
         }
     }
@@ -114,7 +112,7 @@ public class ESP extends Module {
             if (framebuffer != null) {
                 framebuffer.framebufferClear();
 
-                if (lastScaleFactor != event.getResolution().getScaleFactor()|| lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
+                if (lastScaleFactor != event.getResolution().getScaleFactor() || lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
                     framebuffer.deleteFramebuffer();
                     framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
                     framebuffer.framebufferClear();
@@ -184,7 +182,7 @@ public class ESP extends Module {
 
     @Listener
     public void onRenderEntity(RenderEntityEvent event) {
-        if(isEntityValid(event.getEntity()) && mode.getValue() == Mode.OUTLINE) {
+        if (isEntityValid(event.getEntity()) && mode.getValue() == Mode.OUTLINE) {
             OutlineUtil.renderOne(lineWidth.getValue());
             event.renderModel();
             OutlineUtil.renderTwo();
@@ -200,8 +198,8 @@ public class ESP extends Module {
 
     @SubscribeEvent
     public void onRenderWorld(RenderWorldLastEvent event) {
-        for(Entity e : mc.world.loadedEntityList) {
-            if(isEntityValid(e)) {
+        for (Entity e : mc.world.loadedEntityList) {
+            if (isEntityValid(e)) {
                 espEntity(e);
             }
         }
@@ -242,6 +240,7 @@ public class ESP extends Module {
 
     /**
      * Highlights an entity
+     *
      * @param entityIn The entity to highlight
      */
     public void espEntity(Entity entityIn) {
@@ -254,6 +253,7 @@ public class ESP extends Module {
 
     /**
      * Checks if an entity is valid
+     *
      * @param entityIn The entity to check
      * @return Is the entity valid
      */

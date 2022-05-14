@@ -161,7 +161,7 @@ public class Nametags extends Module implements TextRenderer {
                 // Render armour
                 for (ItemStack stack : stacks) {
                     // Check the stack isn't empty
-                    if(stack.getItem() != Items.AIR) {
+                    if (stack.getItem() != Items.AIR) {
                         // Y value
                         int y = -20;
 

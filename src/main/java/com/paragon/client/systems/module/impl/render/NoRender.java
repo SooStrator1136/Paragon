@@ -73,7 +73,7 @@ public class NoRender extends Module {
 
     @SubscribeEvent
     public void onPlaySound(PlaySoundAtEntityEvent event) {
-        if(nullCheck()) return;
+        if (nullCheck()) return;
         if (bats.getValue() && event.getSound().equals(SoundEvents.ENTITY_BAT_AMBIENT) || event.getSound().equals(SoundEvents.ENTITY_BAT_DEATH) || event.getSound().equals(SoundEvents.ENTITY_BAT_HURT) || event.getSound().equals(SoundEvents.ENTITY_BAT_LOOP) || event.getSound().equals(SoundEvents.ENTITY_BAT_TAKEOFF)) {
             event.setVolume(0.0f);
             event.setPitch(0.0f);

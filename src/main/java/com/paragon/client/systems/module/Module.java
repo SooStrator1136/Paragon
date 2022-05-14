@@ -20,25 +20,19 @@ public class Module extends Feature implements Wrapper {
 
     // The category the module is in
     private final Category category;
-
-    // Whether the module is enabled
-    private boolean enabled;
-
     // Whether the module is visible in the Array List or not
     private final Setting<Boolean> visible = new Setting<>("Visible", true)
             .setDescription("Whether the module is visible in the array list or not");
-
     // Whether the module is constantly enabled or not
     private final boolean constant = getClass().isAnnotationPresent(Constant.class);
-
     // Module Settings
     private final List<Setting<?>> settings = new ArrayList<>();
-
     private final Setting<AtomicInteger> keyCode = new Setting<>("Keybind", new AtomicInteger(Keyboard.KEY_NONE))
             .setDescription("The keybind of the module");
-
     // Arraylist animation
     public Animation animation = new Animation(100, false, ArrayListHUD.easing::getValue);
+    // Whether the module is enabled
+    private boolean enabled;
 
     public Module(String name, Category category, String description) {
         super(name, description);
@@ -67,6 +61,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Add settings to the module
+     *
      * @param settings An undefined amount of settings to add
      */
     public void addSettings(Setting<?>... settings) {
@@ -75,12 +70,20 @@ public class Module extends Feature implements Wrapper {
         this.settings.sort(Comparator.comparingInt(s -> s == keyCode ? 1 : 0)); // Make keybind be last
     }
 
-    public void onEnable() {}
-    public void onDisable() {}
+    public void onEnable() {
+    }
 
-    public void onTick() {}
-    public void onRender2D() {}
-    public void onRender3D() {}
+    public void onDisable() {
+    }
+
+    public void onTick() {
+    }
+
+    public void onRender2D() {
+    }
+
+    public void onRender3D() {
+    }
 
     /**
      * Toggles the module
@@ -110,8 +113,7 @@ public class Module extends Feature implements Wrapper {
 
             // Call onEnable
             onEnable();
-        }
-        else {
+        } else {
             // Unregister events
             MinecraftForge.EVENT_BUS.unregister(this);
             Paragon.INSTANCE.getEventBus().unregister(this);
@@ -126,6 +128,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Gets the module info for the array list
+     *
      * @return The module's info
      */
     public String getArrayListInfo() {
@@ -134,6 +137,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Gets the module's category
+     *
      * @return The module's category
      */
     public Category getCategory() {
@@ -142,6 +146,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Gets whether the module is enabled
+     *
      * @return Whether the module is enabled
      */
     public boolean isEnabled() {
@@ -150,6 +155,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Gets the module's visibility
+     *
      * @return The module's visibility
      */
     public boolean isVisible() {
@@ -158,6 +164,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Sets the module's visibility
+     *
      * @param visible The module's new visibility
      */
     public void setVisible(boolean visible) {
@@ -166,6 +173,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Checks if the module is constantly enabled
+     *
      * @return Whether the module is constantly enabled
      */
     public boolean isConstant() {
@@ -174,6 +182,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Gets a list of the module's settings
+     *
      * @return The module's settings
      */
     public List<Setting<?>> getSettings() {
@@ -182,6 +191,7 @@ public class Module extends Feature implements Wrapper {
 
     /**
      * Gets the key code of the module
+     *
      * @return The key code of the module
      */
     public Setting<AtomicInteger> getKeyCode() {

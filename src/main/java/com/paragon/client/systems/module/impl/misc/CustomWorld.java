@@ -13,7 +13,7 @@ public class CustomWorld extends Module {
             .setDescription("Set the world weather to a custom value");
 
     private final Setting<Weather> weather = new Setting<>("Weather", Weather.CLEAR)
-            .setDescription( "The weather to display")
+            .setDescription("The weather to display")
             .setParentSetting(customWeather);
 
     private final Setting<Boolean> customTime = new Setting<>("Custom Time", true)
@@ -70,6 +70,7 @@ public class CustomWorld extends Module {
 
         /**
          * Gets the rain strength
+         *
          * @return The rain strength
          */
         public int getRainStrength() {

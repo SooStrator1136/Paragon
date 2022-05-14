@@ -64,7 +64,7 @@ public class Shader extends Module {
             .setParentSetting(shaderType)
             .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAMONDS));
 
-    private final Setting<Float> diamondSize = new  Setting<>("Size", 1f, 0.1f, 10f, 0.1f)
+    private final Setting<Float> diamondSize = new Setting<>("Size", 1f, 0.1f, 10f, 0.1f)
             .setDescription("The size of the diamonds")
             .setParentSetting(shaderType)
             .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAMONDS));

@@ -2,6 +2,7 @@ package com.paragon.client.systems.feature;
 
 /**
  * A client feature
+ *
  * @author Wolfsurge
  */
 public class Feature {

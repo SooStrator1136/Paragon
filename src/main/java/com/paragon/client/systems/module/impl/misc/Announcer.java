@@ -31,7 +31,7 @@ public class Announcer extends Module {
     private final Timer timer = new Timer();
 
     // Part 1 is the first part of the message, Part 2 is the value, Part 3 is the second part of the message
-    private String[] announceComponents = new String[] { "", "0", ""};
+    private String[] announceComponents = new String[]{"", "0", ""};
 
     public Announcer() {
         super("Announcer", Category.MISC, "Announces events to the chat");
@@ -46,7 +46,7 @@ public class Announcer extends Module {
 
         if (timer.hasMSPassed(chatTimer.getValue() * 1000) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
             mc.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2]);
-            announceComponents = new String[] { "", "0", ""};
+            announceComponents = new String[]{"", "0", ""};
 
             timer.reset();
         }

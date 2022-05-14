@@ -11,32 +11,26 @@ import java.util.function.Supplier;
 
 public class Setting<T> {
 
+    private final ArrayList<Setting<?>> subsettings = new ArrayList<>();
     // Name and description of setting
     private String name;
     private String description = "";
-
     // Value of the setting
     private T value;
-
     // For numeric settings
     private T min;
     private T max;
     private T incrementation;
-
     // For mode settings
     private int index;
-
     // For colour settings
     private float alpha;
     private boolean rainbow;
     private float rainbowSpeed = 4;
     private float rainbowSaturation = 100;
     private boolean sync = false;
-
     // Subsettings
     private Setting<?> parentSetting;
-    private final ArrayList<Setting<?>> subsettings = new ArrayList<>();
-
     // GUI Visibility
     private Supplier<Boolean> isVisible = () -> true;
 
@@ -55,6 +49,7 @@ public class Setting<T> {
 
     /**
      * Gets the name of the setting.
+     *
      * @return the name of the setting.
      */
     public String getName() {
@@ -63,6 +58,7 @@ public class Setting<T> {
 
     /**
      * Gets the description of the setting.
+     *
      * @return the description of the setting.
      */
     public String getDescription() {
@@ -71,6 +67,7 @@ public class Setting<T> {
 
     /**
      * Sets the description of the setting.
+     *
      * @param description the description of the setting.
      * @return this setting
      */
@@ -82,6 +79,7 @@ public class Setting<T> {
 
     /**
      * Gets the value of the setting.
+     *
      * @return the value of the setting.
      */
     public T getValue() {
@@ -100,6 +98,7 @@ public class Setting<T> {
 
     /**
      * Sets the value of the setting.
+     *
      * @param value the value of the setting.
      */
     public void setValue(T value) {
@@ -108,6 +107,7 @@ public class Setting<T> {
 
     /**
      * Gets the minimum value of the setting.
+     *
      * @return the minimum value of the setting.
      */
     public T getMin() {
@@ -116,6 +116,7 @@ public class Setting<T> {
 
     /**
      * Sets the minimum value of the setting.
+     *
      * @param min the minimum value of the setting.
      */
     public void setMin(T min) {
@@ -124,6 +125,7 @@ public class Setting<T> {
 
     /**
      * Gets the maximum value of the setting.
+     *
      * @return the maximum value of the setting.
      */
     public T getMax() {
@@ -132,6 +134,7 @@ public class Setting<T> {
 
     /**
      * Sets the maximum value of the setting.
+     *
      * @param max the maximum value of the setting.
      */
     public void setMax(T max) {
@@ -140,6 +143,7 @@ public class Setting<T> {
 
     /**
      * Gets the incrementation of the setting.
+     *
      * @return the incrementation of the setting.
      */
     public T getIncrementation() {
@@ -148,6 +152,7 @@ public class Setting<T> {
 
     /**
      * Sets the incrementation of the setting.
+     *
      * @param incrementation the incrementation of the setting.
      */
     public void setIncrementation(T incrementation) {
@@ -156,6 +161,7 @@ public class Setting<T> {
 
     /**
      * Gets the index of the setting.
+     *
      * @return the index of the setting.
      */
     public int getIndex() {
@@ -164,6 +170,7 @@ public class Setting<T> {
 
     /**
      * Sets the index of the setting.
+     *
      * @param index the index of the setting.
      */
     public void setIndex(int index) {
@@ -172,6 +179,7 @@ public class Setting<T> {
 
     /**
      * Gets the parent setting of the setting.
+     *
      * @return the parent setting of the setting.
      */
     public Setting<?> getParentSetting() {
@@ -180,6 +188,7 @@ public class Setting<T> {
 
     /**
      * Sets the parent setting of the setting.
+     *
      * @param parentSetting the parent setting of the setting.
      * @return this setting
      */
@@ -193,6 +202,7 @@ public class Setting<T> {
 
     /**
      * Gets the children settings of the setting.
+     *
      * @return the children settings of the setting.
      */
     public ArrayList<Setting<?>> getSubsettings() {
@@ -201,6 +211,7 @@ public class Setting<T> {
 
     /**
      * Gets the visibility of the setting.
+     *
      * @return the visibility of the setting.
      */
     public boolean isVisible() {
@@ -209,6 +220,7 @@ public class Setting<T> {
 
     /**
      * Sets the visibility of the setting.
+     *
      * @param isVisible the visibility of the setting.
      * @return this setting
      */
@@ -220,6 +232,7 @@ public class Setting<T> {
 
     /**
      * Gets the next mode of the setting.
+     *
      * @return the next mode of the setting.
      * @author linustouchtips
      */
@@ -234,6 +247,7 @@ public class Setting<T> {
 
     /**
      * Gets the alpha of the setting
+     *
      * @return the alpha of the setting
      */
     public float getAlpha() {
@@ -242,6 +256,7 @@ public class Setting<T> {
 
     /**
      * Sets the alpha of the setting
+     *
      * @param alpha the alpha of the setting
      */
     public void setAlpha(float alpha) {
@@ -250,6 +265,7 @@ public class Setting<T> {
 
     /**
      * Gets whether the colour is rainbow
+     *
      * @return Whether the colour is rainbow
      */
     public boolean isRainbow() {
@@ -257,31 +273,8 @@ public class Setting<T> {
     }
 
     /**
-     * Gets whether the colour is synced to the client's colour
-     * @return Whether the colour is synced
-     */
-    public boolean isSync() {
-        return sync;
-    }
-
-    /**
-     * Gets the rainbow's saturation
-     * @return The rainbow's saturation
-     */
-    public float getRainbowSaturation() {
-        return rainbowSaturation;
-    }
-
-    /**
-     * Gets the rainbow's speed
-     * @return Gets the rainbow's speed
-     */
-    public float getRainbowSpeed() {
-        return rainbowSpeed;
-    }
-
-    /**
      * Sets the current colour to rainbow
+     *
      * @param rainbow Whether the colour is a rainbow
      */
     public void setRainbow(boolean rainbow) {
@@ -289,15 +282,35 @@ public class Setting<T> {
     }
 
     /**
-     * Sets the speed of the rainbow
-     * @param speed The speed
+     * Gets whether the colour is synced to the client's colour
+     *
+     * @return Whether the colour is synced
      */
-    public void setRainbowSpeed(float speed) {
-        this.rainbowSpeed = speed;
+    public boolean isSync() {
+        return sync;
+    }
+
+    /**
+     * Sets whether the colour is synced to the client colour
+     *
+     * @param sync Whether the colour is synced
+     */
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
+
+    /**
+     * Gets the rainbow's saturation
+     *
+     * @return The rainbow's saturation
+     */
+    public float getRainbowSaturation() {
+        return rainbowSaturation;
     }
 
     /**
      * Sets the saturation of the rainbow
+     *
      * @param saturation The saturation
      */
     public void setRainbowSaturation(float saturation) {
@@ -305,10 +318,20 @@ public class Setting<T> {
     }
 
     /**
-     * Sets whether the colour is synced to the client colour
-     * @param sync Whether the colour is synced
+     * Gets the rainbow's speed
+     *
+     * @return Gets the rainbow's speed
      */
-    public void setSync(boolean sync) {
-        this.sync = sync;
+    public float getRainbowSpeed() {
+        return rainbowSpeed;
+    }
+
+    /**
+     * Sets the speed of the rainbow
+     *
+     * @param speed The speed
+     */
+    public void setRainbowSpeed(float speed) {
+        this.rainbowSpeed = speed;
     }
 }

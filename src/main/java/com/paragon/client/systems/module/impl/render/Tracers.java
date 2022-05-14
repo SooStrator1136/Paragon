@@ -10,6 +10,7 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import java.awt.*;
 
 /**
@@ -64,6 +65,7 @@ public class Tracers extends Module {
 
     /**
      * Gets the entity's colour
+     *
      * @param entityIn The entity
      * @return The entity's colour
      */
