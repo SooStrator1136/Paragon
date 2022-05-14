@@ -91,6 +91,7 @@ public class ModuleManager {
                 new Notifier(),
                 new NoTrace(),
                 new OnDeath(),
+                new RotationLock(),
                 new TimerModule(),
                 new XCarry(),
 
