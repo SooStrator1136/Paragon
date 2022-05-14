@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(EntityRenderer.class)
-public class MixinEntityRenderer {
+public abstract class MixinEntityRenderer {
 
     @Redirect(method = "getMouseOver", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;getEntitiesInAABBexcluding(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;Lcom/google/common/base/Predicate;)Ljava/util/List;"))
-    public List<Entity> getEntitiesInAABBexcluding(WorldClient world, Entity entity, AxisAlignedBB axisAlignedBB, Predicate predicate) {
+    public List<Entity> getEntitiesInAABBexcluding(WorldClient world, Entity entity, AxisAlignedBB axisAlignedBB, Predicate<? super Entity> predicate) {
         RaytraceEntityEvent raytraceEvent = new RaytraceEntityEvent();
         Paragon.INSTANCE.getEventBus().post(raytraceEvent);
 

@@ -9,6 +9,7 @@ import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
@@ -236,7 +238,7 @@ public class Shader extends Module {
     }
 
     private boolean isEntityValid(Entity entityIn) {
-        return entityIn instanceof EntityOtherPlayerMP && players.getValue() ||
+        return entityIn instanceof EntityPlayer && players.getValue() ||
                 entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.getValue() ||
                 entityIn instanceof EntityMob && mobs.getValue() ||
                 entityIn instanceof EntityEnderCrystal && crystals.getValue() ||

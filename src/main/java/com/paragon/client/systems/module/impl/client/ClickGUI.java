@@ -10,29 +10,49 @@ import org.lwjgl.input.Keyboard;
 
 public class ClickGUI extends Module {
 
+    public static Setting<Style> style = new Setting<>("Style", Style.PANEL)
+            .setDescription("The style of the ClickGUI");
+
     // Panel settings
     public static Setting<Float> scrollSpeed = new Setting<>("Scroll Speed", 10f, 5f, 30f, 1f)
-            .setDescription("How fast to scroll");
+            .setDescription("How fast to scroll")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     public static Setting<Boolean> tooltips = new Setting<>("Tooltips", true)
-            .setDescription("Render tooltips near the mouse when hovered over a button");
-
+            .setDescription("Render tooltips near the mouse when hovered over a button")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     public static Setting<Boolean> panelHeaderSeparator = new Setting<>("Header Separator", false)
-            .setDescription("Draw a separator between the header and the module buttons");
+            .setDescription("Draw a separator between the header and the module buttons")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     public static Setting<AnimationType> animation = new Setting<>("Animation", AnimationType.STATIC)
-            .setDescription("The type of animation");
+            .setDescription("The type of animation")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     public static Setting<Float> cornerRadius = new Setting<>("Corner Radius", 5f, 1f, 7f, 1f)
-            .setDescription("The radius of the corners");
-
+            .setDescription("The radius of the corners")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     public static Setting<Float> animationSpeed = new Setting<>("Animation Speed", 200f, 0f, 1000f, 10f)
-            .setDescription("How fast animations are");
+            .setDescription("How fast animations are")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
-            .setDescription("The easing type of the animation");
+            .setDescription("The easing type of the animation")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
+
+    public static Setting<Boolean> scrollClamp = new Setting<>("Scroll Clamp", false)
+            .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.WINDOW));
 
     // Shared settings
     public static Setting<Boolean> darkenBackground = new Setting<>("Darken Background", true)
@@ -43,7 +63,7 @@ public class ClickGUI extends Module {
 
     public ClickGUI() {
         super("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
-        this.addSettings(scrollSpeed, tooltips, panelHeaderSeparator, animation, cornerRadius, animationSpeed, easing, darkenBackground, pause);
+        this.addSettings(style, darkenBackground, pause);
     }
 
     /**
@@ -52,7 +72,13 @@ public class ClickGUI extends Module {
      * @return The GUI to switch to
      */
     public static GuiScreen getGUI() {
-        // return new WindowGUI();
+        switch (style.getValue()) {
+            case WINDOW:
+                return Paragon.INSTANCE.getWindowGUI();
+
+            case PANEL:
+                return Paragon.INSTANCE.getPanelGUI();
+        }
 
         return Paragon.INSTANCE.getPanelGUI();
     }
@@ -61,6 +87,18 @@ public class ClickGUI extends Module {
     public void onEnable() {
         mc.displayGuiScreen(getGUI());
         toggle();
+    }
+
+    public enum Style {
+        /**
+         * Panel GUI
+         */
+        PANEL,
+
+        /**
+         * Window GUI
+         */
+        WINDOW
     }
 
     public enum AnimationType {

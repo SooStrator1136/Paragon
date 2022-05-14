@@ -5,6 +5,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -48,11 +49,8 @@ public class SoundHighlight extends Module {
         if (event.getPacket() instanceof SPacketSoundEffect) {
             SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
-            // Don't add multiple sounds for the same position
-            if (!soundMap.containsKey(new Vec3d(packet.getX(), packet.getY(), packet.getZ()))) {
-                // Add sound to map
-                soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(packet.getSound().getSoundName().getPath(), 255L));
-            }
+            // Add sound to map
+            soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(packet.getSound().getSoundName().getPath(), 255L));
         }
     }
 

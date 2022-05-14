@@ -8,6 +8,7 @@ import com.paragon.client.managers.social.SocialManager;
 import com.paragon.client.systems.ui.console.Console;
 import com.paragon.client.systems.ui.panel.PanelGUI;
 import com.paragon.client.systems.ui.taskbar.Taskbar;
+import com.paragon.client.systems.ui.window.WindowGUI;
 import me.wolfsurge.cerauno.EventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -43,6 +44,7 @@ public class Paragon {
     // GUIs
     private Taskbar taskbar;
     private PanelGUI panelGUI;
+    private WindowGUI windowGUI;
     private Console console;
 
     @Mod.EventHandler
@@ -76,6 +78,7 @@ public class Paragon {
         // Set up GUIs and elements
         taskbar = new Taskbar();
         panelGUI = new PanelGUI();
+        windowGUI = new WindowGUI();
         console = new Console("Paragon Console", 400, 300);
 
         getLogger().info("Paragon Initialised Successfully");
@@ -205,6 +208,15 @@ public class Paragon {
      */
     public PanelGUI getPanelGUI() {
         return panelGUI;
+    }
+
+    /**
+     * Gets the window GUI
+     *
+     * @return The window GUI
+     */
+    public WindowGUI getWindowGUI() {
+        return windowGUI;
     }
 
     /**

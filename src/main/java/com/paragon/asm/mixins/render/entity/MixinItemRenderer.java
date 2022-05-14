@@ -26,19 +26,19 @@ public class MixinItemRenderer {
 
     @Inject(method = "transformFirstPerson", at = @At("HEAD"))
     public void onTransformPre(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
-        RenderItemEvent renderItemEvent = new RenderItemEvent.Pre(hand);
+        RenderItemEvent.Pre renderItemEvent = new RenderItemEvent.Pre(hand);
         Paragon.INSTANCE.getEventBus().post(renderItemEvent);
     }
 
     @Inject(method = "transformFirstPerson", at = @At("TAIL"))
     public void onTransformPost(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
-        RenderItemEvent renderItemEvent = new RenderItemEvent.Post(hand);
+        RenderItemEvent.Post renderItemEvent = new RenderItemEvent.Post(hand);
         Paragon.INSTANCE.getEventBus().post(renderItemEvent);
     }
 
     @Inject(method = "transformSideFirstPerson", at = @At("HEAD"))
     public void onTransformSide(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
-        RenderItemEvent renderItemEvent = new RenderItemEvent.Pre(hand);
+        RenderItemEvent.Pre renderItemEvent = new RenderItemEvent.Pre(hand);
         Paragon.INSTANCE.getEventBus().post(renderItemEvent);
     }
 

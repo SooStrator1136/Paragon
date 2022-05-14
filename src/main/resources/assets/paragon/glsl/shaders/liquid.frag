@@ -20,5 +20,7 @@ void main() {
         finalColour += col * 0.3;
 
         gl_FragColor = finalColour;
+    } else {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }
 }
