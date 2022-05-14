@@ -6,13 +6,14 @@ A 1.12.2 Anarchy Client. Still in development.
 The discord can be joined here:
 https://discord.gg/zSn2a5AZNq
 
-# Head Developers 
-Head Developer - Wolfsurge <br>
+# Founders
+Wolfsurge <br>
+TeleTofu
 
 ## Developers
 Master7720
 
-## contributors
+## Other Contributors
 Doogie13
 
 ## Other Credits
