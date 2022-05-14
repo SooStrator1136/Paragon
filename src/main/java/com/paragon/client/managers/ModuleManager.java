@@ -92,6 +92,7 @@ public class ModuleManager {
                 new NoTrace(),
                 new OnDeath(),
                 new RotationLock(),
+                new TeleTofu(),
                 new TimerModule(),
                 new XCarry(),
 
