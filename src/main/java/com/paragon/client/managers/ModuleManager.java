@@ -77,6 +77,7 @@ public class ModuleManager {
                 new Announcer(),
                 new AutoEZ(),
                 new AutoLog(),
+                new AutoWalk(),
                 new Blink(),
                 new BuildHeight(),
                 new ChatModifications(),

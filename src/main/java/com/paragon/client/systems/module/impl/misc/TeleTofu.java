@@ -12,7 +12,7 @@ public class TeleTofu extends Module {
     private final Timer timer = new Timer();
 
     public TeleTofu() {
-        super("TeleTofu", Category.MISC, "Performs a TeleTofu on the target");
+        super("TeleTofu", Category.MISC, "Tofu would be a lot cooler if he was 1% less gay");
     }
 
     @Override

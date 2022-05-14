@@ -9,6 +9,7 @@
     "accessor.ICPacketPlayer",
     "accessor.IEntity",
     "accessor.IEntityRenderer",
+    "accessor.IKeyBinding",
     "accessor.IMinecraft",
     "accessor.IPlayerControllerMP",
     "accessor.IRenderGlobal",
