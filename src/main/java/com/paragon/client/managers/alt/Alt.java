@@ -22,6 +22,7 @@ public class Alt {
 
     /**
      * Gets the email of the alt
+     *
      * @return The email of the alt
      */
     public String getEmail() {
@@ -30,6 +31,7 @@ public class Alt {
 
     /**
      * Gets the password of the alt
+     *
      * @return The password of the alt
      */
     public String getPassword() {

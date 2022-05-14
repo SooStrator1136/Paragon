@@ -18,6 +18,7 @@ public class Player {
 
     /**
      * Gets the player's name
+     *
      * @return The player's name
      */
     public String getName() {
@@ -26,6 +27,7 @@ public class Player {
 
     /**
      * Gets the relationship we have to the player
+     *
      * @return The relationship
      */
     public Relationship getRelationship() {

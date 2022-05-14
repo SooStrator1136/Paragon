@@ -60,7 +60,8 @@ public class FontManager {
 
             try {
                 JSONObject json = new JSONObject();
-                FileWriter fileWriter = new FileWriter(fontConfigFile);;
+                FileWriter fileWriter = new FileWriter(fontConfigFile);
+                ;
 
                 try {
                     json.put("size", 40);

@@ -18,6 +18,7 @@ public class SocialManager {
 
     /**
      * Checks if a given player name is a friend
+     *
      * @param name The name to check
      * @return If the given player is a friend
      */
@@ -33,6 +34,7 @@ public class SocialManager {
 
     /**
      * Checks if a given player name is neutral
+     *
      * @param name The name to check
      * @return If the given player is neutral
      */
@@ -48,6 +50,7 @@ public class SocialManager {
 
     /**
      * Checks if a given player name is an enemy
+     *
      * @param name The name to check
      * @return If the given player is an enemy
      */
@@ -63,6 +66,7 @@ public class SocialManager {
 
     /**
      * Adds a player to our players list
+     *
      * @param player The player to add
      */
     public void addPlayer(Player player) {
