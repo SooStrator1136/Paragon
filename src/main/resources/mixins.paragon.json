@@ -20,6 +20,7 @@
     "accessor.ISPacketPlayerPosLook",
     "accessor.ITimer",
 
+    "entity.MixinEntity",
     "entity.MixinEntityLivingBase",
 
     "network.MixinNetworkManager",

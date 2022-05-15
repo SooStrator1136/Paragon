@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.event.world.entity.EntityPushEvent;
 import com.paragon.asm.mixins.accessor.ISPacketEntityVelocity;
 import com.paragon.asm.mixins.accessor.ISPacketExplosion;
 import com.paragon.client.systems.module.Module;
@@ -27,9 +28,12 @@ public class Velocity extends Module {
     private final Setting<Float> vertical = new Setting<>("Vertical", 0f, 0f, 100f, 1f)
             .setDescription("The vertical modifier");
 
+    private final Setting<Boolean> noPush = new Setting<>("NoPush", true)
+            .setDescription("Prevents the player from being pushed by entities");
+
     public Velocity() {
         super("Velocity", Category.MOVEMENT, "Stops crystals and mobs from causing you knockback");
-        this.addSettings(velocityPacket, explosions, horizontal, vertical);
+        this.addSettings(velocityPacket, explosions, horizontal, vertical, noPush);
     }
 
     @Listener
@@ -61,6 +65,13 @@ public class Velocity extends Module {
                 ((ISPacketExplosion) event.getPacket()).setMotionY((vertical.getValue() / 100) * (((SPacketExplosion) event.getPacket()).getMotionY()));
                 ((ISPacketExplosion) event.getPacket()).setMotionZ((horizontal.getValue() / 100) * (((SPacketExplosion) event.getPacket()).getMotionZ()));
             }
+        }
+    }
+
+    @Listener
+    public void onEntityPush(EntityPushEvent event) {
+        if (noPush.getValue() && event.getEntity() == mc.player) {
+            event.cancel();
         }
     }
 
