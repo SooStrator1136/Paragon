@@ -1,8 +1,10 @@
 package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
+import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.EnumAction;
+import net.minecraft.util.EnumFacing;
 
 public class PlayerUtil implements Wrapper {
 
@@ -85,6 +87,28 @@ public class PlayerUtil implements Wrapper {
 
     public static boolean isPlayerConsuming() {
         return mc.player.isHandActive() && (mc.player.getActiveItemStack().getItemUseAction().equals(EnumAction.EAT) || mc.player.getActiveItemStack().getItemUseAction().equals(EnumAction.DRINK));
+    }
+
+    public static EnumFaceDirection getDirection() {
+        return EnumFaceDirection.getFacing(EnumFacing.fromAngle(mc.player.rotationYaw));
+    }
+
+    public static String getAxis(EnumFaceDirection direction) {
+        switch (direction) {
+            case NORTH:
+                return "-Z";
+
+            case SOUTH:
+                return "+Z";
+
+            case EAST:
+                return "+X";
+
+            case WEST:
+                return "-X";
+        }
+
+        return "";
     }
 
 }

@@ -108,6 +108,7 @@ public class ModuleManager {
                 new ArrayListHUD(),
                 new CombatInfo(),
                 new Coordinates(),
+                new Direction(),
                 new FPS(),
                 new HUD(),
                 new Inventory(),
