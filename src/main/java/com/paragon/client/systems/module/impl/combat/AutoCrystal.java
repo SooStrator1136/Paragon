@@ -771,19 +771,6 @@ public class AutoCrystal extends Module {
             }
         }
 
-        /* if (placePacket.getValue()) {
-            // Send place packet
-            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(currentPlacement.getPosition(), currentPlacement.getFacing(), placeWhen.getValue().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND, (float) currentPlacement.facingVec.x, (float) currentPlacement.facingVec.y, (float) currentPlacement.facingVec.z));
-            // Swing arm
-            swing(placeSwing.getValue());
-        } else {
-            // Place crystal
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), placeWhen.getValue().equals(When.HOLDING) ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND).equals(EnumActionResult.SUCCESS)) {
-                // Swing arm
-                swing(placeSwing.getValue());
-            }
-        } */
-
         // Add position to our self placed crystals
         selfPlacedCrystals.add(currentPlacement.getPosition().up());
 

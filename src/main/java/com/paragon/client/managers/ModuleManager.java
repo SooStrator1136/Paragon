@@ -64,6 +64,7 @@ public class ModuleManager {
                 new HoleESP(),
                 new Nametags(),
                 new NoRender(),
+                new NoSwing(),
                 new Shader(),
                 new ShulkerViewer(),
                 new SoundHighlight(),
