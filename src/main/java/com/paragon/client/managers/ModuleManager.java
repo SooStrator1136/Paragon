@@ -113,6 +113,7 @@ public class ModuleManager {
                 new HUD(),
                 new Inventory(),
                 new Ping(),
+                new Speed(),
                 new Totems(),
                 new Watermark()
         );
