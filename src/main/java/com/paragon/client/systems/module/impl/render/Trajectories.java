@@ -138,7 +138,7 @@ public class Trajectories extends Module {
                 glEnable(GL_LINE_SMOOTH);
 
                 // Set line width
-                glLineWidth(1);
+                glLineWidth(lineWidth.getValue());
                 ColourUtil.setColour(lineColour.getValue().getRGB());
 
                 glBegin(GL_LINE_STRIP);
@@ -150,12 +150,12 @@ public class Trajectories extends Module {
 
                     // Move position
                     position = new Vec3d(position.x + (velocity.x * 0.1D), position.y + (velocity.y * 0.1D), position.z + (velocity.z * 0.1D));
-                    velocity = new Vec3d(velocity.x, velocity.y - (stack.getItem() instanceof ItemBow ? 0.05 : 0.03) * 0.1, velocity.z);
+                    velocity = new Vec3d(velocity.x, velocity.y - (stack.getItem() instanceof ItemBow ? 0.05 : (stack.getItem() instanceof ItemPotion ? 0.4 : stack.getItem() instanceof ItemExpBottle ? 0.1 : 0.03)) * 0.1, velocity.z);
 
                     // Check if we hit a target
                     RayTraceResult result = mc.world.rayTraceBlocks(EntityUtil.getInterpolatedPosition(mc.player).add(0, mc.player.getEyeHeight(), 0), new Vec3d(position.x, position.y, position.z));
 
-                    if (result != null && result.typeOfHit != RayTraceResult.Type.MISS) {
+                    if (result != null) {
                         break;
                     }
                 }
