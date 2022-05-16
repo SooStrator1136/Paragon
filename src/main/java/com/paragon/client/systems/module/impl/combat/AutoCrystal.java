@@ -97,6 +97,15 @@ public class AutoCrystal extends Module {
             .setDescription("The range to place")
             .setParentSetting(place);
 
+    public final Setting<Boolean> placeMax = new Setting<>("Limit", true)
+            .setDescription("Limit the amount of times we can attempt to place on a position")
+            .setParentSetting(place);
+
+    public final Setting<Double> placeMaxAmount = new Setting<>("Amount", 3D, 1D, 10D, 1D)
+            .setDescription("The amount of times we can attempt to place on a position")
+            .setParentSetting(place)
+            .setVisibility(placeMax::getValue);
+
     public final Setting<Double> placeDelay = new Setting<>("Delay", 10D, 0D, 500D, 1D)
             .setDescription("The delay between placing crystals")
             .setParentSetting(place);
@@ -151,14 +160,14 @@ public class AutoCrystal extends Module {
             .setDescription("What crystals to explode")
             .setParentSetting(explode);
 
-    public final Setting<Boolean> inhibit = new Setting<>("Inhibit", true)
-            .setDescription("Prevent excessive amounts of attacks on crystals")
+    public final Setting<Boolean> explodeMax = new Setting<>("Limit", true)
+            .setDescription("Limit the amount of attacks on a crystal")
             .setParentSetting(explode);
 
-    public final Setting<Float> inhibitMax = new Setting<>("Inhibit Max", 5f, 1f, 10f, 1f)
+    public final Setting<Float> explodeLimitMax = new Setting<>("Limit Value", 5f, 1f, 10f, 1f)
             .setDescription("When to start ignoring the crystals")
             .setParentSetting(explode)
-            .setVisibility(inhibit::getValue);
+            .setVisibility(explodeMax::getValue);
 
     public final Setting<Double> explodeTicksExisted = new Setting<>("Ticks Existed", 0D, 0D, 5D, 1D)
             .setDescription("Check the amount of ticks the crystal has existed before exploding")
@@ -233,10 +242,10 @@ public class AutoCrystal extends Module {
             .setDescription("Force override when you press a key")
             .setParentSetting(override);
 
-    public final Setting<Boolean> ignoreInhibit = new Setting<>("Ignore Inhibit", true)
-            .setDescription("Do not inhibit if we are overriding")
+    public final Setting<Boolean> ignoreMax = new Setting<>("Ignore Max", true)
+            .setDescription("Do not ignore the limits if we are overriding")
             .setParentSetting(override)
-            .setVisibility(inhibit::getValue);
+            .setVisibility(explodeMax::getValue);
 
     public final Setting<Boolean> ignoreMaxLocal = new Setting<>("Ignore Max Local", true)
             .setDescription("Place or explode even if the damage done to us is larger than the max local damage")
@@ -323,7 +332,10 @@ public class AutoCrystal extends Module {
     private ActionState currentActionState = ActionState.PLACING;
 
     // Map of crystals we have attacked. Key is ID, Value is the amount of times we have attacked it
-    private final Map<Integer, Integer> inhibitMap = new HashMap<>();
+    private final Map<Integer, Integer> explodeLimitMap = new HashMap<>();
+
+    // Map of block positions we have attempted to place on
+    private final Map<BlockPos, Integer> placeLimitMap = new HashMap<>();
 
     public AutoCrystal() {
         super("AutoCrystal", Category.COMBAT, "Automatically places and explodes crystals");
@@ -808,12 +820,12 @@ public class AutoCrystal extends Module {
                     }
 
                     // We have already tried to explode this crystal
-                    if (inhibitMap.containsKey(entity.getEntityId()) && inhibitMap.get(entity.getEntityId()).floatValue() > inhibitMax.getValue().floatValue()) {
-                        if (!overriding && !ignoreInhibit.getValue()) {
+                    if (explodeMax.getValue() && explodeLimitMap.containsKey(entity.getEntityId()) && explodeLimitMap.get(entity.getEntityId()).floatValue() > explodeLimitMax.getValue().intValue()) {
+                        if (!overriding && !ignoreMax.getValue()) {
                             continue;
                         }
                     } else {
-                        inhibitMap.put(entity.getEntityId(), inhibitMap.getOrDefault(entity.getEntityId(), 0) + 1);
+                        explodeLimitMap.put(entity.getEntityId(), explodeLimitMap.getOrDefault(entity.getEntityId(), 0) + 1);
                     }
 
                     // If it's too far away, ignore
@@ -903,12 +915,19 @@ public class AutoCrystal extends Module {
 
         // Check we want to place
         if (place.getValue()) {
-
             // Iterate through blocks around us
             for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
                 // Check we can place crystals
                 if (!canPlaceCrystal(pos)) {
                     continue;
+                }
+
+                if (placeMax.getValue() && placeLimitMap.containsKey(pos) && placeLimitMap.get(pos) >= placeMaxAmount.getValue()) {
+                    if (!overriding && !ignoreMax.getValue()) {
+                        continue;
+                    }
+                } else {
+                    placeLimitMap.put(pos, placeLimitMap.getOrDefault(pos, 0) + 1);
                 }
 
                 // Position we are placing at
@@ -1181,7 +1200,7 @@ public class AutoCrystal extends Module {
         this.currentPlacement = null;
         this.backlogPlacement = null;
         this.selfPlacedCrystals.clear();
-        this.inhibitMap.clear();
+        this.explodeLimitMap.clear();
     }
 
     @Override

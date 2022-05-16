@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.client;
 
 import com.paragon.Paragon;
+import com.paragon.client.systems.module.IgnoredByNotifications;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
@@ -8,6 +9,7 @@ import com.paragon.client.systems.ui.animation.Animation;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
+@IgnoredByNotifications
 public class ClickGUI extends Module {
 
     public static Setting<Style> style = new Setting<>("Style", Style.PANEL)

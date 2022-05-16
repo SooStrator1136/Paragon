@@ -20,17 +20,25 @@ public class Module extends Feature implements Wrapper {
 
     // The category the module is in
     private final Category category;
+
     // Whether the module is visible in the Array List or not
     private final Setting<Boolean> visible = new Setting<>("Visible", true)
             .setDescription("Whether the module is visible in the array list or not");
+
     // Whether the module is constantly enabled or not
     private final boolean constant = getClass().isAnnotationPresent(Constant.class);
+
+    // Whether the module is ignored by notifications
+    private final boolean ignoredByNotifications = getClass().isAnnotationPresent(IgnoredByNotifications.class);
+
     // Module Settings
     private final List<Setting<?>> settings = new ArrayList<>();
     private final Setting<AtomicInteger> keyCode = new Setting<>("Keybind", new AtomicInteger(Keyboard.KEY_NONE))
             .setDescription("The keybind of the module");
+
     // Arraylist animation
     public Animation animation = new Animation(100, false, ArrayListHUD.easing::getValue);
+
     // Whether the module is enabled
     private boolean enabled;
 
@@ -178,6 +186,15 @@ public class Module extends Feature implements Wrapper {
      */
     public boolean isConstant() {
         return constant;
+    }
+
+    /**
+     * Gets whether the module is ignored by notifications or not
+     *
+     * @return Whether the module is ignored by notifications or not
+     */
+    public boolean isIgnored() {
+        return ignoredByNotifications;
     }
 
     /**

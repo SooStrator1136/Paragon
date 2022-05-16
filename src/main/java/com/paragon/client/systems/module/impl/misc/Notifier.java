@@ -43,7 +43,9 @@ public class Notifier extends Module {
     @Listener
     public void onModuleToggle(ModuleToggleEvent moduleToggleEvent) {
         if (moduleEnabled.getValue()) {
-            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Toggled " + moduleToggleEvent.getModule().getName(), moduleToggleEvent.getModule().getName() + " was " + (moduleToggleEvent.getModule().isEnabled() ? "Enabled" : "Disabled"), NotificationType.INFO));
+            if (!moduleToggleEvent.getModule().isIgnored()) {
+                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Toggled " + moduleToggleEvent.getModule().getName(), moduleToggleEvent.getModule().getName() + " was " + (moduleToggleEvent.getModule().isEnabled() ? "Enabled" : "Disabled"), NotificationType.INFO));
+            }
         }
     }
 
@@ -51,6 +53,7 @@ public class Notifier extends Module {
     public void onTotemPop(TotemPopEvent event) {
         if (pop.getValue()) {
             CommandManager.sendClientMessage(event.getPlayer().getName() + " has popped " + Paragon.INSTANCE.getPopManager().getPops(event.getPlayer()) + " totems!", false);
+            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Totem Pop", event.getPlayer().getName() + " has popped " + Paragon.INSTANCE.getPopManager().getPops(event.getPlayer()) + " totems!", NotificationType.INFO));
         }
     }
 

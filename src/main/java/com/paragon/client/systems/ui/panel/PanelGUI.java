@@ -49,14 +49,6 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
             drawDefaultBackground();
         }
 
-        // Render HUD modules
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
-            if (hudModule.isEnabled()) {
-                hudModule.updateComponent(mouseX, mouseY);
-                hudModule.render();
-            }
-        });
-
         scrollPanels();
 
         // Render panels
@@ -82,12 +74,6 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
             panel.mouseClicked(mouseX, mouseY, mouseButton);
         });
 
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
-            if (hudModule.isEnabled()) {
-                hudModule.mouseClicked(mouseX, mouseY, mouseButton);
-            }
-        });
-
         Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -98,12 +84,6 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         // Click releases
         panels.forEach(panel -> {
             panel.mouseReleased(mouseX, mouseY, state);
-        });
-
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
-            if (hudModule.isEnabled()) {
-                hudModule.mouseReleased(mouseX, mouseY, state);
-            }
         });
 
         super.mouseReleased(mouseX, mouseY, state);

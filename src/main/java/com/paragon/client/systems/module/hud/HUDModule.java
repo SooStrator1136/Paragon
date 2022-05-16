@@ -5,7 +5,10 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
+
+import java.awt.*;
 
 public abstract class HUDModule extends Module implements TextRenderer {
 
@@ -19,16 +22,30 @@ public abstract class HUDModule extends Module implements TextRenderer {
     }
 
     public abstract void render();
-
     public abstract float getWidth();
-
     public abstract float getHeight();
 
     public void updateComponent(int mouseX, int mouseY) {
         // Set X and Y
         if (dragging) {
-            this.x = MathHelper.clamp(mouseX - lastX, 2, RenderUtil.getScreenWidth());
-            this.y = MathHelper.clamp(mouseY - lastY, 2, RenderUtil.getScreenHeight() - getHeight());
+            ScaledResolution sr = new ScaledResolution(mc);
+
+            float newX = MathHelper.clamp(mouseX - lastX, 2, RenderUtil.getScreenWidth() - getWidth());
+            float newY = MathHelper.clamp(mouseY - lastY, 2, RenderUtil.getScreenHeight() - getHeight());
+
+            this.x = newX;
+            this.y = newY;
+
+            float centerX = newX + (getWidth() / 2f);
+            float centerY = newY + (getHeight() / 2f);
+
+            if (centerX > (sr.getScaledWidth() / 2f) - 5 && centerX < (sr.getScaledWidth() / 2f) + 5) {
+                this.x = (sr.getScaledWidth() / 2f) - (getWidth() / 2f);
+            }
+
+            if (centerY > (sr.getScaledHeight() / 2f) - 5 && centerY < (sr.getScaledHeight() / 2f) + 5) {
+                this.y = (sr.getScaledHeight() / 2f) - (getHeight() / 2f);
+            }
         }
     }
 

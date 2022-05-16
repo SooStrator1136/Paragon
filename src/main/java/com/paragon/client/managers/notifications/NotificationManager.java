@@ -18,27 +18,8 @@ public class NotificationManager implements Wrapper {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void onRenderOverlay(RenderGameOverlayEvent event) {
-        if (!event.getType().equals(RenderGameOverlayEvent.ElementType.TEXT)) {
-            return;
-        }
-
-        if (!notifications.isEmpty()) {
-            Notification notification = notifications.get(0);
-
-            if (Notifier.renderType.getValue().equals(Notifier.RenderType.DISPLAY)) {
-                notification.render();
-
-                if (notification.hasFinishedAnimating()) {
-                    notifications.remove(notification);
-                }
-            } else if (Notifier.renderType.getValue().equals(Notifier.RenderType.CHAT)) {
-                CommandManager.sendClientMessage(notification.getMessage(), false);
-
-                notifications.remove(notification);
-            }
-        }
+    public List<Notification> getNotifications() {
+        return notifications;
     }
 
     public void addNotification(Notification notification) {
