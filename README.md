@@ -25,9 +25,9 @@ If I have not credited something, please let me know. (Although I am pretty sure
 # Build instructions
 Windows:
 
-`gradlew setupDecompWorkspace`
+`.\gradlew setupDecompWorkspace`
 
-`gradlew build`
+`.\gradlew build`
 
 Linux/Mac (or any other based UNIX/UNIX-LIKE OS):
 
