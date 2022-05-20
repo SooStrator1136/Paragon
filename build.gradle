@@ -116,5 +116,3 @@ jar {
 }
 
 build.dependsOn(shadowJar)
-
-sourceSets { main { output.resourcesDir = output.classesDir } }
