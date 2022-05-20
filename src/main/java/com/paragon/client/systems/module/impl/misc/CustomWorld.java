@@ -9,23 +9,26 @@ import net.minecraft.network.play.server.SPacketTimeUpdate;
 
 public class CustomWorld extends Module {
 
-    private final Setting<Boolean> customWeather = new Setting<>("Custom Weather", true)
+    public static CustomWorld INSTANCE;
+
+    public static Setting<Boolean> customWeather = new Setting<>("Custom Weather", true)
             .setDescription("Set the world weather to a custom value");
 
-    private final Setting<Weather> weather = new Setting<>("Weather", Weather.CLEAR)
+    public static Setting<Weather> weather = new Setting<>("Weather", Weather.CLEAR)
             .setDescription("The weather to display")
             .setParentSetting(customWeather);
 
-    private final Setting<Boolean> customTime = new Setting<>("Custom Time", true)
+    public static Setting<Boolean> customTime = new Setting<>("Custom Time", true)
             .setDescription("Set the world time to a custom value");
 
-    private final Setting<Float> time = new Setting<>("Time", 1000f, 0f, 24000f, 1f)
+    public static Setting<Float> time = new Setting<>("Time", 1000f, 0f, 24000f, 1f)
             .setDescription("The time of day")
             .setParentSetting(customTime);
 
     public CustomWorld() {
         super("CustomWorld", Category.MISC, "Changes the way the world is shown client side");
-        this.addSettings(customWeather, customTime);
+
+        INSTANCE = this;
     }
 
     @Override

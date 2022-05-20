@@ -66,7 +66,6 @@ public class ClickGUI extends Module {
 
     public ClickGUI() {
         super("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
-        this.addSettings(style, darkenBackground, pause);
     }
 
     /**

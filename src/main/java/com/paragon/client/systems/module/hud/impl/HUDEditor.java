@@ -9,8 +9,12 @@ import org.lwjgl.input.Keyboard;
 @IgnoredByNotifications
 public class HUDEditor extends Module {
 
+    public static HUDEditor INSTANCE;
+
     public HUDEditor() {
         super("HUDEditor", Category.HUD, "Lets you edit the HUD module positions", Keyboard.KEY_P);
+
+        INSTANCE = this;
     }
 
     @Override

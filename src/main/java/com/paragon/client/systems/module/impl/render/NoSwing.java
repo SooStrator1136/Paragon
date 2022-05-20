@@ -14,15 +14,18 @@ import net.minecraft.network.play.server.SPacketAnimation;
  */
 public class NoSwing extends Module {
 
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.PACKET_CANCEL)
+    public static NoSwing INSTANCE;
+
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.PACKET_CANCEL)
             .setDescription("How to not swing");
 
-    private final Setting<Boolean> others = new Setting<>("Others", true)
+    public static Setting<Boolean> others = new Setting<>("Others", true)
             .setDescription("Whether to cancel other players' animations");
 
     public NoSwing() {
         super("NoSwing", Category.RENDER, "Cancels the swing animation");
-        this.addSettings(mode, others);
+
+        INSTANCE = this;
     }
 
     @Listener

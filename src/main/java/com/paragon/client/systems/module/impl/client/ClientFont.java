@@ -11,6 +11,7 @@ public class ClientFont extends Module {
 
     public ClientFont() {
         super("Font", Category.CLIENT, "Use the client's custom font");
+
         INSTANCE = this;
     }
 

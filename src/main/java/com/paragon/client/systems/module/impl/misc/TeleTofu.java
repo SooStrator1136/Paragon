@@ -4,7 +4,7 @@ import com.paragon.api.util.calculations.Timer;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.Module;
 
-/**
+/*
  * ehehehehhehehehehhe
  */
 public class TeleTofu extends Module {

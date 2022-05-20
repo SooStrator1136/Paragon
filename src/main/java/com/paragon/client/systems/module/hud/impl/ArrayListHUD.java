@@ -19,18 +19,21 @@ import java.util.function.Function;
 
 public class ArrayListHUD extends Module implements TextRenderer {
 
-    public static final Setting<Float> animationSpeed = new Setting<>("Animation", 200f, 0f, 1000f, 10f)
+    public static ArrayListHUD INSTANCE;
+
+    public static Setting<Float> animationSpeed = new Setting<>("Animation", 200f, 0f, 1000f, 10f)
             .setDescription("The speed of the animation");
 
-    public static final Setting<ArrayListColour> arrayListColour = new Setting<>("Colour", ArrayListColour.RAINBOW_WAVE)
+    public static Setting<ArrayListColour> arrayListColour = new Setting<>("Colour", ArrayListColour.RAINBOW_WAVE)
             .setDescription("What colour to render the modules in");
 
-    public static final Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
+    public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
             .setDescription("The easing type of the animation");
 
     public ArrayListHUD() {
         super("ArrayList", Category.HUD, "Renders the enabled modules on screen");
-        this.addSettings(animationSpeed, arrayListColour, easing);
+
+        INSTANCE = this;
     }
 
     @Override

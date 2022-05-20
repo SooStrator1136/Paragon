@@ -19,25 +19,28 @@ import net.minecraft.util.text.TextFormatting;
  */
 public class Notifier extends Module {
 
+    public static Notifier INSTANCE;
+
     public static Setting<RenderType> renderType = new Setting<>("RenderType", RenderType.DISPLAY)
             .setDescription("The way to render the notifications");
 
-    private final Setting<Boolean> moduleEnabled = new Setting<>("Module Toggle", false)
+    public static Setting<Boolean> moduleEnabled = new Setting<>("Module Toggle", false)
             .setDescription("Notifies you when you toggle a module");
 
-    private final Setting<Boolean> pop = new Setting<>("Pop", true)
+    public static Setting<Boolean> pop = new Setting<>("Pop", true)
             .setDescription("Notifies you when a player pops a totem");
 
-    private final Setting<Boolean> death = new Setting<>("Death", true)
+    public static Setting<Boolean> death = new Setting<>("Death", true)
             .setDescription("Notifies you when a player dies");
 
-    private final Setting<Boolean> noPops = new Setting<>("No Pops", true)
+    public static Setting<Boolean> noPops = new Setting<>("No Pops", true)
             .setDescription("Notifies you even if the player hasn't popped any totems")
             .setParentSetting(death);
 
     public Notifier() {
         super("Notifier", Category.MISC, "Notifies you when events happen");
-        this.addSettings(renderType, moduleEnabled, pop, death);
+
+        INSTANCE = this;
     }
 
     @Listener

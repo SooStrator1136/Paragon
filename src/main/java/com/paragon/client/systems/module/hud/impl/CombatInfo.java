@@ -8,8 +8,12 @@ import net.minecraft.util.text.TextFormatting;
 
 public class CombatInfo extends HUDModule {
 
+    public static CombatInfo INSTANCE;
+
     public CombatInfo() {
         super("CombatInfo", "Shows what combat modules are enabled");
+
+        INSTANCE = this;
     }
 
     @Override

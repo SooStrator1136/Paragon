@@ -18,20 +18,23 @@ import net.minecraft.world.GameType;
  */
 public class NoFall extends Module {
 
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.VANILLA)
+    public static NoFall INSTANCE;
+
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.VANILLA)
             .setDescription("How to prevent fall damage");
 
-    private final Setting<Boolean> spoofFall = new Setting<>("Spoof Fall", false)
+    public static Setting<Boolean> spoofFall = new Setting<>("Spoof Fall", false)
             .setDescription("Spoof fall distance")
             .setVisibility(() -> mode.getValue().equals(Mode.RUBBERBAND));
 
-    private final Setting<Boolean> ignoreElytra = new Setting<>("Ignore Elytra", true)
+    public static Setting<Boolean> ignoreElytra = new Setting<>("Ignore Elytra", true)
             .setDescription("Don't attempt to place a water bucket when flying with an elytra")
             .setVisibility(() -> mode.getValue().equals(Mode.BUCKET));
 
     public NoFall() {
         super("NoFall", Category.MOVEMENT, "Disables fall damage");
-        this.addSettings(mode, spoofFall);
+
+        INSTANCE = this;
     }
 
     @Override

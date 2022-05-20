@@ -16,63 +16,66 @@ import net.minecraft.network.play.client.CPacketEntityAction;
  */
 public class ElytraFlight extends Module {
 
+    public static ElytraFlight INSTANCE;
+    
     // Mode for elytra flight
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.CONTROL)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.CONTROL)
             .setDescription("The mode to use");
 
     // Strict settings
-    private final Setting<Float> ascendPitch = new Setting<>("Ascend Pitch", -45f, -90f, 90f, 1f)
+    public static Setting<Float> ascendPitch = new Setting<>("Ascend Pitch", -45f, -90f, 90f, 1f)
             .setDescription("What value to set your pitch to when ascending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    private final Setting<Float> descendPitch = new Setting<>("Descend Pitch", 45f, -90f, 90f, 1f)
+    public static Setting<Float> descendPitch = new Setting<>("Descend Pitch", 45f, -90f, 90f, 1f)
             .setDescription("What value to set your pitch to when descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    private final Setting<Boolean> lockPitch = new Setting<>("Lock Pitch", true)
+    public static Setting<Boolean> lockPitch = new Setting<>("Lock Pitch", true)
             .setDescription("Lock your pitch when you are not ascending or descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    private final Setting<Float> lockPitchVal = new Setting<>("Locked Pitch", 0f, -90f, 90f, 1f)
+    public static Setting<Float> lockPitchVal = new Setting<>("Locked Pitch", 0f, -90f, 90f, 1f)
             .setDescription("The pitch to lock you to when you are not ascending or descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
     // Boost settings
-    private final Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
+    public static Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
             .setDescription("Stop motion when not moving")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.BOOST));
 
     // Global settings
-    private final Setting<Float> flySpeed = new Setting<>("Fly Speed", 1f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> flySpeed = new Setting<>("Fly Speed", 1f, 0.1f, 2f, 0.1f)
             .setDescription("The speed to fly at");
 
-    private final Setting<Float> ascend = new Setting<>("Ascend Speed", 1f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> ascend = new Setting<>("Ascend Speed", 1f, 0.1f, 2f, 0.1f)
             .setDescription("How fast to ascend")
             .setVisibility(() -> !mode.getValue().equals(Mode.BOOST));
 
-    private final Setting<Float> descend = new Setting<>("Descend Speed", 1f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> descend = new Setting<>("Descend Speed", 1f, 0.1f, 2f, 0.1f)
             .setDescription("How fast to descend")
             .setVisibility(() -> !mode.getValue().equals(Mode.BOOST));
 
-    private final Setting<Float> fallSpeed = new Setting<>("Fall Speed", 0f, 0f, 0.1f, 0.01f)
+    public static Setting<Float> fallSpeed = new Setting<>("Fall Speed", 0f, 0f, 0.1f, 0.01f)
             .setDescription("How fast to fall");
 
     // Takeoff settings
-    private final Setting<Boolean> takeOff = new Setting<>("Takeoff", false)
+    public static Setting<Boolean> takeOff = new Setting<>("Takeoff", false)
             .setDescription("Automatically take off when you enable the module");
 
-    private final Setting<Float> takeOffTimer = new Setting<>("Timer", 0.2f, 0.1f, 1f, 0.1f)
+    public static Setting<Float> takeOffTimer = new Setting<>("Timer", 0.2f, 0.1f, 1f, 0.1f)
             .setDescription("How long a tick lasts for")
             .setParentSetting(takeOff);
 
     public ElytraFlight() {
         super("ElytraFlight", Category.MOVEMENT, "Allows for easier flight with an elytra");
-        this.addSettings(mode, flySpeed, ascend, descend, fallSpeed, takeOff);
+
+        INSTANCE = this;
     }
 
     @Override

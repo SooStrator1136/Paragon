@@ -37,39 +37,39 @@ public class Aura extends Module {
     public static Aura INSTANCE;
 
     // How to sort the targets
-    private final Setting<Sort> sort = new Setting<>("Sort", Sort.DISTANCE)
+    public static Setting<Sort> sort = new Setting<>("Sort", Sort.DISTANCE)
             .setDescription("How to sort the targets");
 
     // Filters
-    private final Setting<Boolean> players = new Setting<>("Players", true)
+    public static Setting<Boolean> players = new Setting<>("Players", true)
             .setDescription("Attack players");
 
-    private final Setting<Boolean> mobs = new Setting<>("Mobs", true)
+    private static Setting<Boolean> mobs = new Setting<>("Mobs", true)
             .setDescription("Attack mobs");
 
-    private final Setting<Boolean> passives = new Setting<>("Passives", true)
+    public static Setting<Boolean> passives = new Setting<>("Passives", true)
             .setDescription("Attack passives");
 
     // Main settings
-    private final Setting<Float> range = new Setting<>("Range", 5f, 0f, 5f, 0.1f)
+    public static Setting<Float> range = new Setting<>("Range", 5f, 0f, 5f, 0.1f)
             .setDescription("The range to attack");
 
-    private final Setting<Double> delay = new Setting<>("Delay", 700D, 0D, 2000D, 1D)
+    public static Setting<Double> delay = new Setting<>("Delay", 700D, 0D, 2000D, 1D)
             .setDescription("The delay between attacking in milliseconds");
 
-    private final Setting<When> when = new Setting<>("When", When.HOLDING)
+    public static Setting<When> when = new Setting<>("When", When.HOLDING)
             .setDescription("When to attack");
 
-    private final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
+    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
             .setDescription("How to rotate to the target");
 
-    private final Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+    public static Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
             .setDescription("Rotate back to your original rotation").setParentSetting(rotate);
 
-    private final Setting<Where> where = new Setting<>("Where", Where.BODY)
+    public static Setting<Where> where = new Setting<>("Where", Where.BODY)
             .setDescription("Where to attack");
 
-    private final Setting<Boolean> packetAttack = new Setting<>("Packet Attack", false)
+    public static Setting<Boolean> packetAttack = new Setting<>("Packet Attack", false)
             .setDescription("Attack with a packet");
 
     private final Timer attackTimer = new Timer();
@@ -77,7 +77,6 @@ public class Aura extends Module {
 
     public Aura() {
         super("Aura", Category.COMBAT, "Automatically attacks entities");
-        this.addSettings(sort, players, mobs, passives, range, delay, when, rotate, packetAttack, where);
 
         INSTANCE = this;
     }

@@ -7,8 +7,12 @@ import net.minecraft.util.text.TextFormatting;
 
 public class FPS extends HUDModule {
 
+    public static FPS INSTANCE;
+
     public FPS() {
         super("FPS", "Renders your FPS on screen");
+
+        INSTANCE = this;
     }
 
     @Override

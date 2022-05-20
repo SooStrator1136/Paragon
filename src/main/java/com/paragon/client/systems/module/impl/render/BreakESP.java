@@ -19,24 +19,27 @@ import java.awt.*;
  */
 public class BreakESP extends Module {
 
+    public static BreakESP INSTANCE;
+
     // Render settings
-    private final Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
+    public static Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
             .setDescription("How to render the highlight");
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3f, 0.1f)
             .setDescription("The width of the outline")
             .setVisibility(() -> !renderMode.getValue().equals(RenderMode.FILL));
 
     // Other settings
-    private final Setting<Float> range = new Setting<>("Range", 20f, 1f, 50f, 1f)
+    public static Setting<Float> range = new Setting<>("Range", 20f, 1f, 50f, 1f)
             .setDescription("The maximum distance a highlighted block can be");
 
-    private final Setting<Boolean> percent = new Setting<>("Percent", true)
+    public static Setting<Boolean> percent = new Setting<>("Percent", true)
             .setDescription("Show the percentage of how much the block has been broken");
 
     public BreakESP() {
         super("BreakESP", Category.RENDER, "Highlights blocks that are currently being broken");
-        this.addSettings(renderMode, lineWidth, range, percent);
+
+        INSTANCE = this;
     }
 
     @Override

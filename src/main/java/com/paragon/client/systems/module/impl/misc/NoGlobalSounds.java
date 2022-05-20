@@ -16,22 +16,25 @@ import net.minecraft.util.SoundCategory;
  */
 public class NoGlobalSounds extends Module {
 
+    public static NoGlobalSounds INSTANCE;
+
     // Sounds to cancel
-    private final Setting<Boolean> endPortal = new Setting<>("End Portal", true)
+    public static Setting<Boolean> endPortal = new Setting<>("End Portal", true)
             .setDescription("Disables the end portal spawn sound");
 
-    private final Setting<Boolean> witherSpawn = new Setting<>("Wither Spawn", true)
+    public static Setting<Boolean> witherSpawn = new Setting<>("Wither Spawn", true)
             .setDescription("Disables the wither spawn sound");
 
-    private final Setting<Boolean> dragonDeath = new Setting<>("Dragon Death", true)
+    public static Setting<Boolean> dragonDeath = new Setting<>("Dragon Death", true)
             .setDescription("Disables the dragon death sound");
 
-    private final Setting<Boolean> lightning = new Setting<>("Lightning", true)
+    public static Setting<Boolean> lightning = new Setting<>("Lightning", true)
             .setDescription("Disables the lightning sound");
 
     public NoGlobalSounds() {
         super("NoGlobalSounds", Category.MISC, "Prevents global sounds from playing");
-        this.addSettings(endPortal, witherSpawn, dragonDeath, lightning);
+
+        INSTANCE = this;
     }
 
     @Listener

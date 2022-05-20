@@ -19,23 +19,26 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class ChinaHat extends Module {
 
+    public static ChinaHat INSTANCE;
+
     // Colours
-    private final Setting<Color> topColour = new Setting<>("Top Colour", new Color(185, 17, 255, 180))
+    public static Setting<Color> topColour = new Setting<>("Top Colour", new Color(185, 17, 255, 180))
             .setDescription("The top colour of the hat");
 
-    private final Setting<Color> bottomColour = new Setting<>("Bottom Colour", new Color(185, 17, 255, 180))
+    public static Setting<Color> bottomColour = new Setting<>("Bottom Colour", new Color(185, 17, 255, 180))
             .setDescription("The bottom colour of the hat");
 
     // Settings
-    private final Setting<Boolean> firstPerson = new Setting<>("First Person", false)
+    public static Setting<Boolean> firstPerson = new Setting<>("First Person", false)
             .setDescription("Render the hat in first person");
 
-    private final Setting<Boolean> others = new Setting<>("Others", true)
+    public static Setting<Boolean> others = new Setting<>("Others", true)
             .setDescription("Render the hat on other players");
 
     public ChinaHat() {
         super("ChinaHat", Category.RENDER, "-69420 social credit :((");
-        this.addSettings(topColour, bottomColour, firstPerson, others);
+
+        INSTANCE = this;
     }
 
     @Override

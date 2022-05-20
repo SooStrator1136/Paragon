@@ -15,14 +15,16 @@ import net.minecraft.util.math.Vec3d;
  */
 public class BowRelease extends Module {
 
-    private final Setting<Release> release = new Setting<>("Release", Release.TICKS)
+    public static BowRelease INSTANCE;
+
+    public static Setting<Release> release = new Setting<>("Release", Release.TICKS)
             .setDescription("When to release the bow");
 
-    private final Setting<Float> releasePower = new Setting<>("Release Power", 3.1f, 0.1f, 4.0f, 0.1f)
+    public static Setting<Float> releasePower = new Setting<>("Release Power", 3.1f, 0.1f, 4.0f, 0.1f)
             .setDescription("The power the bow needs to be before releasing")
             .setVisibility(() -> release.getValue().equals(Release.POWER));
 
-    private final Setting<Float> releaseTicks = new Setting<>("Release Ticks", 3.0f, 0.0f, 60.0f, 1.0f)
+    public static Setting<Float> releaseTicks = new Setting<>("Release Ticks", 3.0f, 0.0f, 60.0f, 1.0f)
             .setDescription("The amount of ticks that have passed before releasing")
             .setVisibility(() -> release.getValue().equals(Release.TICKS));
 
@@ -30,7 +32,8 @@ public class BowRelease extends Module {
 
     public BowRelease() {
         super("BowRelease", Category.COMBAT, "Automatically releases your bow when at max charge");
-        this.addSettings(release, releasePower, releaseTicks);
+
+        INSTANCE = this;
     }
 
     @Override

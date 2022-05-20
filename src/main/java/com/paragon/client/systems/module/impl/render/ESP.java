@@ -41,41 +41,43 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
  */
 public class ESP extends Module {
 
-    /* Entity settings */
-    private final Setting<Boolean> passive = new Setting<>("Passives", true)
+    public static ESP INSTANCE;
+
+    // Entity filters
+    public static Setting<Boolean> passive = new Setting<>("Passives", true)
             .setDescription("Highlight passive entities");
 
-    private final Setting<Boolean> mobs = new Setting<>("Mobs", true)
+    public static Setting<Boolean> mobs = new Setting<>("Mobs", true)
             .setDescription("Highlight mobs");
 
-    private final Setting<Boolean> players = new Setting<>("Players", true)
+    public static Setting<Boolean> players = new Setting<>("Players", true)
             .setDescription("Highlight player entities");
 
-    private final Setting<Boolean> items = new Setting<>("Items", true)
+    public static Setting<Boolean> items = new Setting<>("Items", true)
             .setDescription("Highlight items");
 
-    private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
+    public static Setting<Boolean> crystals = new Setting<>("Crystals", true)
             .setDescription("Highlight crystals");
 
     // Render settings
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
             .setDescription("How to render the entities");
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 3f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 3f, 0.1f)
             .setDescription("How thick to render the outlines");
 
     // Outline shader
-    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+    public static Setting<Boolean> outline = new Setting<>("Outline", true)
             .setDescription("Outline the fill")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+    public static Setting<Boolean> fill = new Setting<>("Fill", true)
             .setDescription("Fill the outline")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour to highlight items in");
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
@@ -84,7 +86,8 @@ public class ESP extends Module {
 
     public ESP() {
         super("ESP", Category.RENDER, "Highlights entities in the world");
-        this.addSettings(passive, mobs, players, items, crystals, mode, lineWidth, colour);
+
+        INSTANCE = this;
     }
 
     @Override

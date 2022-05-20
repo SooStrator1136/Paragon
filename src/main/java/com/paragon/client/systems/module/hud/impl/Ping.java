@@ -6,8 +6,12 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Ping extends HUDModule {
 
+    public static Ping INSTANCE;
+
     public Ping() {
         super("Ping", "Displays your ping in ms");
+
+        INSTANCE = this;
     }
 
     @Override

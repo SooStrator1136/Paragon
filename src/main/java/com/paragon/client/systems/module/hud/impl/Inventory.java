@@ -10,8 +10,12 @@ import net.minecraft.item.ItemStack;
  */
 public class Inventory extends HUDModule {
 
+    public static Inventory INSTANCE;
+
     public Inventory() {
         super("Inventory", "Displays the contents of your inventory");
+
+        INSTANCE = this;
     }
 
     @Override

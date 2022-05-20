@@ -6,8 +6,12 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Coordinates extends HUDModule {
 
+    public static Coordinates INSTANCE;
+
     public Coordinates() {
         super("Coordinates", "Displays your coordinates");
+
+        INSTANCE = this;
     }
 
     @Override

@@ -18,19 +18,22 @@ import java.awt.*;
  */
 public class BlockHighlight extends Module {
 
-    private final Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
+    public static BlockHighlight INSTANCE;
+
+    public static Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
             .setDescription("How to highlight the block");
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 1.5f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 1.5f, 0.1f)
             .setDescription("The width of the outline")
             .setVisibility(() -> !renderMode.getValue().equals(RenderMode.FILL));
 
-    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 19, 211))
+    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 19, 211))
             .setDescription("What colour to render the block");
 
     public BlockHighlight() {
         super("BlockHighlight", Category.RENDER, "Highlights the block you are looking at");
-        this.addSettings(renderMode, lineWidth, colour);
+
+        INSTANCE = this;
     }
 
     @Listener

@@ -14,18 +14,21 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class NoSlow extends Module {
 
-    private final Setting<Boolean> soulSand = new Setting<>("Soul Sand", true)
+    public static NoSlow INSTANCE;
+
+    public static Setting<Boolean> soulSand = new Setting<>("Soul Sand", true)
             .setDescription("Stop soul sand from slowing you down");
 
-    private final Setting<Boolean> slime = new Setting<>("Slime", true)
+    public static Setting<Boolean> slime = new Setting<>("Slime", true)
             .setDescription("Stop slime blocks from slowing you down");
 
-    private final Setting<Boolean> items = new Setting<>("Items", true)
+    public static Setting<Boolean> items = new Setting<>("Items", true)
             .setDescription("Stop items from slowing you down");
 
     public NoSlow() {
         super("NoSlow", Category.MOVEMENT, "Stop certain blocks and actions from slowing you down");
-        this.addSettings(soulSand, slime, items);
+
+        INSTANCE = this;
     }
 
     @SubscribeEvent

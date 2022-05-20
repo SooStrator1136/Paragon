@@ -28,35 +28,38 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 
 public class StorageESP extends Module {
 
-    private final Setting<Boolean> chests = new Setting<>("Chests", true)
+    public static StorageESP INSTANCE;
+
+    public static Setting<Boolean> chests = new Setting<>("Chests", true)
             .setDescription("Highlight chests");
 
-    private final Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
+    public static Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
             .setDescription("Highlight shulker boxes");
 
-    private final Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
+    public static Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
             .setDescription("Highlight Ender Chests");
 
     // Render settings
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
             .setDescription("How to render the entities");
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 8f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 8f, 0.1f)
             .setDescription("How thick to render the outlines");
 
     // Outline shader
-    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+    public static Setting<Boolean> outline = new Setting<>("Outline", true)
             .setDescription("Outline the fill")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+    public static Setting<Boolean> fill = new Setting<>("Fill", true)
             .setDescription("Fill the outline")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
 
-    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour to highlight items in");
+
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
     private Framebuffer framebuffer;
@@ -64,7 +67,8 @@ public class StorageESP extends Module {
 
     public StorageESP() {
         super("StorageESP", Category.RENDER, "Highlights storage blocks in the world");
-        this.addSettings(chests, shulkers, enderChests, mode, lineWidth, colour);
+
+        INSTANCE = this;
     }
 
     @Override

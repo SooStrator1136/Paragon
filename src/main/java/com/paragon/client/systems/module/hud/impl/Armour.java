@@ -15,12 +15,15 @@ import java.util.List;
 
 public class Armour extends HUDModule {
 
-    private final Setting<Boolean> waterOffset = new Setting<>("Water Offset", true)
+    public static Armour INSTANCE;
+
+    public static Setting<Boolean> waterOffset = new Setting<>("Water Offset", true)
             .setDescription("Position higher when you are underwater");
 
     public Armour() {
         super("Armour", "Displays your armour on screen");
-        this.addSettings(waterOffset);
+
+        INSTANCE = this;
     }
 
 

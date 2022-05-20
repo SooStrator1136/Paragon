@@ -14,28 +14,31 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class Announcer extends Module {
 
+    public static Announcer INSTANCE;
+
     // Event settings
-    private final Setting<Double> chatTimer = new Setting<>("Chat Timer", 5D, 1D, 60D, 1D)
+    public static Setting<Double> chatTimer = new Setting<>("Chat Timer", 5D, 1D, 60D, 1D)
             .setDescription("The amount of time in seconds between each chat message");
 
-    private final Setting<Boolean> breakBlocks = new Setting<>("Break Blocks", true)
+    public static Setting<Boolean> breakBlocks = new Setting<>("Break Blocks", true)
             .setDescription("Announce when a block is broken");
 
-    private final Setting<Boolean> playerJoin = new Setting<>("Player Join", true)
+    public static Setting<Boolean> playerJoin = new Setting<>("Player Join", true)
             .setDescription("Announce when players join the server");
 
-    private final Setting<Boolean> playerLeave = new Setting<>("Player Leave", true)
+    public static Setting<Boolean> playerLeave = new Setting<>("Player Leave", true)
             .setDescription("Announce when players leave the server");
 
     // Timer to determine when we should send the message
-    private final Timer timer = new Timer();
+    public static Timer timer = new Timer();
 
     // Part 1 is the first part of the message, Part 2 is the value, Part 3 is the second part of the message
     private String[] announceComponents = new String[]{"", "0", ""};
 
     public Announcer() {
         super("Announcer", Category.MISC, "Announces events to the chat");
-        this.addSettings(chatTimer, breakBlocks, playerJoin, playerLeave);
+
+        INSTANCE = this;
     }
 
     @Override

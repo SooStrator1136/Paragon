@@ -14,12 +14,15 @@ import java.util.function.Function;
  */
 public class Speed extends HUDModule {
 
-    private final Setting<Unit> unit = new Setting<>("Unit", Unit.BPS)
+    public static Speed INSTANCE;
+
+    public static Setting<Unit> unit = new Setting<>("Unit", Unit.BPS)
             .setDescription("The unit to display the speed in");
 
     public Speed() {
         super("Speed", "Displays your current speed");
-        this.addSettings(unit);
+
+        INSTANCE = this;
     }
 
     @Override

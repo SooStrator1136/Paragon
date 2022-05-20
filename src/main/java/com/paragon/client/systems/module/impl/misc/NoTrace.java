@@ -15,19 +15,22 @@ import net.minecraft.item.ItemPickaxe;
  */
 public class NoTrace extends Module {
 
+    public static NoTrace INSTANCE;
+
     // Settings
-    private final Setting<Boolean> pickaxe = new Setting<>("Pickaxe", true)
+    public static Setting<Boolean> pickaxe = new Setting<>("Pickaxe", true)
             .setDescription("Ignores entities when you are holding a pickaxe");
 
-    private final Setting<Boolean> blocks = new Setting<>("Blocks", false)
+    public static Setting<Boolean> blocks = new Setting<>("Blocks", false)
             .setDescription("Ignores entities when you are holding blocks");
 
-    private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
+    public static Setting<Boolean> crystals = new Setting<>("Crystals", true)
             .setDescription("Ignores entities when you are holding crystals");
 
     public NoTrace() {
         super("NoTrace", Category.MISC, "Ignores raytraced entities");
-        this.addSettings(pickaxe, blocks, crystals);
+
+        INSTANCE = this;
     }
 
     @Listener

@@ -15,7 +15,6 @@ public class Colours extends Module {
 
     public Colours() {
         super("Colours", Category.CLIENT, "Customise the client's main colour");
-        this.addSettings(mainColour);
     }
 
 }

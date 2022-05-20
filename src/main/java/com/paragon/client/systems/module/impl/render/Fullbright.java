@@ -8,12 +8,15 @@ import net.minecraft.potion.PotionEffect;
 
 public class Fullbright extends Module {
 
-    private Setting<Mode> mode = new Setting<>("Mode", Mode.GAMMA)
+    public static Fullbright INSTANCE;
+
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.GAMMA)
             .setDescription("What mode to use");
 
     public Fullbright() {
         super("Fullbright", Category.RENDER, "Makes the world appear brighter");
-        this.addSettings(mode);
+
+        INSTANCE = this;
     }
 
     public void onTick() {

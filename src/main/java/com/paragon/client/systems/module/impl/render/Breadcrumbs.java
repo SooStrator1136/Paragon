@@ -16,21 +16,23 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Breadcrumbs extends Module {
 
+    public static Breadcrumbs INSTANCE;
+
     // Settings
-    private final Setting<Boolean> infinite = new Setting<>("Infinite", false)
+    public static Setting<Boolean> infinite = new Setting<>("Infinite", false)
             .setDescription("Breadcrumbs last forever");
 
-    private final Setting<Float> lifespanValue = new Setting<>("Lifespan", 100f, 1f, 1000f, 1f)
+    public static Setting<Float> lifespanValue = new Setting<>("Lifespan", 100f, 1f, 1000f, 1f)
             .setDescription("The lifespan of the positions in ticks")
             .setVisibility(() -> !infinite.getValue());
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 5f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 5f, 0.1f)
             .setDescription("The width of the lines");
 
-    private final Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
+    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour of the breadcrumbs");
 
-    private final Setting<Boolean> rainbow = new Setting<>("Rainbow", true)
+    public static Setting<Boolean> rainbow = new Setting<>("Rainbow", true)
             .setDescription("Makes the trail a rainbow");
 
     private final LinkedList<Position> positions = new LinkedList<>();
@@ -38,7 +40,8 @@ public class Breadcrumbs extends Module {
 
     public Breadcrumbs() {
         super("Breadcrumbs", Category.RENDER, "Draws a trail behind you");
-        this.addSettings(infinite, lifespanValue, lineWidth, colour, rainbow);
+
+        INSTANCE = this;
     }
 
     @Override

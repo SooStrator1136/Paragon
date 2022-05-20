@@ -15,30 +15,33 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoRender extends Module {
 
-    private final Setting<Boolean> fire = new Setting<>("Fire", true)
+    public static NoRender INSTANCE;
+
+    public static Setting<Boolean> fire = new Setting<>("Fire", true)
             .setDescription("Cancel rendering the fire overlay");
 
-    private final Setting<Boolean> water = new Setting<>("Water", true)
+    public static Setting<Boolean> water = new Setting<>("Water", true)
             .setDescription("Cancel rendering the water overlay");
 
-    private final Setting<Boolean> bossInfo = new Setting<>("Boss Info", true)
+    public static Setting<Boolean> bossInfo = new Setting<>("Boss Info", true)
             .setDescription("Cancel rendering the boss info overlay");
 
-    private final Setting<Boolean> potions = new Setting<>("Potion Icons", false)
+    public static Setting<Boolean> potions = new Setting<>("Potion Icons", false)
             .setDescription("Cancel rendering the potion icons");
 
-    private final Setting<Boolean> portal = new Setting<>("Portal", true)
+    public static Setting<Boolean> portal = new Setting<>("Portal", true)
             .setDescription("Cancel rendering the portal effect");
 
-    private final Setting<Boolean> bats = new Setting<>("Bats", true)
+    public static Setting<Boolean> bats = new Setting<>("Bats", true)
             .setDescription("Cancel rendering bats");
 
-    private final Setting<Boolean> eatingAnimation = new Setting<>("Eating animation", false)
+    public static Setting<Boolean> eatingAnimation = new Setting<>("Eating animation", false)
             .setDescription("Stops rendering the eating animation");
 
     public NoRender() {
         super("NoRender", Category.RENDER, "Cancels rendering certain things");
-        this.addSettings(fire, water, bossInfo, potions, portal, bats, eatingAnimation);
+
+        INSTANCE = this;
     }
 
     @SubscribeEvent

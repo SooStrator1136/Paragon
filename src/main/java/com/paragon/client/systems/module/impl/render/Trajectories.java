@@ -21,56 +21,59 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
 
 public class Trajectories extends Module {
 
-    private final Setting<Boolean> line = new Setting<>("Line", true)
+    public static Trajectories INSTANCE;
+
+    public static Setting<Boolean> line = new Setting<>("Line", true)
             .setDescription("Render a line to the projectile's destination");
 
-    private final Setting<Color> lineColour = new Setting<>("Line Colour", new Color(185, 17, 255))
+    public static Setting<Color> lineColour = new Setting<>("Line Colour", new Color(185, 17, 255))
             .setDescription("The colour of the line")
             .setParentSetting(line);
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3.0f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3.0f, 0.1f)
             .setDescription("The width of the line")
             .setParentSetting(line);
 
-    private final Setting<Boolean> box = new Setting<>("Box", true)
+    public static Setting<Boolean> box = new Setting<>("Box", true)
             .setDescription("Render a box at the projectile's destination");
 
-    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+    public static Setting<Boolean> fill = new Setting<>("Fill", true)
             .setDescription("Fill the box at the end of the line")
             .setParentSetting(box);
 
-    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+    public static Setting<Boolean> outline = new Setting<>("Outline", true)
             .setDescription("Outline the box at the end of the line")
             .setParentSetting(box);
 
-    private final Setting<Float> outlineWidth = new Setting<>("Outline Width", 1.0f, 0.1f, 3.0f, 0.1f)
+    public static Setting<Float> outlineWidth = new Setting<>("Outline Width", 1.0f, 0.1f, 3.0f, 0.1f)
             .setDescription("The width of the outline")
             .setParentSetting(box)
             .setVisibility(outline::getValue);
 
-    private final Setting<Color> boxColour = new Setting<>("Box Colour", new Color(185, 17, 255, 130))
+    public static Setting<Color> boxColour = new Setting<>("Box Colour", new Color(185, 17, 255, 130))
             .setDescription("The colour of the box at the end of the line")
             .setVisibility(() -> fill.getValue() || outline.getValue())
             .setParentSetting(box);
 
-    private final Setting<Boolean> bow = new Setting<>("Bow", true)
+    public static Setting<Boolean> bow = new Setting<>("Bow", true)
             .setDescription("Draw the trajectory of the bow");
 
-    private final Setting<Boolean> snowball = new Setting<>("Snowball", true)
+    public static Setting<Boolean> snowball = new Setting<>("Snowball", true)
             .setDescription("Draw the trajectory of snowballs");
 
-    private final Setting<Boolean> egg = new Setting<>("Egg", true)
+    public static Setting<Boolean> egg = new Setting<>("Egg", true)
             .setDescription("Draw the trajectory of eggs");
 
-    private final Setting<Boolean> exp = new Setting<>("EXP", true)
+    public static Setting<Boolean> exp = new Setting<>("EXP", true)
             .setDescription("Draw the trajectory of EXP bottles");
 
-    private final Setting<Boolean> potion = new Setting<>("Potion", true)
+    public static Setting<Boolean> potion = new Setting<>("Potion", true)
             .setDescription("Draw the trajectory of splash potions");
 
     public Trajectories() {
         super("Trajectories", Category.RENDER, "Shows where projectiles will land");
-        this.addSettings(line, box, bow, snowball, egg, exp, potion);
+
+        INSTANCE = this;
     }
 
     @Override

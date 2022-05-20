@@ -12,12 +12,15 @@ import me.wolfsurge.cerauno.listener.Listener;
  */
 public class ViewClip extends Module {
 
-    private final Setting<Double> distance = new Setting<>("Distance", 10.0, 1.0, 20.0, 0.1)
+    public static ViewClip INSTANCE;
+
+    public static Setting<Double> distance = new Setting<>("Distance", 10.0, 1.0, 20.0, 0.1)
             .setDescription("How far your camera is from your body");
 
     public ViewClip() {
         super("ViewClip", Category.RENDER, "Lets your third person view clip to the world");
-        this.addSettings(distance);
+
+        INSTANCE = this;
     }
 
     @Listener

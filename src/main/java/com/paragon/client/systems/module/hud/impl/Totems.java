@@ -8,8 +8,12 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Totems extends HUDModule {
 
+    public static Totems INSTANCE;
+
     public Totems() {
         super("Totems", "Displays the amount of totems in your inventory");
+
+        INSTANCE = this;
     }
 
     @Override

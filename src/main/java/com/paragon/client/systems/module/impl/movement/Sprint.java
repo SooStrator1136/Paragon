@@ -11,16 +11,19 @@ import com.paragon.client.systems.module.setting.Setting;
  */
 public class Sprint extends Module {
 
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.LEGIT)
+    public static Sprint INSTANCE;
+
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.LEGIT)
             .setDescription("The mode to sprint in");
 
-    private final Setting<Boolean> onlyWhenMoving = new Setting<>("When Moving", true)
+    public static Setting<Boolean> onlyWhenMoving = new Setting<>("When Moving", true)
             .setDescription("Only omni sprint when actually moving")
             .setVisibility(() -> mode.getValue().equals(Mode.OMNI));
 
     public Sprint() {
         super("Sprint", Category.MOVEMENT, "Automatically sprint");
-        this.addSettings(mode, onlyWhenMoving);
+
+        INSTANCE = this;
     }
 
     @Override

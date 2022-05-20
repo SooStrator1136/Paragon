@@ -9,15 +9,18 @@ import com.paragon.client.systems.module.setting.Setting;
  */
 public class RotationLock extends Module {
 
-    private final Setting<Float> yaw = new Setting<>("Yaw", 0f, -180f, 180f, 1f)
+    public static RotationLock INSTANCE;
+
+    public static Setting<Float> yaw = new Setting<>("Yaw", 0f, -180f, 180f, 1f)
             .setDescription("The yaw to lock to");
 
-    private final Setting<Float> pitch = new Setting<>("Pitch", 0f, -180f, 180f, 1f)
+    public static Setting<Float> pitch = new Setting<>("Pitch", 0f, -180f, 180f, 1f)
             .setDescription("The pitch to lock to");
 
     public RotationLock() {
         super("RotationLock", Category.MISC, "Locks your rotation");
-        this.addSettings(yaw, pitch);
+
+        INSTANCE = this;
     }
 
     @Override

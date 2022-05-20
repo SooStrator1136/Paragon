@@ -8,8 +8,12 @@ import com.paragon.client.systems.module.hud.HUDEditorGUI;
 
 public class HUD extends Module implements TextRenderer {
 
+    public static HUD INSTANCE;
+
     public HUD() {
         super("HUD", Category.HUD, "Render the client's HUD on screen");
+
+        INSTANCE = this;
     }
 
     @Override

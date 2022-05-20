@@ -11,12 +11,15 @@ import com.paragon.client.systems.module.setting.Setting;
  */
 public class TimerModule extends Module {
 
-    private final Setting<Float> timer = new Setting<>("Timer Speed", 1.25f, 0.01f, 20f, 0.01f)
+    public static TimerModule INSTANCE;
+
+    public static Setting<Float> timer = new Setting<>("Timer Speed", 1.25f, 0.01f, 20f, 0.01f)
             .setDescription("How much to multiply the timer speed by");
 
     public TimerModule() {
         super("Timer", Category.MISC, "Modifies how long each tick takes");
-        this.addSettings(timer);
+
+        INSTANCE = this;
     }
 
     @Override

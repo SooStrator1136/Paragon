@@ -12,15 +12,18 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class ChatModifications extends Module {
 
-    private final Setting<Boolean> coloured = new Setting<>("Coloured", false)
+    public static ChatModifications INSTANCE;
+
+    public static Setting<Boolean> coloured = new Setting<>("Coloured", false)
             .setDescription("Adds a '>' before the message");
 
-    private final Setting<Boolean> suffix = new Setting<>("Suffix", true)
+    public static Setting<Boolean> suffix = new Setting<>("Suffix", true)
             .setDescription("Adds a Paragon suffix to the end of the message");
 
     public ChatModifications() {
         super("ChatModifications", Category.MISC, "Changes the way you send messages");
-        this.addSettings(coloured, suffix);
+
+        INSTANCE = this;
     }
 
     @SubscribeEvent

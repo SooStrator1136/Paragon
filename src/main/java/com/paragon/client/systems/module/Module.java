@@ -50,8 +50,22 @@ public class Module extends Feature implements Wrapper {
             this.enabled = true;
         }
 
-        addSettings(keyCode);
-        addSettings(visible);
+        Arrays.stream(getClass().getDeclaredFields()).filter(field -> Setting.class.isAssignableFrom(field.getType())).forEach(field -> {
+            field.setAccessible(true);
+
+            try {
+                Setting<?> setting = (Setting<?>) field.get(this);
+
+                if (setting != null && setting.getParentSetting() == null) {
+                    settings.add(setting);
+                }
+            } catch (IllegalAccessException | IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        });
+
+        this.settings.add(this.visible);
+        this.settings.add(this.keyCode);
     }
 
     public Module(String name, Category category, String description, int keyBind) {
@@ -62,20 +76,24 @@ public class Module extends Feature implements Wrapper {
             this.enabled = true;
         }
 
-        this.keyCode.getValue().set(keyBind);
-        addSettings(keyCode);
-        addSettings(visible);
-    }
+        Arrays.stream(getClass().getDeclaredFields()).filter(field -> Setting.class.isAssignableFrom(field.getType())).forEach(field -> {
+            field.setAccessible(true);
 
-    /**
-     * Add settings to the module
-     *
-     * @param settings An undefined amount of settings to add
-     */
-    public void addSettings(Setting<?>... settings) {
-        this.settings.addAll(Arrays.asList(settings)); // Add settings
-        this.settings.sort(Comparator.comparingInt(s -> s == visible ? 1 : 0)); // Make visible be second to last
-        this.settings.sort(Comparator.comparingInt(s -> s == keyCode ? 1 : 0)); // Make keybind be last
+            try {
+                Setting<?> setting = (Setting<?>) field.get(this);
+
+                if (setting != null && setting.getParentSetting() == null) {
+                    settings.add(setting);
+                }
+            } catch (IllegalAccessException | IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        });
+
+        this.settings.add(this.visible);
+        this.settings.add(this.keyCode);
+
+        this.keyCode.getValue().set(keyBind);
     }
 
     public void onEnable() {

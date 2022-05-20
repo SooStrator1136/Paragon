@@ -15,15 +15,18 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class OnDeath extends Module {
 
-    private final Setting<Boolean> printCoords = new Setting<>("Print Coords", true)
+    public static OnDeath INSTANCE;
+
+    public static Setting<Boolean> printCoords = new Setting<>("Print Coords", true)
             .setDescription("Prints your death coordinates in chat (client-side only)");
 
-    private final Setting<Boolean> respawn = new Setting<>("Respawn", true)
+    public static Setting<Boolean> respawn = new Setting<>("Respawn", true)
             .setDescription("Respawns you after death");
 
     public OnDeath() {
         super("OnDeath", Category.MISC, "Do certain actions when you die");
-        this.addSettings(printCoords, respawn);
+
+        INSTANCE = this;
     }
 
     @SubscribeEvent

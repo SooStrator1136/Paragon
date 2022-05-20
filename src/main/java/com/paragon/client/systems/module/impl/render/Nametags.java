@@ -37,33 +37,47 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Nametags extends Module implements TextRenderer {
 
+    public static Nametags INSTANCE;
+
     // Render settings
-    private final Setting<Boolean> health = new Setting<>("Health", true)
+    public static Setting<Boolean> health = new Setting<>("Health", true)
             .setDescription("Render the player's health");
 
-    private final Setting<Boolean> ping = new Setting<>("Ping", true)
+    public static Setting<Boolean> ping = new Setting<>("Ping", true)
             .setDescription("Render the player's ping");
 
-    private final Setting<Boolean> pops = new Setting<>("Pops", true)
+    public static Setting<Boolean> pops = new Setting<>("Pops", true)
             .setDescription("Render the player's totem pop count");
 
-    private final Setting<Boolean> armour = new Setting<>("Armour", true)
+    public static Setting<Boolean> armour = new Setting<>("Armour", true)
             .setDescription("Render the player's armour");
 
-    private final Setting<Boolean> armourDurability = new Setting<>("Durability", true)
+    public static Setting<Boolean> armourDurability = new Setting<>("Durability", true)
             .setDescription("Render the player's armour durability")
             .setParentSetting(armour);
 
     // Scaling
-    private final Setting<Float> scaleFactor = new Setting<>("Scale", 0.2f, 0.1f, 1f, 0.1f)
+    public static Setting<Float> scaleFactor = new Setting<>("Scale", 0.2f, 0.1f, 1f, 0.1f)
             .setDescription("The scale of the nametag");
 
-    private final Setting<Boolean> distanceScale = new Setting<>("Distance Scale", true)
+    public static Setting<Boolean> distanceScale = new Setting<>("Distance Scale", true)
             .setDescription("Scale the nametag based on your distance from the player");
+
+    public static Setting<Boolean> outline = new Setting<>("Outline", true)
+            .setDescription("Render the nametag outline");
+
+    public static Setting<Float> outlineWidth = new Setting<>("Width", 0.5f, 0.1f, 2f, 0.01f)
+            .setDescription("The width of the outline")
+            .setParentSetting(outline);
+
+    public static Setting<Color> outlineColour = new Setting<>("Colour", new Color(185, 17, 255))
+            .setDescription("The colour of the outline")
+            .setParentSetting(outline);
 
     public Nametags() {
         super("Nametags", Category.RENDER, "Draws nametags above players");
-        this.addSettings(health, ping, pops, armour, scaleFactor, distanceScale);
+
+        INSTANCE = this;
     }
 
     @Override
@@ -104,7 +118,7 @@ public class Nametags extends Module implements TextRenderer {
 
             // Disable depth so we can see the nametag through walls
             GlStateManager.disableDepth();
-            GlStateManager.enableBlend();
+            //GlStateManager.enableBlend();
 
             StringBuilder stringBuilder = new StringBuilder(player.getName());
 
@@ -114,7 +128,7 @@ public class Nametags extends Module implements TextRenderer {
 
             if (ping.getValue() && mc.getConnection() != null) {
                 if (mc.getConnection().getPlayerInfo(player.getUniqueID()) != null) {
-                    stringBuilder.append(" ").append(getPingColour(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime())).append(String.valueOf(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime()));
+                    stringBuilder.append(" ").append(getPingColour(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime())).append(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime());
                 }
             }
 
@@ -130,7 +144,11 @@ public class Nametags extends Module implements TextRenderer {
 
             // Draw background
             RenderUtil.drawRect(0, 0, width, getFontHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), 0x90000000);
-            RenderUtil.drawBorder(0, 0, width, getFontHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), 0.5f, -1);
+
+            // Draw border
+            if (outline.getValue()) {
+                RenderUtil.drawBorder(0, 0, width, getFontHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), outlineWidth.getValue(), outlineColour.getValue().getRGB());
+            }
 
             // Render string
             renderText(stringBuilder.toString(), 2, 2, -1);

@@ -22,10 +22,12 @@ import org.lwjgl.input.Mouse;
  */
 public class MiddleClick extends Module {
 
-    private final Setting<Boolean> friend = new Setting<>("Friend", true)
+    public static MiddleClick INSTANCE;
+
+    public static Setting<Boolean> friend = new Setting<>("Friend", true)
             .setDescription("Add a friend when you middle click on an player");
 
-    private final Setting<Boolean> pearl = new Setting<>("Pearl", true)
+    public static Setting<Boolean> pearl = new Setting<>("Pearl", true)
             .setDescription("Throw an ender pearl when you miss an entity");
 
     // To prevent excessive spam
@@ -33,7 +35,8 @@ public class MiddleClick extends Module {
 
     public MiddleClick() {
         super("MiddleClick", Category.MISC, "Allows you to perform actions when you middle click");
-        this.addSettings(friend, pearl);
+
+        INSTANCE = this;
     }
 
     @SubscribeEvent

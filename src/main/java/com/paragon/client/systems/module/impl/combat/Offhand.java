@@ -23,58 +23,60 @@ import java.util.stream.Collectors;
  */
 public class Offhand extends Module {
 
+    public static Offhand INSTANCE;
+
     // Swap settings
-    private final Setting<ItemMode> priority = new Setting<>("Priority", ItemMode.CRYSTAL)
+    public static final Setting<ItemMode> priority = new Setting<>("Priority", ItemMode.CRYSTAL)
             .setDescription("The item we most want to use in the offhand");
 
-    private final Setting<ItemMode> secondary = new Setting<>("Secondary", ItemMode.TOTEM)
+    public static final Setting<ItemMode> secondary = new Setting<>("Secondary", ItemMode.TOTEM)
             .setDescription("The item we want to use if we cannot find the main item");
 
-    private final Setting<Boolean> gappleSword = new Setting<>("Gapple Sword", true)
+    public static final Setting<Boolean> gappleSword = new Setting<>("Gapple Sword", true)
             .setDescription("Swap to a gapple when wielding a sword");
 
     // Safety settings
-    private final Setting<Boolean> safety = new Setting<>("Safety", true)
+    public static final Setting<Boolean> safety = new Setting<>("Safety", true)
             .setDescription("Switch to a totem in certain scenarios");
 
-    private final Setting<Boolean> elytra = new Setting<>("Elytra", true)
+    public static final Setting<Boolean> elytra = new Setting<>("Elytra", true)
             .setDescription("Switch to a totem when elytra flying")
             .setParentSetting(safety);
 
-    private final Setting<Boolean> falling = new Setting<>("Falling", true)
+    public static final Setting<Boolean> falling = new Setting<>("Falling", true)
             .setDescription("Switch to a totem when you will take fall damage")
             .setParentSetting(safety);
 
-    private final Setting<Boolean> crystal = new Setting<>("Crystal", true)
+    public static final Setting<Boolean> crystal = new Setting<>("Crystal", true)
             .setDescription("Switch to a totem when you can die from a crystal")
             .setParentSetting(safety);
 
-    private final Setting<Boolean> health = new Setting<>("Health", true)
+    public static final Setting<Boolean> health = new Setting<>("Health", true)
             .setDescription("Switch to a totem when you are below a value")
             .setParentSetting(safety);
 
-    private final Setting<Float> healthValue = new Setting<>("Health Value", 10f, 0f, 20f, 1f)
+    public static final Setting<Float> healthValue = new Setting<>("Health Value", 10f, 0f, 20f, 1f)
             .setDescription("The value we want to switch to a totem when you are below")
             .setParentSetting(safety)
             .setVisibility(health::getValue);
 
-    private final Setting<Boolean> lava = new Setting<>("Lava", true)
+    public static final Setting<Boolean> lava = new Setting<>("Lava", true)
             .setDescription("Switch to a totem when you are in lava")
             .setParentSetting(safety);
 
-    private final Setting<Boolean> fire = new Setting<>("Fire", false)
+    public static final Setting<Boolean> fire = new Setting<>("Fire", false)
             .setDescription("Switch to a totem when you are on fire")
             .setParentSetting(safety);
 
     // Delay
-    private final Setting<Double> delay = new Setting<>("Delay", 0D, 0D, 200D, 1D)
+    public static final Setting<Double> delay = new Setting<>("Delay", 0D, 0D, 200D, 1D)
             .setDescription("The delay between switching items");
 
     // Bypass settings
-    private final Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
+    public static final Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
             .setDescription("Spoof opening your inventory");
 
-    private final Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
+    public static final Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
             .setDescription("Cancel the motion of the player when switching items");
 
     // The timer to determine when to switch
@@ -82,7 +84,8 @@ public class Offhand extends Module {
 
     public Offhand() {
         super("Offhand", Category.COMBAT, "Manages the item in your offhand");
-        this.addSettings(priority, secondary, gappleSword, safety, delay, inventorySpoof, cancelMotion);
+
+        INSTANCE = this;
     }
 
     @Override

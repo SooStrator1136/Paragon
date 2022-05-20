@@ -19,58 +19,60 @@ import java.util.ArrayList;
  */
 public class HoleESP extends Module {
 
+    public static HoleESP INSTANCE;
+
     // Hole filters and colours
-    private final Setting<Boolean> obsidian = new Setting<>("Obsidian", true)
+    public static Setting<Boolean> obsidian = new Setting<>("Obsidian", true)
             .setDescription("Highlight obsidian holes");
 
-    private final Setting<Color> obsidianColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.RED, 130))
+    public static Setting<Color> obsidianColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.RED, 130))
             .setDescription("Colour of obsidian holes")
             .setParentSetting(obsidian);
 
-    private final Setting<Boolean> mixed = new Setting<>("Mixed", true)
+    public static Setting<Boolean> mixed = new Setting<>("Mixed", true)
             .setDescription("Highlight mixed holes (holes that are a mix of obsidian and bedrock)");
 
-    private final Setting<Color> mixedColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.ORANGE, 130))
+    public static Setting<Color> mixedColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.ORANGE, 130))
             .setDescription("The colour for mixed holes")
             .setParentSetting(mixed);
 
-    private final Setting<Boolean> bedrock = new Setting<>("Bedrock", true)
+    public static Setting<Boolean> bedrock = new Setting<>("Bedrock", true)
             .setDescription("Highlight bedrock holes");
 
-    private final Setting<Color> bedrockColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.GREEN, 130))
+    public static Setting<Color> bedrockColour = new Setting<>("Colour", ColourUtil.integrateAlpha(Color.GREEN, 130))
             .setDescription("The colour for bedrock holes")
             .setParentSetting(bedrock);
 
-    private final Setting<Float> range = new Setting<>("Range", 5f, 2f, 20f, 1f)
+    public static Setting<Float> range = new Setting<>("Range", 5f, 2f, 20f, 1f)
             .setDescription("The range to search for holes");
 
     // Render settings
-    private final Setting<Boolean> fill = new Setting<>("Fill", true)
+    public static Setting<Boolean> fill = new Setting<>("Fill", true)
             .setDescription("Fill the holes ;)");
 
-    private final Setting<Float> fillHeight = new Setting<>("Height", 0f, 0f, 2f, 0.01f)
+    public static Setting<Float> fillHeight = new Setting<>("Height", 0f, 0f, 2f, 0.01f)
             .setDescription("How tall the fill is")
             .setParentSetting(fill);
 
-    private final Setting<Boolean> outline = new Setting<>("Outline", true)
+    public static Setting<Boolean> outline = new Setting<>("Outline", true)
             .setDescription("Outline the hole");
 
-    private final Setting<Float> outlineWidth = new Setting<>("Width", 1f, 1f, 3f, 1f)
+    public static Setting<Float> outlineWidth = new Setting<>("Width", 1f, 1f, 3f, 1f)
             .setDescription("The width of the outlines")
             .setParentSetting(outline);
 
-    private final Setting<Float> outlineHeight = new Setting<>("Height", 0f, 0f, 2f, 0.01f)
+    public static Setting<Float> outlineHeight = new Setting<>("Height", 0f, 0f, 2f, 0.01f)
             .setDescription("How tall the outline is")
             .setParentSetting(outline);
 
-    private final Setting<Boolean> glow = new Setting<>("Gradient", true)
+    public static Setting<Boolean> glow = new Setting<>("Gradient", true)
             .setDescription("Renders a glow effect above the box");
 
-    private final Setting<Float> glowHeight = new Setting<>("Height", 1f, 0f, 2f, 0.01f)
+    public static Setting<Float> glowHeight = new Setting<>("Height", 1f, 0f, 2f, 0.01f)
             .setDescription("How tall the glow is")
             .setParentSetting(glow);
 
-    private final Setting<Boolean> hideCurrent = new Setting<>("Hide Current", false)
+    public static Setting<Boolean> hideCurrent = new Setting<>("Hide Current", false)
             .setDescription("Doesn't render the hole if you are standing in it");
 
     // List of holes to render
@@ -78,7 +80,8 @@ public class HoleESP extends Module {
 
     public HoleESP() {
         super("HoleESP", Category.RENDER, "Highlights holes to stand in when crystalling");
-        this.addSettings(obsidian, mixed, bedrock, range, fill, outline, glow, hideCurrent);
+
+        INSTANCE = this;
     }
 
     @Override

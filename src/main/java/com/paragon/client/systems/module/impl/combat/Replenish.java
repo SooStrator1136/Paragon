@@ -12,16 +12,16 @@ import net.minecraft.item.ItemStack;
  */
 public class Replenish extends Module {
 
-    // General
-    private final Setting<Float> percent = new Setting<>("Percent", 50f, 1f, 100f, 1f)
-            .setDescription("The point at which to refill");
+    public static Replenish INSTANCE;
 
-    private final Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
-            .setDescription("Spoof opening your inventory");
+    // General
+    public static Setting<Float> percent = new Setting<>("Percent", 50f, 1f, 100f, 1f)
+            .setDescription("The point at which to refill");
 
     public Replenish() {
         super("Replenish", Category.COMBAT, "Automatically refills the item you are holding");
-        this.addSettings(percent);
+
+        INSTANCE = this;
     }
 
     @Override

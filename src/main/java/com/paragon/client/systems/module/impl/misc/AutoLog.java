@@ -10,18 +10,21 @@ import net.minecraft.client.gui.GuiMainMenu;
  */
 public class AutoLog extends Module {
 
-    private final Setting<DisconnectMode> logMode = new Setting<>("Log Mode", DisconnectMode.DISCONNECT)
+    public static AutoLog INSTANCE;
+
+    public static Setting<DisconnectMode> logMode = new Setting<>("Log Mode", DisconnectMode.DISCONNECT)
             .setDescription("How to log you out of the server");
 
-    private final Setting<Float> health = new Setting<>("Health", 6f, 1f, 20f, 1f)
+    public static Setting<Float> health = new Setting<>("Health", 6f, 1f, 20f, 1f)
             .setDescription("The health to log you out at");
 
-    private final Setting<Boolean> autoDisable = new Setting<>("Auto Disable", true)
+    public static Setting<Boolean> autoDisable = new Setting<>("Auto Disable", true)
             .setDescription("Disables the module after logging you out");
 
     public AutoLog() {
         super("AutoLog", Category.MISC, "Automatically logs you out when you reach a certain health");
-        this.addSettings(logMode, health, autoDisable);
+
+        INSTANCE = this;
     }
 
     @Override

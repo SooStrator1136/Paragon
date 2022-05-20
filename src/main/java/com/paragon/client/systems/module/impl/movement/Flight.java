@@ -6,12 +6,15 @@ import com.paragon.client.systems.module.setting.Setting;
 
 public class Flight extends Module {
 
-    private final Setting<Float> flySpeed = new Setting<>("Fly Speed", 0.05f, 0.01f, 0.1f, 0.01f)
+    public static Flight INSTANCE;
+
+    public static Setting<Float> flySpeed = new Setting<>("Fly Speed", 0.05f, 0.01f, 0.1f, 0.01f)
             .setDescription("How fast you fly");
 
     public Flight() {
         super("Flight", Category.MOVEMENT, "Allows you to fly in survival mode");
-        this.addSettings(flySpeed);
+
+        INSTANCE = this;
     }
 
     @Override

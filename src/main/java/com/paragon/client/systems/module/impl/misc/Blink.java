@@ -18,22 +18,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Blink extends Module {
 
+    public static Blink INSTANCE;
+
     // General
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.PACKETS_QUEUED)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.PACKETS_QUEUED)
             .setDescription("When to send queued packets");
 
     // Packet queue flush settings
-    private final Setting<Double> queueLength = new Setting<>("Queue Length", 50D, 1D, 1000D, 1D)
+    public static Setting<Double> queueLength = new Setting<>("Queue Length", 50D, 1D, 1000D, 1D)
             .setDescription("The size of the queue to start sending packets")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.PACKETS_QUEUED));
 
-    private final Setting<Double> delay = new Setting<>("Delay", 4D, 0.1D, 10D, 0.1D)
+    public static Setting<Double> delay = new Setting<>("Delay", 4D, 0.1D, 10D, 0.1D)
             .setDescription("The delay between sending packets in seconds")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.DELAY));
 
-    private final Setting<Double> distance = new Setting<>("Distance", 10D, 1D, 100D, 0.1D)
+    public static Setting<Double> distance = new Setting<>("Distance", 10D, 1D, 100D, 0.1D)
             .setDescription("The distance to the fake player to start sending packets")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.DISTANCE));
@@ -45,7 +47,8 @@ public class Blink extends Module {
 
     public Blink() {
         super("Blink", Category.MISC, "Cancels sending packets for a length of time");
-        this.addSettings(mode);
+
+        INSTANCE = this;
     }
 
     @Override

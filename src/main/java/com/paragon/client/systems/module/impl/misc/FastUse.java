@@ -18,27 +18,30 @@ import java.util.Random;
  */
 public class FastUse extends Module {
 
+    public static FastUse INSTANCE;
+
     // Options
-    private final Setting<Boolean> xp = new Setting<>("XP Bottles", true)
+    public static Setting<Boolean> xp = new Setting<>("XP Bottles", true)
             .setDescription("Fast use XP bottles");
 
-    private final Setting<Boolean> rotate = new Setting<>("Rotate", true)
+    public static Setting<Boolean> rotate = new Setting<>("Rotate", true)
             .setDescription("Rotate your player when using XP bottles")
             .setParentSetting(xp);
 
-    private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
+    public static Setting<Boolean> crystals = new Setting<>("Crystals", true)
             .setDescription("Place crystals fast");
 
-    private final Setting<Boolean> randomPause = new Setting<>("Random Pause", true)
+    public static Setting<Boolean> randomPause = new Setting<>("Random Pause", true)
             .setDescription("Randomly pauses to try and prevent you from being kicked");
 
-    private final Setting<Float> randomChance = new Setting<>("Chance", 50f, 2f, 100f, 1f)
+    public static Setting<Float> randomChance = new Setting<>("Chance", 50f, 2f, 100f, 1f)
             .setDescription("The chance to pause")
             .setParentSetting(randomPause);
 
     public FastUse() {
         super("FastUse", Category.MISC, "Allows you to use items quicker than you would be able to in vanilla");
-        this.addSettings(xp, crystals, randomPause);
+
+        INSTANCE = this;
     }
 
     @Override

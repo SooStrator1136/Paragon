@@ -12,12 +12,15 @@ import net.minecraft.client.settings.KeyBinding;
  */
 public class AutoWalk extends Module {
 
-    private final Setting<Direction> direction = new Setting<>("Direction", Direction.FORWARD)
+    public static AutoWalk INSTANCE;
+
+    public static Setting<Direction> direction = new Setting<>("Direction", Direction.FORWARD)
             .setDescription("The direction to walk in");
 
     public AutoWalk() {
         super("AutoWalk", Category.MISC, "Makes you constantly walk");
-        this.addSettings(direction);
+
+        INSTANCE = this;
     }
 
     @Override

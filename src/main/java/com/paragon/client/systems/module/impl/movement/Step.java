@@ -14,18 +14,21 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
  */
 public class Step extends Module {
 
+    public static Step INSTANCE;
+
     // Step mode
-    private final Setting<Mode> mode = new Setting<>("Mode", Mode.PACKET)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.PACKET)
             .setDescription("What mode to use");
 
     // Vanilla step height
-    private final Setting<Float> stepHeight = new Setting<>("Step Height", 1.5f, 0.5f, 2.5f, 0.5f)
+    public static Setting<Float> stepHeight = new Setting<>("Step Height", 1.5f, 0.5f, 2.5f, 0.5f)
             .setDescription("How high to step up")
             .setVisibility(() -> mode.getValue().equals(Mode.VANILLA));
 
     public Step() {
         super("Step", Category.MOVEMENT, "Lets you instantly step up blocks");
-        this.addSettings(mode, stepHeight);
+
+        INSTANCE = this;
     }
 
     @Override

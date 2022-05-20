@@ -18,40 +18,43 @@ import java.awt.*;
  */
 public class Tracers extends Module {
 
-    private final Setting<Boolean> passive = new Setting<>("Passives", true)
+    public static Tracers INSTANCE;
+
+    public static Setting<Boolean> passive = new Setting<>("Passives", true)
             .setDescription("Draws lines to passive entities");
 
-    private final Setting<Color> passiveColour = new Setting<>("Passive Colour", new Color(0, 255, 0, 180))
+    public static Setting<Color> passiveColour = new Setting<>("Passive Colour", new Color(0, 255, 0, 180))
             .setDescription("The colour to render the passive tracers in")
             .setParentSetting(passive);
 
-    private final Setting<Boolean> mobs = new Setting<>("Mobs", true)
+    public static Setting<Boolean> mobs = new Setting<>("Mobs", true)
             .setDescription("Draws lines to monsters");
 
-    private final Setting<Color> mobColour = new Setting<>("Mob Colour", new Color(255, 0, 0, 180))
+    public static Setting<Color> mobColour = new Setting<>("Mob Colour", new Color(255, 0, 0, 180))
             .setDescription("The colour to render the mob tracers in")
             .setParentSetting(mobs);
 
-    private final Setting<Boolean> players = new Setting<>("Players", true)
+    public static Setting<Boolean> players = new Setting<>("Players", true)
             .setDescription("Draws lines to players");
 
-    private final Setting<Color> playerColour = new Setting<>("Player Colour", new Color(255, 255, 255, 180))
+    public static Setting<Color> playerColour = new Setting<>("Player Colour", new Color(255, 255, 255, 180))
             .setDescription("The colour to render the player tracers in")
             .setParentSetting(players);
 
-    private final Setting<Boolean> crystals = new Setting<>("Crystals", true)
+    public static Setting<Boolean> crystals = new Setting<>("Crystals", true)
             .setDescription("Draws lines to ender crystals");
 
-    private final Setting<Color> crystalColour = new Setting<>("Crystal Colour", new Color(200, 0, 200, 180))
+    public static Setting<Color> crystalColour = new Setting<>("Crystal Colour", new Color(200, 0, 200, 180))
             .setDescription("The colour to render the ender crystal tracers in")
             .setParentSetting(crystals);
 
-    private final Setting<Float> lineWidth = new Setting<>("Line Width", 0.5f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("Line Width", 0.5f, 0.1f, 2f, 0.1f)
             .setDescription("How thick to render the lines");
 
     public Tracers() {
         super("Tracers", Category.RENDER, "Draws lines to entities in the world");
-        this.addSettings(passive, mobs, players, crystals, lineWidth);
+
+        INSTANCE = this;
     }
 
     @SubscribeEvent

@@ -16,24 +16,27 @@ import net.minecraft.network.play.server.SPacketExplosion;
  */
 public class Velocity extends Module {
 
-    private final Setting<Boolean> velocityPacket = new Setting<>("Velocity Packet", true)
+    public static Velocity INSTANCE;
+
+    public static Setting<Boolean> velocityPacket = new Setting<>("Velocity Packet", true)
             .setDescription("Cancels or modifies the velocity packet");
 
-    private final Setting<Boolean> explosions = new Setting<>("Explosions", true)
+    public static Setting<Boolean> explosions = new Setting<>("Explosions", true)
             .setDescription("Cancels or modifies the explosion knockback");
 
-    private final Setting<Float> horizontal = new Setting<>("Horizontal", 0f, 0f, 100f, 1f)
+    public static Setting<Float> horizontal = new Setting<>("Horizontal", 0f, 0f, 100f, 1f)
             .setDescription("The horizontal modifier");
 
-    private final Setting<Float> vertical = new Setting<>("Vertical", 0f, 0f, 100f, 1f)
+    public static Setting<Float> vertical = new Setting<>("Vertical", 0f, 0f, 100f, 1f)
             .setDescription("The vertical modifier");
 
-    private final Setting<Boolean> noPush = new Setting<>("NoPush", true)
+    public static Setting<Boolean> noPush = new Setting<>("NoPush", true)
             .setDescription("Prevents the player from being pushed by entities");
 
     public Velocity() {
         super("Velocity", Category.MOVEMENT, "Stops crystals and mobs from causing you knockback");
-        this.addSettings(velocityPacket, explosions, horizontal, vertical, noPush);
+
+        INSTANCE = this;
     }
 
     @Listener

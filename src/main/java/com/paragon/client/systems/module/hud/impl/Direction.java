@@ -8,10 +8,13 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Direction extends HUDModule {
 
+    public static Direction INSTANCE;
+
     public Direction() {
         super("Direction", "Displays what direction you are facing");
-    }
 
+        INSTANCE = this;
+    }
 
     @Override
     public void render() {

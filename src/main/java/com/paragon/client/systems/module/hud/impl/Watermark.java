@@ -12,12 +12,15 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Watermark extends HUDModule {
 
-    private final Setting<Display> display = new Setting<>("Display", Display.TEXT)
+    public static Watermark INSTANCE;
+
+    public static Setting<Display> display = new Setting<>("Display", Display.TEXT)
             .setDescription("The type of watermark to display");
 
     public Watermark() {
         super("Watermark", "Renders the client's name on screen");
-        this.addSettings(display);
+
+        INSTANCE = this;
     }
 
     @Override

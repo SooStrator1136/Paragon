@@ -29,32 +29,34 @@ import java.util.Map;
  */
 public class Surround extends Module {
 
+    public static Surround INSTANCE;
+
     // General settings
-    private final Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
+    public static Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
             .setDescription("When to automatically disable the module");
 
-    private final Setting<Double> blocksPerTick = new Setting<>("Blocks Per Tick", 4D, 1D, 10D, 1D)
+    public static Setting<Double> blocksPerTick = new Setting<>("Blocks Per Tick", 4D, 1D, 10D, 1D)
             .setDescription("The maximum amount of blocks to be placed per tick");
 
-    private final Setting<Center> center = new Setting<>("Center", Center.MOTION)
+    public static Setting<Center> center = new Setting<>("Center", Center.MOTION)
             .setDescription("Center the player on the block when enabled");
 
-    private final Setting<Air> air = new Setting<>("Air", Air.SUPPORT)
+    public static Setting<Air> air = new Setting<>("Air", Air.SUPPORT)
             .setDescription("Place blocks beneath where we are placing");
 
     // Rotate settings
-    private final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
+    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
             .setDescription("How to rotate the player");
 
-    private final Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+    public static Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
             .setDescription("Rotate the player back to their original rotation")
             .setParentSetting(rotate);
 
     // Render
-    private final Setting<Boolean> render = new Setting<>("Render", true)
+    public static Setting<Boolean> render = new Setting<>("Render", true)
             .setDescription("Render a highlight on the positions we need to place blocks at");
 
-    private final Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255, 130))
+    public static Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255, 130))
             .setDescription("The colour of the highlight")
             .setParentSetting(render);
 
@@ -63,7 +65,8 @@ public class Surround extends Module {
 
     public Surround() {
         super("Surround", Category.COMBAT, "Places obsidian around you to protect you from crystals");
-        this.addSettings(disable, blocksPerTick, center, air, rotate, render);
+
+        INSTANCE = this;
     }
 
     @Override
