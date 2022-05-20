@@ -26,7 +26,7 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Boolean> panelHeaderSeparator = new Setting<>("Header Separator", false)
+    public static Setting<Boolean> panelHeaderSeparator = new Setting<>("Header Separator", true)
             .setDescription("Draw a separator between the header and the module buttons")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
@@ -36,7 +36,7 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Float> cornerRadius = new Setting<>("Corner Radius", 5f, 1f, 7f, 1f)
+    public static Setting<Float> cornerRadius = new Setting<>("Corner Radius", 1f, 1f, 7f, 1f)
             .setDescription("The radius of the corners")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
@@ -46,11 +46,12 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
+    public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.EXPO_IN_OUT)
             .setDescription("The easing type of the animation")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
+    // Window settings
     public static Setting<Boolean> scrollClamp = new Setting<>("Scroll Clamp", false)
             .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
             .setParentSetting(style)

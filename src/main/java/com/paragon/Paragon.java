@@ -64,6 +64,10 @@ public class Paragon {
         storageManager = new StorageManager();
 
         moduleManager = new ModuleManager();
+
+        // Load config
+        getStorageManager().loadModules("current");
+
         commandManager = new CommandManager();
 
         eventParser = new EventParser();

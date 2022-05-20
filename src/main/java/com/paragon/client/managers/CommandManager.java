@@ -3,6 +3,7 @@ package com.paragon.client.managers;
 import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.command.Command;
+import com.paragon.client.systems.command.impl.ConfigCommand;
 import com.paragon.client.systems.command.impl.HelpCommand;
 import com.paragon.client.systems.command.impl.SocialCommand;
 import com.paragon.client.systems.command.impl.SyntaxCommand;
@@ -28,6 +29,7 @@ public class CommandManager implements Wrapper {
     public CommandManager() {
         MinecraftForge.EVENT_BUS.register(this);
 
+        commands.add(new ConfigCommand());
         commands.add(new HelpCommand());
         commands.add(new SocialCommand());
         commands.add(new SyntaxCommand());

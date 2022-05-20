@@ -7,8 +7,12 @@ import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class HUDEditorGUI extends GuiScreen {
+
+    private boolean draggingComponent;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -31,17 +35,27 @@ public class HUDEditorGUI extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        Collections.reverse(Paragon.INSTANCE.getModuleManager().getModules());
+
         Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
-            if (hudModule.isEnabled()) {
+            if (hudModule.isEnabled() && !draggingComponent) {
                 hudModule.mouseClicked(mouseX, mouseY, mouseButton);
+
+                if (hudModule.isDragging()) {
+                    draggingComponent = true;
+                }
             }
         });
+
+        Collections.reverse(Paragon.INSTANCE.getModuleManager().getModules());
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
+        draggingComponent = false;
+
         Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
             if (hudModule.isEnabled()) {
                 hudModule.mouseReleased(mouseX, mouseY, state);

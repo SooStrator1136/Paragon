@@ -30,7 +30,7 @@ public class ChatModifications extends Module {
         }
 
         if (coloured.getValue()) {
-            event.setMessage(">" + event.getMessage());
+            event.setMessage("> " + event.getMessage());
         }
 
         if (suffix.getValue()) {

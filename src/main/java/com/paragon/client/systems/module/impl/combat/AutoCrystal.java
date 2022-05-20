@@ -683,7 +683,7 @@ public class AutoCrystal extends Module {
 
             // Rotate back to our original rotation
             if (!explodeRotate.getValue().equals(Rotate.NONE) && explodeRotateBack.getValue()) {
-                Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getValue(), RotationPriority.HIGH);
+                Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getValue(), RotationPriority.HIGHEST);
 
                 // Send rotation
                 Paragon.INSTANCE.getRotationManager().addRotation(rotation);
@@ -789,7 +789,7 @@ public class AutoCrystal extends Module {
         // Check we want to rotate back
         if (!placeRotate.getValue().equals(Rotate.NONE) && placeRotateBack.getValue()) {
             // Rotate back
-            Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getValue(), RotationPriority.HIGH);
+            Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getValue(), RotationPriority.HIGHEST);
             Paragon.INSTANCE.getRotationManager().addRotation(rotation);
         }
 

@@ -16,8 +16,8 @@ public class Inventory extends HUDModule {
 
     @Override
     public void render() {
-        RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), 0x90000000);
-        RenderUtil.drawBorder(getX(), getY(), getWidth(), getHeight(), 1, Colours.mainColour.getValue().getRGB());
+        RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight() - 4, 0x90000000);
+        RenderUtil.drawBorder(getX(), getY(), getWidth(), getHeight() - 4, 1, Colours.mainColour.getValue().getRGB());
 
         float x = 0;
         float y = 0;
@@ -43,6 +43,6 @@ public class Inventory extends HUDModule {
 
     @Override
     public float getHeight() {
-        return 18 * 3;
+        return 18 * 3 + 4;
     }
 }

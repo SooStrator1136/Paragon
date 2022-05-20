@@ -49,12 +49,15 @@ public class FastUse extends Module {
 
         // Check we want to set the delay timer to 0
         if (xp.getValue() && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) || crystals.getValue() && InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-
             Random random = new Random();
 
             if (randomPause.getValue() && random.nextInt(randomChance.getValue().intValue()) == 1) {
                 ((IMinecraft) mc).setRightClickDelayTimer(4);
                 return;
+            }
+
+            if (InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE)) {
+                mc.player.xpCooldown = 0;
             }
 
             ((IMinecraft) mc).setRightClickDelayTimer(0);

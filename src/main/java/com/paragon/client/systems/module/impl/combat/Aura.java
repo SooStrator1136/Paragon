@@ -113,6 +113,7 @@ public class Aura extends Module {
 
                 // Check we want to attack
                 switch (when.getValue()) {
+                    case SILENT_SWITCH:
                     case SWITCH:
                         // If we aren't holding a sword, switch to it
                         if (!InventoryUtil.isHoldingSword()) {
@@ -163,7 +164,7 @@ public class Aura extends Module {
                 }
 
                 // Switch back to the old slot
-                if (oldSlot != mc.player.inventory.currentItem) {
+                if (oldSlot != mc.player.inventory.currentItem && when.getValue().equals(When.SILENT_SWITCH)) {
                     InventoryUtil.switchToSlot(oldSlot, false);
                 }
             }

@@ -9,46 +9,42 @@ import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RotationManager implements Wrapper {
 
-    private final ArrayList<Rotation> rotationsQueue = new ArrayList<>();
+    private final CopyOnWriteArrayList<Rotation> rotationsQueue = new CopyOnWriteArrayList<>();
 
     public RotationManager() {
+        MinecraftForge.EVENT_BUS.register(this);
         Paragon.INSTANCE.getEventBus().register(this);
     }
 
-    @Listener
-    public void onPacketSent(PacketEvent.PreSend preSend) {
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent event) {
         if (nullCheck()) {
+            rotationsQueue.clear();
             return;
         }
 
-        if (preSend.getPacket() instanceof CPacketPlayer.Rotation) {
-            if (!rotationsQueue.isEmpty()) {
-                preSend.cancel();
+        rotationsQueue.sort(Comparator.comparing(rotation -> rotation.getPriority().getPriority()));
 
-                rotationsQueue.sort(Comparator.comparing(rotation -> rotation.getPriority().getPriority()));
+        for (Rotation rotation : rotationsQueue) {
+            switch (rotation.getRotate()) {
+                case LEGIT:
+                    mc.player.rotationYaw = rotation.getYaw();
+                    mc.player.rotationYawHead = rotation.getYaw();
+                    mc.player.rotationPitch = rotation.getPitch();
+                    break;
 
-                CPacketPlayer packet = (CPacketPlayer.Rotation) preSend.getPacket();
-
-                ((ICPacketPlayer) preSend.getPacket()).setYaw(rotationsQueue.get(0).getYaw());
-                ((ICPacketPlayer) preSend.getPacket()).setPitch(rotationsQueue.get(0).getPitch());
-
-                if (rotationsQueue.get(0).getRotate().equals(Rotate.LEGIT)) {
-                    mc.player.rotationYaw = rotationsQueue.get(0).getYaw();
-                    mc.player.rotationYawHead = rotationsQueue.get(0).getYaw();
-                    mc.player.rotationPitch = rotationsQueue.get(0).getPitch();
-                }
-
-                rotationsQueue.remove(0);
-
-                mc.player.connection.sendPacket(packet);
+                case PACKET:
+                    mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rotation.getYaw(), rotation.getPitch(), mc.player.onGround));
+                    break;
             }
         }
+
+        rotationsQueue.clear();
     }
 
     public void addRotation(Rotation rotation) {

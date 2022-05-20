@@ -230,10 +230,10 @@ public class Shader extends Module {
 
             mc.entityRenderer.enableLightmap();
 
+            mc.entityRenderer.setupOverlayRendering();
+
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
-
-            mc.entityRenderer.setupOverlayRendering();
         }
     }
 

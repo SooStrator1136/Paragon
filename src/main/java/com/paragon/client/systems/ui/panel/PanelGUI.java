@@ -11,6 +11,7 @@ import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -102,9 +103,7 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
 
     @Override
     public void onGuiClosed() {
-        Paragon.INSTANCE.getModuleManager().getModules().forEach(module -> {
-            Paragon.INSTANCE.getStorageManager().saveModuleConfiguration(module);
-        });
+        Paragon.INSTANCE.getStorageManager().saveModules("current");
     }
 
     public void scrollPanels() {

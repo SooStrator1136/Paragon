@@ -63,7 +63,7 @@ public class ElytraFlight extends Module {
             .setDescription("How fast to fall");
 
     // Takeoff settings
-    private final Setting<Boolean> takeOff = new Setting<>("Takeoff", true)
+    private final Setting<Boolean> takeOff = new Setting<>("Takeoff", false)
             .setDescription("Automatically take off when you enable the module");
 
     private final Setting<Float> takeOffTimer = new Setting<>("Timer", 0.2f, 0.1f, 1f, 0.1f)

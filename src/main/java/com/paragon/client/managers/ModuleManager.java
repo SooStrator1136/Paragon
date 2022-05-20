@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,11 +121,6 @@ public class ModuleManager {
                 new Totems(),
                 new Watermark()
         );
-
-        modules.forEach(module -> {
-            // Load config
-            Paragon.INSTANCE.getStorageManager().loadModuleConfiguration(module);
-        });
     }
 
     @SubscribeEvent

@@ -6,6 +6,7 @@ import com.paragon.client.systems.ui.window.impl.Window;
 import com.paragon.client.systems.ui.window.impl.windows.ModuleWindow;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.io.File;
 import java.io.IOException;
 
 public class WindowGUI extends GuiScreen {
@@ -50,9 +51,7 @@ public class WindowGUI extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
-        Paragon.INSTANCE.getModuleManager().getModules().forEach(module -> {
-            Paragon.INSTANCE.getStorageManager().saveModuleConfiguration(module);
-        });
+        Paragon.INSTANCE.getStorageManager().saveModules("current");
     }
 
     @Override
