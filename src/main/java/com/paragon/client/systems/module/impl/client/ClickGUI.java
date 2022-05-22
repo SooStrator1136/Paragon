@@ -6,6 +6,8 @@ import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Animation;
+import com.paragon.client.systems.ui.animation.Easing;
+import com.paragon.client.systems.ui.panel.PanelGUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -46,7 +48,7 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.EXPO_IN_OUT)
+    public static Setting<Easing> easing = new Setting<>("Easing", Easing.EXPO_IN_OUT)
             .setDescription("The easing type of the animation")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
@@ -79,7 +81,7 @@ public class ClickGUI extends Module {
                 return Paragon.INSTANCE.getWindowGUI();
 
             case PANEL:
-                return Paragon.INSTANCE.getPanelGUI();
+                return new PanelGUI(); //Paragon.INSTANCE.getPanelGUI();
         }
 
         return Paragon.INSTANCE.getPanelGUI();

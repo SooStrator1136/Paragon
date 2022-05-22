@@ -4,6 +4,8 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.hud.impl.Notifications;
 import com.paragon.client.systems.ui.animation.Animation;
+import com.paragon.client.systems.ui.animation.Easing;
+
 import static org.lwjgl.opengl.GL11.glScalef;
 
 public class Notification implements TextRenderer {
@@ -25,7 +27,7 @@ public class Notification implements TextRenderer {
 
     public void render() {
         if (!started) {
-            animation = new Animation(500, false, () -> Animation.Easing.EXPO_IN_OUT);
+            animation = new Animation(200, false, () -> Easing.EXPO_IN_OUT);
             animation.setState(true);
             started = true;
         }

@@ -3,6 +3,7 @@ package com.paragon.client.systems.ui.menu;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.ui.animation.Animation;
+import com.paragon.client.systems.ui.animation.Easing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -12,7 +13,7 @@ import java.awt.*;
 
 public class ParagonButton extends GuiButton implements TextRenderer {
 
-    private final Animation animation = new Animation(300, false, () -> Animation.Easing.EXPO_IN_OUT);
+    private final Animation animation = new Animation(300, false, () -> Easing.EXPO_IN_OUT);
 
     public ParagonButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
         super(buttonId, x, y, widthIn, heightIn, buttonText);

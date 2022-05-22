@@ -5,10 +5,9 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.ui.animation.Animation;
+import com.paragon.client.systems.ui.animation.Easing;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.ResourceLocation;
-
-import java.awt.*;
 import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.glScalef;
@@ -19,7 +18,7 @@ import static org.lwjgl.opengl.GL11.glScalef;
 public class ParagonMenu extends GuiScreen implements TextRenderer {
 
     // Credits expand animation
-    private final Animation creditsAnimation = new Animation(500, false, () -> Animation.Easing.EXPO_IN_OUT);
+    private final Animation creditsAnimation = new Animation(500, false, () -> Easing.EXPO_IN_OUT);
     // Whether the credits are displayed or not
     private boolean creditsExpanded = false;
 

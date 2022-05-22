@@ -2,12 +2,13 @@ package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.ColourUtil;
+import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.setting.Setting;
-import com.paragon.client.systems.ui.animation.Animation;
+import com.paragon.client.systems.ui.animation.Easing;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
 
@@ -27,8 +28,11 @@ public class ArrayListHUD extends Module implements TextRenderer {
     public static Setting<ArrayListColour> arrayListColour = new Setting<>("Colour", ArrayListColour.RAINBOW_WAVE)
             .setDescription("What colour to render the modules in");
 
-    public static Setting<Animation.Easing> easing = new Setting<>("Easing", Animation.Easing.LINEAR)
+    public static Setting<Easing> easing = new Setting<>("Easing", Easing.EXPO_IN_OUT)
             .setDescription("The easing type of the animation");
+
+    public static Setting<Boolean> background = new Setting<>("Background", false)
+            .setDescription("Render a background behind the text");
 
     public ArrayListHUD() {
         super("ArrayList", Category.HUD, "Renders the enabled modules on screen");
@@ -39,7 +43,6 @@ public class ArrayListHUD extends Module implements TextRenderer {
     @Override
     public void onRender2D() {
         ScaledResolution sr = new ScaledResolution(mc);
-        float y = sr.getScaledHeight() - 11;
 
         int index = 0;
 
@@ -55,8 +58,16 @@ public class ArrayListHUD extends Module implements TextRenderer {
         modules.sort(Comparator.comparingDouble(module -> getStringWidth(module.getName() + module.getArrayListInfo())));
         Collections.reverse(modules);
 
+        float y = sr.getScaledHeight() - 11;
         for (Module module : modules) {
-            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), (float) (sr.getScaledWidth() - (((getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor()) + 2)), y, arrayListColour.getValue().getColour(index * 150));
+            float x = (float) (sr.getScaledWidth() - (getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor());
+
+            if (background.getValue()) {
+                RenderUtil.drawRect((float) (x - (2.5f * module.animation.getAnimationFactor())), y, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, 11, 0x90000000);
+            }
+
+            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), x, y + 1.5f, arrayListColour.getValue().getColour(index * 150));
+
             y -= 11 * module.animation.getAnimationFactor();
             index++;
         }

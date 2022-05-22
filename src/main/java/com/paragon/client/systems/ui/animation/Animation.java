@@ -25,7 +25,7 @@ public class Animation {
     private boolean initialState;
 
     // The easing to apply
-    private Supplier<Easing> easing;
+    private final Supplier<Easing> easing;
 
     public Animation(int time, boolean initialState, Supplier<Easing> easing) {
         this.time = time;
@@ -45,9 +45,9 @@ public class Animation {
      */
     public double getAnimationFactor() {
         if (currentState.equals(State.EXPANDING)) {
-            return easing.get().apply(MathHelper.clamp((System.currentTimeMillis() - currentStateStart) / time, 0, 1));
+            return MathHelper.clamp(easing.get().ease((System.currentTimeMillis() - currentStateStart) / time), 0, 1);
         } else if (currentState.equals(State.RETRACTING)) {
-            return easing.get().apply(MathHelper.clamp(1 - (System.currentTimeMillis() - currentStateStart) / time, 0, 1));
+            return MathHelper.clamp(easing.get().ease(1 - (System.currentTimeMillis() - currentStateStart) / time), 0, 1);
         }
 
         return previousState.equals(State.EXPANDING) ? 1 : 0;
@@ -79,25 +79,6 @@ public class Animation {
         currentStateStart = System.currentTimeMillis();
     }
 
-    /**
-     * Sets the state (no animation)
-     *
-     * @param expand Expand or retract
-     */
-    public void setStateHard(boolean expand) {
-        if (expand) {
-            currentState = State.EXPANDING;
-            initialState = true;
-
-            // reset time
-            currentStateStart = System.currentTimeMillis();
-        } else {
-            previousState = State.RETRACTING;
-            currentState = State.RETRACTING;
-            initialState = false;
-        }
-    }
-
     public enum State {
 
         /**
@@ -114,32 +95,5 @@ public class Animation {
          * No animation
          */
         STATIC
-    }
-
-    public enum Easing {
-        /**
-         * No easing -> A - B
-         */
-        LINEAR((input) -> input),
-
-        /**
-         * Speed increases till halfway, then decreases
-         */
-        EXPO_IN_OUT((input) -> input < 0.5 ? 4 * input * input * input : 1 - Math.pow(-2 * input + 2, 3) / 2),
-
-        /**
-         * Speed increases till halfway, then decreases, but slightly less 'steep' than EXPO_IN_OUT
-         */
-        CUBIC_IN_OUT((input) -> input < 0.5 ? 4 * input * input * input : 1 - Math.pow(-2 * input + 2, 3) / 2);
-
-        private final Function<Double, Double> function;
-
-        Easing(Function<Double, Double> function) {
-            this.function = function;
-        }
-
-        public double apply(double input) {
-            return function.apply(input);
-        }
     }
 }
