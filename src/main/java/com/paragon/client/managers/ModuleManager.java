@@ -67,6 +67,7 @@ public class ModuleManager {
                 new ChinaHat(),
                 new ESP(),
                 new Fullbright(),
+                new HitColour(),
                 new HoleESP(),
                 new Nametags(),
                 new NoRender(),
