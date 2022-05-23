@@ -3,15 +3,21 @@ package com.paragon.asm.mixins.render.entity;
 import com.google.common.base.Predicate;
 import com.paragon.Paragon;
 import com.paragon.api.event.player.RaytraceEntityEvent;
+import com.paragon.api.event.render.AspectEvent;
 import com.paragon.api.event.render.entity.CameraClipEvent;
+import com.paragon.api.event.render.entity.HurtcamEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
+import org.lwjgl.util.glu.Project;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +59,52 @@ public abstract class MixinEntityRenderer {
         }
 
         return distance;
+    }
+
+    @Inject(method = "hurtCameraEffect", at = @At("HEAD"), cancellable = true)
+    public void onHurtcamEffect(float partialTicks, CallbackInfo ci) {
+        HurtcamEvent event = new HurtcamEvent();
+        Paragon.INSTANCE.getEventBus().post(event);
+
+        if (event.isCancelled()) {
+            ci.cancel();
+        }
+    }
+
+    @Redirect(method = "setupCameraTransform", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V"))
+    public void onSetupCameraTransform(float fov, float aspect, float z1, float z2) {
+        AspectEvent event = new AspectEvent();
+        Paragon.INSTANCE.getEventBus().post(event);
+
+        if (event.isCancelled()) {
+            Project.gluPerspective(fov, event.getRatio(), z1, z2);
+        } else {
+            Project.gluPerspective(fov, (float) Minecraft.getMinecraft().displayWidth / Minecraft.getMinecraft().displayHeight, z1, z2);
+        }
+    }
+
+    @Redirect(method = "renderWorldPass", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V"))
+    public void onRenderWorldPass(float fov, float aspect, float z1, float z2) {
+        AspectEvent event = new AspectEvent();
+        Paragon.INSTANCE.getEventBus().post(event);
+
+        if (event.isCancelled()) {
+            Project.gluPerspective(fov, event.getRatio(), z1, z2);
+        } else {
+            Project.gluPerspective(fov, (float) Minecraft.getMinecraft().displayWidth / Minecraft.getMinecraft().displayHeight, z1, z2);
+        }
+    }
+
+    @Redirect(method = "renderCloudsCheck", at = @At(value="INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V"))
+    public void onRenderCloudsCheck(float fov, float aspect, float z1, float z2) {
+        AspectEvent event = new AspectEvent();
+        Paragon.INSTANCE.getEventBus().post(event);
+
+        if (event.isCancelled()) {
+            Project.gluPerspective(fov, event.getRatio(), z1, z2);
+        } else {
+            Project.gluPerspective(fov, (float) Minecraft.getMinecraft().displayWidth / Minecraft.getMinecraft().displayHeight, z1, z2);
+        }
     }
 
 }

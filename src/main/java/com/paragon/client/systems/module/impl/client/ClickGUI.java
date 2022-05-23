@@ -81,7 +81,7 @@ public class ClickGUI extends Module {
                 return Paragon.INSTANCE.getWindowGUI();
 
             case PANEL:
-                return new PanelGUI(); //Paragon.INSTANCE.getPanelGUI();
+                return Paragon.INSTANCE.getPanelGUI();
         }
 
         return Paragon.INSTANCE.getPanelGUI();

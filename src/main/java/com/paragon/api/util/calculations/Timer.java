@@ -8,7 +8,7 @@ public class Timer {
         this.milliseconds = -1;
     }
 
-    public boolean hasMSPassed(Double time) {
+    public boolean hasMSPassed(double time) {
         return System.currentTimeMillis() - milliseconds > time;
     }
 

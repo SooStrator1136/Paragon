@@ -58,10 +58,6 @@ public class AutoCrystal extends Module {
     public static Setting<Order> order = new Setting<>("Order", Order.PLACE_EXPLODE)
             .setDescription("The order of operations to perform");
 
-    public static Setting<Boolean> grouped = new Setting<>("Grouped", true)
-            .setDescription("Immediately attack or place the crystal after calculating")
-            .setParentSetting(order);
-
     public static Setting<Timing> timing = new Setting<>("Timing", Timing.LINEAR)
             .setDescription("When to perform actions");
 
@@ -357,31 +353,13 @@ public class AutoCrystal extends Module {
 
     @Override
     public void onTick() {
-        if (nullCheck() || mc.currentScreen instanceof GuiIngameMenu) {
+        if (nullCheck()) {
             return;
         }
 
-        if (pause.getValue()) {
-            // Pause if we are at a low health
-            if (pauseHealth.getValue() && EntityUtil.getEntityHealth(mc.player) <= pauseHealthValue.getValue()) {
-                return;
-            }
-
-            // Pause if we are eating
-            if (pauseEating.getValue() && PlayerUtil.isPlayerEating()) {
-                return;
-            }
-
-            // Pause if we are drinking
-            if (pauseDrinking.getValue() && PlayerUtil.isPlayerDrinking()) {
-                return;
-            }
-
-            Random random = new Random();
-
-            if (randomPause.getValue() && random.nextInt(randomChance.getValue().intValue()) == 1) {
-                return;
-            }
+        // Pause if we are supposed to
+        if (pause.getValue() && (pauseHealth.getValue() && EntityUtil.getEntityHealth(mc.player) <= pauseHealthValue.getValue() || pauseEating.getValue() && PlayerUtil.isPlayerEating() || pauseDrinking.getValue() && PlayerUtil.isPlayerDrinking() || randomPause.getValue() && new Random().nextInt(randomChance.getValue().intValue()) == 1)) {
+            return;
         }
 
         // Set our target
@@ -406,7 +384,7 @@ public class AutoCrystal extends Module {
                     // Find placement
                     currentPlacement = findBestPosition(overriding);
 
-                    if (currentPlacement != null && grouped.getValue()) {
+                    if (currentPlacement != null) {
                         placeSearchedPosition();
                     }
                 }
@@ -415,17 +393,9 @@ public class AutoCrystal extends Module {
                     // Find crystal
                     currentCrystal = findBestCrystal(overriding);
 
-                    if (currentCrystal != null && grouped.getValue()) {
+                    if (currentCrystal != null) {
                         explodeSearchedCrystal();
                     }
-                }
-
-                if (currentPlacement != null && !grouped.getValue()) {
-                    placeSearchedPosition();
-                }
-
-                if (currentCrystal != null && !grouped.getValue()) {
-                    explodeSearchedCrystal();
                 }
 
                 break;
@@ -449,14 +419,6 @@ public class AutoCrystal extends Module {
                     }
                 }
 
-                if (currentCrystal != null && !grouped.getValue()) {
-                    explodeSearchedCrystal();
-                }
-
-                if (currentPlacement != null && !grouped.getValue()) {
-                    placeSearchedPosition();
-                }
-
                 break;
 
         }
@@ -466,24 +428,21 @@ public class AutoCrystal extends Module {
 
     @Override
     public void onRender3D() {
-        // Check we want to render
-        if (render.getValue()) {
-            // Check we have a placement and placing is enabled
-            if (currentPlacement != null && place.getValue()) {
-                // Render fill
-                if (renderMode.getValue().equals(Render.FILL) || renderMode.getValue().equals(Render.BOTH)) {
-                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderColour.getValue());
-                }
+        // Render highlight
+        if (render.getValue() && currentPlacement != null && place.getValue()) {
+            // Render fill
+            if (renderMode.getValue().equals(Render.FILL) || renderMode.getValue().equals(Render.BOTH)) {
+                RenderUtil.drawFilledBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderColour.getValue());
+            }
 
-                // Render outline
-                if (renderMode.getValue().equals(Render.OUTLINE) || renderMode.getValue().equals(Render.BOTH)) {
-                    RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderOutlineWidth.getValue(), renderOutlineColour.getValue());
-                }
+            // Render outline
+            if (renderMode.getValue().equals(Render.OUTLINE) || renderMode.getValue().equals(Render.BOTH)) {
+                RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(currentPlacement.getPosition()), renderOutlineWidth.getValue(), renderOutlineColour.getValue());
+            }
 
-                // Render damage nametag
-                if (renderDamageNametag.getValue()) {
-                    RenderUtil.drawNametagText("[" + (int) currentPlacement.getTargetDamage() + ", " + (int) currentPlacement.getSelfDamage() + "]", new Vec3d(currentPlacement.getPosition().getX() + 0.5, currentPlacement.getPosition().getY() + 0.5, currentPlacement.getPosition().getZ() + 0.5), -1);
-                }
+            // Render damage nametag
+            if (renderDamageNametag.getValue()) {
+                RenderUtil.drawNametagText("[" + (int) currentPlacement.getTargetDamage() + ", " + (int) currentPlacement.getSelfDamage() + "]", new Vec3d(currentPlacement.getPosition().getX() + 0.5, currentPlacement.getPosition().getY() + 0.5, currentPlacement.getPosition().getZ() + 0.5), -1);
             }
         }
     }
@@ -496,7 +455,7 @@ public class AutoCrystal extends Module {
             CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
 
             // Check we are holding end crystals
-            if (mc.player.getHeldItem(packet.getHand()).getItem() == Items.END_CRYSTAL) {
+            if (mc.player.getHeldItem(packet.getHand()).getItem().equals(Items.END_CRYSTAL)) {
                 // If we can place a crystal on that block, add it to our self placed crystals list
                 selfPlacedCrystals.add(packet.getPos());
             }
@@ -511,13 +470,8 @@ public class AutoCrystal extends Module {
             if (packet.getSound().equals(SoundEvents.ENTITY_GENERIC_EXPLODE) && packet.getCategory().equals(SoundCategory.BLOCKS)) {
                 // Iterate through loaded entities
                 for (Entity entity : mc.world.loadedEntityList) {
-                    // If the entity isn't an ender crystal, ignore
-                    if (!(entity instanceof EntityEnderCrystal)) {
-                        continue;
-                    }
-
-                    // If the entity is dead, ignore
-                    if (entity.isDead) {
+                    // If the entity isn't an ender crystal, or it is dead, ignore
+                    if (!(entity instanceof EntityEnderCrystal) || entity.isDead) {
                         continue;
                     }
 
@@ -542,16 +496,11 @@ public class AutoCrystal extends Module {
         for (Entity entity : mc.world.loadedEntityList) {
             // Check it's a player that isn't us
             if (entity instanceof EntityOtherPlayerMP) {
-                // If the player is dead, ignore
-                if (entity.isDead || ((EntityOtherPlayerMP) entity).getHealth() <= 0) {
-                    continue;
-                }
-
                 // Get player
                 EntityPlayer entityPlayer = (EntityPlayer) entity;
 
-                // If it's too far away, ignore
-                if (EntityUtil.isTooFarAwayFromSelf(entityPlayer, targetRange.getValue())) {
+                // Make sure the player is a valid target
+                if (entityPlayer.isDead || entityPlayer.getHealth() <= 0 || EntityUtil.isTooFarAwayFromSelf(entityPlayer, targetRange.getValue())) {
                     continue;
                 }
 
@@ -615,13 +564,8 @@ public class AutoCrystal extends Module {
     public void explodeSearchedCrystal() {
         // Check we want to explode
         if (explode.getValue()) {
-            // Check the timer has passed the required value
-            if (!explodeTimer.hasMSPassed(explodeDelay.getValue())) {
-                return;
-            }
-
-            // AntiSuicide
-            if (currentCrystal.getSelfDamage() > EntityUtil.getEntityHealth(mc.player) && antiSuicide.getValue()) {
+            // Check we want to explode a crystal
+            if (!explodeTimer.hasMSPassed(explodeDelay.getValue()) || currentCrystal.getSelfDamage() > EntityUtil.getEntityHealth(mc.player) && antiSuicide.getValue()) {
                 return;
             }
 
@@ -629,21 +573,18 @@ public class AutoCrystal extends Module {
             int antiWeaknessSlot = mc.player.inventory.currentItem;
 
             // Check we want to apply anti weakness
-            if (!antiWeakness.getValue().equals(AntiWeakness.OFF)) {
-                // Check we have the weakness effect
-                if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
-                    // If we want to fake opening our inventory, send the opening inventory packet
-                    if (strictInventory.getValue()) {
-                        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
-                    }
+            if (!antiWeakness.getValue().equals(AntiWeakness.OFF) && mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                // If we want to fake opening our inventory, send the opening inventory packet
+                if (strictInventory.getValue()) {
+                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+                }
 
-                    // Get the best sword
-                    int hotbarSwordSlot = InventoryUtil.getItemInHotbar(Items.DIAMOND_SWORD);
+                // Get the best sword
+                int hotbarSwordSlot = InventoryUtil.getItemInHotbar(Items.DIAMOND_SWORD);
 
-                    // If we have found a sword, switch to it
-                    if (hotbarSwordSlot != -1) {
-                        InventoryUtil.switchToSlot(hotbarSwordSlot, antiWeakness.getValue().equals(AntiWeakness.SILENT));
-                    }
+                // If we have found a sword, switch to it
+                if (hotbarSwordSlot != -1) {
+                    InventoryUtil.switchToSlot(hotbarSwordSlot, antiWeakness.getValue().equals(AntiWeakness.SILENT));
                 }
             }
 
@@ -689,18 +630,15 @@ public class AutoCrystal extends Module {
             }
 
             // Check we want to switch
-            if (!antiWeakness.getValue().equals(AntiWeakness.OFF)) {
-                // Check we have weakness
-                if (mc.player.isPotionActive(MobEffects.WEAKNESS)) {
-                    // Fake opening inventory
-                    if (strictInventory.getValue()) {
-                        mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
-                    }
+            if (!antiWeakness.getValue().equals(AntiWeakness.OFF) && mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                // Fake opening inventory
+                if (strictInventory.getValue()) {
+                    mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+                }
 
-                    // Switch to slot
-                    if (antiWeaknessSlot != -1) {
-                        InventoryUtil.switchToSlot(antiWeaknessSlot, antiWeakness.getValue().equals(AntiWeakness.SILENT));
-                    }
+                // Switch to slot
+                if (antiWeaknessSlot != -1) {
+                    InventoryUtil.switchToSlot(antiWeaknessSlot, antiWeakness.getValue().equals(AntiWeakness.SILENT));
                 }
             }
 
@@ -712,13 +650,8 @@ public class AutoCrystal extends Module {
      * Places a crystal at the searched position
      */
     public void placeSearchedPosition() {
-        // Check the place timer has passed the required time
-        if (!placeTimer.hasMSPassed(placeDelay.getValue())) {
-            return;
-        }
-
-        // AntiSuicide
-        if (currentPlacement.getSelfDamage() > EntityUtil.getEntityHealth(mc.player) && antiSuicide.getValue()) {
+        // Check we want to place a crystal
+        if (!placeTimer.hasMSPassed(placeDelay.getValue()) && currentPlacement.getSelfDamage() > EntityUtil.getEntityHealth(mc.player) && antiSuicide.getValue()) {
             return;
         }
 
@@ -772,9 +705,7 @@ public class AutoCrystal extends Module {
 
             // Swing arm
             swing(placeSwing.getValue());
-        }
-
-        else if (placeHand != null) {
+        } else if (placeHand != null) {
             // Place crystal
             if (mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement.getPosition(), currentPlacement.getFacing(), new Vec3d(currentPlacement.getFacing().getDirectionVec()), mc.player.getHeldItemOffhand().getItem().equals(Items.END_CRYSTAL) ? EnumHand.OFF_HAND : placeHand).equals(EnumActionResult.SUCCESS)) {
                 // Swing arm
@@ -813,8 +744,8 @@ public class AutoCrystal extends Module {
             for (Entity entity : mc.world.loadedEntityList) {
                 // Check the entity is a crystal
                 if (entity instanceof EntityEnderCrystal && !entity.isDead) {
-                    // Check the crystal is old enough
-                    if (entity.ticksExisted < explodeTicksExisted.getValue().intValue()) {
+                    // Check the crystal is valid
+                    if (entity.ticksExisted < explodeTicksExisted.getValue().intValue() || EntityUtil.isTooFarAwayFromSelf(entity, explodeRange.getValue()) || explodeRaytrace.getValue() && !mc.player.canEntityBeSeen(entity)) {
                         continue;
                     }
 
@@ -825,18 +756,6 @@ public class AutoCrystal extends Module {
                         }
                     } else {
                         explodeLimitMap.put(entity.getEntityId(), explodeLimitMap.getOrDefault(entity.getEntityId(), 0) + 1);
-                    }
-
-                    // If it's too far away, ignore
-                    if (EntityUtil.isTooFarAwayFromSelf(entity, explodeRange.getValue())) {
-                        continue;
-                    }
-
-                    // Check we can see the crystal
-                    if (explodeRaytrace.getValue()) {
-                        if (!mc.player.canEntityBeSeen(entity)) {
-                            continue;
-                        }
                     }
 
                     // Get the crystals position as a vector
@@ -916,7 +835,7 @@ public class AutoCrystal extends Module {
         if (place.getValue()) {
             // Iterate through blocks around us
             for (BlockPos pos : BlockUtil.getSphere(placeRange.getValue(), true)) {
-                // Check we can place crystals
+                // Check we can place crystals on this block
                 if (!canPlaceCrystal(pos)) {
                     continue;
                 }
@@ -956,29 +875,17 @@ public class AutoCrystal extends Module {
                     facingVec = new Vec3d(rayTraceResult.hitVec.x - pos.getX(), rayTraceResult.hitVec.y - pos.getY(), rayTraceResult.hitVec.z - pos.getZ());
                 }
 
-                // Check we can see the position
-                if (placeRaytrace.getValue()) {
-                    if (!BlockUtil.canSeePos(pos)) {
-                        continue;
-                    }
-                }
-
                 // Create new crystal position
                 CrystalPosition crystalPosition = new CrystalPosition(pos, facing, facingVec, calculateDamage(damageVec, currentTarget), calculateDamage(damageVec, mc.player));
 
                 // Check it's below or equal to our maximum local damage requirement
-                if (crystalPosition.getSelfDamage() > placeMaxLocal.getValue()) {
-                    if (!(overriding && ignoreMaxLocal.getValue())) {
-                        continue;
-                    }
+                if (crystalPosition.getSelfDamage() > placeMaxLocal.getValue() && (!(overriding && ignoreMaxLocal.getValue()))) {
+                    continue;
                 }
 
-                // Check we aren't overriding
-                if (!overriding) {
-                    // Check it's above or equal to our minimum damage requirement
-                    if (crystalPosition.getTargetDamage() < placeMinDamage.getValue()) {
-                        continue;
-                    }
+                // Check it's above or equal to our minimum damage requirement
+                if (!overriding && crystalPosition.getTargetDamage() < placeMinDamage.getValue()) {
+                    continue;
                 }
 
                 crystalPositions.add(crystalPosition);
@@ -996,17 +903,10 @@ public class AutoCrystal extends Module {
         return null;
     }
 
-    public boolean isOverriding(EntityPlayer player) {
+    public boolean isOverriding(EntityPlayer target) {
         if (override.getValue()) {
-            if (overrideHealth.getValue()) {
-                // Get total health
-                if (EntityUtil.getEntityHealth(player) <= overrideHealthValue.getValue()) {
-                    return true;
-                }
-            }
-            
-            if (forceOverride.getValue().get() != 0) {
-                return Keyboard.isKeyDown(forceOverride.getValue().get());
+            if (overrideHealth.getValue() && EntityUtil.getEntityHealth(target) <= overrideHealthValue.getValue() || forceOverride.getValue().get() != 0 && Keyboard.isKeyDown(forceOverride.getValue().get())) {
+                return true;
             }
 
             if (overrideTotalArmour.getValue()) {
@@ -1015,7 +915,7 @@ public class AutoCrystal extends Module {
                 float lowest = 100;
 
                 // Iterate through target's armour
-                for (ItemStack armourPiece : player.getArmorInventoryList()) {
+                for (ItemStack armourPiece : target.getArmorInventoryList()) {
                     // If it is an actual piece of armour
                     if (armourPiece != null && armourPiece.getItem() != Items.AIR) {
                         // Get durability
@@ -1029,7 +929,9 @@ public class AutoCrystal extends Module {
                 }
 
                 // We are overriding if the lowest durability is less or equal to the total armour value setting
-                return lowest <= overrideTotalArmourValue.getValue();
+                if (lowest <= overrideTotalArmourValue.getValue()) {
+                    return true;
+                }
             }
         }
 
@@ -1111,18 +1013,8 @@ public class AutoCrystal extends Module {
         // Get block
         Block block = BlockUtil.getBlockAtPos(pos);
 
-        // Check the block is obsidian or bedrock
-        if (!(block.equals(Blocks.OBSIDIAN) || block.equals(Blocks.BEDROCK))) {
-            return false;
-        }
-
-        // Check the position above is an air block
-        if (!mc.world.isAirBlock(pos.up()) || !mc.world.getBlockState(pos.up(2)).getMaterial().isReplaceable()) {
-            return false;
-        }
-
-        // Check we aren't standing in the position
-        if (mc.player.getPosition().equals(pos)) {
+        // Check position is valid
+        if (!(block.equals(Blocks.OBSIDIAN) || block.equals(Blocks.BEDROCK)) || !mc.world.isAirBlock(pos.up()) || !mc.world.getBlockState(pos.up(2)).getMaterial().isReplaceable() || mc.player.getPosition().equals(pos) || placeRaytrace.getValue() && !BlockUtil.canSeePos(pos)) {
             return false;
         }
 
@@ -1146,7 +1038,7 @@ public class AutoCrystal extends Module {
      * @return The damage done to the target
      */
     public float calculateDamage(Vec3d vec, EntityLivingBase entity) {
-        float finalDamage = 1.0f;
+        float finalDamage = 0.0f;
         try {
             float doubleExplosionSize = 12.0F;
             double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) doubleExplosionSize;
@@ -1156,7 +1048,7 @@ public class AutoCrystal extends Module {
 
             int diff = mc.world.getDifficulty().getId();
             finalDamage = getBlastReduction(entity, damage * (diff == 0 ? 0 : (diff == 2 ? 1 : (diff == 1 ? 0.5f : 1.5f))), new Explosion(mc.world, null, vec.x, vec.y, vec.z, 6F, false, true));
-        } catch (NullPointerException ignored){
+        } catch (NullPointerException ignored) {
         }
 
         return finalDamage;
@@ -1179,7 +1071,7 @@ public class AutoCrystal extends Module {
             float f = MathHelper.clamp(k, 0.0F, 20.0F);
             damage *= 1.0F - f / 25.0F;
 
-            if (entity.isPotionActive(Potion.getPotionById(11))) {
+            if (entity.isPotionActive(MobEffects.WEAKNESS)) {
                 damage = damage - (damage / 4);
             }
 
@@ -1204,9 +1096,7 @@ public class AutoCrystal extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() +
-                " DMG " + (!isOverriding(currentTarget) ? "" : "[OVERRIDING] ") +
-                (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getValue()))));
+        return (currentTarget == null ? " No Target" : " " + currentTarget.getName() + " DMG " + (!isOverriding(currentTarget) ? "" : "[OVERRIDING] ") + (backlogPlacement == null ? "No Placement" : Math.round(calculateHeuristic(backlogPlacement, heuristic.getValue()))));
     }
 
     public enum Order {
