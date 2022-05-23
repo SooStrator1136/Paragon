@@ -55,7 +55,6 @@ public class Notifier extends Module {
     @Listener
     public void onTotemPop(TotemPopEvent event) {
         if (pop.getValue()) {
-            CommandManager.sendClientMessage(event.getPlayer().getName() + " has popped " + Paragon.INSTANCE.getPopManager().getPops(event.getPlayer()) + " totems!", false);
             Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Totem Pop", event.getPlayer().getName() + " has popped " + Paragon.INSTANCE.getPopManager().getPops(event.getPlayer()) + " totems!", NotificationType.INFO));
         }
     }

@@ -61,6 +61,7 @@ public class ModuleManager {
                 new Velocity(),
 
                 // Render
+                new AspectRatio(),
                 new BlockHighlight(),
                 new Breadcrumbs(),
                 new BreakESP(),

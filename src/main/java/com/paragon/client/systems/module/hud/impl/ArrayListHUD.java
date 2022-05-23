@@ -66,7 +66,7 @@ public class ArrayListHUD extends Module implements TextRenderer {
                 RenderUtil.drawRect((float) (x - (2.5f * module.animation.getAnimationFactor())), y, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, 11, 0x90000000);
             }
 
-            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), x, y + 1.5f, arrayListColour.getValue().getColour(index * 150));
+            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), x - 2, y + 1.5f, arrayListColour.getValue().getColour(index * 150));
 
             y -= 11 * module.animation.getAnimationFactor();
             index++;

@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.render;
 
+import com.paragon.api.event.render.entity.HurtcamEvent;
 import com.paragon.api.event.render.entity.RenderEatingEvent;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
@@ -37,6 +38,9 @@ public class NoRender extends Module {
 
     public static Setting<Boolean> eatingAnimation = new Setting<>("Eating animation", false)
             .setDescription("Stops rendering the eating animation");
+
+    public static Setting<Boolean> hurtcam = new Setting<>("Hurtcam", true)
+            .setDescription("Cancel rendering the hurtcam");
 
     public NoRender() {
         super("NoRender", Category.RENDER, "Cancels rendering certain things");
@@ -98,6 +102,13 @@ public class NoRender extends Module {
     @Listener
     public void onRenderEating(RenderEatingEvent event) {
         if (eatingAnimation.getValue()) {
+            event.cancel();
+        }
+    }
+
+    @Listener
+    public void onHurtcam(HurtcamEvent event) {
+        if (hurtcam.getValue()) {
             event.cancel();
         }
     }
