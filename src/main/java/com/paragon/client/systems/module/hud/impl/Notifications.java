@@ -30,6 +30,23 @@ public class Notifications extends HUDModule {
         }
 
         else {
+            if (Notifier.renderType.getValue().equals(Notifier.RenderType.DISPLAY)) {
+                float y = Notifications.INSTANCE.getY();
+
+                for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
+                    notification.render(y);
+                    y += 50 * notification.getAnimation().getAnimationFactor();
+                }
+
+                Paragon.INSTANCE.getNotificationManager().getNotifications().removeIf(Notification::hasFinishedAnimating);
+            } else if (Notifier.renderType.getValue().equals(Notifier.RenderType.CHAT)) {
+                for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
+
+                }
+            }
+        }
+
+        /* else {
             if (!Paragon.INSTANCE.getNotificationManager().getNotifications().isEmpty()) {
                 Notification notification = Paragon.INSTANCE.getNotificationManager().getNotifications().get(0);
 
@@ -45,7 +62,7 @@ public class Notifications extends HUDModule {
                     Paragon.INSTANCE.getNotificationManager().getNotifications().remove(notification);
                 }
             }
-        }
+        } */
     }
 
     @Override

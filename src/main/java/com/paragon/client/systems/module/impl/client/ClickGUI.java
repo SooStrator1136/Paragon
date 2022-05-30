@@ -5,9 +5,7 @@ import com.paragon.client.systems.module.IgnoredByNotifications;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
-import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.animation.Easing;
-import com.paragon.client.systems.ui.panel.PanelGUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 

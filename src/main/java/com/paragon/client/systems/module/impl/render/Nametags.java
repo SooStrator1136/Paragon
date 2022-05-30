@@ -111,7 +111,7 @@ public class Nametags extends Module implements TextRenderer {
             glPushMatrix();
             RenderHelper.enableStandardItemLighting();
             GlStateManager.disableLighting();
-            glTranslated(renderVec.x - renderValues[0], renderVec.y + player.height + (player.isSneaking() ? 0.05 : 0.08) - renderValues[1], renderVec.z - renderValues[2]);
+            glTranslated(renderVec.x - renderValues[0], renderVec.y + player.height + 0.1 + (player.isSneaking() ? 0.05 : 0.08) - renderValues[1], renderVec.z - renderValues[2]);
             glRotated(-mc.getRenderManager().playerViewY, 0, 1, 0);
             glRotated(mc.getRenderManager().playerViewX, (mc.gameSettings.thirdPersonView == 2) ? -1 : 1, 0, 0);
             glScaled(-scale, -scale, scale);

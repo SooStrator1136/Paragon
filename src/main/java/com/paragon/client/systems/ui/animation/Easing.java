@@ -47,17 +47,17 @@ public enum Easing {
     /**
      * Speed gradually increases
      */
-    EXPO_IN((input) -> 4 * input * input * input),
+    EXPO_IN((input) -> input == 0 ? 0 : Math.pow(2, 10 * input - 10)),
 
     /**
      * Speed gradually decreases
      */
-    EXPO_OUT((input) -> 1 - Math.pow(-2 * input + 2, 3) / 2),
+    EXPO_OUT((input) -> input == 1 ? 1 : 1 - Math.pow(2, -10 * input)),
 
     /**
      * Speed gradually increases until halfway and then decreases
      */
-    EXPO_IN_OUT((input) -> input < 0.5 ? 4 * input * input * input : 1 - Math.pow(-2 * input + 2, 3) / 2);
+    EXPO_IN_OUT((input) -> input == 0 ? 0 : input == 1 ? 1 : input < 0.5 ? Math.pow(2, 20 * input - 10) / 2 : (2 - Math.pow(2, -20 * input + 10)) / 2);
 
     // The function that calculates the easing
     private final Function<Double, Double> easeFunction;

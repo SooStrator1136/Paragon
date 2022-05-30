@@ -8,6 +8,9 @@ import com.paragon.client.systems.ui.animation.Easing;
 
 import static org.lwjgl.opengl.GL11.glScalef;
 
+/**
+ * ew.
+ */
 public class Notification implements TextRenderer {
 
     private final String title;
@@ -25,29 +28,29 @@ public class Notification implements TextRenderer {
         this.type = type;
     }
 
-    public void render() {
+    public void render(float y) {
         if (!started) {
-            animation = new Animation(200, false, () -> Easing.EXPO_IN_OUT);
+            animation = new Animation(350, false, () -> Easing.EXPO_IN_OUT);
             animation.setState(true);
             started = true;
         }
 
-        RenderUtil.startGlScissor(Notifications.INSTANCE.getX(), Notifications.INSTANCE.getY(), 300 * animation.getAnimationFactor(), 45);
+        RenderUtil.startGlScissor(Notifications.INSTANCE.getX(), y, 300, 45 * animation.getAnimationFactor());
 
-        RenderUtil.drawRect(Notifications.INSTANCE.getX(), Notifications.INSTANCE.getY(), 300, 45, 0x90000000);
+        RenderUtil.drawRect(Notifications.INSTANCE.getX(), y, 300, 45, 0x90000000);
 
         glScalef(1.5f, 1.5f, 1.5f);
         {
             float scaleFactor = 1 / 1.5f;
 
-            renderText(getTitle(), (Notifications.INSTANCE.getX() + 10) * scaleFactor, (Notifications.INSTANCE.getY() + 10) * scaleFactor, -1);
+            renderText(getTitle(), (Notifications.INSTANCE.getX() + 10) * scaleFactor, (y + 10) * scaleFactor, -1);
 
             glScalef(scaleFactor, scaleFactor, scaleFactor);
         }
 
-        renderText(message, Notifications.INSTANCE.getX() + 10, Notifications.INSTANCE.getY() + 30, -1);
+        renderText(message, Notifications.INSTANCE.getX() + 10, y + 30, -1);
 
-        RenderUtil.drawRect(Notifications.INSTANCE.getX(), Notifications.INSTANCE.getY(), 300, 1, type.getColour());
+        RenderUtil.drawRect(Notifications.INSTANCE.getX(), y, 300, 1, type.getColour());
 
         RenderUtil.endGlScissor();
 
@@ -59,7 +62,7 @@ public class Notification implements TextRenderer {
             renderTicks++;
         }
 
-        if (renderTicks == 400) {
+        if (renderTicks == 300) {
             animation.setState(false);
         }
 
@@ -75,6 +78,10 @@ public class Notification implements TextRenderer {
 
     public String getMessage() {
         return message;
+    }
+
+    public Animation getAnimation() {
+        return animation;
     }
 
 }

@@ -45,9 +45,9 @@ public class Animation {
      */
     public double getAnimationFactor() {
         if (currentState.equals(State.EXPANDING)) {
-            return MathHelper.clamp(easing.get().ease((System.currentTimeMillis() - currentStateStart) / time), 0, 1);
+            return easing.get().ease(MathHelper.clamp((System.currentTimeMillis() - currentStateStart) / time, 0, 1));
         } else if (currentState.equals(State.RETRACTING)) {
-            return MathHelper.clamp(easing.get().ease(1 - (System.currentTimeMillis() - currentStateStart) / time), 0, 1);
+            return easing.get().ease(MathHelper.clamp(1 - (System.currentTimeMillis() - currentStateStart) / time, 0, 1));
         }
 
         return previousState.equals(State.EXPANDING) ? 1 : 0;
