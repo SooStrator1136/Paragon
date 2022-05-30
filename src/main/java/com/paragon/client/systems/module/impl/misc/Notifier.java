@@ -21,9 +21,6 @@ public class Notifier extends Module {
 
     public static Notifier INSTANCE;
 
-    public static Setting<RenderType> renderType = new Setting<>("RenderType", RenderType.DISPLAY)
-            .setDescription("The way to render the notifications");
-
     public static Setting<Boolean> moduleEnabled = new Setting<>("Module Toggle", false)
             .setDescription("Notifies you when you toggle a module");
 
@@ -68,18 +65,6 @@ public class Notifier extends Module {
 
             Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Player Died", event.getEntityPlayer().getName() + " has died after popping " + event.getPops() + " totems!", NotificationType.INFO));
         }
-    }
-
-    public enum RenderType {
-        /**
-         * Displays a rect
-         */
-        DISPLAY,
-
-        /**
-         * Sends a chat message
-         */
-        CHAT
     }
 
 }

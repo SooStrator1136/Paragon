@@ -24,10 +24,6 @@ public class NotificationManager implements Wrapper {
 
     public void addNotification(Notification notification) {
         notifications.add(notification);
-
-        if (!Notifier.renderType.getValue().equals(Notifier.RenderType.CHAT)) {
-            CommandManager.sendClientMessage(notification.getMessage(), true);
-        }
     }
 
 }

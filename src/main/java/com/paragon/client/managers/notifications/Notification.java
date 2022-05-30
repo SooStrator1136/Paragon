@@ -30,12 +30,12 @@ public class Notification implements TextRenderer {
 
     public void render(float y) {
         if (!started) {
-            animation = new Animation(350, false, () -> Easing.EXPO_IN_OUT);
+            animation = new Animation(500, false, () -> Easing.EXPO_IN_OUT);
             animation.setState(true);
             started = true;
         }
 
-        RenderUtil.startGlScissor(Notifications.INSTANCE.getX(), y, 300, 45 * animation.getAnimationFactor());
+        RenderUtil.startGlScissor(Notifications.INSTANCE.getX() + (150 - (150 * animation.getAnimationFactor())), y, 300 * animation.getAnimationFactor(), 45);
 
         RenderUtil.drawRect(Notifications.INSTANCE.getX(), y, 300, 45, 0x90000000);
 

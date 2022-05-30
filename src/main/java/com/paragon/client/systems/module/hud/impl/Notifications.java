@@ -8,6 +8,7 @@ import com.paragon.client.systems.module.Constant;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.misc.Notifier;
+import com.paragon.client.systems.module.setting.Setting;
 
 import java.awt.*;
 
@@ -15,6 +16,12 @@ import java.awt.*;
 public class Notifications extends HUDModule {
 
     public static Notifications INSTANCE;
+
+    public static Setting<RenderType> renderType = new Setting<>("Render Type", RenderType.DISPLAY)
+            .setDescription("The way to render the notifications");
+
+    public static Setting<Direction> direction = new Setting<>("Direction", Direction.DOWN)
+            .setDescription("The vertical direction of the notifications");
 
     public Notifications() {
         super("Notifications", "Where the notifications will render");
@@ -30,39 +37,32 @@ public class Notifications extends HUDModule {
         }
 
         else {
-            if (Notifier.renderType.getValue().equals(Notifier.RenderType.DISPLAY)) {
+            if (renderType.getValue().equals(RenderType.DISPLAY)) {
                 float y = Notifications.INSTANCE.getY();
 
                 for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
                     notification.render(y);
-                    y += 50 * notification.getAnimation().getAnimationFactor();
+
+                    switch (direction.getValue()) {
+                        case UP:
+                            y += -50 * notification.getAnimation().getAnimationFactor();
+                            break;
+
+                        case DOWN:
+                            y += 50 * notification.getAnimation().getAnimationFactor();
+                            break;
+                    }
                 }
 
                 Paragon.INSTANCE.getNotificationManager().getNotifications().removeIf(Notification::hasFinishedAnimating);
-            } else if (Notifier.renderType.getValue().equals(Notifier.RenderType.CHAT)) {
+            } else if (renderType.getValue().equals(RenderType.CHAT)) {
                 for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
-
+                    CommandManager.sendClientMessage(notification.getMessage(), false);
                 }
+
+                Paragon.INSTANCE.getNotificationManager().getNotifications().clear();
             }
         }
-
-        /* else {
-            if (!Paragon.INSTANCE.getNotificationManager().getNotifications().isEmpty()) {
-                Notification notification = Paragon.INSTANCE.getNotificationManager().getNotifications().get(0);
-
-                if (Notifier.renderType.getValue().equals(Notifier.RenderType.DISPLAY)) {
-                    notification.render();
-
-                    if (notification.hasFinishedAnimating()) {
-                        Paragon.INSTANCE.getNotificationManager().getNotifications().remove(notification);
-                    }
-                } else if (Notifier.renderType.getValue().equals(Notifier.RenderType.CHAT)) {
-                    CommandManager.sendClientMessage(notification.getMessage(), false);
-
-                    Paragon.INSTANCE.getNotificationManager().getNotifications().remove(notification);
-                }
-            }
-        } */
     }
 
     @Override
@@ -73,5 +73,29 @@ public class Notifications extends HUDModule {
     @Override
     public float getHeight() {
         return 45;
+    }
+
+    public enum RenderType {
+        /**
+         * Displays a rect
+         */
+        DISPLAY,
+
+        /**
+         * Sends a chat message
+         */
+        CHAT
+    }
+
+    public enum Direction {
+        /**
+         * Notification Y will decrease
+         */
+        UP,
+
+        /**
+         * Notification Y will increase
+         */
+        DOWN
     }
 }
