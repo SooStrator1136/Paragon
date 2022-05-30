@@ -1,10 +1,13 @@
 package com.paragon.client.systems.ui.window;
 
 import com.paragon.Paragon;
+import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.ui.window.impl.Window;
 import com.paragon.client.systems.ui.window.impl.windows.ModuleWindow;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +27,13 @@ public class WindowGUI extends GuiScreen {
         }
 
         window.drawWindow(mouseX, mouseY);
+
+        if (ClickGUI.catgirl.getValue()) {
+            ScaledResolution sr = new ScaledResolution(mc);
+
+            mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
+            RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
+        }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

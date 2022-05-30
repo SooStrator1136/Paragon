@@ -64,6 +64,9 @@ public class ClickGUI extends Module {
     public static Setting<Boolean> pause = new Setting<>("Pause Game", false)
             .setDescription("Pause the game whilst in the GUI");
 
+    public static Setting<Boolean> catgirl = new Setting<>("Catgirl", false)
+            .setDescription("deadshot is a weeb");
+
     public ClickGUI() {
         super("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
     }

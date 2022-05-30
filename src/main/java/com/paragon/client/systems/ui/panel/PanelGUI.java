@@ -9,6 +9,8 @@ import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.io.File;
@@ -63,6 +65,13 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
             RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
             RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getValue().getRGB());
             renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
+        }
+
+        if (ClickGUI.catgirl.getValue()) {
+            ScaledResolution sr = new ScaledResolution(mc);
+
+            mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
+            RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);
