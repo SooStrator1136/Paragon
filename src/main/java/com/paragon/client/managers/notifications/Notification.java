@@ -69,7 +69,7 @@ public class Notification implements TextRenderer {
     }
 
     public boolean hasFinishedAnimating() {
-        return animation.getAnimationFactor() == 0 && reachedFirst;
+        return animation == null || animation.getAnimationFactor() == 0 && reachedFirst;
     }
 
     public String getTitle() {

@@ -79,6 +79,7 @@ public class ESP extends Module {
 
     public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour to highlight items in");
+
     // Shaders
     private final OutlineShader outlineShader = new OutlineShader();
     private Framebuffer framebuffer;

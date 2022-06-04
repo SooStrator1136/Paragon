@@ -1,18 +1,13 @@
 package com.paragon.client.managers.notifications;
 
 import com.paragon.api.util.Wrapper;
-import com.paragon.client.managers.CommandManager;
-import com.paragon.client.systems.module.impl.misc.Notifier;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class NotificationManager implements Wrapper {
 
-    private final List<Notification> notifications = new ArrayList<>();
+    private final List<Notification> notifications = new CopyOnWriteArrayList<>();
 
     public NotificationManager() {
         MinecraftForge.EVENT_BUS.register(this);

@@ -80,4 +80,40 @@ public class BlockUtil implements Wrapper {
                 false, true, false) == null;
     }
 
+    /**
+     * Checks if a block is surrounded by blocks
+     *
+     * @param pos The position
+     * @param obbyBedrock Whether to only check if the hole is obsidian or bedrock
+     * @return Whether the block is surrounded by blocks
+     */
+    public static boolean isSafeHole(BlockPos pos, boolean obbyBedrock) {
+        if (BlockUtil.getBlockAtPos(pos) != Blocks.AIR) {
+            return false;
+        }
+
+        boolean seenPosition = false;
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (facing.equals(EnumFacing.UP)) {
+                continue;
+            }
+
+            if (getBlockAtPos(pos.offset(facing)) == Blocks.AIR || getBlockAtPos(pos.offset(facing)) != Blocks.OBSIDIAN && getBlockAtPos(pos.offset(facing)) != Blocks.BEDROCK && obbyBedrock) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static EnumFacing getFacing(BlockPos pos) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (canSeePos(pos.offset(facing))) {
+                return facing;
+            }
+        }
+
+        return null;
+    }
+
 }

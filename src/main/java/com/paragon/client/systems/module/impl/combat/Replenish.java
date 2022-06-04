@@ -6,6 +6,8 @@ import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketCloseWindow;
+import net.minecraft.network.play.client.CPacketEntityAction;
 
 /**
  * @author Wolfsurge
@@ -13,6 +15,12 @@ import net.minecraft.item.ItemStack;
 public class Replenish extends Module {
 
     public static Replenish INSTANCE;
+
+    public static Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
+            .setDescription("Spoofs opening your inventory");
+
+    public static Setting<Double> stacksPerTick = new Setting<>("Stacks Per Tick", 1D, 1D, 9D, 1D)
+            .setDescription("The max amount of stacks to merge per tick");
 
     // General
     public static Setting<Float> percent = new Setting<>("Percent", 50f, 1f, 100f, 1f)
@@ -32,6 +40,10 @@ public class Replenish extends Module {
 
         // Loop through hotbar items
         for (int i = 0; i < 9; i++) {
+            if (i > stacksPerTick.getValue()) {
+                break;
+            }
+
             // Get the stack
             ItemStack stack = mc.player.inventory.getStackInSlot(i);
 
@@ -87,12 +99,20 @@ public class Replenish extends Module {
         }
 
         if (replaceSlot != -1) {
+            if (inventorySpoof.getValue()) {
+                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
+            }
+
             // Merge stacks
             mc.playerController.windowClick(0, replaceSlot, 0, ClickType.PICKUP, mc.player);
 
             mc.playerController.windowClick(0, current < 9 ? current + 36 : current, 0, ClickType.PICKUP, mc.player);
 
             mc.playerController.windowClick(0, replaceSlot, 0, ClickType.PICKUP, mc.player);
+
+            if (inventorySpoof.getValue()) {
+                mc.player.connection.sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+            }
         }
     }
 }

@@ -21,7 +21,6 @@ import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -35,7 +34,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
@@ -208,8 +206,8 @@ public class AutoCrystal extends Module {
             .setParentSetting(explode)
             .setVisibility(() -> explodeFilter.getValue().equals(ExplodeFilter.SMART) || explodeFilter.getValue().equals(ExplodeFilter.SELF_SMART));
 
-    public static Setting<SetDead> explodeSetDead = new Setting<>("Set Dead", SetDead.SOUND)
-            .setDescription("Set the crystals alive status to dead")
+    public static Setting<SetDead> explodeSync = new Setting<>("Sync", SetDead.SOUND)
+            .setDescription("Sync crystal explosions")
             .setParentSetting(explode);
 
 
@@ -462,7 +460,7 @@ public class AutoCrystal extends Module {
         }
 
         // Check it's a sound packet
-        if (event.getPacket() instanceof SPacketSoundEffect && explodeSetDead.getValue().equals(SetDead.SOUND)) {
+        if (event.getPacket() instanceof SPacketSoundEffect && explodeSync.getValue().equals(SetDead.SOUND)) {
             // Get packet
             SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
@@ -611,7 +609,7 @@ public class AutoCrystal extends Module {
             }
 
             // If we want to set the crystal to dead as soon as we attack, do that
-            if (explodeSetDead.getValue().equals(SetDead.ATTACK)) {
+            if (explodeSync.getValue().equals(SetDead.ATTACK)) {
                 currentCrystal.getCrystal().setDead();
             }
 

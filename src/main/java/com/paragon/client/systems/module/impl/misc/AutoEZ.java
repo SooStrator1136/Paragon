@@ -9,9 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Wolfsurge
@@ -24,7 +23,7 @@ public class AutoEZ extends Module {
             .setDescription("The furthest distance from the player to target");
 
     // List of targeted players
-    private final List<EntityPlayer> targeted = new ArrayList<>();
+    private final List<EntityPlayer> targeted = new CopyOnWriteArrayList<>();
 
     public AutoEZ() {
         super("AutoEZ", Category.MISC, "Automatically sends a message when you kill an opponent");
