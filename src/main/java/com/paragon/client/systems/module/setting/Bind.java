@@ -62,6 +62,14 @@ public class Bind {
     }
 
     /**
+     * Gets the button code
+     * @return The button code
+     */
+    public int getButtonCode() {
+        return buttonCode;
+    }
+
+    /**
      * Sets the button code
      * @param newCode The new button code
      */

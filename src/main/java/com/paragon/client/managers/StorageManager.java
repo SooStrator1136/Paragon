@@ -61,7 +61,7 @@ public class StorageManager {
                     if (setting.getValue() instanceof Color) {
                         jsonObject.put(setting.getName(), ((Color) setting.getValue()).getRed() + ":" + ((Color) setting.getValue()).getGreen() + ":" + ((Color) setting.getValue()).getBlue() + ":" + ((Color) setting.getValue()).getAlpha() + ":" + setting.isRainbow() + ":" + setting.getRainbowSpeed() + ":" + setting.getRainbowSaturation() + ":" + setting.isSync());
                     } else if (setting.getValue() instanceof Bind) {
-                        jsonObject.put(setting.getName(), ((Bind) setting.getValue()).getButtonName() + ":" + ((Bind) setting.getValue()).getDevice());
+                        jsonObject.put(setting.getName(), ((Bind) setting.getValue()).getButtonCode() + ":" + ((Bind) setting.getValue()).getDevice());
                     } else {
                         jsonObject.put(setting.getName(), setting.getValue());
                     }
@@ -73,7 +73,7 @@ public class StorageManager {
                             if (subsetting.getValue() instanceof Color) {
                                 jsonObject.put(subsettingName, ((Color) subsetting.getValue()).getRed() + ":" + ((Color) subsetting.getValue()).getGreen() + ":" + ((Color) subsetting.getValue()).getBlue() + ":" + ((Color) subsetting.getValue()).getAlpha() + ":" + subsetting.isRainbow() + ":" + subsetting.getRainbowSpeed() + ":" + subsetting.getRainbowSaturation() + ":" + subsetting.isSync());
                             } else if (subsetting.getValue() instanceof Bind) {
-                                jsonObject.put(subsetting.getName(), ((Bind) subsetting.getValue()).getButtonName() + ":" + ((Bind) subsetting.getValue()).getDevice());
+                                jsonObject.put(subsetting.getName(), ((Bind) subsetting.getValue()).getButtonCode() + ":" + ((Bind) subsetting.getValue()).getDevice());
                             } else {
                                 jsonObject.put(subsettingName, subsetting.getValue());
                             }

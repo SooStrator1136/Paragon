@@ -23,6 +23,7 @@ import java.util.List;
 public class CommandManager implements Wrapper {
 
     public static String prefix = "$";
+    private static String lastCommand = "";
 
     private static ArrayList<Command> commands = new ArrayList<>();
 
@@ -45,6 +46,7 @@ public class CommandManager implements Wrapper {
             for (Command command : commands) {
                 if (command.getName().equalsIgnoreCase(commandName)) {
                     command.whenCalled(Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length), fromConsole);
+                    lastCommand = prefix + message;
                     commandFound = true;
                     break;
                 }
@@ -82,6 +84,15 @@ public class CommandManager implements Wrapper {
      */
     public List<Command> getCommands() {
         return commands;
+    }
+
+    /**
+     * Gets the last command sent
+     *
+     * @return The last command sent
+     */
+    public String getLastCommand() {
+        return lastCommand;
     }
 
 }
