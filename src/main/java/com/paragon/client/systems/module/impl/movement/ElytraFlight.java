@@ -23,45 +23,45 @@ public class ElytraFlight extends Module {
             .setDescription("The mode to use");
 
     // Strict settings
-    public static Setting<Float> ascendPitch = new Setting<>("Ascend Pitch", -45f, -90f, 90f, 1f)
+    public static Setting<Float> ascendPitch = new Setting<>("AscendPitch", -45f, -90f, 90f, 1f)
             .setDescription("What value to set your pitch to when ascending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    public static Setting<Float> descendPitch = new Setting<>("Descend Pitch", 45f, -90f, 90f, 1f)
+    public static Setting<Float> descendPitch = new Setting<>("DescendPitch", 45f, -90f, 90f, 1f)
             .setDescription("What value to set your pitch to when descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    public static Setting<Boolean> lockPitch = new Setting<>("Lock Pitch", true)
+    public static Setting<Boolean> lockPitch = new Setting<>("LockPitch", true)
             .setDescription("Lock your pitch when you are not ascending or descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    public static Setting<Float> lockPitchVal = new Setting<>("Locked Pitch", 0f, -90f, 90f, 1f)
+    public static Setting<Float> lockPitchVal = new Setting<>("LockedPitch", 0f, -90f, 90f, 1f)
             .setDescription("The pitch to lock you to when you are not ascending or descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
     // Boost settings
-    public static Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
+    public static Setting<Boolean> cancelMotion = new Setting<>("CancelMotion", false)
             .setDescription("Stop motion when not moving")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.BOOST));
 
     // Global settings
-    public static Setting<Float> flySpeed = new Setting<>("Fly Speed", 1f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> flySpeed = new Setting<>("FlySpeed", 1f, 0.1f, 2f, 0.1f)
             .setDescription("The speed to fly at");
 
-    public static Setting<Float> ascend = new Setting<>("Ascend Speed", 1f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> ascend = new Setting<>("AscendSpeed", 1f, 0.1f, 2f, 0.1f)
             .setDescription("How fast to ascend")
             .setVisibility(() -> !mode.getValue().equals(Mode.BOOST));
 
-    public static Setting<Float> descend = new Setting<>("Descend Speed", 1f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> descend = new Setting<>("DescendSpeed", 1f, 0.1f, 2f, 0.1f)
             .setDescription("How fast to descend")
             .setVisibility(() -> !mode.getValue().equals(Mode.BOOST));
 
-    public static Setting<Float> fallSpeed = new Setting<>("Fall Speed", 0f, 0f, 0.1f, 0.01f)
+    public static Setting<Float> fallSpeed = new Setting<>("FallSpeed", 0f, 0f, 0.1f, 0.01f)
             .setDescription("How fast to fall");
 
     // Takeoff settings

@@ -9,7 +9,8 @@ public class EnumFormatter {
         boolean isFirst = true;
         for (char c : text.toCharArray()) {
             if (c == '_') {
-                c = ' ';
+                isFirst = true;
+                continue;
             }
 
             if (isFirst) {
@@ -17,10 +18,6 @@ public class EnumFormatter {
                 isFirst = false;
             } else {
                 formatted.append(String.valueOf(c).toLowerCase());
-            }
-
-            if (c == ' ') {
-                isFirst = true;
             }
         }
 

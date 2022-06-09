@@ -18,7 +18,7 @@ public class Velocity extends Module {
 
     public static Velocity INSTANCE;
 
-    public static Setting<Boolean> velocityPacket = new Setting<>("Velocity Packet", true)
+    public static Setting<Boolean> velocityPacket = new Setting<>("VelocityPacket", true)
             .setDescription("Cancels or modifies the velocity packet");
 
     public static Setting<Boolean> explosions = new Setting<>("Explosions", true)

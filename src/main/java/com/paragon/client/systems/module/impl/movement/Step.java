@@ -21,7 +21,7 @@ public class Step extends Module {
             .setDescription("What mode to use");
 
     // Vanilla step height
-    public static Setting<Float> stepHeight = new Setting<>("Step Height", 1.5f, 0.5f, 2.5f, 0.5f)
+    public static Setting<Float> stepHeight = new Setting<>("StepHeight", 1.5f, 0.5f, 2.5f, 0.5f)
             .setDescription("How high to step up")
             .setVisibility(() -> mode.getValue().equals(Mode.VANILLA));
 

@@ -25,7 +25,7 @@ public class Blink extends Module {
             .setDescription("When to send queued packets");
 
     // Packet queue flush settings
-    public static Setting<Double> queueLength = new Setting<>("Queue Length", 50D, 1D, 1000D, 1D)
+    public static Setting<Double> queueLength = new Setting<>("QueueLength", 50D, 1D, 1000D, 1D)
             .setDescription("The size of the queue to start sending packets")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.PACKETS_QUEUED));

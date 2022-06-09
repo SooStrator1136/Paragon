@@ -35,7 +35,7 @@ public class Surround extends Module {
     public static Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
             .setDescription("When to automatically disable the module");
 
-    public static Setting<Double> blocksPerTick = new Setting<>("Blocks Per Tick", 4D, 1D, 10D, 1D)
+    public static Setting<Double> blocksPerTick = new Setting<>("BlocksPerTick", 4D, 1D, 10D, 1D)
             .setDescription("The maximum amount of blocks to be placed per tick");
 
     public static Setting<Center> center = new Setting<>("Center", Center.MOTION)
@@ -48,7 +48,7 @@ public class Surround extends Module {
     public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
             .setDescription("How to rotate the player");
 
-    public static Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+    public static Setting<Boolean> rotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate the player back to their original rotation")
             .setParentSetting(rotate);
 

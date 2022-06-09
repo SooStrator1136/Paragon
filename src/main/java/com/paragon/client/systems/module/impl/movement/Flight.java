@@ -8,7 +8,7 @@ public class Flight extends Module {
 
     public static Flight INSTANCE;
 
-    public static Setting<Float> flySpeed = new Setting<>("Fly Speed", 0.05f, 0.01f, 0.1f, 0.01f)
+    public static Setting<Float> flySpeed = new Setting<>("FlySpeed", 0.05f, 0.01f, 0.1f, 0.01f)
             .setDescription("How fast you fly");
 
     public Flight() {

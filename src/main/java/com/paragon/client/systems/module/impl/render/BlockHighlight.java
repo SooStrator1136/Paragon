@@ -20,10 +20,10 @@ public class BlockHighlight extends Module {
 
     public static BlockHighlight INSTANCE;
 
-    public static Setting<RenderMode> renderMode = new Setting<>("Render Mode", RenderMode.BOTH)
+    public static Setting<RenderMode> renderMode = new Setting<>("RenderMode", RenderMode.BOTH)
             .setDescription("How to highlight the block");
 
-    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 1.5f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1f, 0.1f, 1.5f, 0.1f)
             .setDescription("The width of the outline")
             .setVisibility(() -> !renderMode.getValue().equals(RenderMode.FILL));
 

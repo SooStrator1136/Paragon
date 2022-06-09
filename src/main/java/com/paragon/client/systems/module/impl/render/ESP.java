@@ -63,7 +63,7 @@ public class ESP extends Module {
     public static Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
             .setDescription("How to render the entities");
 
-    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 3f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1f, 0.1f, 3f, 0.1f)
             .setDescription("How thick to render the outlines");
 
     // Outline shader

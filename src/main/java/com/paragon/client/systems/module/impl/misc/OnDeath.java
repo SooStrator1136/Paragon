@@ -17,7 +17,7 @@ public class OnDeath extends Module {
 
     public static OnDeath INSTANCE;
 
-    public static Setting<Boolean> printCoords = new Setting<>("Print Coords", true)
+    public static Setting<Boolean> printCoords = new Setting<>("PrintCoords", true)
             .setDescription("Prints your death coordinates in chat (client-side only)");
 
     public static Setting<Boolean> respawn = new Setting<>("Respawn", true)

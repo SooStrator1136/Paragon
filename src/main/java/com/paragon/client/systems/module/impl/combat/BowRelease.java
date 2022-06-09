@@ -20,11 +20,11 @@ public class BowRelease extends Module {
     public static Setting<Release> release = new Setting<>("Release", Release.TICKS)
             .setDescription("When to release the bow");
 
-    public static Setting<Float> releasePower = new Setting<>("Release Power", 3.1f, 0.1f, 4.0f, 0.1f)
+    public static Setting<Float> releasePower = new Setting<>("Power", 3.1f, 0.1f, 4.0f, 0.1f)
             .setDescription("The power the bow needs to be before releasing")
             .setVisibility(() -> release.getValue().equals(Release.POWER));
 
-    public static Setting<Float> releaseTicks = new Setting<>("Release Ticks", 3.0f, 0.0f, 60.0f, 1.0f)
+    public static Setting<Float> releaseTicks = new Setting<>("Ticks", 3.0f, 0.0f, 60.0f, 1.0f)
             .setDescription("The amount of ticks that have passed before releasing")
             .setVisibility(() -> release.getValue().equals(Release.TICKS));
 

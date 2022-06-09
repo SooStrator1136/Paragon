@@ -19,13 +19,13 @@ public class NoGlobalSounds extends Module {
     public static NoGlobalSounds INSTANCE;
 
     // Sounds to cancel
-    public static Setting<Boolean> endPortal = new Setting<>("End Portal", true)
+    public static Setting<Boolean> endPortal = new Setting<>("EndPortal", true)
             .setDescription("Disables the end portal spawn sound");
 
-    public static Setting<Boolean> witherSpawn = new Setting<>("Wither Spawn", true)
+    public static Setting<Boolean> witherSpawn = new Setting<>("WitherSpawn", true)
             .setDescription("Disables the wither spawn sound");
 
-    public static Setting<Boolean> dragonDeath = new Setting<>("Dragon Death", true)
+    public static Setting<Boolean> dragonDeath = new Setting<>("DragonDeath", true)
             .setDescription("Disables the dragon death sound");
 
     public static Setting<Boolean> lightning = new Setting<>("Lightning", true)

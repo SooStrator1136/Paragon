@@ -17,16 +17,16 @@ public class Announcer extends Module {
     public static Announcer INSTANCE;
 
     // Event settings
-    public static Setting<Double> chatTimer = new Setting<>("Chat Timer", 5D, 1D, 60D, 1D)
+    public static Setting<Double> chatTimer = new Setting<>("Delay", 5D, 1D, 60D, 1D)
             .setDescription("The amount of time in seconds between each chat message");
 
-    public static Setting<Boolean> breakBlocks = new Setting<>("Break Blocks", true)
+    public static Setting<Boolean> breakBlocks = new Setting<>("BreakBlocks", true)
             .setDescription("Announce when a block is broken");
 
-    public static Setting<Boolean> playerJoin = new Setting<>("Player Join", true)
+    public static Setting<Boolean> playerJoin = new Setting<>("PlayerJoin", true)
             .setDescription("Announce when players join the server");
 
-    public static Setting<Boolean> playerLeave = new Setting<>("Player Leave", true)
+    public static Setting<Boolean> playerLeave = new Setting<>("PlayerLeave", true)
             .setDescription("Announce when players leave the server");
 
     // Timer to determine when we should send the message

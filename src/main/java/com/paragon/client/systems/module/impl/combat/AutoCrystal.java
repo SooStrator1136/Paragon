@@ -108,7 +108,7 @@ public class AutoCrystal extends Module {
             .setDescription("Rotate to the position you are placing at")
             .setParentSetting(place);
 
-    public static Setting<Boolean> placeRotateBack = new Setting<>("Rotate Back", true)
+    public static Setting<Boolean> placeRotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate back to your original rotation")
             .setParentSetting(place)
             .setVisibility(() -> !placeRotate.getValue().equals(Rotate.NONE));
@@ -121,11 +121,11 @@ public class AutoCrystal extends Module {
             .setDescription("Place multiple crystals")
             .setParentSetting(place);
 
-    public static Setting<Float> placeMinDamage = new Setting<>("Min Damage", 4f, 0f, 36f, 1f)
+    public static Setting<Float> placeMinDamage = new Setting<>("MinDamage", 4f, 0f, 36f, 1f)
             .setDescription("The minimum amount of damage to do to the target")
             .setParentSetting(place);
 
-    public static Setting<Float> placeMaxLocal = new Setting<>("Max Local Damage", 8f, 0f, 36f, 1f)
+    public static Setting<Float> placeMaxLocal = new Setting<>("MaxLocal", 8f, 0f, 36f, 1f)
             .setDescription("The minimum amount of damage to inflict upon yourself")
             .setParentSetting(place);
 
@@ -158,12 +158,12 @@ public class AutoCrystal extends Module {
             .setDescription("Limit the amount of attacks on a crystal")
             .setParentSetting(explode);
 
-    public static Setting<Float> explodeLimitMax = new Setting<>("Limit Value", 5f, 1f, 10f, 1f)
+    public static Setting<Float> explodeLimitMax = new Setting<>("LimitValue", 5f, 1f, 10f, 1f)
             .setDescription("When to start ignoring the crystals")
             .setParentSetting(explode)
             .setVisibility(explodeMax::getValue);
 
-    public static Setting<Double> explodeTicksExisted = new Setting<>("Ticks Existed", 0D, 0D, 5D, 1D)
+    public static Setting<Double> explodeTicksExisted = new Setting<>("TicksExisted", 0D, 0D, 5D, 1D)
             .setDescription("Check the amount of ticks the crystal has existed before exploding")
             .setParentSetting(explode);
 
@@ -175,16 +175,16 @@ public class AutoCrystal extends Module {
             .setDescription("How to rotate to the crystal")
             .setParentSetting(explode);
 
-    public static Setting<Boolean> explodeRotateBack = new Setting<>("Rotate Back", true)
+    public static Setting<Boolean> explodeRotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate back to your original rotation")
             .setParentSetting(explode)
             .setVisibility(() -> !explodeRotate.getValue().equals(Rotate.NONE));
 
-    public static Setting<AntiWeakness> antiWeakness = new Setting<>("Anti Weakness", AntiWeakness.SWITCH)
+    public static Setting<AntiWeakness> antiWeakness = new Setting<>("AntiWeakness", AntiWeakness.SWITCH)
             .setDescription("If you have the weakness effect, you will still be able to explode crystals")
             .setParentSetting(explode);
 
-    public static Setting<Boolean> strictInventory = new Setting<>("Strict Inventory", true)
+    public static Setting<Boolean> strictInventory = new Setting<>("StrictInventory", true)
             .setDescription("Fake opening your inventory when you switch")
             .setParentSetting(explode)
             .setVisibility(() -> !antiWeakness.getValue().equals(AntiWeakness.OFF));
@@ -197,12 +197,12 @@ public class AutoCrystal extends Module {
             .setDescription("How to swing your hand")
             .setParentSetting(explode);
 
-    public static Setting<Float> explodeMinDamage = new Setting<>("Min Damage", 4f, 0f, 36f, 1f)
+    public static Setting<Float> explodeMinDamage = new Setting<>("MinDamage", 4f, 0f, 36f, 1f)
             .setDescription("The minimum amount of damage to do to the target")
             .setParentSetting(explode)
             .setVisibility(() -> explodeFilter.getValue().equals(ExplodeFilter.SMART) || explodeFilter.getValue().equals(ExplodeFilter.SELF_SMART));
 
-    public static Setting<Float> explodeMaxLocal = new Setting<>("Max Local Damage", 8f, 0f, 36f, 1f)
+    public static Setting<Float> explodeMaxLocal = new Setting<>("MaxLocal", 8f, 0f, 36f, 1f)
             .setParentSetting(explode)
             .setVisibility(() -> explodeFilter.getValue().equals(ExplodeFilter.SMART) || explodeFilter.getValue().equals(ExplodeFilter.SELF_SMART));
 
@@ -219,7 +219,7 @@ public class AutoCrystal extends Module {
             .setDescription("Override if the target's health is below a value")
             .setParentSetting(override);
 
-    public static Setting<Float> overrideHealthValue = new Setting<>("Override Health", 10f, 0f, 36f, 1f)
+    public static Setting<Float> overrideHealthValue = new Setting<>("OverrideHealth", 10f, 0f, 36f, 1f)
             .setDescription("If the targets health is this value or below, ignore minimum damage")
             .setParentSetting(override)
             .setVisibility(override::getValue);
@@ -228,20 +228,20 @@ public class AutoCrystal extends Module {
             .setDescription("Override if the target's total armour durability is below a certain value")
             .setParentSetting(override);
 
-    public static Setting<Float> overrideTotalArmourValue = new Setting<>("Armour Value", 10f, 0f, 100f, 1f)
+    public static Setting<Float> overrideTotalArmourValue = new Setting<>("ArmourValue", 10f, 0f, 100f, 1f)
             .setDescription("The value which we will start to override at (in %)")
             .setParentSetting(override);
 
-    public static Setting<AtomicInteger> forceOverride = new Setting<>("Force Override", new AtomicInteger(Keyboard.KEY_NONE))
+    public static Setting<AtomicInteger> forceOverride = new Setting<>("ForceOverride", new AtomicInteger(Keyboard.KEY_NONE))
             .setDescription("Force override when you press a key")
             .setParentSetting(override);
 
-    public static Setting<Boolean> ignoreMax = new Setting<>("Ignore Max", true)
+    public static Setting<Boolean> ignoreMax = new Setting<>("IgnoreMax", true)
             .setDescription("Do not ignore the limits if we are overriding")
             .setParentSetting(override)
             .setVisibility(explodeMax::getValue);
 
-    public static Setting<Boolean> ignoreMaxLocal = new Setting<>("Ignore Max Local", true)
+    public static Setting<Boolean> ignoreMaxLocal = new Setting<>("IgnoreMaxLocal", true)
             .setDescription("Place or explode even if the damage done to us is larger than the max local damage")
             .setParentSetting(override);
 
@@ -262,15 +262,15 @@ public class AutoCrystal extends Module {
             .setDescription("Pause when your health is below a specified value")
             .setParentSetting(pause);
 
-    public static Setting<Float> pauseHealthValue = new Setting<>("Health Value", 10f, 1f, 20f, 1f)
+    public static Setting<Float> pauseHealthValue = new Setting<>("HealthValue", 10f, 1f, 20f, 1f)
             .setParentSetting(pause)
             .setVisibility(pauseHealth::getValue);
 
-    public static Setting<Boolean> antiSuicide = new Setting<>("Anti Suicide", true)
+    public static Setting<Boolean> antiSuicide = new Setting<>("AntiSuicide", true)
             .setDescription("Does not explode / place the crystal if it will pop or kill you")
             .setParentSetting(pause);
 
-    public static Setting<Boolean> randomPause = new Setting<>("Random Pause", false)
+    public static Setting<Boolean> randomPause = new Setting<>("RandomPause", false)
             .setDescription("Randomly pauses to try and prevent you from being kicked")
             .setParentSetting(pause);
 
@@ -288,18 +288,18 @@ public class AutoCrystal extends Module {
             .setDescription("How to render placement")
             .setParentSetting(render);
 
-    public static Setting<Float> renderOutlineWidth = new Setting<>("Outline Width", 0.5f, 0.1f, 2f, 0.1f)
+    public static Setting<Float> renderOutlineWidth = new Setting<>("OutlineWidth", 0.5f, 0.1f, 2f, 0.1f)
             .setDescription("The width of the lines")
             .setParentSetting(render);
 
-    public static Setting<Color> renderColour = new Setting<>("Fill Colour", new Color(185, 19, 255, 130))
+    public static Setting<Color> renderColour = new Setting<>("FillColour", new Color(185, 19, 255, 130))
             .setDescription( "The colour of the fill")
             .setParentSetting(render);
 
-    public static Setting<Color> renderOutlineColour = new Setting<>("Outline Colour", new Color(185, 19, 255))
+    public static Setting<Color> renderOutlineColour = new Setting<>("OutlineColour", new Color(185, 19, 255))
             .setParentSetting(render);
 
-    public static Setting<Boolean> renderDamageNametag = new Setting<>("Damage Nametag", true)
+    public static Setting<Boolean> renderDamageNametag = new Setting<>("DamageNametag", true)
             .setDescription("Render the damage nametag")
             .setParentSetting(render);
 

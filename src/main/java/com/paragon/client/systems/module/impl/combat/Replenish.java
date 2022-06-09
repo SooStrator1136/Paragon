@@ -16,10 +16,10 @@ public class Replenish extends Module {
 
     public static Replenish INSTANCE;
 
-    public static Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
+    public static Setting<Boolean> inventorySpoof = new Setting<>("InventorySpoof", true)
             .setDescription("Spoofs opening your inventory");
 
-    public static Setting<Double> stacksPerTick = new Setting<>("Stacks Per Tick", 1D, 1D, 9D, 1D)
+    public static Setting<Double> stacksPerTick = new Setting<>("StacksPerTick", 1D, 1D, 9D, 1D)
             .setDescription("The max amount of stacks to merge per tick");
 
     // General
@@ -27,7 +27,7 @@ public class Replenish extends Module {
             .setDescription("The point at which to refill");
 
     public Replenish() {
-        super("Replenish", Category.COMBAT, "Automatically refills the item you are holding");
+        super("Replenish", Category.COMBAT, "Automatically refills items in your hotbar");
 
         INSTANCE = this;
     }
@@ -39,11 +39,8 @@ public class Replenish extends Module {
         }
 
         // Loop through hotbar items
+        int mergedStacks = 0;
         for (int i = 0; i < 9; i++) {
-            if (i > stacksPerTick.getValue()) {
-                break;
-            }
-
             // Get the stack
             ItemStack stack = mc.player.inventory.getStackInSlot(i);
 
@@ -58,6 +55,12 @@ public class Replenish extends Module {
             // Check if the item is below the threshold
             if (stackPercent <= percent.getValue().intValue()) {
                 mergeStack(i, stack);
+
+                mergedStacks++;
+
+                if (mergedStacks > stacksPerTick.getValue()) {
+                    break;
+                }
             }
         }
     }

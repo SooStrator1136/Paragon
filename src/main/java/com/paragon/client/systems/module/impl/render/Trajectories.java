@@ -26,11 +26,11 @@ public class Trajectories extends Module {
     public static Setting<Boolean> line = new Setting<>("Line", true)
             .setDescription("Render a line to the projectile's destination");
 
-    public static Setting<Color> lineColour = new Setting<>("Line Colour", new Color(185, 17, 255))
+    public static Setting<Color> lineColour = new Setting<>("LineColour", new Color(185, 17, 255))
             .setDescription("The colour of the line")
             .setParentSetting(line);
 
-    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1.0f, 0.1f, 3.0f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
             .setDescription("The width of the line")
             .setParentSetting(line);
 
@@ -45,12 +45,12 @@ public class Trajectories extends Module {
             .setDescription("Outline the box at the end of the line")
             .setParentSetting(box);
 
-    public static Setting<Float> outlineWidth = new Setting<>("Outline Width", 1.0f, 0.1f, 3.0f, 0.1f)
+    public static Setting<Float> outlineWidth = new Setting<>("OutlineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
             .setDescription("The width of the outline")
             .setParentSetting(box)
             .setVisibility(outline::getValue);
 
-    public static Setting<Color> boxColour = new Setting<>("Box Colour", new Color(185, 17, 255, 130))
+    public static Setting<Color> boxColour = new Setting<>("BoxColour", new Color(185, 17, 255, 130))
             .setDescription("The colour of the box at the end of the line")
             .setVisibility(() -> fill.getValue() || outline.getValue())
             .setParentSetting(box);

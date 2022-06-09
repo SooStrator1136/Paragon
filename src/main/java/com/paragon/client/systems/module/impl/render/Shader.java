@@ -6,10 +6,8 @@ import com.paragon.client.shader.shaders.*;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
@@ -59,40 +57,40 @@ public class Shader extends Module {
     public static Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
             .setDescription("Apply shader to ender chests");
 
-    public static Setting<ShaderType> shaderType = new Setting<>("Shader Type", ShaderType.DIAMONDS)
+    public static Setting<FragmentShader> shaderType = new Setting<>("FragmentShader", FragmentShader.DIAMONDS)
             .setDescription("The shader to use");
 
     // Diamonds
     public static Setting<Float> diamondSpacing = new Setting<>("Spacing", 4f, 1f, 16f, 0.5f)
             .setDescription("The spacing between diamonds")
             .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAMONDS));
+            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAMONDS));
 
     public static Setting<Float> diamondSize = new Setting<>("Size", 1f, 0.1f, 10f, 0.1f)
             .setDescription("The size of the diamonds")
             .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAMONDS));
+            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAMONDS));
 
     // Outline
     public static Setting<Float> outlineWidth = new Setting<>("Width", 1f, 1f, 5f, 0.5f)
             .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(ShaderType.OUTLINE));
+            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.OUTLINE));
 
     public static Setting<Boolean> outlineFill = new Setting<>("Fill", true)
             .setDescription("Fill the outline")
             .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(ShaderType.OUTLINE));
+            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.OUTLINE));
 
     // Diagonal
     public static Setting<Float> diagonalSpacing = new Setting<>("Spacing", 4f, 1f, 16f, 0.5f)
             .setDescription("The spacing between lines")
             .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAGONAL));
+            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAGONAL));
 
     public static Setting<Float> diagonalWidth = new Setting<>("Width", 1f, 1f, 16f, 0.5f)
             .setDescription("The width of the lines")
             .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(ShaderType.DIAGONAL));
+            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAGONAL));
 
     // Colour
     public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
@@ -269,7 +267,7 @@ public class Shader extends Module {
         return " " + EnumFormatter.getFormattedText(shaderType.getValue());
     }
 
-    public enum ShaderType {
+    public enum FragmentShader {
         /**
          * Outline shader
          */

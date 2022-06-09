@@ -24,8 +24,15 @@ public class ModeComponent extends SettingComponent<Enum<?>> {
         String mode = EnumFormatter.getFormattedText(getSetting().getValue());
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
-        float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName() + formatCode(TextFormatting.GRAY) + " " + mode, (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+
+        {
+            float scaleFactor = 1 / 0.65f;
+            renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(mode) * 0.65f) - 5) * scaleFactor;
+            renderText(formatCode(TextFormatting.GRAY) + " " + mode, side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+        }
+
         GL11.glPopMatrix();
 
         super.renderSetting(mouseX, mouseY);

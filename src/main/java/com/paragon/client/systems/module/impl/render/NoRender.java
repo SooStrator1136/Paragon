@@ -24,10 +24,10 @@ public class NoRender extends Module {
     public static Setting<Boolean> water = new Setting<>("Water", true)
             .setDescription("Cancel rendering the water overlay");
 
-    public static Setting<Boolean> bossInfo = new Setting<>("Boss Info", true)
+    public static Setting<Boolean> bossInfo = new Setting<>("BossInfo", true)
             .setDescription("Cancel rendering the boss info overlay");
 
-    public static Setting<Boolean> potions = new Setting<>("Potion Icons", false)
+    public static Setting<Boolean> potions = new Setting<>("PotionIcons", false)
             .setDescription("Cancel rendering the potion icons");
 
     public static Setting<Boolean> portal = new Setting<>("Portal", true)
@@ -36,7 +36,7 @@ public class NoRender extends Module {
     public static Setting<Boolean> bats = new Setting<>("Bats", true)
             .setDescription("Cancel rendering bats");
 
-    public static Setting<Boolean> eatingAnimation = new Setting<>("Eating animation", false)
+    public static Setting<Boolean> eatingAnimation = new Setting<>("EatingAnimation", false)
             .setDescription("Stops rendering the eating animation");
 
     public static Setting<Boolean> hurtcam = new Setting<>("Hurtcam", true)

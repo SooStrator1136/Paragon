@@ -56,6 +56,7 @@ public class ModuleManager {
                 new NoFall(),
                 new NoSlow(),
                 new ReverseStep(),
+                new Scaffold(),
                 new Sprint(),
                 new Step(),
                 new Velocity(),

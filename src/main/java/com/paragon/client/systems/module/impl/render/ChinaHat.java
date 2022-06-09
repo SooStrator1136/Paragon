@@ -22,14 +22,14 @@ public class ChinaHat extends Module {
     public static ChinaHat INSTANCE;
 
     // Colours
-    public static Setting<Color> topColour = new Setting<>("Top Colour", new Color(185, 17, 255, 180))
+    public static Setting<Color> topColour = new Setting<>("TopColour", new Color(185, 17, 255, 180))
             .setDescription("The top colour of the hat");
 
-    public static Setting<Color> bottomColour = new Setting<>("Bottom Colour", new Color(185, 17, 255, 180))
+    public static Setting<Color> bottomColour = new Setting<>("BottomColour", new Color(185, 17, 255, 180))
             .setDescription("The bottom colour of the hat");
 
     // Settings
-    public static Setting<Boolean> firstPerson = new Setting<>("First Person", false)
+    public static Setting<Boolean> firstPerson = new Setting<>("FirstPerson", false)
             .setDescription("Render the hat in first person");
 
     public static Setting<Boolean> others = new Setting<>("Others", true)

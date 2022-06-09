@@ -32,7 +32,7 @@ public class Offhand extends Module {
     public static final Setting<ItemMode> secondary = new Setting<>("Secondary", ItemMode.TOTEM)
             .setDescription("The item we want to use if we cannot find the main item");
 
-    public static final Setting<Boolean> gappleSword = new Setting<>("Gapple Sword", true)
+    public static final Setting<Boolean> gappleSword = new Setting<>("GappleSword", true)
             .setDescription("Swap to a gapple when wielding a sword");
 
     // Safety settings
@@ -55,7 +55,7 @@ public class Offhand extends Module {
             .setDescription("Switch to a totem when you are below a value")
             .setParentSetting(safety);
 
-    public static final Setting<Float> healthValue = new Setting<>("Health Value", 10f, 0f, 20f, 1f)
+    public static final Setting<Float> healthValue = new Setting<>("HealthValue", 10f, 0f, 20f, 1f)
             .setDescription("The value we want to switch to a totem when you are below")
             .setParentSetting(safety)
             .setVisibility(health::getValue);
@@ -73,10 +73,10 @@ public class Offhand extends Module {
             .setDescription("The delay between switching items");
 
     // Bypass settings
-    public static final Setting<Boolean> inventorySpoof = new Setting<>("Inventory Spoof", true)
+    public static final Setting<Boolean> inventorySpoof = new Setting<>("InventorySpoof", true)
             .setDescription("Spoof opening your inventory");
 
-    public static final Setting<Boolean> cancelMotion = new Setting<>("Cancel Motion", false)
+    public static final Setting<Boolean> cancelMotion = new Setting<>("CancelMotion", false)
             .setDescription("Cancel the motion of the player when switching items");
 
     // The timer to determine when to switch

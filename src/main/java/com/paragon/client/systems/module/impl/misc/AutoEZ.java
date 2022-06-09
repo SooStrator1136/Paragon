@@ -19,7 +19,7 @@ public class AutoEZ extends Module {
 
     public static AutoEZ INSTANCE;
 
-    public static Setting<Double> maximumRange = new Setting<>("Max Range", 10.0D, 1.0D, 20.0D, 0.1D)
+    public static Setting<Double> maximumRange = new Setting<>("MaxRange", 10.0D, 1.0D, 20.0D, 0.1D)
             .setDescription("The furthest distance from the player to target");
 
     // List of targeted players

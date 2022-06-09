@@ -16,7 +16,7 @@ public class NoSlow extends Module {
 
     public static NoSlow INSTANCE;
 
-    public static Setting<Boolean> soulSand = new Setting<>("Soul Sand", true)
+    public static Setting<Boolean> soulSand = new Setting<>("SoulSand", true)
             .setDescription("Stop soul sand from slowing you down");
 
     public static Setting<Boolean> slime = new Setting<>("Slime", true)

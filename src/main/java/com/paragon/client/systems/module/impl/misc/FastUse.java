@@ -21,7 +21,7 @@ public class FastUse extends Module {
     public static FastUse INSTANCE;
 
     // Options
-    public static Setting<Boolean> xp = new Setting<>("XP Bottles", true)
+    public static Setting<Boolean> xp = new Setting<>("XP", true)
             .setDescription("Fast use XP bottles");
 
     public static Setting<Boolean> rotate = new Setting<>("Rotate", true)
@@ -31,7 +31,7 @@ public class FastUse extends Module {
     public static Setting<Boolean> crystals = new Setting<>("Crystals", true)
             .setDescription("Place crystals fast");
 
-    public static Setting<Boolean> randomPause = new Setting<>("Random Pause", true)
+    public static Setting<Boolean> randomPause = new Setting<>("RandomPause", true)
             .setDescription("Randomly pauses to try and prevent you from being kicked");
 
     public static Setting<Float> randomChance = new Setting<>("Chance", 50f, 2f, 100f, 1f)

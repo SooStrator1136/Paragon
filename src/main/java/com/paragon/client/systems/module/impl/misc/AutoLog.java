@@ -12,13 +12,13 @@ public class AutoLog extends Module {
 
     public static AutoLog INSTANCE;
 
-    public static Setting<DisconnectMode> logMode = new Setting<>("Log Mode", DisconnectMode.DISCONNECT)
+    public static Setting<DisconnectMode> logMode = new Setting<>("LogMode", DisconnectMode.DISCONNECT)
             .setDescription("How to log you out of the server");
 
     public static Setting<Float> health = new Setting<>("Health", 6f, 1f, 20f, 1f)
             .setDescription("The health to log you out at");
 
-    public static Setting<Boolean> autoDisable = new Setting<>("Auto Disable", true)
+    public static Setting<Boolean> autoDisable = new Setting<>("AutoDisable", true)
             .setDescription("Disables the module after logging you out");
 
     public AutoLog() {

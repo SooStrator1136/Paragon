@@ -26,7 +26,7 @@ public class Breadcrumbs extends Module {
             .setDescription("The lifespan of the positions in ticks")
             .setVisibility(() -> !infinite.getValue());
 
-    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 5f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1f, 0.1f, 5f, 0.1f)
             .setDescription("The width of the lines");
 
     public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))

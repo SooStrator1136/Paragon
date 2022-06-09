@@ -63,13 +63,13 @@ public class Aura extends Module {
     public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
             .setDescription("How to rotate to the target");
 
-    public static Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+    public static Setting<Boolean> rotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate back to your original rotation").setParentSetting(rotate);
 
     public static Setting<Where> where = new Setting<>("Where", Where.BODY)
             .setDescription("Where to attack");
 
-    public static Setting<Boolean> packetAttack = new Setting<>("Packet Attack", false)
+    public static Setting<Boolean> packetAttack = new Setting<>("Packet", false)
             .setDescription("Attack with a packet");
 
     private final Timer attackTimer = new Timer();

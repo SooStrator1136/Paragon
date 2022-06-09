@@ -60,7 +60,7 @@ public class Nametags extends Module implements TextRenderer {
     public static Setting<Float> scaleFactor = new Setting<>("Scale", 0.2f, 0.1f, 1f, 0.1f)
             .setDescription("The scale of the nametag");
 
-    public static Setting<Boolean> distanceScale = new Setting<>("Distance Scale", true)
+    public static Setting<Boolean> distanceScale = new Setting<>("DistanceScale", true)
             .setDescription("Scale the nametag based on your distance from the player");
 
     public static Setting<Boolean> outline = new Setting<>("Outline", true)

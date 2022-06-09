@@ -16,7 +16,7 @@ public class Sprint extends Module {
     public static Setting<Mode> mode = new Setting<>("Mode", Mode.LEGIT)
             .setDescription("The mode to sprint in");
 
-    public static Setting<Boolean> onlyWhenMoving = new Setting<>("When Moving", true)
+    public static Setting<Boolean> onlyWhenMoving = new Setting<>("WhenMoving", true)
             .setDescription("Only omni sprint when actually moving")
             .setVisibility(() -> mode.getValue().equals(Mode.OMNI));
 

@@ -27,8 +27,15 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
         String key = Keyboard.getKeyName(getSetting().getValue().get());
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
-        float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName() + formatCode(TextFormatting.GRAY) + (isListening ? " ..." : " " + key), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+
+        {
+            float scaleFactor = 1 / 0.65f;
+            renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(isListening ? " ..." : " " + key) * 0.65f) - 5) * scaleFactor;
+            renderText(formatCode(TextFormatting.GRAY) + (isListening ? " ..." : " " + key), side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+        }
+
         GL11.glPopMatrix();
 
         super.renderSetting(mouseX, mouseY);

@@ -21,7 +21,7 @@ public class Notifier extends Module {
 
     public static Notifier INSTANCE;
 
-    public static Setting<Boolean> moduleEnabled = new Setting<>("Module Toggle", false)
+    public static Setting<Boolean> moduleEnabled = new Setting<>("ModuleToggle", false)
             .setDescription("Notifies you when you toggle a module");
 
     public static Setting<Boolean> pop = new Setting<>("Pop", true)
@@ -30,7 +30,7 @@ public class Notifier extends Module {
     public static Setting<Boolean> death = new Setting<>("Death", true)
             .setDescription("Notifies you when a player dies");
 
-    public static Setting<Boolean> noPops = new Setting<>("No Pops", true)
+    public static Setting<Boolean> noPops = new Setting<>("NoPops", true)
             .setDescription("Notifies you even if the player hasn't popped any totems")
             .setParentSetting(death);
 

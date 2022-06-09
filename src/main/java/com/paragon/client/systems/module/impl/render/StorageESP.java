@@ -36,14 +36,14 @@ public class StorageESP extends Module {
     public static Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
             .setDescription("Highlight shulker boxes");
 
-    public static Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
+    public static Setting<Boolean> enderChests = new Setting<>("EnderChests", true)
             .setDescription("Highlight Ender Chests");
 
     // Render settings
     public static Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
             .setDescription("How to render the entities");
 
-    public static Setting<Float> lineWidth = new Setting<>("Line Width", 1f, 0.1f, 8f, 0.1f)
+    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1f, 0.1f, 8f, 0.1f)
             .setDescription("How thick to render the outlines");
 
     // Outline shader

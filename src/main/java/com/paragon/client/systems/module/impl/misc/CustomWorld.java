@@ -11,14 +11,14 @@ public class CustomWorld extends Module {
 
     public static CustomWorld INSTANCE;
 
-    public static Setting<Boolean> customWeather = new Setting<>("Custom Weather", true)
+    public static Setting<Boolean> customWeather = new Setting<>("CustomWeather", true)
             .setDescription("Set the world weather to a custom value");
 
     public static Setting<Weather> weather = new Setting<>("Weather", Weather.CLEAR)
             .setDescription("The weather to display")
             .setParentSetting(customWeather);
 
-    public static Setting<Boolean> customTime = new Setting<>("Custom Time", true)
+    public static Setting<Boolean> customTime = new Setting<>("CustomTime", true)
             .setDescription("Set the world time to a custom value");
 
     public static Setting<Float> time = new Setting<>("Time", 1000f, 0f, 24000f, 1f)

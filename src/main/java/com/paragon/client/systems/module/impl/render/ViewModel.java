@@ -16,7 +16,7 @@ public class ViewModel extends Module {
     public static ViewModel INSTANCE;
 
     // Main hand settings
-    public static Setting<Boolean> main = new Setting<>("Main Hand", true)
+    public static Setting<Boolean> main = new Setting<>("MainHand", true)
             .setDescription("Modify your main hand");
 
     public static Setting<Float> mainX = new Setting<>("X", 0.19f, -2f, 2f, 0.01f)

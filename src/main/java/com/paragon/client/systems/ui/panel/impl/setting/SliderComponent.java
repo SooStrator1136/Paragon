@@ -81,8 +81,15 @@ public class SliderComponent extends SettingComponent<Number> {
 
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
-        float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName() + formatCode(TextFormatting.GRAY) + " " + getSetting().getValue(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
+
+        {
+            float scaleFactor = 1 / 0.65f;
+            renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
+
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(String.valueOf(getSetting().getValue())) * 0.65f) - 5) * scaleFactor;
+            renderText(formatCode(TextFormatting.GRAY) + " " + getSetting().getValue(), side, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
+        }
+
         GL11.glPopMatrix();
 
         RenderUtil.drawRect(getModuleButton().getPanel().getX() + 4, getModuleButton().getOffset() + getOffset() + 10, 88, 1, new Color(30, 30, 30).getRGB());

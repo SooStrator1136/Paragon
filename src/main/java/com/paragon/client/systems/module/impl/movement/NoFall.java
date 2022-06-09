@@ -23,11 +23,11 @@ public class NoFall extends Module {
     public static Setting<Mode> mode = new Setting<>("Mode", Mode.VANILLA)
             .setDescription("How to prevent fall damage");
 
-    public static Setting<Boolean> spoofFall = new Setting<>("Spoof Fall", false)
+    public static Setting<Boolean> spoofFall = new Setting<>("SpoofFall", false)
             .setDescription("Spoof fall distance")
             .setVisibility(() -> mode.getValue().equals(Mode.RUBBERBAND));
 
-    public static Setting<Boolean> ignoreElytra = new Setting<>("Ignore Elytra", true)
+    public static Setting<Boolean> ignoreElytra = new Setting<>("IgnoreElytra", true)
             .setDescription("Don't attempt to place a water bucket when flying with an elytra")
             .setVisibility(() -> mode.getValue().equals(Mode.BUCKET));
 

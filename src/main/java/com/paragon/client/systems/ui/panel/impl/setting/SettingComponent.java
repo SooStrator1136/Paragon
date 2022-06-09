@@ -64,7 +64,7 @@ public class SettingComponent<T> implements TextRenderer {
         // Set animation speed
         animation.time = ClickGUI.animationSpeed.getValue();
 
-        if (!getSettingComponents().isEmpty() && hasVisibleSubsettings()) {
+        if (!getSettingComponents().isEmpty() && hasVisibleSubsettings() && !(this instanceof ModeComponent)) {
             GL11.glPushMatrix();
             GL11.glScalef(0.5f, 0.5f, 0.5f);
             Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 4f) * 2, -1);
