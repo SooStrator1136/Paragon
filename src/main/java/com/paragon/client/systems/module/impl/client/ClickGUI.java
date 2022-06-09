@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.client.systems.module.IgnoredByNotifications;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Easing;
 import net.minecraft.client.gui.GuiScreen;
@@ -16,7 +17,7 @@ public class ClickGUI extends Module {
             .setDescription("The style of the ClickGUI");
 
     // Panel settings
-    public static Setting<Float> scrollSpeed = new Setting<>("Scroll Speed", 10f, 5f, 30f, 1f)
+    public static Setting<Float> scrollSpeed = new Setting<>("ScrollSpeed", 10f, 5f, 30f, 1f)
             .setDescription("How fast to scroll")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
@@ -26,7 +27,7 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Boolean> panelHeaderSeparator = new Setting<>("Header Separator", true)
+    public static Setting<Boolean> panelHeaderSeparator = new Setting<>("HeaderSeparator", true)
             .setDescription("Draw a separator between the header and the module buttons")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
@@ -36,12 +37,12 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Float> cornerRadius = new Setting<>("Corner Radius", 1f, 1f, 7f, 1f)
+    public static Setting<Float> cornerRadius = new Setting<>("CornerRadius", 1f, 1f, 7f, 1f)
             .setDescription("The radius of the corners")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Float> animationSpeed = new Setting<>("Animation Speed", 200f, 0f, 1000f, 10f)
+    public static Setting<Float> animationSpeed = new Setting<>("AnimationSpeed", 200f, 0f, 1000f, 10f)
             .setDescription("How fast animations are")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
@@ -52,13 +53,13 @@ public class ClickGUI extends Module {
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
     // Window settings
-    public static Setting<Boolean> scrollClamp = new Setting<>("Scroll Clamp", false)
+    public static Setting<Boolean> scrollClamp = new Setting<>("ScrollClamp", false)
             .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.WINDOW));
 
     // Shared settings
-    public static Setting<Boolean> darkenBackground = new Setting<>("Darken Background", true)
+    public static Setting<Boolean> darkenBackground = new Setting<>("DarkenBackground", true)
             .setDescription("Darkens the background whilst in the GUI");
 
     public static Setting<Boolean> pause = new Setting<>("Pause Game", false)
@@ -68,7 +69,7 @@ public class ClickGUI extends Module {
             .setDescription("deadshot is a weeb");
 
     public ClickGUI() {
-        super("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Keyboard.KEY_RSHIFT);
+        super("ClickGUI", Category.CLIENT, "The ClickGUI of the client", new Bind(Keyboard.KEY_RSHIFT, Bind.Device.KEYBOARD));
     }
 
     /**

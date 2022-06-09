@@ -10,6 +10,7 @@ import com.paragon.client.systems.module.impl.combat.*;
 import com.paragon.client.systems.module.impl.misc.*;
 import com.paragon.client.systems.module.impl.movement.*;
 import com.paragon.client.systems.module.impl.render.*;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,7 +20,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -131,21 +131,6 @@ public class ModuleManager {
         );
     }
 
-    @SubscribeEvent
-    public void onKey(InputEvent.KeyInputEvent event) {
-        if (Keyboard.getEventKeyState()) {
-            if (!(Keyboard.getEventKey() > 1)) {
-                return;
-            }
-
-            getModules().forEach(module -> {
-                if (module.getKeyCode().getValue().get() == Keyboard.getEventKey()) {
-                    module.toggle();
-                }
-            });
-        }
-    }
-
     /**
      * Gets a list of modules
      *
@@ -193,6 +178,10 @@ public class ModuleManager {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {
         modules.forEach(module -> {
+            if (module.getBind().getValue().isPressed() && Minecraft.getMinecraft().currentScreen == null) {
+                module.toggle();
+            }
+
             if (module.isEnabled()) {
                 module.onTick();
             }

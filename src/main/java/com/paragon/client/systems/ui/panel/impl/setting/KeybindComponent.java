@@ -3,6 +3,7 @@ package com.paragon.client.systems.ui.panel.impl.setting;
 import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.panel.impl.module.ModuleButton;
 import net.minecraft.util.text.TextFormatting;
@@ -12,11 +13,11 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class KeybindComponent extends SettingComponent<AtomicInteger> {
+public class KeybindComponent extends SettingComponent<Bind> {
 
     private boolean isListening = false;
 
-    public KeybindComponent(ModuleButton moduleButton, Setting<AtomicInteger> setting, float offset, float height) {
+    public KeybindComponent(ModuleButton moduleButton, Setting<Bind> setting, float offset, float height) {
         super(moduleButton, setting, offset, height);
     }
 
@@ -24,7 +25,6 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
     public void renderSetting(int mouseX, int mouseY) {
         RenderUtil.drawRect(getModuleButton().getPanel().getX(), getModuleButton().getOffset() + getOffset(), getModuleButton().getPanel().getWidth(), getHeight(), isMouseOver(mouseX, mouseY) ? new Color(23, 23, 23).brighter().getRGB() : new Color(23, 23, 23).getRGB());
 
-        String key = Keyboard.getKeyName(getSetting().getValue().get());
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
 
@@ -32,8 +32,8 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
             float scaleFactor = 1 / 0.65f;
             renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
 
-            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(isListening ? " ..." : " " + key) * 0.65f) - 5) * scaleFactor;
-            renderText(formatCode(TextFormatting.GRAY) + (isListening ? " ..." : " " + key), side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(isListening ? " ..." : " " + getSetting().getValue().getButtonName()) * 0.65f) - 5) * scaleFactor;
+            renderText(formatCode(TextFormatting.GRAY) + (isListening ? " ..." : " " + getSetting().getValue().getButtonName()), side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
         }
 
         GL11.glPopMatrix();
@@ -43,13 +43,20 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (mouseButton == 0) {
-            if (isMouseOver(mouseX, mouseY)) {
-                // Set listening
-                isListening = !isListening;
-                SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
-                Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
-            }
+        if (isListening) {
+            isListening = false;
+
+            getSetting().getValue().setDevice(Bind.Device.MOUSE);
+            getSetting().getValue().setButtonCode(mouseButton);
+
+            return;
+        }
+
+        if (isMouseOver(mouseX, mouseY) && mouseButton == 0) {
+            // Set listening
+            isListening = !isListening;
+            SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
+            Paragon.INSTANCE.getEventBus().post(settingUpdateEvent);
         }
 
         if (isExpanded()) {
@@ -68,12 +75,14 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
         if (isListening) {
             isListening = false;
 
+            getSetting().getValue().setDevice(Bind.Device.KEYBOARD);
+
             if (keyCode == Keyboard.KEY_DELETE || keyCode == Keyboard.KEY_BACK) {
-                getSetting().getValue().set(0);
+                getSetting().getValue().setButtonCode(0);
                 return;
             }
 
-            getSetting().getValue().set(keyCode);
+            getSetting().getValue().setButtonCode(keyCode);
         }
 
         if (isExpanded()) {

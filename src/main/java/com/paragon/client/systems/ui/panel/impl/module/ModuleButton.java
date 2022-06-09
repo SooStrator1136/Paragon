@@ -3,6 +3,7 @@ package com.paragon.client.systems.ui.panel.impl.module;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.panel.PanelGUI;
 import com.paragon.client.systems.ui.panel.impl.Panel;
@@ -49,8 +50,8 @@ public class ModuleButton implements TextRenderer {
             if (setting.getValue() instanceof Boolean) {
                 settingComponents.add(new BooleanComponent(this, (Setting<Boolean>) setting, settingOffset, height));
                 settingOffset += height;
-            } else if (setting.getValue() instanceof AtomicInteger) {
-                settingComponents.add(new KeybindComponent(this, (Setting<AtomicInteger>) setting, settingOffset, height));
+            } else if (setting.getValue() instanceof Bind) {
+                settingComponents.add(new KeybindComponent(this, (Setting<Bind>) setting, settingOffset, height));
                 settingOffset += height;
             } else if (setting.getValue() instanceof Number) {
                 settingComponents.add(new SliderComponent(this, (Setting<Number>) setting, settingOffset, height));

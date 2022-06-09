@@ -61,7 +61,7 @@ public class ModuleWindow extends Window {
         }
 
         if (selectedComponent != null) {
-            // RenderUtil.startGlScissor(getX(), getY() + 39, getWidth(), getHeight() - 40);
+            RenderUtil.startGlScissor(getX(), getY() + 39, getWidth(), getHeight() - 40);
 
             ModuleComponent firstComponent = selectedComponent.getModuleComponents().get(0);
             ModuleComponent lastComponent = selectedComponent.getModuleComponents().get(selectedComponent.getModuleComponents().size() - 1);
@@ -98,7 +98,6 @@ public class ModuleWindow extends Window {
                 }
             }
 
-            float contHeight = 0;
             float y = firstComponent.getY();
             for (ModuleComponent moduleComponent : selectedComponent.getModuleComponents()) {
                 moduleComponent.setX(getX() + 2);
@@ -107,25 +106,9 @@ public class ModuleWindow extends Window {
                 moduleComponent.drawComponent(mouseX, mouseY);
 
                 y += moduleComponent.getTotalHeight() + 3;
-
-                contHeight += moduleComponent.getTotalHeight() + 3;
             }
 
-            // RenderUtil.endGlScissor();
-
-            float firstY = firstComponent.getY();
-
-            float arrowHeight = 25;
-            float viewportHeight = 200;
-            float contentHeight = 600;
-
-            float viewableRatio = viewportHeight / contentHeight; // 1/3 or 0.333333333n
-
-            float scrollBarArea = viewportHeight - arrowHeight * 2; // 150px
-
-            float thumbHeight = scrollBarArea * viewableRatio; // 50px
-
-            RenderUtil.drawRect(getX(), MathHelper.clamp((getY() + 40) - (firstY - (getY() + 40)), getY() + 40, getY() + 40 + getHeight()), 5, thumbHeight, -1);
+            RenderUtil.endGlScissor();
         }
 
         RenderUtil.drawRect(getX(), getY() + 37, getWidth(), 1, Colours.mainColour.getValue().getRGB());

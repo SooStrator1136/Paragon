@@ -3,6 +3,7 @@ package com.paragon.client.systems.ui.window.impl.windows.components;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.window.impl.Window;
 import com.paragon.client.systems.ui.window.impl.windows.Component;
@@ -33,8 +34,8 @@ public class ModuleComponent extends Component {
                 offset += 15;
             }
 
-            else if (setting.getValue() instanceof AtomicInteger) {
-                settingComponents.add(new KeybindComponent(window, (Setting<AtomicInteger>) setting, x + 2, y + offset, width - 4, 15));
+            else if (setting.getValue() instanceof Bind) {
+                settingComponents.add(new KeybindComponent(window, (Setting<Bind>) setting, x + 2, y + offset, width - 4, 15));
                 offset += 15;
             }
 
@@ -131,6 +132,14 @@ public class ModuleComponent extends Component {
 
     public Module getModule() {
         return module;
+    }
+
+    public Component getLastComponent() {
+        if (!open) {
+            return this;
+        }
+
+        return this.settingComponents.get(this.settingComponents.size() - 1);
     }
 
 }

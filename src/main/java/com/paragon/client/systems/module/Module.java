@@ -5,6 +5,7 @@ import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.feature.Feature;
 import com.paragon.client.systems.module.hud.impl.ArrayListHUD;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,7 +13,6 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +33,7 @@ public class Module extends Feature implements Wrapper {
 
     // Module Settings
     private final List<Setting<?>> settings = new ArrayList<>();
-    private final Setting<AtomicInteger> keyCode = new Setting<>("Keybind", new AtomicInteger(Keyboard.KEY_NONE))
+    private final Setting<Bind> bind = new Setting<>("Bind", new Bind(Keyboard.KEY_NONE, Bind.Device.KEYBOARD))
             .setDescription("The keybind of the module");
 
     // Arraylist animation
@@ -65,10 +65,10 @@ public class Module extends Feature implements Wrapper {
         });
 
         this.settings.add(this.visible);
-        this.settings.add(this.keyCode);
+        this.settings.add(this.bind);
     }
 
-    public Module(String name, Category category, String description, int keyBind) {
+    public Module(String name, Category category, String description, Bind bind) {
         super(name, description);
         this.category = category;
 
@@ -91,9 +91,9 @@ public class Module extends Feature implements Wrapper {
         });
 
         this.settings.add(this.visible);
-        this.settings.add(this.keyCode);
+        this.settings.add(this.bind);
 
-        this.keyCode.getValue().set(keyBind);
+        this.bind.setValue(bind);
     }
 
     public void onEnable() {
@@ -225,11 +225,11 @@ public class Module extends Feature implements Wrapper {
     }
 
     /**
-     * Gets the key code of the module
+     * Gets the bind of the module
      *
-     * @return The key code of the module
+     * @return The bind of the module
      */
-    public Setting<AtomicInteger> getKeyCode() {
-        return keyCode;
+    public Setting<Bind> getBind() {
+        return bind;
     }
 }

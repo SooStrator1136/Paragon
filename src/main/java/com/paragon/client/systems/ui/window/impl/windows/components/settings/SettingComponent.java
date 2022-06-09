@@ -1,5 +1,6 @@
 package com.paragon.client.systems.ui.window.impl.windows.components.settings;
 
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.window.impl.Window;
 import com.paragon.client.systems.ui.window.impl.windows.Component;
@@ -27,8 +28,8 @@ public class SettingComponent<T> extends Component {
                 offset += 15;
             }
 
-            else if (subsetting.getValue() instanceof AtomicInteger) {
-                subsettings.add(new KeybindComponent(window, (Setting<AtomicInteger>) subsetting, x + 2, y + offset, width - 4, 15));
+            else if (subsetting.getValue() instanceof Bind) {
+                subsettings.add(new KeybindComponent(window, (Setting<Bind>) subsetting, x + 2, y + offset, width - 4, 15));
                 offset += 15;
             }
 

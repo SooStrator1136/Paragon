@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.window.impl.Window;
 import net.minecraft.util.text.TextFormatting;
@@ -11,11 +12,11 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class KeybindComponent extends SettingComponent<AtomicInteger> {
+public class KeybindComponent extends SettingComponent<Bind> {
 
     private boolean isListening = false;
 
-    public KeybindComponent(Window window, Setting<AtomicInteger> setting, float x, float y, float width, float height) {
+    public KeybindComponent(Window window, Setting<Bind> setting, float x, float y, float width, float height) {
         super(window, setting, x, y, width, height);
     }
 
@@ -23,13 +24,22 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
     public void drawComponent(int mouseX, int mouseY) {
         RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), 0x90000000);
 
-        renderText(getSetting().getName() + " " + TextFormatting.GRAY + (isListening ? "..." : Keyboard.getKeyName(getSetting().getValue().get())), getX() + 4, getY() + 4, -1);
+        renderText(getSetting().getName() + " " + TextFormatting.GRAY + (isListening ? "..." : getSetting().getValue().getButtonName()), getX() + 4, getY() + 4, -1);
 
         super.drawComponent(mouseX, mouseY);
     }
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int button) {
+        if (isListening) {
+            isListening = false;
+
+            getSetting().getValue().setDevice(Bind.Device.MOUSE);
+            getSetting().getValue().setButtonCode(button);
+
+            return;
+        }
+
         if (button == 0 && isWithinWindowBounds(getWindow().getY() + 40, getWindow().getY() + getWindow().getHeight()) && isHovered(mouseX, mouseY)) {
             isListening = true;
             SettingUpdateEvent settingUpdateEvent = new SettingUpdateEvent(getSetting());
@@ -40,21 +50,18 @@ public class KeybindComponent extends SettingComponent<AtomicInteger> {
     }
 
     @Override
-    public void mouseReleased(int mouseX, int mouseY, int button) {
-
-    }
-
-    @Override
     public void keyTyped(char typedChar, int keyCode) {
         if (isListening) {
-            if (keyCode == Keyboard.KEY_ESCAPE || keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_DELETE) {
-                getSetting().getValue().set(0);
-                isListening = false;
+            isListening = false;
+
+            getSetting().getValue().setDevice(Bind.Device.KEYBOARD);
+
+            if (keyCode == Keyboard.KEY_DELETE || keyCode == Keyboard.KEY_BACK) {
+                getSetting().getValue().setButtonCode(0);
                 return;
             }
 
-            getSetting().getValue().set(keyCode);
-            isListening = false;
+            getSetting().getValue().setButtonCode(keyCode);
         }
     }
 }
