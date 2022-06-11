@@ -9,4 +9,5 @@ public interface IEntityRenderer {
 
     @Invoker("setupCameraTransform")
     void setupCamera(float partialTicks, int pass);
+
 }

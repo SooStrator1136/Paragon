@@ -37,6 +37,10 @@ public class Setting<T> {
     public Setting(String name, T value) {
         this.name = name;
         this.value = value;
+
+        if (value instanceof Color) {
+            this.alpha = ((Color) value).getAlpha();
+        }
     }
 
     public Setting(String name, T value, T min, T max, T incrementation) {

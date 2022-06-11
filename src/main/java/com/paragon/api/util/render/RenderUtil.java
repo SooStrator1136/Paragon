@@ -200,7 +200,7 @@ public class RenderUtil implements Wrapper {
         ColourUtil.setColour(color);
 
         // Set line width
-        glLineWidth((float) lineWidth);
+        glLineWidth(lineWidth);
         glBegin(GL_CURRENT_BIT);
 
         // Draw line

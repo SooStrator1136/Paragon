@@ -1,30 +1,38 @@
 package com.paragon.api.event.render.entity;
 
 import me.wolfsurge.cerauno.event.CancellableEvent;
-import me.wolfsurge.cerauno.event.Event;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-
-import java.lang.reflect.Method;
+import net.minecraft.entity.item.EntityEnderCrystal;
 
 /**
  * @author Wolfsurge
  * @since 2/2/22
  */
-public class RenderEntityEvent extends CancellableEvent {
+public class RenderCrystalEvent extends CancellableEvent {
 
     // The entity being rendered
-    private final Entity entity;
+    private final EntityEnderCrystal entity;
 
     // The model of the entity
-    private final ModelBase modelBase;
+    private final ModelRenderer base;
+
+    private final ModelRenderer glass;
+
+    private final ModelRenderer cube;
 
     // Required variables
-    private final float limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale;
+    private final float limbSwing;
+    private final float limbSwingAmount;
+    private final float ageInTicks;
+    private final float netHeadYaw;
+    private final float headPitch;
+    private float scale;
 
-    public RenderEntityEvent(ModelBase modelBase, Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        this.modelBase = modelBase;
+    public RenderCrystalEvent(ModelRenderer modelRenderer, ModelRenderer glass, ModelRenderer cube, EntityEnderCrystal entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        this.base = modelRenderer;
+        this.glass = glass;
+        this.cube = cube;
         this.entity = entityIn;
         this.limbSwing = limbSwing;
         this.limbSwingAmount = limbSwingAmount;
@@ -35,12 +43,30 @@ public class RenderEntityEvent extends CancellableEvent {
     }
 
     /**
-     * Gets the model base
+     * Gets the model renderer
      *
-     * @return The model base
+     * @return The model renderer
      */
-    public ModelBase getModelBase() {
-        return modelBase;
+    public ModelRenderer getBase() {
+        return base;
+    }
+
+    /**
+     * Gets the glass renderer
+     *
+     * @return The glass renderer
+     */
+    public ModelRenderer getGlass() {
+        return glass;
+    }
+
+    /**
+     * Gets the cube renderer
+     *
+     * @return The cube renderer
+     */
+    public ModelRenderer getCube() {
+        return cube;
     }
 
     /**
@@ -107,9 +133,11 @@ public class RenderEntityEvent extends CancellableEvent {
     }
 
     /**
-     * Renders the model
+     * Sets the scale
+     *
+     * @param newScale The new scale
      */
-    public void renderModel() {
-        getModelBase().render(getEntity(), getLimbSwing(), getLimbSwingAmount(), getAgeInTicks(), getNetHeadYaw(), getHeadPitch(), getScale());
+    public void setScale(float newScale) {
+        this.scale = newScale;
     }
 }

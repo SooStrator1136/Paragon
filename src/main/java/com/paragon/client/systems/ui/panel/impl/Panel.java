@@ -87,7 +87,7 @@ public class Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor()) + (0.5f * (1 - animation.getAnimationFactor()))), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
+        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
 
         if (ClickGUI.panelHeaderSeparator.getValue()) {
             RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getValue().getRGB());

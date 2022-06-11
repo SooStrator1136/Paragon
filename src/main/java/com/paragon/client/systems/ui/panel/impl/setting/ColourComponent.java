@@ -264,7 +264,7 @@ public class ColourComponent extends SettingComponent<Color> {
 
     @Override
     public float getHeight() {
-        return (float) (13 + (((components.size() * 13) + 94.5f) * animation.getAnimationFactor()));
+        return (float) (13 + (((components.size() * 13) + 93.5f) * animation.getAnimationFactor()));
     }
 
     @Override

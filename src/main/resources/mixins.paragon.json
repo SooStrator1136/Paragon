@@ -32,6 +32,7 @@
 
     "render.entity.MixinEntityRenderer",
     "render.entity.MixinItemRenderer",
+    "render.entity.MixinModelEnderCrystal",
     "render.entity.MixinRenderLivingBase",
     "render.entity.MixinRenderPlayer",
 

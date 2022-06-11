@@ -43,7 +43,7 @@ public class SettingComponent<T> extends Component {
                 offset += 15;
             }
 
-            else if (setting.getValue() instanceof Color) {
+            else if (subsetting.getValue() instanceof Color) {
                 subsettings.add(new ColourComponent(window, (Setting<Color>) subsetting, x + 2, y + offset, width - 4, 15));
                 offset += 15;
             }

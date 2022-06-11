@@ -856,11 +856,11 @@ public class AutoCrystal extends Module {
                 EnumFacing facing = EnumFacing.getDirectionFromEntityLiving(pos, mc.player);
                 Vec3d facingVec = null;
                 RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).add(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);
-                RayTraceResult laxResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).add(0.5, 0.5, 0.5));
+                RayTraceResult middleResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).add(0.5, 0.5, 0.5));
 
                 // Check we hit a block
-                if (laxResult != null && laxResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
-                    facing = laxResult.sideHit;
+                if (middleResult != null && middleResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
+                    facing = middleResult.sideHit;
 
                     // We can place if we are at max height by doing this
                     if (pos.getY() >= (mc.world.getActualHeight() - 1)) {

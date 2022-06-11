@@ -59,7 +59,7 @@ public class StorageManager {
 
                 for (Setting<?> setting : module.getSettings()) {
                     if (setting.getValue() instanceof Color) {
-                        jsonObject.put(setting.getName(), ((Color) setting.getValue()).getRed() + ":" + ((Color) setting.getValue()).getGreen() + ":" + ((Color) setting.getValue()).getBlue() + ":" + ((Color) setting.getValue()).getAlpha() + ":" + setting.isRainbow() + ":" + setting.getRainbowSpeed() + ":" + setting.getRainbowSaturation() + ":" + setting.isSync());
+                        jsonObject.put(setting.getName(), ((Color) setting.getValue()).getRed() + ":" + ((Color) setting.getValue()).getGreen() + ":" + ((Color) setting.getValue()).getBlue() + ":" + setting.getAlpha() + ":" + setting.isRainbow() + ":" + setting.getRainbowSpeed() + ":" + setting.getRainbowSaturation() + ":" + setting.isSync());
                     } else if (setting.getValue() instanceof Bind) {
                         jsonObject.put(setting.getName(), ((Bind) setting.getValue()).getButtonCode() + ":" + ((Bind) setting.getValue()).getDevice());
                     } else {
@@ -71,7 +71,7 @@ public class StorageManager {
                             String subsettingName = subsetting.getParentSetting().getName() + " " + subsetting.getName();
 
                             if (subsetting.getValue() instanceof Color) {
-                                jsonObject.put(subsettingName, ((Color) subsetting.getValue()).getRed() + ":" + ((Color) subsetting.getValue()).getGreen() + ":" + ((Color) subsetting.getValue()).getBlue() + ":" + ((Color) subsetting.getValue()).getAlpha() + ":" + subsetting.isRainbow() + ":" + subsetting.getRainbowSpeed() + ":" + subsetting.getRainbowSaturation() + ":" + subsetting.isSync());
+                                jsonObject.put(subsettingName, ((Color) subsetting.getValue()).getRed() + ":" + ((Color) subsetting.getValue()).getGreen() + ":" + ((Color) subsetting.getValue()).getBlue() + ":" +  subsetting.getAlpha() + ":" + subsetting.isRainbow() + ":" + subsetting.getRainbowSpeed() + ":" + subsetting.getRainbowSaturation() + ":" + subsetting.isSync());
                             } else if (subsetting.getValue() instanceof Bind) {
                                 jsonObject.put(subsetting.getName(), ((Bind) subsetting.getValue()).getButtonCode() + ":" + ((Bind) subsetting.getValue()).getDevice());
                             } else {
@@ -113,16 +113,24 @@ public class StorageManager {
                         try {
                             if (setting.getValue() instanceof Boolean) {
                                 ((Setting<Boolean>) setting).setValue(moduleJSON.getBoolean(setting.getName()));
-                            } else if (setting.getValue() instanceof Bind) {
+                            }
+
+                            else if (setting.getValue() instanceof Bind) {
                                 String[] parts = moduleJSON.getString(setting.getName()).split(":");
 
                                 ((Bind) setting.getValue()).setButtonCode(Integer.parseInt(parts[0]));
                                 ((Bind) setting.getValue()).setDevice(Enum.valueOf(Bind.Device.class, parts[1]));
-                            } else if (setting.getValue() instanceof Float) {
+                            }
+
+                            else if (setting.getValue() instanceof Float) {
                                 ((Setting<Float>) setting).setValue(moduleJSON.getFloat(setting.getName()));
-                            } else if (setting.getValue() instanceof Double) {
+                            }
+
+                            else if (setting.getValue() instanceof Double) {
                                 ((Setting<Double>) setting).setValue(moduleJSON.getDouble(setting.getName()));
-                            } else if (setting.getValue() instanceof Enum<?>) {
+                            }
+
+                            else if (setting.getValue() instanceof Enum<?>) {
                                 Enum<?> value = Enum.valueOf(((Enum) setting.getValue()).getClass(), moduleJSON.getString(setting.getName()));
 
                                 int i = 0;
@@ -136,13 +144,14 @@ public class StorageManager {
                                 }
 
                                 ((Setting<Enum<?>>) setting).setValue(value);
-                            } else if (setting.getValue() instanceof Color) {
+                            }
+
+                            else if (setting.getValue() instanceof Color) {
                                 String[] values = moduleJSON.getString(setting.getName()).split(":");
 
-                                Color colour = new Color(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                                Color colour = new Color(Integer.parseInt(values[0]) / 255f, Integer.parseInt(values[1]) / 255f, Integer.parseInt(values[2]) / 255f, Float.parseFloat(values[3]) / 255f);
 
                                 ((Setting<Color>) setting).setValue(colour);
-                                setting.setAlpha(colour.getAlpha());
                                 setting.setRainbow(Boolean.parseBoolean(values[4]));
                                 setting.setRainbowSpeed(Float.parseFloat(values[5]));
                                 setting.setRainbowSaturation(Float.parseFloat(values[6]));
@@ -154,19 +163,28 @@ public class StorageManager {
                         
                         for (Setting<?> subsetting : setting.getSubsettings()) {
                             String subsettingName = setting.getName() + " " + subsetting.getName();
+
                             try {
                                 if (subsetting.getValue() instanceof Boolean) {
                                     ((Setting<Boolean>) subsetting).setValue(moduleJSON.getBoolean(subsettingName));
-                                } else if (subsetting.getValue() instanceof Bind) {
+                                }
+
+                                else if (subsetting.getValue() instanceof Bind) {
                                     String[] parts = moduleJSON.getString(subsettingName).split(":");
 
                                     ((Bind) subsetting.getValue()).setButtonCode(Integer.parseInt(parts[0]));
                                     ((Bind) subsetting.getValue()).setDevice(Enum.valueOf(Bind.Device.class, parts[1]));
-                                } else if (subsetting.getValue() instanceof Float) {
+                                }
+
+                                else if (subsetting.getValue() instanceof Float) {
                                     ((Setting<Float>) subsetting).setValue(moduleJSON.getFloat(subsettingName));
-                                } else if (subsetting.getValue() instanceof Double) {
+                                }
+
+                                else if (subsetting.getValue() instanceof Double) {
                                     ((Setting<Double>) subsetting).setValue(moduleJSON.getDouble(subsettingName));
-                                } else if (subsetting.getValue() instanceof Enum<?>) {
+                                }
+
+                                else if (subsetting.getValue() instanceof Enum<?>) {
                                     Enum<?> value = Enum.valueOf(((Enum) subsetting.getValue()).getClass(), moduleJSON.getString(subsettingName));
 
                                     int i = 0;
@@ -180,13 +198,14 @@ public class StorageManager {
                                     }
 
                                     ((Setting<Enum<?>>) subsetting).setValue(value);
-                                } else if (subsetting.getValue() instanceof Color) {
+                                }
+
+                                else if (subsetting.getValue() instanceof Color) {
                                     String[] values = moduleJSON.getString(subsettingName).split(":");
 
-                                    Color colour = new Color(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                                    Color colour = new Color(Integer.parseInt(values[0]) / 255f, Integer.parseInt(values[1]) / 255f, Integer.parseInt(values[2]) / 255f, Float.parseFloat(values[3]) / 255f);
 
                                     ((Setting<Color>) subsetting).setValue(colour);
-                                    subsetting.setAlpha(colour.getAlpha());
                                     subsetting.setRainbow(Boolean.parseBoolean(values[4]));
                                     subsetting.setRainbowSpeed(Float.parseFloat(values[5]));
                                     subsetting.setRainbowSaturation(Float.parseFloat(values[6]));
