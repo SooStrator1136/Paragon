@@ -92,6 +92,7 @@ public class ModuleManager {
                 new BuildHeight(),
                 new ChatModifications(),
                 new CustomWorld(),
+                new ExtraTab(),
                 new FakePlayer(),
                 new FastUse(),
                 new LiquidInteract(),

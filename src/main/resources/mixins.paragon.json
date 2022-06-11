@@ -39,6 +39,7 @@
     "render.gui.MixinGuiChat",
     "render.gui.MixinGuiMainMenu",
     "render.gui.MixinGuiMultiplayer",
+    "render.gui.MixinGuiPlayerTabOverlay",
     "render.gui.MixinGuiScreen",
 
     "render.tileentity.MixinTileEntityRendererDispatcher",
