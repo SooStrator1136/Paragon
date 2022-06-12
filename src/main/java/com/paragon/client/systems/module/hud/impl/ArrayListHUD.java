@@ -6,6 +6,8 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
+import com.paragon.client.systems.module.hud.HUDEditorGUI;
+import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Easing;
@@ -18,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-public class ArrayListHUD extends Module implements TextRenderer {
+public class ArrayListHUD extends HUDModule implements TextRenderer {
 
     public static ArrayListHUD INSTANCE;
 
@@ -34,43 +36,168 @@ public class ArrayListHUD extends Module implements TextRenderer {
     public static Setting<Boolean> background = new Setting<>("Background", false)
             .setDescription("Render a background behind the text");
 
+    // Creating a new list, so we can sort these, but not the module manager list
+    private final List<Module> enabledModules = new ArrayList<>();
+
+    private Corner corner = Corner.TOP_LEFT;
+
     public ArrayListHUD() {
-        super("ArrayList", Category.HUD, "Renders the enabled modules on screen");
+        super("ArrayList", "Renders the enabled modules on screen");
 
         INSTANCE = this;
     }
 
     @Override
-    public void onRender2D() {
-        ScaledResolution sr = new ScaledResolution(mc);
+    public void render() {
+        ScaledResolution scaledResolution = new ScaledResolution(mc);
 
-        int index = 0;
+        if (getX() + (getWidth() / 2) < scaledResolution.getScaledWidth() / 2f) {
+            if (getY() + (getHeight() / 2) > scaledResolution.getScaledHeight() / 2f) {
+                corner = Corner.BOTTOM_LEFT;
+            } else {
+                corner = Corner.TOP_LEFT;
+            }
+        }
+        else if (getX() + (getWidth() / 2) > scaledResolution.getScaledWidth() / 2f) {
+            if (getY() + (getHeight() / 2) < scaledResolution.getScaledHeight() / 2f) {
+                corner = Corner.TOP_RIGHT;
+            }
 
-        // Creating a new list, so we can sort these, but not the module manager list
-        List<Module> modules = new ArrayList<>();
+            else if (getY() + (getHeight() / 2) > scaledResolution.getScaledHeight() / 2f) {
+                corner = Corner.BOTTOM_RIGHT;
+            }
+        }
+
+        if (mc.currentScreen instanceof HUDEditorGUI) {
+            RenderUtil.drawRect(getX(), getY(), getWidth() - 2, getHeight() - 2, 0x90000000);
+            RenderUtil.drawBorder(getX(), getY(), getWidth() - 2, getHeight() - 2, 1, Colours.mainColour.getValue().getRGB());
+        }
+
+        enabledModules.clear();
+
         for (Module module : Paragon.INSTANCE.getModuleManager().getModules()) {
             if (module.animation.getAnimationFactor() > 0 && module.isVisible()) {
-                modules.add(module);
+                enabledModules.add(module);
             }
         }
 
         // Sort by module length
-        modules.sort(Comparator.comparingDouble(module -> getStringWidth(module.getName() + module.getArrayListInfo())));
-        Collections.reverse(modules);
+        enabledModules.sort(Comparator.comparingDouble(module -> getStringWidth(module.getName() + module.getArrayListInfo())));
+        Collections.reverse(enabledModules);
 
-        float y = sr.getScaledHeight() - 11;
-        for (Module module : modules) {
-            float x = (float) (sr.getScaledWidth() - (getStringWidth(module.getName() + module.getArrayListInfo())) * module.animation.getAnimationFactor());
+        float x = getX();
+        float topY = getY();
+        float width = enabledModules.isEmpty() ? 0 : getStringWidth(enabledModules.get(0).getName() + enabledModules.get(0).getArrayListInfo()) + 4;
 
-            if (background.getValue()) {
-                RenderUtil.drawRect((float) (x - (2.5f * module.animation.getAnimationFactor())), y, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, 11, 0x90000000);
+        if (corner.equals(Corner.BOTTOM_LEFT) || corner.equals(Corner.BOTTOM_RIGHT)) {
+            topY = getY() - (enabledModules.size() * getFontHeight());
+        }
+
+        if (corner.equals(Corner.TOP_RIGHT) || corner.equals(Corner.BOTTOM_RIGHT)) {
+            x = getX() - width;
+        }
+
+        RenderUtil.startGlScissor(x, topY, width * 2, enabledModules.size() * (getFontHeight() * 2));
+
+        float yOffset = 0;
+
+        switch (corner) {
+            case TOP_LEFT: {
+                int index = 0;
+
+                for (Module module : enabledModules) {
+                    float originX = getX() - (getStringWidth(module.getName() + module.getArrayListInfo()) + 4);
+                    float textX = (float) (originX + ((getStringWidth(module.getName() + module.getArrayListInfo()) + 4) * module.animation.getAnimationFactor()));
+
+                    if (background.getValue()) {
+                        RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, 11, 0x90000000);
+                    }
+
+                    renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), textX + 2, getY() + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
+
+                    yOffset += 11 * module.animation.getAnimationFactor();
+                    index++;
+                }
+
+                break;
             }
 
-            renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), x - 2, y + 1.5f, arrayListColour.getValue().getColour(index * 150));
+            case TOP_RIGHT: {
+                int index = 0;
 
-            y -= 11 * module.animation.getAnimationFactor();
-            index++;
+                for (Module module : enabledModules) {
+                    float textX = (float) ((getX() + getWidth()) - ((getStringWidth(module.getName() + module.getArrayListInfo()) + 6) * module.animation.getAnimationFactor()));
+
+                    if (background.getValue()) {
+                        RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, (float) (11 * module.animation.getAnimationFactor()), 0x90000000);
+                    }
+
+                    renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), textX + 2, getY() + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
+
+                    yOffset += 11 * module.animation.getAnimationFactor();
+                    index++;
+                }
+
+                break;
+            }
+
+            case BOTTOM_RIGHT: {
+                int index = 0;
+
+                for (Module module : enabledModules) {
+                    float textX = (float) ((getX() + getWidth()) - ((getStringWidth(module.getName() + module.getArrayListInfo()) + 6) * module.animation.getAnimationFactor()));
+
+                    if (background.getValue()) {
+                        RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, 11, 0x90000000);
+                    }
+
+                    renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), textX + 2, getY() + (getHeight() - getFontHeight()) + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
+
+                    yOffset -= 11 * module.animation.getAnimationFactor();
+                    index++;
+                }
+
+                break;
+            }
+
+            case BOTTOM_LEFT: {
+                int index = 0;
+
+                for (Module module : enabledModules) {
+                    float originX = getX() - (getStringWidth(module.getName() + module.getArrayListInfo()) + 4);
+                    float textX = (float) (originX + ((getStringWidth(module.getName() + module.getArrayListInfo()) + 4) * module.animation.getAnimationFactor()));
+
+                    if (background.getValue()) {
+                        RenderUtil.drawRect(textX, yOffset, getStringWidth(module.getName() + module.getArrayListInfo()) + 4, 11, 0x90000000);
+                    }
+
+                    renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getArrayListInfo(), textX + 2, getY() + (getHeight() - getFontHeight()) + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
+
+                    yOffset -= 11 * module.animation.getAnimationFactor();
+                    index++;
+                }
+
+                break;
+            }
         }
+
+        this.setHeight(Math.abs(yOffset));
+
+        if (this.getHeight() > scaledResolution.getScaledHeight()) {
+            this.setHeight(scaledResolution.getScaledHeight());
+        }
+
+        RenderUtil.endGlScissor();
+    }
+
+    @Override
+    public float getWidth() {
+        return enabledModules.isEmpty() ? 50 : getStringWidth(enabledModules.get(0).getName() + enabledModules.get(0).getArrayListInfo()) + 6;
+    }
+
+    @Override
+    public float getHeight() {
+        return 56;
     }
 
     public enum ArrayListColour {
@@ -99,5 +226,12 @@ public class ArrayListHUD extends Module implements TextRenderer {
         public int getColour(int addition) {
             return colour.apply(addition);
         }
+    }
+
+    public enum Corner {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
     }
 }

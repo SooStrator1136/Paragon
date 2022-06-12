@@ -13,6 +13,7 @@ import java.awt.*;
 public abstract class HUDModule extends Module implements TextRenderer {
 
     private float x = 50, y = 50;
+    private float width = 50, height = 50;
     private float lastX, lastY;
     private boolean dragging;
 
@@ -22,16 +23,22 @@ public abstract class HUDModule extends Module implements TextRenderer {
     }
 
     public abstract void render();
-    public abstract float getWidth();
-    public abstract float getHeight();
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
 
     public void updateComponent(int mouseX, int mouseY) {
         // Set X and Y
         if (dragging) {
             ScaledResolution sr = new ScaledResolution(mc);
 
-            float newX = MathHelper.clamp(mouseX - lastX, 4, RenderUtil.getScreenWidth() - getWidth());
-            float newY = MathHelper.clamp(mouseY - lastY, 4, RenderUtil.getScreenHeight() - getHeight());
+            float newX = MathHelper.clamp(mouseX - lastX, 2, RenderUtil.getScreenWidth() - getWidth());
+            float newY = MathHelper.clamp(mouseY - lastY, 2, RenderUtil.getScreenHeight() - getHeight());
 
             this.x = newX;
             this.y = newY;
@@ -82,6 +89,14 @@ public abstract class HUDModule extends Module implements TextRenderer {
 
     public void setY(float newY) {
         this.y = newY;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 
     public boolean isDragging() {

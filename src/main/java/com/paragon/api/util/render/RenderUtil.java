@@ -391,7 +391,7 @@ public class RenderUtil implements Wrapper {
         GlStateManager.popMatrix();
     }
 
-    public static void renderItemStack(ItemStack itemStack, float x, float y, boolean durability) {
+    public static void renderItemStack(ItemStack itemStack, float x, float y, boolean overlay) {
         RenderItem renderItem = mc.getRenderItem();
 
         GlStateManager.enableDepth();
@@ -399,7 +399,7 @@ public class RenderUtil implements Wrapper {
         renderItem.zLevel = 200;
         renderItem.renderItemAndEffectIntoGUI(itemStack, (int) x, (int) y);
 
-        if (durability) {
+        if (overlay) {
             renderItem.renderItemOverlays(mc.fontRenderer, itemStack, (int) x, (int) y);
         }
 

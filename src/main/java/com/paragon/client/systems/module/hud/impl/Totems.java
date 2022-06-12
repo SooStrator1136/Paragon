@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.hud.impl;
 
+import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.init.Items;
@@ -18,20 +19,25 @@ public class Totems extends HUDModule {
 
     @Override
     public void render() {
-        renderText(getText(), getX(), getY(), Colours.mainColour.getValue().getRGB());
+        RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), 0x70000000);
+        RenderUtil.drawBorder(getX(), getY(), getWidth(), getHeight(), 1, Colours.mainColour.getValue().getRGB());
+
+        ItemStack itemStack = new ItemStack(Items.TOTEM_OF_UNDYING, getTotems());
+
+        RenderUtil.renderItemStack(itemStack, getX() + 1, getY() + 2, true);
     }
 
     @Override
     public float getWidth() {
-        return getStringWidth(getText());
+        return 19;
     }
 
     @Override
     public float getHeight() {
-        return getFontHeight();
+        return 19;
     }
 
-    public String getText() {
+    public int getTotems() {
         int count = 0;
 
         for (int i = 0; i < 36; i++) {
@@ -50,6 +56,6 @@ public class Totems extends HUDModule {
             count++;
         }
 
-        return "Totems " + TextFormatting.WHITE + count;
+        return count;
     }
 }

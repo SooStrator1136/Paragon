@@ -60,13 +60,14 @@ public class Chams extends Module {
             .setDescription("Make the crystals bounce like they do in vanilla")
             .setParentSetting(crystals);
 
-    public static Setting<Float> scaleSetting = new Setting<>("Scale", 0.6f, 0.0f, 1f, 0.01f)
-            .setDescription("The scale of the crystal")
-            .setParentSetting(crystals);
-
     public static Setting<Boolean> rubiks = new Setting<>("Rubik's Cube", false)
             .setDescription("Make end crystals look like Rubik's cubes")
             .setParentSetting(crystals);
+
+    public static Setting<Float> scaleSetting = new Setting<>("Scale", 0.6f, 0.0f, 1f, 0.01f)
+            .setDescription("The scale of the crystal")
+            .setParentSetting(crystals)
+            .setVisibility(() -> !rubiks.getValue());
 
     public static Setting<Float> time = new Setting<>("Time", 400f, 200f, 1000f, 1f)
             .setDescription("The time it takes for a side to rotate")
@@ -300,10 +301,9 @@ public class Chams extends Module {
             }
 
             // Render rubik's cube
-            if (!rubiks.getValue()) {
-                GL11.glColor4f(colour.getValue().getRed() / 255f, colour.getValue().getGreen() / 255f, colour.getValue().getBlue() / 255f, mode.getValue().equals(Mode.MODEL) ? colour.getAlpha() / 255f : 1);
-                renderCrystal(event);
-            }
+            GL11.glColor4f(colour.getValue().getRed() / 255f, colour.getValue().getGreen() / 255f, colour.getValue().getBlue() / 255f, mode.getValue().equals(Mode.MODEL) ? colour.getAlpha() / 255f : 1);
+
+            renderCrystal(event);
 
             // Re enable depth
             if (walls.getValue() && mode.getValue().equals(Mode.WIRE_MODEL)) {
@@ -345,6 +345,11 @@ public class Chams extends Module {
         if (rubiks.getValue()) {
             cubeModel = event.getCube();
 
+            GL11.glPushMatrix();
+
+            float oldScale = scaleSetting.getValue();
+            scaleSetting.setValue(0.4f);
+
             GlStateManager.scale(2, 2, 2);
             GlStateManager.translate(0, -0.5, 0);
 
@@ -354,7 +359,7 @@ public class Chams extends Module {
 
             GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
 
-            GlStateManager.translate(0, 0.8f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0);
+            GlStateManager.translate(0, 1f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0);
 
             GlStateManager.rotate(60, 0.7071f, 0, 0.7071f);
             GlStateManager.scale(0.875f, 0.875f, 0.875f);
@@ -362,7 +367,12 @@ public class Chams extends Module {
             GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
 
             if (glass.getValue()) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(1f, 1f, 1f);
+
                 event.getGlass().render(event.getScale());
+
+                GlStateManager.popMatrix();
             }
 
             GlStateManager.scale(0.875f, 0.875f, 0.875f);
@@ -370,7 +380,12 @@ public class Chams extends Module {
             GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
 
             if (glass.getValue()) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(1f, 1f, 1f);
+
                 event.getGlass().render(event.getScale());
+
+                GlStateManager.popMatrix();
             }
 
             GlStateManager.scale(0.875f, 0.875f, 0.875f);
@@ -452,6 +467,10 @@ public class Chams extends Module {
                     }
                 }
             }
+
+            scaleSetting.setValue(oldScale);
+
+            GL11.glPopMatrix();
         }
 
         else {
@@ -464,7 +483,7 @@ public class Chams extends Module {
             }
 
             GlStateManager.rotate(event.getLimbSwingAmount(), 0.0F, 1.0F, 0.0F);
-            GlStateManager.translate(0.0F, 0.8f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0.0F);
+            GlStateManager.translate(0.0F, 1f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0.0F);
             GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
 
             GlStateManager.pushMatrix();
