@@ -44,7 +44,7 @@ public class Notifier extends Module {
     public void onModuleToggle(ModuleToggleEvent moduleToggleEvent) {
         if (moduleEnabled.getValue()) {
             if (!moduleToggleEvent.getModule().isIgnored()) {
-                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Toggled " + moduleToggleEvent.getModule().getName(), moduleToggleEvent.getModule().getName() + " was " + (moduleToggleEvent.getModule().isEnabled() ? "Enabled" : "Disabled"), NotificationType.INFO));
+                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification(moduleToggleEvent.getModule().getName() + " was " + (moduleToggleEvent.getModule().isEnabled() ? "Enabled" : "Disabled"), NotificationType.INFO));
             }
         }
     }
@@ -52,7 +52,7 @@ public class Notifier extends Module {
     @Listener
     public void onTotemPop(TotemPopEvent event) {
         if (pop.getValue()) {
-            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Totem Pop", event.getPlayer().getName() + " has popped " + Paragon.INSTANCE.getPopManager().getPops(event.getPlayer()) + " totems!", NotificationType.INFO));
+            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification(event.getPlayer().getName() + " has popped " + Paragon.INSTANCE.getPopManager().getPops(event.getPlayer()) + " totems!", NotificationType.INFO));
         }
     }
 
@@ -63,7 +63,7 @@ public class Notifier extends Module {
                 return;
             }
 
-            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Player Died", event.getEntityPlayer().getName() + " has died after popping " + event.getPops() + " totems!", NotificationType.INFO));
+            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification(event.getEntityPlayer().getName() + " has died after popping " + event.getPops() + " totems!", NotificationType.INFO));
         }
     }
 

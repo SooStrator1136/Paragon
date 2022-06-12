@@ -5,6 +5,7 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.hud.impl.Notifications;
 import com.paragon.client.systems.ui.animation.Animation;
 import com.paragon.client.systems.ui.animation.Easing;
+import net.minecraft.util.math.MathHelper;
 
 import static org.lwjgl.opengl.GL11.glScalef;
 
@@ -13,17 +14,15 @@ import static org.lwjgl.opengl.GL11.glScalef;
  */
 public class Notification implements TextRenderer {
 
-    private final String title;
     private final String message;
-    private NotificationType type;
+    private final NotificationType type;
 
     private Animation animation;
     private boolean started;
     private boolean reachedFirst = false;
     private int renderTicks = 0;
 
-    public Notification(String title, String message, NotificationType type) {
-        this.title = title;
+    public Notification(String message, NotificationType type) {
         this.message = message;
         this.type = type;
     }
@@ -35,22 +34,16 @@ public class Notification implements TextRenderer {
             started = true;
         }
 
+        float width = getStringWidth(getMessage()) + 40;
+        float x = Notifications.INSTANCE.getX();
+
         RenderUtil.startGlScissor(Notifications.INSTANCE.getX() + (150 - (150 * animation.getAnimationFactor())), y, 300 * animation.getAnimationFactor(), 45);
 
-        RenderUtil.drawRect(Notifications.INSTANCE.getX(), y, 300, 45, 0x90000000);
+        RenderUtil.drawRect(x + width / 2, y, width, 30, 0x90000000);
 
-        glScalef(1.5f, 1.5f, 1.5f);
-        {
-            float scaleFactor = 1 / 1.5f;
+        renderCenteredString(getMessage(), x + 150, y + 15f, -1, true);
 
-            renderText(getTitle(), (Notifications.INSTANCE.getX() + 10) * scaleFactor, (y + 10) * scaleFactor, -1);
-
-            glScalef(scaleFactor, scaleFactor, scaleFactor);
-        }
-
-        renderText(message, Notifications.INSTANCE.getX() + 10, y + 30, -1);
-
-        RenderUtil.drawRect(Notifications.INSTANCE.getX(), y, 300, 1, type.getColour());
+        RenderUtil.drawRect(x + width / 2, y, width, 1, type.getColour());
 
         RenderUtil.endGlScissor();
 
@@ -65,15 +58,10 @@ public class Notification implements TextRenderer {
         if (renderTicks == 300) {
             animation.setState(false);
         }
-
     }
 
     public boolean hasFinishedAnimating() {
         return animation == null || animation.getAnimationFactor() == 0 && reachedFirst;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getMessage() {

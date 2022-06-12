@@ -11,8 +11,9 @@ import com.paragon.client.systems.module.impl.misc.Notifier;
 import com.paragon.client.systems.module.setting.Setting;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Constant
 public class Notifications extends HUDModule {
 
     public static Notifications INSTANCE;
@@ -22,6 +23,10 @@ public class Notifications extends HUDModule {
 
     public static Setting<Direction> direction = new Setting<>("Direction", Direction.DOWN)
             .setDescription("The vertical direction of the notifications");
+
+    public static Setting<Float> limit = new Setting<>("Limit", 3f, 1f, 20f, 1f)
+            .setDescription("The limit to the amount of notifications displayed")
+            .setVisibility(() -> renderType.getValue().equals(RenderType.DISPLAY));
 
     public Notifications() {
         super("Notifications", "Where the notifications will render");
@@ -41,20 +46,29 @@ public class Notifications extends HUDModule {
                 float y = Notifications.INSTANCE.getY();
 
                 for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
+                    if (Paragon.INSTANCE.getNotificationManager().getNotifications().size() >= limit.getValue() + 1 && Paragon.INSTANCE.getNotificationManager().getNotifications().get(limit.getValue().intValue()) == notification) {
+                        break;
+                    }
+
                     notification.render(y);
 
                     switch (direction.getValue()) {
                         case UP:
-                            y += -50 * notification.getAnimation().getAnimationFactor();
+                            y += -35 * notification.getAnimation().getAnimationFactor();
                             break;
 
                         case DOWN:
-                            y += 50 * notification.getAnimation().getAnimationFactor();
+                            y += 35 * notification.getAnimation().getAnimationFactor();
                             break;
                     }
                 }
 
-                Paragon.INSTANCE.getNotificationManager().getNotifications().removeIf(Notification::hasFinishedAnimating);
+                // bad code 2: electric boogaloo
+                for (int i = 0; i < limit.getValue() && i < Paragon.INSTANCE.getNotificationManager().getNotifications().size() - 1; i++) {
+                    if (Paragon.INSTANCE.getNotificationManager().getNotifications().get(i).hasFinishedAnimating()) {
+                        Paragon.INSTANCE.getNotificationManager().getNotifications().remove(Paragon.INSTANCE.getNotificationManager().getNotifications().get(i));
+                    }
+                }
             } else if (renderType.getValue().equals(RenderType.CHAT)) {
                 for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
                     CommandManager.sendClientMessage(notification.getMessage(), false);
@@ -72,7 +86,7 @@ public class Notifications extends HUDModule {
 
     @Override
     public float getHeight() {
-        return 45;
+        return 30;
     }
 
     public enum RenderType {

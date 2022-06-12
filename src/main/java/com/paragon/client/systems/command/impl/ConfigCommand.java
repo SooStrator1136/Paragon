@@ -16,15 +16,15 @@ public class ConfigCommand extends Command {
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("save")) {
                 Paragon.INSTANCE.getStorageManager().saveModules(args[1]);
-                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Config Saved", "Saved config " + args[1], NotificationType.INFO));
+                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Saved config " + args[1], NotificationType.INFO));
             }
 
             if (args[0].equalsIgnoreCase("load")) {
                 Paragon.INSTANCE.getStorageManager().loadModules(args[1]);
-                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Loading Config", "Loading config " + args[1], NotificationType.INFO));
+                Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Loading config " + args[1], NotificationType.INFO));
             }
         } else {
-            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Invalid arguments", "Syntax: " + getSyntax(), NotificationType.ERROR));
+            Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Syntax: " + getSyntax(), NotificationType.ERROR));
         }
     }
 }
