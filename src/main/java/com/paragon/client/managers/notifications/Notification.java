@@ -34,16 +34,16 @@ public class Notification implements TextRenderer {
             started = true;
         }
 
-        float width = getStringWidth(getMessage()) + 40;
+        float width = getStringWidth(getMessage()) + 10;
         float x = Notifications.INSTANCE.getX();
 
         RenderUtil.startGlScissor(Notifications.INSTANCE.getX() + (150 - (150 * animation.getAnimationFactor())), y, 300 * animation.getAnimationFactor(), 45);
 
-        RenderUtil.drawRect(x + width / 2, y, width, 30, 0x90000000);
+        RenderUtil.drawRect((x + 150) - (width / 2f), y, width, 30, 0x90000000);
 
         renderCenteredString(getMessage(), x + 150, y + 15f, -1, true);
 
-        RenderUtil.drawRect(x + width / 2, y, width, 1, type.getColour());
+        RenderUtil.drawRect((x + 150) - (width / 2f), y, width, 1, type.getColour());
 
         RenderUtil.endGlScissor();
 

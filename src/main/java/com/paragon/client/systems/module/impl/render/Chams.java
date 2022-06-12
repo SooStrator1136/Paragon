@@ -190,6 +190,8 @@ public class Chams extends Module {
                 GL11.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             }
 
+            GL11.glColor4f(colour.getValue().getRed() / 255f, colour.getValue().getGreen() / 255f, colour.getValue().getBlue() / 255f, mode.getValue().equals(Mode.MODEL) ? colour.getAlpha() / 255f : 1);
+
             // Render model
             event.renderModel();
 
@@ -300,7 +302,6 @@ public class Chams extends Module {
                 GL11.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             }
 
-            // Render rubik's cube
             GL11.glColor4f(colour.getValue().getRed() / 255f, colour.getValue().getGreen() / 255f, colour.getValue().getBlue() / 255f, mode.getValue().equals(Mode.MODEL) ? colour.getAlpha() / 255f : 1);
 
             renderCrystal(event);
