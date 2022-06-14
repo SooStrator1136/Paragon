@@ -19,6 +19,7 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
 
     // Credits expand animation
     private final Animation creditsAnimation = new Animation(500, false, () -> Easing.EXPO_IN_OUT);
+
     // Whether the credits are displayed or not
     private boolean creditsExpanded = false;
 
@@ -29,6 +30,8 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
         this.buttonList.add(new ParagonButton(2, this.width / 2 - 100, this.height / 2 + 50, 95, 20, "Options"));
         this.buttonList.add(new ParagonButton(3, this.width / 2 + 5, this.height / 2 + 50, 95, 20, "Exit"));
         this.buttonList.add(new ParagonButton(4, 3, this.height - 23, 60, 20, "Credits"));
+
+        this.buttonList.add(new ParagonButton(5, this.width - 83, 3, 80, 20, "Minecraft Menu"));
     }
 
     @Override
@@ -79,7 +82,7 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
             float scaleFactor = 1 / 0.65f;
 
             float y = 270;
-            for (String str : new String[]{"Created by Wolfsurge & Teletofu", "Animation class - Tigermouthbear, linustouchtips", "Shader OpenGL code - linustouchtips", "Font Renderer - Cosmos Client (so good)"}) {
+            for (String str : new String[]{"Created by Wolfsurge & Teletofu", "Animation class - Tigermouthbear, linustouchtips", "Shader OpenGL code - linustouchtips", "Font Renderer - Cosmos Client"}) {
                 renderText(str, 10 * scaleFactor, y * scaleFactor, -1);
                 y += 10;
             }
@@ -99,18 +102,27 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
             case 0:
                 mc.displayGuiScreen(new GuiWorldSelection(this));
                 break;
+
             case 1:
                 mc.displayGuiScreen(new GuiMultiplayer(this));
                 break;
+
             case 2:
                 mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings));
                 break;
+
             case 3:
                 mc.shutdown();
                 break;
+
             case 4:
                 creditsExpanded = !creditsExpanded;
                 creditsAnimation.setState(creditsExpanded);
+                break;
+
+            case 5:
+                Paragon.INSTANCE.setParagonMainMenu(false);
+                mc.displayGuiScreen(new GuiMainMenu());
                 break;
         }
 

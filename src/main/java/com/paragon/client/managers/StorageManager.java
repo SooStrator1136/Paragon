@@ -355,7 +355,7 @@ public class StorageManager {
     }
 
     public void loadAlts() {
-        // Create friends folder if it doesn't already exist
+        // Create main folder if it doesn't already exist
         if (!mainFolder.exists()) {
             mainFolder.mkdirs();
         }
@@ -374,6 +374,48 @@ public class StorageManager {
                 Paragon.INSTANCE.getAltManager().addAlt(alt);
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveOther() {
+        if (!mainFolder.exists()) {
+            mainFolder.mkdirs();
+        }
+
+        try {
+            File file = new File("paragon/client.json");
+            file.createNewFile();
+
+            JSONObject jsonObject = new JSONObject();
+
+            FileWriter fileWriter = new FileWriter(file);
+
+            try {
+                jsonObject.put("mainmenu", Paragon.INSTANCE.isParagonMainMenu());
+                fileWriter.write(jsonObject.toString(4));
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void loadOther() {
+        if (!mainFolder.exists()) {
+            mainFolder.mkdirs();
+        }
+
+        try {
+            // Load JSON
+            JSONObject jsonObject = getJSON(new File("paragon/other.json"));
+
+            Paragon.INSTANCE.setParagonMainMenu(jsonObject.getBoolean("mainmenu"));
         } catch (Exception e) {
             e.printStackTrace();
         }

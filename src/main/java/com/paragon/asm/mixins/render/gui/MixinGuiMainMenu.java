@@ -2,9 +2,12 @@ package com.paragon.asm.mixins.render.gui;
 
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.client.systems.ui.menu.ParagonButton;
 import com.paragon.client.systems.ui.menu.ParagonMenu;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,12 +16,24 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = GuiMainMenu.class, priority = Integer.MAX_VALUE)
-public class MixinGuiMainMenu {
+public class MixinGuiMainMenu extends GuiScreen {
+
+    @Inject(method = "initGui", at = @At("TAIL"))
+    public void onInit(CallbackInfo ci) {
+        this.buttonList.add(new ParagonButton(-1, this.width - 83, 3, 80, 20, "Paragon Menu"));
+    }
 
     @Inject(method = "drawScreen", at = @At("TAIL"))
     public void renderWatermark(int mouseX, int mouseY, float partialTicks, CallbackInfo info) {
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, 2, sr.getScaledHeight() - 50, Colours.mainColour.getValue().getRGB());
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, 2, 2, Colours.mainColour.getValue().getRGB());
+    }
+
+    @Inject(method = "actionPerformed", at = @At("TAIL"))
+    public void onActionPerformed(GuiButton button, CallbackInfo ci) {
+        if (button.id == -1) {
+            Paragon.INSTANCE.setParagonMainMenu(true);
+            mc.displayGuiScreen(new ParagonMenu());
+        }
     }
 
 }

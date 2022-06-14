@@ -27,6 +27,7 @@ public class Paragon {
     @Mod.Instance
     public static Paragon INSTANCE = new Paragon();
     private final EventBus eventBus = new EventBus();
+
     // Client stuff
     private Logger logger;
     private DiscordPresenceManager presenceManager = new DiscordPresenceManager();
@@ -48,6 +49,8 @@ public class Paragon {
     private PanelGUI panelGUI;
     private WindowGUI windowGUI;
     private Console console;
+
+    private boolean paragonMainMenu;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -88,6 +91,8 @@ public class Paragon {
         panelGUI = new PanelGUI();
         windowGUI = new WindowGUI();
         console = new Console("Paragon Console", 400, 300);
+
+        getStorageManager().loadOther();
 
         getLogger().info("Paragon Initialised Successfully");
     }
@@ -243,5 +248,25 @@ public class Paragon {
      */
     public Console getConsole() {
         return console;
+    }
+
+    /**
+     * Gets whether we are using the custom main menu
+     *
+     * @return Whether we are using the custom main menu
+     */
+    public boolean isParagonMainMenu() {
+        return paragonMainMenu;
+    }
+
+    /**
+     * Sets whether we are using the custom main menu
+     *
+     * @param paragonMainMenu  Whether we are using the custom main menu
+     */
+    public void setParagonMainMenu(boolean paragonMainMenu) {
+        this.paragonMainMenu = paragonMainMenu;
+
+        getStorageManager().saveOther();
     }
 }
