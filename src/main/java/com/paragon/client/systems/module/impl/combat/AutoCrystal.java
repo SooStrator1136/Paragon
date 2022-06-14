@@ -17,6 +17,7 @@ import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
+import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.block.Block;
@@ -232,7 +233,7 @@ public class AutoCrystal extends Module {
             .setDescription("The value which we will start to override at (in %)")
             .setParentSetting(override);
 
-    public static Setting<AtomicInteger> forceOverride = new Setting<>("ForceOverride", new AtomicInteger(Keyboard.KEY_NONE))
+    public static Setting<Bind> forceOverride = new Setting<>("ForceOverride", new Bind(0, Bind.Device.KEYBOARD))
             .setDescription("Force override when you press a key")
             .setParentSetting(override);
 
@@ -903,7 +904,7 @@ public class AutoCrystal extends Module {
 
     public boolean isOverriding(EntityPlayer target) {
         if (override.getValue()) {
-            if (overrideHealth.getValue() && EntityUtil.getEntityHealth(target) <= overrideHealthValue.getValue() || forceOverride.getValue().get() != 0 && Keyboard.isKeyDown(forceOverride.getValue().get())) {
+            if (overrideHealth.getValue() && EntityUtil.getEntityHealth(target) <= overrideHealthValue.getValue() || forceOverride.getValue().isPressed()) {
                 return true;
             }
 

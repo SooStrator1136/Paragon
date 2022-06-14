@@ -192,7 +192,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
     @Override
     public float getWidth() {
-        return enabledModules.isEmpty() ? 50 : getStringWidth(enabledModules.get(0).getName() + enabledModules.get(0).getArrayListInfo()) + 6;
+        return enabledModules.isEmpty() || corner.equals(Corner.TOP_RIGHT) || corner.equals(Corner.BOTTOM_RIGHT) ? 56 : getStringWidth(enabledModules.get(0).getName() + enabledModules.get(0).getArrayListInfo()) + 6;
     }
 
     @Override

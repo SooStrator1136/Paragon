@@ -2,10 +2,13 @@ package com.paragon.client.managers.rotation;
 
 import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.event.player.RotationUpdateEvent;
+import com.paragon.api.event.player.UpdateEvent;
 import com.paragon.api.util.Wrapper;
 import com.paragon.asm.mixins.accessor.ICPacketPlayer;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -21,30 +24,39 @@ public class RotationManager implements Wrapper {
         Paragon.INSTANCE.getEventBus().register(this);
     }
 
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
-        if (nullCheck()) {
-            rotationsQueue.clear();
-            return;
+    @Listener
+    public void onRotationUpdate(RotationUpdateEvent event) {
+        if (!rotationsQueue.isEmpty()) {
+            event.cancel();
         }
+    }
 
-        rotationsQueue.sort(Comparator.comparing(rotation -> rotation.getPriority().getPriority()));
+    @Listener
+    public void onPacketSend(PacketEvent.PreSend event) {
+        if (event.getPacket() instanceof CPacketPlayer) {
+            if (!rotationsQueue.isEmpty()) {
+                rotationsQueue.sort(Comparator.comparing(rotation -> rotation.getPriority().getPriority()));
 
-        for (Rotation rotation : rotationsQueue) {
-            switch (rotation.getRotate()) {
-                case LEGIT:
-                    mc.player.rotationYaw = rotation.getYaw();
-                    mc.player.rotationYawHead = rotation.getYaw();
-                    mc.player.rotationPitch = rotation.getPitch();
-                    break;
+                Rotation rotation = rotationsQueue.get(0);
 
-                case PACKET:
-                    mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rotation.getYaw(), rotation.getPitch(), mc.player.onGround));
-                    break;
+                ((ICPacketPlayer) event.getPacket()).setYaw(rotation.getYaw());
+                ((ICPacketPlayer) event.getPacket()).setPitch(rotation.getPitch());
+
+                mc.player.rotationYaw = rotation.getYaw();
+                mc.player.rotationPitch = rotation.getPitch();
+
+                // Remove rotations that have the same yaw as the one we just rotated to
+                rotationsQueue.removeIf(rotation1 -> rotation1.getYaw() == rotation.getYaw());
             }
         }
+    }
 
-        rotationsQueue.clear();
+    @Listener
+    public void onUpdate(UpdateEvent event) {
+        if (!rotationsQueue.isEmpty()) {
+            // Send packet if we haven't cleared the queue yet
+            mc.player.connection.sendPacket(new CPacketPlayer());
+        }
     }
 
     public void addRotation(Rotation rotation) {

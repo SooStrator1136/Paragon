@@ -43,7 +43,6 @@ public class ModuleManager {
                 new Aura(),
                 new AutoCrystal(),
                 new BowRelease(),
-                new CevBreaker(),
                 new Criticals(),
                 new Offhand(),
                 new Replenish(),

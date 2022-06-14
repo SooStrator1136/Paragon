@@ -8,7 +8,6 @@ import com.paragon.client.systems.ui.window.impl.windows.Component;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SettingComponent<T> extends Component {
 

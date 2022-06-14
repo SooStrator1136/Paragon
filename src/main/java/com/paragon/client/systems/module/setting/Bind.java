@@ -24,6 +24,10 @@ public class Bind {
     }
 
     public boolean isPressed() {
+        if (buttonCode == 0) {
+            return false;
+        }
+
         // Our bind is pressed
         boolean pressed = Keyboard.isKeyDown(buttonCode) && device.equals(Device.KEYBOARD) || Mouse.isButtonDown(buttonCode) && device.equals(Device.MOUSE);
 
