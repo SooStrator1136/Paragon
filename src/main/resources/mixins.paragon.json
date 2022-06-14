@@ -25,6 +25,7 @@
 
     "network.MixinNetworkManager",
 
+    "player.MixinAbstractClientPlayer",
     "player.MixinEntityPlayer",
     "player.MixinEntityPlayerSP",
 
