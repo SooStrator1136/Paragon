@@ -70,6 +70,7 @@ public class ModuleManager {
                 new Fullbright(),
                 new HitColour(),
                 new HoleESP(),
+                new MobOwner(),
                 new Nametags(),
                 new NoRender(),
                 new NoSwing(),
