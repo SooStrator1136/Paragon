@@ -48,6 +48,10 @@ public class Module extends Feature implements Wrapper {
 
         if (constant) {
             this.enabled = true;
+
+            // Register events
+            MinecraftForge.EVENT_BUS.register(this);
+            Paragon.INSTANCE.getEventBus().register(this);
         }
 
         Arrays.stream(getClass().getDeclaredFields()).filter(field -> Setting.class.isAssignableFrom(field.getType())).forEach(field -> {
@@ -69,29 +73,7 @@ public class Module extends Feature implements Wrapper {
     }
 
     public Module(String name, Category category, String description, Bind bind) {
-        super(name, description);
-        this.category = category;
-
-        if (constant) {
-            this.enabled = true;
-        }
-
-        Arrays.stream(getClass().getDeclaredFields()).filter(field -> Setting.class.isAssignableFrom(field.getType())).forEach(field -> {
-            field.setAccessible(true);
-
-            try {
-                Setting<?> setting = (Setting<?>) field.get(this);
-
-                if (setting != null && setting.getParentSetting() == null) {
-                    settings.add(setting);
-                }
-            } catch (IllegalAccessException | IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-        });
-
-        this.settings.add(this.visible);
-        this.settings.add(this.bind);
+        this(name, category, description);
 
         this.bind.setValue(bind);
     }

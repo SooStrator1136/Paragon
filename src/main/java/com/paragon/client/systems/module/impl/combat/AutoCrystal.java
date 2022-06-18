@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.combat;
 import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.util.calculations.MathUtil;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
@@ -11,11 +12,12 @@ import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
-import com.paragon.client.managers.rotation.Rotate;
-import com.paragon.client.managers.rotation.Rotation;
-import com.paragon.client.managers.rotation.RotationPriority;
+import com.paragon.client.systems.module.impl.client.rotation.Rotate;
+import com.paragon.client.systems.module.impl.client.rotation.Rotation;
+import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
+import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
 import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
@@ -38,12 +40,10 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * somewhat bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded.
@@ -280,6 +280,12 @@ public class AutoCrystal extends Module {
             .setParentSetting(pause)
             .setVisibility(randomPause::getValue);
 
+    public static Setting<Boolean> confirmRotate = new Setting<>("ConfirmRotate", true)
+            .setDescription("Make sure you have rotated before preceding with the action");
+
+    public static Setting<Float> confirmThreshold = new Setting<>("ConfirmThreshold", 50f, 0f, 100f, 1f)
+            .setDescription("The threshold to determine whether we are looking away from the position")
+            .setVisibility(confirmRotate::getValue);
 
     // Render settings
     public static Setting<Boolean> render = new Setting<>("Render", true)
@@ -590,15 +596,19 @@ public class AutoCrystal extends Module {
             // Get our original rotation before rotating to the crystal
             Vec2f originalPlayerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
+            // Get rotation
+            Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
+
             // Check we want to rotate
             if (!explodeRotate.getValue().equals(Rotate.NONE)) {
-                // Get rotation
-                Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
-
                 Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, explodeRotate.getValue(), RotationPriority.HIGHEST);
 
                 // Send rotation
-                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+                Rotations.INSTANCE.addRotation(rotation);
+            }
+
+            if (confirmRotate.getValue() && !MathUtil.isNearlyEqual(mc.player.rotationYaw, rotationVec.x, confirmThreshold.getValue()) && !MathUtil.isNearlyEqual(mc.player.rotationPitch, rotationVec.y, confirmThreshold.getValue())) {
+                return;
             }
 
             if (packetExplode.getValue()) {
@@ -625,7 +635,7 @@ public class AutoCrystal extends Module {
                 Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getValue(), RotationPriority.HIGHEST);
 
                 // Send rotation
-                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+                Rotations.INSTANCE.addRotation(rotation);
             }
 
             // Check we want to switch
@@ -684,13 +694,18 @@ public class AutoCrystal extends Module {
         // Get our current rotation
         Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
+        // Get rotation
+        Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
+
         // Check we want to rotate
         if (!placeRotate.getValue().equals(Rotate.NONE)) {
-            // Get rotation
-            Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
-
             Rotation rotation = new Rotation(placeRotation.x, placeRotation.y, placeRotate.getValue(), RotationPriority.HIGHEST);
-            Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            Rotations.INSTANCE.addRotation(rotation);
+        }
+
+        // Confirm rotations for strict
+        if (confirmRotate.getValue() && (!MathUtil.isNearlyEqual(mc.player.rotationYaw, placeRotation.x, confirmThreshold.getValue()) || !MathUtil.isNearlyEqual(mc.player.rotationPitch, placeRotation.y, confirmThreshold.getValue()))) {
+            return;
         }
 
         EnumHand placeHand = InventoryUtil.getHandHolding(Items.END_CRYSTAL);
@@ -719,7 +734,7 @@ public class AutoCrystal extends Module {
         if (!placeRotate.getValue().equals(Rotate.NONE) && placeRotateBack.getValue()) {
             // Rotate back
             Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getValue(), RotationPriority.HIGHEST);
-            Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+            Rotations.INSTANCE.addRotation(rotation);
         }
 
         if (placeWhen.getValue().equals(When.SILENT_SWITCH)) {

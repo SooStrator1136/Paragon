@@ -138,10 +138,14 @@ public class Offhand extends Module {
 
         // Get return slot
         int returnSlot = -1;
-        for (int i = 9; i <= 44; i++) {
-            if (mc.player.inventory.getStackInSlot(i).isEmpty()) {
-                returnSlot = i;
-                break;
+        if (mc.player.inventory.getStackInSlot(slot).isEmpty()) {
+            returnSlot = slot;
+        } else {
+            for (int i = 9; i <= 44; i++) {
+                if (mc.player.inventory.getStackInSlot(i).isEmpty()) {
+                    returnSlot = i;
+                    break;
+                }
             }
         }
 

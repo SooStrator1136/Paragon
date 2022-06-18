@@ -1,4 +1,4 @@
-package com.paragon.client.managers.rotation;
+package com.paragon.client.systems.module.impl.client.rotation;
 
 import com.paragon.api.util.Wrapper;
 import net.minecraft.network.play.client.CPacketPlayer;

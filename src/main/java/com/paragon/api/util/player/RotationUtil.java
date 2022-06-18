@@ -52,4 +52,18 @@ public class RotationUtil implements Wrapper {
         mc.player.rotationPitch = rotationVec.y;
     }
 
+    public static float normalizeAngle(float angle) {
+        angle %= 360.0f;
+
+        if (angle >= 180.0f) {
+            angle -= 360.0f;
+        }
+
+        if (angle < -180.0f) {
+            angle += 360.0f;
+        }
+
+        return angle;
+    }
+
 }

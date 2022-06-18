@@ -6,11 +6,12 @@ import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
-import com.paragon.client.managers.rotation.Rotate;
-import com.paragon.client.managers.rotation.Rotation;
-import com.paragon.client.managers.rotation.RotationPriority;
+import com.paragon.client.systems.module.impl.client.rotation.Rotate;
+import com.paragon.client.systems.module.impl.client.rotation.Rotation;
+import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
+import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import com.paragon.client.systems.module.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -140,7 +141,7 @@ public class Aura extends Module {
                 Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, rotate.getValue(), RotationPriority.HIGH);
 
                 // Rotate to the target
-                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
+                Rotations.INSTANCE.addRotation(rotation);
 
                 // Attack the target
                 if (packetAttack.getValue()) {
@@ -159,7 +160,7 @@ public class Aura extends Module {
                 if (rotateBack.getValue() && !rotate.getValue().equals(Rotate.NONE)) {
                     Rotation rotationBack = new Rotation(originalRotation.x, originalRotation.y, rotate.getValue(), RotationPriority.NORMAL);
 
-                    Paragon.INSTANCE.getRotationManager().addRotation(rotationBack);
+                    Rotations.INSTANCE.addRotation(rotationBack);
                 }
 
                 // Switch back to the old slot

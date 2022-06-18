@@ -413,7 +413,7 @@ public class StorageManager {
 
         try {
             // Load JSON
-            JSONObject jsonObject = getJSON(new File("paragon/other.json"));
+            JSONObject jsonObject = getJSON(new File("paragon/client.json"));
 
             Paragon.INSTANCE.setParagonMainMenu(jsonObject.getBoolean("mainmenu"));
         } catch (Exception e) {

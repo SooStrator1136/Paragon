@@ -1,4 +1,4 @@
-package com.paragon.client.managers.rotation;
+package com.paragon.client.systems.module.impl.client.rotation;
 
 /**
  * @author Wolfsurge
