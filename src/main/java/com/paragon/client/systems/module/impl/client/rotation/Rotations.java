@@ -105,8 +105,10 @@ public class Rotations extends Module {
                 ((ICPacketPlayer) event.getPacket()).setYaw(finYaw);
                 ((ICPacketPlayer) event.getPacket()).setPitch(finPitch);
 
-                mc.player.rotationYaw = finYaw;
-                mc.player.rotationPitch = finPitch;
+                if (rotation.getRotate().equals(Rotate.LEGIT)) {
+                    mc.player.rotationYaw = finYaw;
+                    mc.player.rotationPitch = finPitch;
+                }
 
                 // Remove rotations that have the same yaw and pitch as the one we just rotated to
                 rotationsQueue.removeIf(rotation1 -> rotation1.getYaw() == rotation.getYaw() && rotation1.getPitch() == rotation.getPitch());

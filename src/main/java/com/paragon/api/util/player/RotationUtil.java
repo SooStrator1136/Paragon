@@ -13,10 +13,11 @@ public class RotationUtil implements Wrapper {
      * Gets the rotation to a block position
      *
      * @param pos The block position to calculate angles to
+     * @param yOffset The y offset to use
      * @return The calculated angles
      */
-    public static Vec2f getRotationToBlockPos(BlockPos pos) {
-        return getRotationToVec3d(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5));
+    public static Vec2f getRotationToBlockPos(BlockPos pos, double yOffset) {
+        return getRotationToVec3d(new Vec3d(pos.getX() + 0.5, pos.getY() + yOffset, pos.getZ() + 0.5));
     }
 
     /**

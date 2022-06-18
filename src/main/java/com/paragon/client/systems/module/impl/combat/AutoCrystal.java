@@ -109,6 +109,11 @@ public class AutoCrystal extends Module {
             .setDescription("Rotate to the position you are placing at")
             .setParentSetting(place);
 
+    public static Setting<Double> placeYOffset = new Setting<>("Offset", 0.75D, 0D, 1.25D, 0.01D)
+            .setDescription("The Y offset when rotating")
+            .setParentSetting(place)
+            .setVisibility(() -> !placeRotate.getValue().equals(Rotate.NONE));
+
     public static Setting<Boolean> placeRotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate back to your original rotation")
             .setParentSetting(place)
@@ -175,6 +180,11 @@ public class AutoCrystal extends Module {
     public static Setting<Rotate> explodeRotate = new Setting<>("Rotate", Rotate.PACKET)
             .setDescription("How to rotate to the crystal")
             .setParentSetting(explode);
+
+    public static Setting<Double> explodeYOffset = new Setting<>("Offset", 0.25D, 0D, 1.5D, 0.01D)
+            .setDescription("The Y offset to rotate to the crystal")
+            .setParentSetting(explode)
+            .setVisibility(() -> !explodeRotate.getValue().equals(Rotate.NONE));
 
     public static Setting<Boolean> explodeRotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate back to your original rotation")
@@ -597,7 +607,7 @@ public class AutoCrystal extends Module {
             Vec2f originalPlayerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
             // Get rotation
-            Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + 1, currentCrystal.getCrystal().posZ));
+            Vec2f rotationVec = RotationUtil.getRotationToVec3d(new Vec3d(currentCrystal.getCrystal().posX, currentCrystal.getCrystal().posY + explodeYOffset.getValue(), currentCrystal.getCrystal().posZ));
 
             // Check we want to rotate
             if (!explodeRotate.getValue().equals(Rotate.NONE)) {
@@ -695,7 +705,7 @@ public class AutoCrystal extends Module {
         Vec2f originalRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
 
         // Get rotation
-        Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition());
+        Vec2f placeRotation = RotationUtil.getRotationToBlockPos(currentPlacement.getPosition(), placeYOffset.getValue());
 
         // Check we want to rotate
         if (!placeRotate.getValue().equals(Rotate.NONE)) {

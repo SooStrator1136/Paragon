@@ -213,7 +213,7 @@ public class Surround extends Module {
             EnumFacing facing = blocks.get(pos);
 
             // Get rotation
-            Vec2f rotation = RotationUtil.getRotationToBlockPos(pos);
+            Vec2f rotation = RotationUtil.getRotationToBlockPos(pos, 0.5);
 
             // Rotate to position
             if (rotate.getValue().equals(Rotate.LEGIT)) {

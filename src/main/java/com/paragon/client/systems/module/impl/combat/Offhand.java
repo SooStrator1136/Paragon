@@ -25,62 +25,68 @@ public class Offhand extends Module {
 
     public static Offhand INSTANCE;
 
+    public static Setting<Timing> timing = new Setting<>("Timing", Timing.LINEAR)
+            .setDescription("The timing to use before switching");
+
     // Swap settings
-    public static final Setting<ItemMode> priority = new Setting<>("Priority", ItemMode.CRYSTAL)
+    public static Setting<ItemMode> priority = new Setting<>("Priority", ItemMode.CRYSTAL)
             .setDescription("The item we most want to use in the offhand");
 
-    public static final Setting<ItemMode> secondary = new Setting<>("Secondary", ItemMode.TOTEM)
+    public static Setting<ItemMode> secondary = new Setting<>("Secondary", ItemMode.TOTEM)
             .setDescription("The item we want to use if we cannot find the main item");
 
-    public static final Setting<Boolean> gappleSword = new Setting<>("GappleSword", true)
+    public static Setting<Boolean> gappleSword = new Setting<>("GappleSword", true)
             .setDescription("Swap to a gapple when wielding a sword");
 
     // Safety settings
-    public static final Setting<Boolean> safety = new Setting<>("Safety", true)
+    public static Setting<Boolean> safety = new Setting<>("Safety", true)
             .setDescription("Switch to a totem in certain scenarios");
 
-    public static final Setting<Boolean> elytra = new Setting<>("Elytra", true)
+    public static Setting<Boolean> elytra = new Setting<>("Elytra", true)
             .setDescription("Switch to a totem when elytra flying")
             .setParentSetting(safety);
 
-    public static final Setting<Boolean> falling = new Setting<>("Falling", true)
+    public static Setting<Boolean> falling = new Setting<>("Falling", true)
             .setDescription("Switch to a totem when you will take fall damage")
             .setParentSetting(safety);
 
-    public static final Setting<Boolean> crystal = new Setting<>("Crystal", true)
+    public static Setting<Boolean> crystal = new Setting<>("Crystal", true)
             .setDescription("Switch to a totem when you can die from a crystal")
             .setParentSetting(safety);
 
-    public static final Setting<Boolean> health = new Setting<>("Health", true)
+    public static Setting<Boolean> health = new Setting<>("Health", true)
             .setDescription("Switch to a totem when you are below a value")
             .setParentSetting(safety);
 
-    public static final Setting<Float> healthValue = new Setting<>("HealthValue", 10f, 0f, 20f, 1f)
+    public static Setting<Float> healthValue = new Setting<>("HealthValue", 10f, 0f, 20f, 1f)
             .setDescription("The value we want to switch to a totem when you are below")
             .setParentSetting(safety)
             .setVisibility(health::getValue);
 
-    public static final Setting<Boolean> lava = new Setting<>("Lava", true)
+    public static Setting<Boolean> lava = new Setting<>("Lava", true)
             .setDescription("Switch to a totem when you are in lava")
             .setParentSetting(safety);
 
-    public static final Setting<Boolean> fire = new Setting<>("Fire", false)
+    public static Setting<Boolean> fire = new Setting<>("Fire", false)
             .setDescription("Switch to a totem when you are on fire")
             .setParentSetting(safety);
 
     // Delay
-    public static final Setting<Double> delay = new Setting<>("Delay", 0D, 0D, 200D, 1D)
+    public static Setting<Double> delay = new Setting<>("Delay", 0D, 0D, 200D, 1D)
             .setDescription("The delay between switching items");
 
     // Bypass settings
-    public static final Setting<Boolean> inventorySpoof = new Setting<>("InventorySpoof", true)
+    public static Setting<Boolean> inventorySpoof = new Setting<>("InventorySpoof", true)
             .setDescription("Spoof opening your inventory");
 
-    public static final Setting<Boolean> cancelMotion = new Setting<>("CancelMotion", false)
+    public static Setting<Boolean> cancelMotion = new Setting<>("CancelMotion", false)
             .setDescription("Cancel the motion of the player when switching items");
 
     // The timer to determine when to switch
     private final Timer switchTimer = new Timer();
+
+    // Sequential state
+    private State state = State.IDLE;
 
     public Offhand() {
         super("Offhand", Category.COMBAT, "Manages the item in your offhand");
@@ -94,35 +100,61 @@ public class Offhand extends Module {
             return;
         }
 
-        // Check time has passed
-        if (switchTimer.hasMSPassed(delay.getValue() * 10)) {
-            // Get slot to switch to
-            int switchItemSlot = getSwapSlot();
+        // Get slot to switch to
+        int switchItemSlot = getSwapSlot();
 
-            // Check we have a slot to switch
-            if (switchItemSlot != -1) {
-                // Spoof inventory
+        // Check we have a slot to switch
+        if (switchItemSlot != -1) {
+            // Spoof inventory
+            if (state.equals(State.IDLE)) {
+                state = State.SWAP;
+
                 if (inventorySpoof.getValue() && mc.getConnection() != null) {
                     mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.OPEN_INVENTORY));
-                }
 
-                // Cancel motion
-                if (cancelMotion.getValue()) {
-                    mc.player.motionX = 0;
-                    mc.player.motionZ = 0;
-                    mc.player.setVelocity(0, mc.player.motionY, 0);
-                }
-
-                // Switch items
-                swapOffhand(switchItemSlot);
-
-                // Close inventory
-                if (inventorySpoof.getValue() && mc.getConnection() != null && mc.player.inventoryContainer != null) {
-                    mc.getConnection().sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+                    if (timing.getValue().equals(Timing.SEQUENTIAL)) {
+                        return;
+                    }
                 }
             }
 
-            switchTimer.reset();
+            // Cancel motion
+            if (cancelMotion.getValue()) {
+                mc.player.motionX = 0;
+                mc.player.motionZ = 0;
+                mc.player.setVelocity(0, mc.player.motionY, 0);
+            }
+
+            // Switch items
+            if (state.equals(State.SWAP)) {
+                // Check time has passed
+                if (switchTimer.hasMSPassed(delay.getValue() * 10) || timing.getValue().equals(Timing.SEQUENTIAL)) {
+                    swapOffhand(switchItemSlot);
+                    switchTimer.reset();
+                }
+
+                state = State.CLOSE_INVENTORY;
+
+                if (timing.getValue().equals(Timing.SEQUENTIAL)) {
+                    return;
+                }
+            }
+        }
+
+        // Close inventory
+        if (state.equals(State.CLOSE_INVENTORY)) {
+            if (inventorySpoof.getValue() && mc.getConnection() != null && mc.player.inventoryContainer != null) {
+                mc.getConnection().sendPacket(new CPacketCloseWindow(mc.player.inventoryContainer.windowId));
+            }
+
+            state = State.FINISHED;
+
+
+            return;
+        }
+
+        if (state.equals(State.FINISHED)) {
+            state = State.IDLE;
         }
     }
 
@@ -206,7 +238,19 @@ public class Offhand extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true);
+        return " " + EnumFormatter.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true) + ", " + (timing.getValue().equals(Timing.SEQUENTIAL) ? EnumFormatter.getFormattedText(state) : "");
+    }
+
+    public enum Timing {
+        /**
+         * Perform all actions on one tick
+         */
+        LINEAR,
+
+        /**
+         * Spread actions through multiple ticks
+         */
+        SEQUENTIAL
     }
 
     public enum ItemMode {
@@ -240,5 +284,27 @@ public class Offhand extends Module {
         public Item getItem() {
             return item;
         }
+    }
+
+    public enum State {
+        /**
+         * Not performing an action
+         */
+        IDLE,
+
+        /**
+         * Swap item
+         */
+        SWAP,
+
+        /**
+         * Close inventory
+         */
+        CLOSE_INVENTORY,
+
+        /**
+         * Finished swapping
+         */
+        FINISHED
     }
 }

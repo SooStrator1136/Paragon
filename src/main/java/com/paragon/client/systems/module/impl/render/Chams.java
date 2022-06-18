@@ -57,17 +57,15 @@ public class Chams extends Module {
             .setDescription("Highlight crystals");
 
     public static Setting<Boolean> bounce = new Setting<>("Bounce", false)
-            .setDescription("Make the crystals bounce like they do in vanilla")
+            .setDescription("Make the crystals bounce like they do in vanilla");
+
+    public static Setting<Float> scaleSetting = new Setting<>("Scale", 0.6f, 0.0f, 1f, 0.01f)
+            .setDescription("The scale of the crystal")
             .setParentSetting(crystals);
 
     public static Setting<Boolean> rubiks = new Setting<>("Rubik's Cube", false)
             .setDescription("Make end crystals look like Rubik's cubes")
             .setParentSetting(crystals);
-
-    public static Setting<Float> scaleSetting = new Setting<>("Scale", 0.6f, 0.0f, 1f, 0.01f)
-            .setDescription("The scale of the crystal")
-            .setParentSetting(crystals)
-            .setVisibility(() -> !rubiks.getValue());
 
     public static Setting<Float> time = new Setting<>("Time", 400f, 200f, 1000f, 1f)
             .setDescription("The time it takes for a side to rotate")
@@ -108,6 +106,7 @@ public class Chams extends Module {
     private int rotating;
     private long lastTime;
     private ModelRenderer cubeModel;
+    private double CUBELET_SCALE = 0.4f;
 
     public Chams() {
         super("Chams", Category.RENDER, "Shows entities through walls");
@@ -122,13 +121,13 @@ public class Chams extends Module {
                 event.cancel();
             }
 
+            GL11.glPushMatrix();
+            GL11.glPushAttrib(GL_ALL_ATTRIB_BITS);
+
             // Enable transparency
             if (transparent.getValue()) {
                 GlStateManager.enableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL);
             }
-
-            GL11.glPushMatrix();
-            GL11.glPushAttrib(GL_ALL_ATTRIB_BITS);
 
             // Disable texture
             if (!texture.getValue()) {
@@ -223,6 +222,10 @@ public class Chams extends Module {
             // Reset colour
             GlStateManager.color(1, 1, 1, 1);
 
+            if (transparent.getValue()) {
+                GlStateManager.disableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL);
+            }
+
             GL11.glPopAttrib();
             GL11.glPopMatrix();
         }
@@ -234,13 +237,13 @@ public class Chams extends Module {
             // Cancel vanilla crystal render
             event.cancel();
 
+            GL11.glPushMatrix();
+            GL11.glPushAttrib(GL_ALL_ATTRIB_BITS);
+
             // Enable transparency
             if (transparent.getValue()) {
                 GlStateManager.enableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL);
             }
-
-            GL11.glPushMatrix();
-            GL11.glPushAttrib(GL_ALL_ATTRIB_BITS);
 
             // Disable texture
             if (!texture.getValue()) {
@@ -304,7 +307,9 @@ public class Chams extends Module {
 
             GL11.glColor4f(colour.getValue().getRed() / 255f, colour.getValue().getGreen() / 255f, colour.getValue().getBlue() / 255f, mode.getValue().equals(Mode.MODEL) ? colour.getAlpha() / 255f : 1);
 
-            renderCrystal(event);
+            if (mode.getValue().equals(Mode.WIRE_MODEL)) {
+                renderCrystal(event);
+            }
 
             // Re enable depth
             if (walls.getValue() && mode.getValue().equals(Mode.WIRE_MODEL)) {
@@ -335,7 +340,16 @@ public class Chams extends Module {
             GlStateManager.color(1, 1, 1, 1);
 
             // Reset scale
-            GlStateManager.scale(1 / scaleSetting.getValue(), 1 / scaleSetting.getValue(), 1 / scaleSetting.getValue());
+            if (rubiks.getValue()) {
+                GlStateManager.scale(1 / 0.5f, 1 / 0.5f, 1 / 0.5f);
+            } else {
+                GlStateManager.scale(1 / scaleSetting.getValue(), 1 / scaleSetting.getValue(), 1 / scaleSetting.getValue());
+            }
+
+            // Enable transparency
+            if (transparent.getValue()) {
+                GlStateManager.disableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL);
+            }
 
             GL11.glPopAttrib();
             GL11.glPopMatrix();
@@ -346,60 +360,54 @@ public class Chams extends Module {
         if (rubiks.getValue()) {
             cubeModel = event.getCube();
 
-            GL11.glPushMatrix();
-
-            float oldScale = scaleSetting.getValue();
-            scaleSetting.setValue(0.4f);
-
-            GlStateManager.scale(2, 2, 2);
-            GlStateManager.translate(0, -0.5, 0);
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(2.0F, 2.0F, 2.0F);
+            GlStateManager.translate(0.0F, -0.5F, 0.0F);
 
             if (event.getBase() != null) {
                 event.getBase().render(event.getScale());
             }
 
-            GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
+            GlStateManager.rotate(event.getLimbSwingAmount(), 0.0F, 1.0F, 0.0F);
 
-            GlStateManager.translate(0, 1f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0);
-
-            GlStateManager.rotate(60, 0.7071f, 0, 0.7071f);
-            GlStateManager.scale(0.875f, 0.875f, 0.875f);
-            GlStateManager.rotate(60, 0.7071f, 0, 0.7071f);
-            GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
-
-            if (glass.getValue()) {
-                GlStateManager.pushMatrix();
-                GlStateManager.scale(1f, 1f, 1f);
-
-                event.getGlass().render(event.getScale());
-
-                GlStateManager.popMatrix();
+            if (event.getBase() != null) {
+                GlStateManager.translate(0.0F, 1.2F, 0.0F);
+            } else {
+                GlStateManager.translate(0.0F, 1.0F, 0.0F);
             }
 
-            GlStateManager.scale(0.875f, 0.875f, 0.875f);
-            GlStateManager.rotate(60, 0.7071f, 0, 0.7071f);
-            GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
+            GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
+
+            GlStateManager.scale(0.875F, 0.875F, 0.875F);
+            GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
+            GlStateManager.rotate(event.getLimbSwingAmount(), 0.0F, 1.0F, 0.0F);
 
             if (glass.getValue()) {
-                GlStateManager.pushMatrix();
-                GlStateManager.scale(1f, 1f, 1f);
-
                 event.getGlass().render(event.getScale());
-
-                GlStateManager.popMatrix();
             }
 
-            GlStateManager.scale(0.875f, 0.875f, 0.875f);
-            GlStateManager.rotate(60, 0.7071f, 0, 0.7071f);
-            GlStateManager.rotate(event.getLimbSwingAmount(), 0, 1, 0);
+            GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
 
-            GlStateManager.scale(scaleSetting.getValue(), scaleSetting.getValue(), scaleSetting.getValue());
-            event.setScale(event.getScale() * scaleSetting.getValue());
+            GlStateManager.scale(0.875F, 0.875F, 0.875F);
+            GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
+            GlStateManager.rotate(event.getLimbSwingAmount(), 0.0F, 1.0F, 0.0F);
 
+            if (glass.getValue()) {
+                event.getGlass().render(event.getScale());
+            }
+
+            GlStateManager.scale(0.875F, 0.875F, 0.875F);
+            GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
+            GlStateManager.rotate(event.getLimbSwingAmount(), 0.0F, 1.0F, 0.0F);
+
+            // Scale cubelets
+            GlStateManager.scale(CUBELET_SCALE, CUBELET_SCALE, CUBELET_SCALE);
+            event.setScale((float) (event.getScale() * (CUBELET_SCALE * 2)));
+            
             long currentTime = Minecraft.getSystemTime();
             if (currentTime - time.getValue() > lastTime) {
                 int[] currentSide = RubiksCrystalUtil.cubeSides[rotating];
-                Quaternion[] cubelets = {
+                Quaternion[] cubletsTemp = {
                         RubiksCrystalUtil.cubeletStatus[currentSide[0]],
                         RubiksCrystalUtil.cubeletStatus[currentSide[1]],
                         RubiksCrystalUtil.cubeletStatus[currentSide[2]],
@@ -411,26 +419,29 @@ public class Chams extends Module {
                         RubiksCrystalUtil.cubeletStatus[currentSide[8]]
                 };
 
-                RubiksCrystalUtil.cubeletStatus[currentSide[0]] = cubelets[6];
-                RubiksCrystalUtil.cubeletStatus[currentSide[1]] = cubelets[3];
-                RubiksCrystalUtil.cubeletStatus[currentSide[2]] = cubelets[0];
-                RubiksCrystalUtil.cubeletStatus[currentSide[3]] = cubelets[7];
-                RubiksCrystalUtil.cubeletStatus[currentSide[4]] = cubelets[4];
-                RubiksCrystalUtil.cubeletStatus[currentSide[5]] = cubelets[1];
-                RubiksCrystalUtil.cubeletStatus[currentSide[6]] = cubelets[8];
-                RubiksCrystalUtil.cubeletStatus[currentSide[7]] = cubelets[5];
-                RubiksCrystalUtil.cubeletStatus[currentSide[8]] = cubelets[2];
+                //Rotation direction
+                RubiksCrystalUtil.cubeletStatus[currentSide[0]] = cubletsTemp[6];
+                RubiksCrystalUtil.cubeletStatus[currentSide[1]] = cubletsTemp[3];
+                RubiksCrystalUtil.cubeletStatus[currentSide[2]] = cubletsTemp[0];
+                RubiksCrystalUtil.cubeletStatus[currentSide[3]] = cubletsTemp[7];
+                RubiksCrystalUtil.cubeletStatus[currentSide[4]] = cubletsTemp[4];
+                RubiksCrystalUtil.cubeletStatus[currentSide[5]] = cubletsTemp[1];
+                RubiksCrystalUtil.cubeletStatus[currentSide[6]] = cubletsTemp[8];
+                RubiksCrystalUtil.cubeletStatus[currentSide[7]] = cubletsTemp[5];
+                RubiksCrystalUtil.cubeletStatus[currentSide[8]] = cubletsTemp[2];
 
-                int[] transform = RubiksCrystalUtil.cubeSideTransforms[rotating];
+                int[] trans = RubiksCrystalUtil.cubeSideTransforms[rotating];
                 for (int x = -1; x < 2; x++) {
                     for (int y = -1; y < 2; y++) {
                         for (int z = -1; z < 2; z++) {
-                            applyRotation(x, y, z, transform[0], transform[1], transform[2]);
+                            if (x != 0 || y != 0 || z != 0) {
+                                applyRotation(x, y, z, trans[0], trans[1], trans[2]);
+                            }
                         }
                     }
                 }
-
-                rotating = ThreadLocalRandom.current().nextInt(0, 6);
+                
+                rotating = ThreadLocalRandom.current().nextInt(0, 5 + 1);
                 lastTime = currentTime;
             }
 
@@ -438,40 +449,41 @@ public class Chams extends Module {
                 for (int y = -1; y < 2; y++) {
                     for (int z = -1; z < 2; z++) {
                         if (x != 0 || y != 0 || z != 0) {
-                            drawCubeletStatic(event.getScale(), x, y, z);
+                            if (cube.getValue()) {
+                                drawCubeletStatic(event.getScale(), x, y, z);
+                            }
                         }
                     }
                 }
             }
 
-            int[] transform = RubiksCrystalUtil.cubeSideTransforms[rotating];
+            int[] trans = RubiksCrystalUtil.cubeSideTransforms[rotating];
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(transform[0] * scaleSetting.getValue(), transform[1] * scaleSetting.getValue(), transform[2] * scaleSetting.getValue());
+            GlStateManager.translate(trans[0] * CUBELET_SCALE, trans[1] * CUBELET_SCALE, trans[2] * CUBELET_SCALE);
 
-            float angle = (float) Math.toRadians(Easing.EXPO_IN_OUT.ease((currentTime - lastTime) / time.getValue()) * 90);
-            float xx = (float) (transform[0] * Math.sin(angle / 2));
-            float yy = (float) (transform[1] * Math.sin(angle / 2));
-            float zz = (float) (transform[2] * Math.sin(angle / 2));
-            float ww = (float) Math.cos(angle / 2);
+            float RotationAngle = (float) Math.toRadians(Easing.EXPO_IN_OUT.ease(((float) (currentTime - lastTime)) / time.getValue())) * 90;
+            float xx = (float) (trans[0] * Math.sin(RotationAngle / 2));
+            float yy = (float) (trans[1] * Math.sin(RotationAngle / 2));
+            float zz = (float) (trans[2] * Math.sin(RotationAngle / 2));
+            float ww = (float) Math.cos(RotationAngle / 2);
 
-            Quaternion quaternion = new Quaternion(xx, yy, zz, ww);
+            Quaternion q = new Quaternion(xx, yy, zz, ww);
 
-            GlStateManager.rotate(quaternion);
+            GlStateManager.rotate(q);
 
             for (int x = -1; x < 2; x++) {
                 for (int y = -1; y < 2; y++) {
                     for (int z = -1; z < 2; z++) {
                         if (x != 0 || y != 0 || z != 0) {
-                            drawCubeletRotating(event.getScale(), x, y, z);
+                            if (cube.getValue()) {
+                                drawCubeletRotating(event.getScale(), x, y, z);
+                            }
                         }
                     }
                 }
             }
 
-            scaleSetting.setValue(oldScale);
-
-            GL11.glPopMatrix();
         }
 
         else {
@@ -484,7 +496,7 @@ public class Chams extends Module {
             }
 
             GlStateManager.rotate(event.getLimbSwingAmount(), 0.0F, 1.0F, 0.0F);
-            GlStateManager.translate(0.0F, 1f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0.0F);
+            GlStateManager.translate(0.0F, 0.8f + (bounce.getValue() ? event.getAgeInTicks() : 0), 0.0F);
             GlStateManager.rotate(60.0F, 0.7071F, 0.0F, 0.7071F);
 
             GlStateManager.pushMatrix();
@@ -520,9 +532,9 @@ public class Chams extends Module {
                 event.getCube().render(event.getScale());
             }
 
-            GlStateManager.popMatrix();
         }
 
+        GlStateManager.popMatrix();
         GlStateManager.popMatrix();
     }
 
@@ -566,7 +578,7 @@ public class Chams extends Module {
 
     public void drawCubelet(float scale, int x, int y, int z, int id) {
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x * scaleSetting.getValue(), y * scaleSetting.getValue(), z * scaleSetting.getValue());
+        GlStateManager.translate(x * CUBELET_SCALE, y * CUBELET_SCALE, z * CUBELET_SCALE);
         GlStateManager.pushMatrix();
 
         GlStateManager.rotate(RubiksCrystalUtil.cubeletStatus[id]);

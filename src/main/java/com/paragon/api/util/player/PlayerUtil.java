@@ -68,6 +68,42 @@ public class PlayerUtil implements Wrapper {
         }
     }
 
+    public static double[] forward(double speed) {
+        Entity mover = mc.player.isRiding() ? mc.player.getRidingEntity() : mc.player;
+
+        float forward = mc.player.movementInput.moveForward;
+        float strafe = mc.player.movementInput.moveStrafe;
+        float playerYaw = mc.player.rotationYaw;
+
+        if (mover != null) {
+            if (forward != 0) {
+                if (strafe >= 1) {
+                    playerYaw += (float) (forward > 0 ? -45 : 45);
+                    strafe = 0;
+                } else if (strafe <= -1) {
+                    playerYaw += (float) (forward > 0 ? 45 : -45);
+                    strafe = 0;
+                }
+
+                if (forward > 0) {
+                    forward = 1;
+                } else if (forward < 0) {
+                    forward = -1;
+                }
+            }
+
+            double sin = Math.sin(Math.toRadians(playerYaw + 90));
+            double cos = Math.cos(Math.toRadians(playerYaw + 90));
+
+            double motionX = forward * speed * cos + strafe * speed * sin;
+            double motionZ = forward * speed * sin - strafe * speed * cos;
+
+            return new double[]{ mc.player.posX + motionX, mc.player.posY, mc.player.posZ + motionZ };
+        }
+
+        return new double[]{mc.player.posX, mc.player.posY, mc.player.posZ};
+    }
+
     public static void propel(float speed) {
         float yaw = mc.player.rotationYaw;
         float pitch = mc.player.rotationPitch;

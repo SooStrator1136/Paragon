@@ -1,16 +1,18 @@
 package com.paragon.client.systems.module.impl.movement;
 
+import com.paragon.api.event.player.StepEvent;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
+import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
- * @author Wolfsurge
+ * @author Wolfsurge, Doogie13
  */
 public class Step extends Module {
 
@@ -47,28 +49,44 @@ public class Step extends Module {
             return;
         }
 
-        switch (mode.getValue()) {
-            case PACKET:
-                // Set our position if we are: collided, on ground, not falling, not on a ladder, and not jumping
-                if (mc.player.collidedHorizontally && mc.player.onGround && mc.player.fallDistance == 0.0f && !mc.player.isOnLadder() && !mc.player.movementInput.jump) {
-                    // Send packet
-                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.42, mc.player.posZ, true));
+        // Increase step height
+        mc.player.stepHeight = stepHeight.getValue();
 
-                    // Set position
-                    mc.player.setPosition(mc.player.posX, mc.player.posY + 0.75, mc.player.posZ);
-
-                    // We want to move a tiny bit forwards
-                    PlayerUtil.move(0.01f);
-                }
-                break;
-
-            case VANILLA:
-                // Increase step height
-                mc.player.stepHeight = stepHeight.getValue();
-                break;
-
+        if (mode.getValue().equals(Mode.PACKET)) {
+            mc.player.stepHeight = 1;
         }
+    }
 
+    @Listener
+    public void onStep(StepEvent event) {
+        if (event.getEntity().equals(mc.player) && mode.getValue().equals(Mode.PACKET)) {
+            double height = event.getBB().minY - mc.player.posY;
+
+            double[] forward = PlayerUtil.forward(0.1);
+
+            // Don't step
+            if (height <= 0.0 || height > 1 || mc.player.isInWater() || mc.player.isInLava() || mc.gameSettings.keyBindJump.isKeyDown() || mc.player.fallDistance != 0 || !mc.player.onGround || mc.world.collidesWithAnyBlock(mc.player.getEntityBoundingBox().offset(forward[0], 0.9, forward[2]))) {
+                return;
+            }
+
+            // Step offsets
+            double[] offsets = { 0, 0 };
+
+            // Chests
+            if (height == 0.875) {
+                offsets = new double[]{ 0.42, 0.75, 0.43 };
+            }
+
+            // Normal blocks
+            else if (height == 1) {
+                offsets = new double[]{ 0.42, 0.75 };
+            }
+
+            // Send offsets
+            for (double offset : offsets) {
+                mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + offset, mc.player.posZ, false));
+            }
+        }
     }
 
     @Override
@@ -83,7 +101,7 @@ public class Step extends Module {
         VANILLA,
 
         /**
-         * Packet step - Higher chance of bypassing, probably
+         * Packet step - Higher chance of bypassing
          */
         PACKET
     }
