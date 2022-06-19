@@ -40,6 +40,7 @@
     "render.gui.MixinGuiChat",
     "render.gui.MixinGuiMainMenu",
     "render.gui.MixinGuiMultiplayer",
+    "render.gui.MixinGuiNewChat",
     "render.gui.MixinGuiPlayerTabOverlay",
     "render.gui.MixinGuiScreen",
 

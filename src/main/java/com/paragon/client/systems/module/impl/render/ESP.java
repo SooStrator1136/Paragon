@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;

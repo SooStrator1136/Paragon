@@ -29,6 +29,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -89,7 +90,7 @@ public class Nametags extends Module implements TextRenderer {
 
         // Iterate through loaded players
         for (EntityPlayer player : mc.world.playerEntities) {
-            // Check the player isn't us
+            // Check the player isn't us or a pop cham
             if (player == mc.player) {
                 continue;
             }

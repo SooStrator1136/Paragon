@@ -101,7 +101,7 @@ public class Chams extends Module {
             .setDescription("Render entities through walls");
 
     public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255, 85))
-            .setDescription("The colour of the crystal");
+            .setDescription("The colour of the highlight");
 
     private int rotating;
     private long lastTime;

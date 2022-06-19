@@ -66,6 +66,7 @@ public class ModuleManager {
                 new BreakESP(),
                 new Chams(),
                 new ChinaHat(),
+                new ClearChat(),
                 new ESP(),
                 new Fullbright(),
                 new HitColour(),
