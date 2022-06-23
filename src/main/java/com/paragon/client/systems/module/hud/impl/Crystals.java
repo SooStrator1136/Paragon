@@ -29,7 +29,7 @@ public class Crystals extends HUDModule {
 
     @Override
     public float getWidth() {
-        return MathHelper.clamp(mc.fontRenderer.getStringWidth(String.valueOf(getCrystals())), 18, mc.fontRenderer.getStringWidth(String.valueOf(getCrystals()))) + 2;
+        return MathHelper.clamp(mc.fontRenderer.getStringWidth(String.valueOf(getCrystals())), 19, mc.fontRenderer.getStringWidth(String.valueOf(getCrystals()))) + 2;
     }
 
     @Override

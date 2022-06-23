@@ -2,7 +2,7 @@ package com.paragon.client.systems.ui.panel.impl.setting;
 
 import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
-import com.paragon.api.util.calculations.MathUtil;
+import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -192,7 +191,7 @@ public class ColourComponent extends SettingComponent<Color> {
                 if (satDiff == 0) {
                     saturation = 0;
                 } else {
-                    saturation = (float) MathUtil.roundDouble(((satDiff / dimension) * 100), 0);
+                    saturation = (float) MathsUtil.roundDouble(((satDiff / dimension) * 100), 0);
                 }
 
                 float brightDiff = Math.min(height, Math.max(0, y + height - mouseY));
@@ -200,7 +199,7 @@ public class ColourComponent extends SettingComponent<Color> {
                 if (brightDiff == 0) {
                     brightness = 0;
                 } else {
-                    brightness = (float) MathUtil.roundDouble(((brightDiff / height) * 100), 0);
+                    brightness = (float) MathsUtil.roundDouble(((brightDiff / height) * 100), 0);
                 }
 
                 finalColour = new Color(Color.HSBtoRGB(hue / 360, saturation / 100, brightness / 100));

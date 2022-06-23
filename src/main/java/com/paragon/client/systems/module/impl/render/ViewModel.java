@@ -43,6 +43,18 @@ public class ViewModel extends Module {
             .setDescription("The roll of the item")
             .setParentSetting(main);
 
+    public static Setting<Float> mainScaleX = new Setting<>("ScaleX", 1f, 0f, 1f, 0.01f)
+            .setDescription("The X scale of the item")
+            .setParentSetting(main);
+
+    public static Setting<Float> mainScaleY = new Setting<>("ScaleY", 1f, 0f, 1f, 0.01f)
+            .setDescription("The Y scale of the item")
+            .setParentSetting(main);
+
+    public static Setting<Float> mainScaleZ = new Setting<>("ScaleZ", 1f, 0f, 1f, 0.01f)
+            .setDescription("The Z scale of the item")
+            .setParentSetting(main);
+
     // Offhand settings
     public static Setting<Boolean> offhand = new Setting<>("Offhand", true)
             .setDescription("Modify your offhand");
@@ -62,12 +74,24 @@ public class ViewModel extends Module {
             .setDescription("The yaw of the item")
             .setParentSetting(offhand);
 
-    public static Setting<Float> offhandPitch = new Setting<>("Pitch", 0f, -10f, 100f, 1f)
+    public static Setting<Float> offhandPitch = new Setting<>("Pitch", 0f, -100f, 100f, 1f)
             .setDescription("The pitch of the item")
             .setParentSetting(offhand);
 
     public static Setting<Float> offhandRoll = new Setting<>("Roll", 0f, -100f, 100f, 1f)
             .setDescription("The roll of the item")
+            .setParentSetting(offhand);
+
+    public static Setting<Float> offhandScaleX = new Setting<>("ScaleX", 1f, 0f, 1f, 0.01f)
+            .setDescription("The X scale of the item")
+            .setParentSetting(offhand);
+
+    public static Setting<Float> offhandScaleY = new Setting<>("ScaleY", 1f, 0f, 1f, 0.01f)
+            .setDescription("The Y scale of the item")
+            .setParentSetting(offhand);
+
+    public static Setting<Float> offhandScaleZ = new Setting<>("ScaleZ", 1f, 0f, 1f, 0.01f)
+            .setDescription("The Z scale of the item")
             .setParentSetting(offhand);
 
     public ViewModel() {
@@ -81,11 +105,17 @@ public class ViewModel extends Module {
         if (event.getSide() == EnumHandSide.LEFT && offhand.getValue()) {
             // Translate offhand item according to x, y, and z settings
             GlStateManager.translate(offhandX.getValue(), offhandY.getValue(), offhandZ.getValue());
+
+            // Scale offhand
+            GlStateManager.scale(offhandScaleX.getValue(), offhandScaleY.getValue(), offhandScaleZ.getValue());
         }
 
         if (event.getSide() == EnumHandSide.RIGHT && main.getValue()) {
             // Translate main hand item according to x, y, and z settings
             GlStateManager.translate(mainX.getValue(), mainY.getValue(), mainZ.getValue());
+
+            // Scale main hand
+            GlStateManager.scale(mainScaleX.getValue(), mainScaleY.getValue(), mainScaleZ.getValue());
         }
     }
 

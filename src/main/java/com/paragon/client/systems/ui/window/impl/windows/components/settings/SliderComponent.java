@@ -1,7 +1,6 @@
 package com.paragon.client.systems.ui.window.impl.windows.components.settings;
 
-import com.paragon.api.util.calculations.MathUtil;
-import com.paragon.api.util.render.ColourUtil;
+import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.setting.Setting;
@@ -43,7 +42,7 @@ public class SliderComponent extends SettingComponent<Number> {
                 if (diff == 0) {
                     getSetting().setValue(getSetting().getMin());
                 } else {
-                    float newValue = (float) MathUtil.roundDouble(((diff / (getWidth() - 8)) * (max - min) + min), 2);
+                    float newValue = (float) MathsUtil.roundDouble(((diff / (getWidth() - 8)) * (max - min) + min), 2);
 
                     float precision = 1 / getSetting().getIncrementation().floatValue();
                     newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
@@ -68,7 +67,7 @@ public class SliderComponent extends SettingComponent<Number> {
                 if (diff == 0) {
                     getSetting().setValue(getSetting().getMin());
                 } else {
-                    double newValue = MathUtil.roundDouble(((diff / (getWidth() - 8)) * (max - min) + min), 2);
+                    double newValue = MathsUtil.roundDouble(((diff / (getWidth() - 8)) * (max - min) + min), 2);
 
                     double precision = 1 / getSetting().getIncrementation().floatValue();
                     newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;

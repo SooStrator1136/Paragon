@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.util.entity.EntityUtil;
+import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
@@ -66,7 +67,12 @@ public class ChinaHat extends Module {
         glBegin(GL_TRIANGLE_STRIP);
 
         // Get the vector to start drawing the hat
-        Vec3d vec = EntityUtil.getInterpolatedPosition(player).add(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY + player.getEyeHeight() + 0.5 + (player.isSneaking() ? -0.2 : 0), -mc.getRenderManager().viewerPosZ);
+        Vec3d vec = EntityUtil.getInterpolatedPosition(player).add(new Vec3d(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY + player.getEyeHeight() + 0.5 + (player.isSneaking() ? -0.2 : 0), -mc.getRenderManager().viewerPosZ));
+
+        // Change vec if elytra flying
+        if (player.isElytraFlying()) {
+            vec.add(new Vec3d(PlayerUtil.forward(2)[0], -0.8, PlayerUtil.forward(2)[2]));
+        }
 
         // Add vertices for each point
         for (float i = 0; i < Math.PI * 2; i += Math.PI * 4 / 128) {

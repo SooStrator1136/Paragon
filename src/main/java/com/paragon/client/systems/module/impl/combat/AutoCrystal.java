@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.combat;
 import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.event.network.PacketEvent;
-import com.paragon.api.util.calculations.MathUtil;
+import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
@@ -617,7 +617,7 @@ public class AutoCrystal extends Module {
                 Rotations.INSTANCE.addRotation(rotation);
             }
 
-            if (confirmRotate.getValue() && !MathUtil.isNearlyEqual(mc.player.rotationYaw, rotationVec.x, confirmThreshold.getValue()) && !MathUtil.isNearlyEqual(mc.player.rotationPitch, rotationVec.y, confirmThreshold.getValue())) {
+            if (confirmRotate.getValue() && !MathsUtil.isNearlyEqual(mc.player.rotationYaw, rotationVec.x, confirmThreshold.getValue()) && !MathsUtil.isNearlyEqual(mc.player.rotationPitch, rotationVec.y, confirmThreshold.getValue()) && placeRotate.getValue().equals(Rotate.LEGIT)) {
                 return;
             }
 
@@ -635,7 +635,7 @@ public class AutoCrystal extends Module {
             }
 
             // Remove it from our self placed crystals
-            selfPlacedCrystals.remove(currentCrystal.getCrystal().getPosition());
+            selfPlacedCrystals.remove(currentCrystal.getCrystal().getPosition().down());
 
             // Swing our arm
             swing(explodeSwing.getValue());
@@ -714,7 +714,7 @@ public class AutoCrystal extends Module {
         }
 
         // Confirm rotations for strict
-        if (confirmRotate.getValue() && (!MathUtil.isNearlyEqual(mc.player.rotationYaw, placeRotation.x, confirmThreshold.getValue()) || !MathUtil.isNearlyEqual(mc.player.rotationPitch, placeRotation.y, confirmThreshold.getValue()))) {
+        if (confirmRotate.getValue() && (!MathsUtil.isNearlyEqual(mc.player.rotationYaw, placeRotation.x, confirmThreshold.getValue()) || !MathsUtil.isNearlyEqual(mc.player.rotationPitch, placeRotation.y, confirmThreshold.getValue())) && placeRotate.getValue().equals(Rotate.LEGIT)) {
             return;
         }
 
@@ -738,7 +738,7 @@ public class AutoCrystal extends Module {
         }
 
         // Add position to our self placed crystals
-        selfPlacedCrystals.add(currentPlacement.getPosition().up());
+        selfPlacedCrystals.add(currentPlacement.getPosition());
 
         // Check we want to rotate back
         if (!placeRotate.getValue().equals(Rotate.NONE) && placeRotateBack.getValue()) {
@@ -881,8 +881,8 @@ public class AutoCrystal extends Module {
                 // Get the direction we want to face
                 EnumFacing facing = EnumFacing.getDirectionFromEntityLiving(pos, mc.player);
                 Vec3d facingVec = null;
-                RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).add(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue()), false, false, true);
-                RayTraceResult middleResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).add(0.5, 0.5, 0.5));
+                RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), mc.player.getPositionEyes(1).add(new Vec3d(placeVec.x * placeRange.getValue(), placeVec.y * placeRange.getValue(), placeVec.z * placeRange.getValue())), false, false, true);
+                RayTraceResult middleResult = mc.world.rayTraceBlocks(mc.player.getPositionEyes(1), new Vec3d(pos).add(new Vec3d(0.5, 0.5, 0.5)));
 
                 // Check we hit a block
                 if (middleResult != null && middleResult.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {

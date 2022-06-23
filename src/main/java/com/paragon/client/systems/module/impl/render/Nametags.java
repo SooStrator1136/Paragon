@@ -14,20 +14,28 @@ import com.paragon.client.systems.module.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +64,9 @@ public class Nametags extends Module implements TextRenderer {
     public static Setting<Boolean> armourDurability = new Setting<>("Durability", true)
             .setDescription("Render the player's armour durability")
             .setParentSetting(armour);
+
+    public static Setting<Boolean> potions = new Setting<>("Potions", true)
+            .setDescription("Shows the player's potion effects");
 
     // Scaling
     public static Setting<Float> scaleFactor = new Setting<>("Scale", 0.2f, 0.1f, 1f, 0.1f)
@@ -90,7 +101,7 @@ public class Nametags extends Module implements TextRenderer {
 
         // Iterate through loaded players
         for (EntityPlayer player : mc.world.playerEntities) {
-            // Check the player isn't us or a pop cham
+            // Check the player isn't us
             if (player == mc.player) {
                 continue;
             }
@@ -119,7 +130,6 @@ public class Nametags extends Module implements TextRenderer {
 
             // Disable depth so we can see the nametag through walls
             GlStateManager.disableDepth();
-            //GlStateManager.enableBlend();
 
             StringBuilder stringBuilder = new StringBuilder(player.getName());
 
@@ -137,8 +147,22 @@ public class Nametags extends Module implements TextRenderer {
                 stringBuilder.append(" " + TextFormatting.GOLD + "-").append((player instanceof EntityFakePlayer) ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
             }
 
+            float potionWidth = 0;
+            List<String> potionStrings = new ArrayList<>();
+
+            player.getActivePotionEffects().stream().sorted(Comparator.comparing(PotionEffect::getDuration)).forEach(potion -> {
+                        if (potions.getValue()) {
+                            Potion potionType = Potion.getPotionFromResourceLocation(potion.getPotion().getRegistryName().toString());
+                            if (potionType != null) {
+                                potionStrings.add(potionType.getName().replace("potion.", "") + " " + potion.getDuration() + "s");
+                            }
+                        }
+                    });
+
+            potionStrings.sort(Comparator.comparingDouble(this::getStringWidth));
+
             // Get nametag width
-            float width = getStringWidth(stringBuilder.toString()) + 4;
+            float width = getStringWidth(stringBuilder.toString()) + potionWidth + 4;
 
             // Center nametag
             glTranslated(-width / 2, -20, 0);
@@ -263,6 +287,17 @@ public class Nametags extends Module implements TextRenderer {
                         armourX += 18;
                     }
                 }
+            }
+
+            float y = 0;
+
+            // GL11.glScalef(0.75f, 0.75f, 0.75f);
+            // float scaleFactor = 1 / 0.75f;
+
+            for (String effectString : potionStrings) {
+                renderText(effectString, (getStringWidth(stringBuilder.toString()) + 6), y, -1);
+
+                y += getFontHeight();
             }
 
             // End render

@@ -42,6 +42,7 @@ public class Paragon {
     private SocialManager socialManager;
     private AltManager altManager;
     private NotificationManager notificationManager;
+    private CapeManager capeManager;
 
     // GUIs
     private Taskbar taskbar;
@@ -82,6 +83,8 @@ public class Paragon {
         getStorageManager().loadAlts();
 
         notificationManager = new NotificationManager();
+
+        capeManager = new CapeManager();
 
         // Set up GUIs and elements
         taskbar = new Taskbar();
@@ -200,6 +203,15 @@ public class Paragon {
      */
     public NotificationManager getNotificationManager() {
         return notificationManager;
+    }
+
+    /**
+     * Gets the cape manager
+     *
+     * @return The cape manager
+     */
+    public CapeManager getCapeManager() {
+        return capeManager;
     }
 
     /**

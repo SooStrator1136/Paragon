@@ -73,7 +73,7 @@ public class StorageManager {
                             if (subsetting.getValue() instanceof Color) {
                                 jsonObject.put(subsettingName, ((Color) subsetting.getValue()).getRed() + ":" + ((Color) subsetting.getValue()).getGreen() + ":" + ((Color) subsetting.getValue()).getBlue() + ":" +  subsetting.getAlpha() + ":" + subsetting.isRainbow() + ":" + subsetting.getRainbowSpeed() + ":" + subsetting.getRainbowSaturation() + ":" + subsetting.isSync());
                             } else if (subsetting.getValue() instanceof Bind) {
-                                jsonObject.put(subsetting.getName(), ((Bind) subsetting.getValue()).getButtonCode() + ":" + ((Bind) subsetting.getValue()).getDevice());
+                                jsonObject.put(subsettingName, ((Bind) subsetting.getValue()).getButtonCode() + ":" + ((Bind) subsetting.getValue()).getDevice());
                             } else {
                                 jsonObject.put(subsettingName, subsetting.getValue());
                             }

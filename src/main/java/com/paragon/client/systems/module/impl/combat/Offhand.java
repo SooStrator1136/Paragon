@@ -204,7 +204,7 @@ public class Offhand extends Module {
 
         // Apply safety
         if (safety.getValue()) {
-            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() < healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
+            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() <= healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
                 swap = Items.TOTEM_OF_UNDYING;
             }
 
@@ -229,7 +229,11 @@ public class Offhand extends Module {
 
         // Get secondary slot if we couldn't find the priority slot
         if (swapSlot == -1) {
-            swapSlot = InventoryUtil.getItemSlot(secondary.getValue().getItem());
+            if (mc.player.getHeldItemOffhand().getItem() == secondary.getValue().getItem()) {
+                return -1;
+            }
+
+            return InventoryUtil.getItemSlot(secondary.getValue().getItem());
         }
 
         // Return slot

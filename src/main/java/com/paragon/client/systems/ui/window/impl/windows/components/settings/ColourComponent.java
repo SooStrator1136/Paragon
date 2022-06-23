@@ -1,10 +1,9 @@
 package com.paragon.client.systems.ui.window.impl.windows.components.settings;
 
-import com.paragon.api.util.calculations.MathUtil;
+import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.window.impl.Window;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -176,7 +175,7 @@ public class ColourComponent extends SettingComponent<Color> {
                 if (satDiff == 0) {
                     saturation = 0;
                 } else {
-                    saturation = (float) MathUtil.roundDouble(((satDiff / dimension) * 100), 0);
+                    saturation = (float) MathsUtil.roundDouble(((satDiff / dimension) * 100), 0);
                 }
 
                 float brightDiff = Math.min(dimension, Math.max(0, y + dimension - mouseY));
@@ -184,7 +183,7 @@ public class ColourComponent extends SettingComponent<Color> {
                 if (brightDiff == 0) {
                     brightness = 0;
                 } else {
-                    brightness = (float) MathUtil.roundDouble(((brightDiff / dimension) * 100), 0);
+                    brightness = (float) MathsUtil.roundDouble(((brightDiff / dimension) * 100), 0);
                 }
 
                 finalColour = new Color(Color.HSBtoRGB(hue / 360, saturation / 100, brightness / 100));

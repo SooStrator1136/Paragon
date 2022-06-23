@@ -27,7 +27,7 @@ public class PlayerUtil implements Wrapper {
     }
 
     public static boolean isMoving() {
-        return mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0;
+        return mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.posX != mc.player.lastTickPosX || mc.player.posZ != mc.player.lastTickPosZ || mc.player.posY != mc.player.lastTickPosY;
     }
 
     public static void move(float speed) {

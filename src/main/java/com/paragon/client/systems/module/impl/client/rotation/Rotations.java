@@ -110,8 +110,10 @@ public class Rotations extends Module {
                     mc.player.rotationPitch = finPitch;
                 }
 
-                // Remove rotations that have the same yaw and pitch as the one we just rotated to
-                rotationsQueue.removeIf(rotation1 -> rotation1.getYaw() == rotation.getYaw() && rotation1.getPitch() == rotation.getPitch());
+                // Clear rotations queue when we have reached our final rotation
+                if (finYaw == rotation.getYaw() && finPitch == rotation.getPitch()) {
+                    rotationsQueue.clear();
+                }
             }
         }
     }

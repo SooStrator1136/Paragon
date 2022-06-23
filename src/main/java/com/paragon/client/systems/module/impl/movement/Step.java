@@ -65,12 +65,12 @@ public class Step extends Module {
             double[] forward = PlayerUtil.forward(0.1);
 
             // Don't step
-            if (height <= 0.0 || height > 1 || mc.player.isInWater() || mc.player.isInLava() || mc.gameSettings.keyBindJump.isKeyDown() || mc.player.fallDistance != 0 || !mc.player.onGround || mc.world.collidesWithAnyBlock(mc.player.getEntityBoundingBox().offset(forward[0], 0.9, forward[2]))) {
+            if (height <= 0.0 || height > 1 || mc.player.lastTickPosY != mc.player.posY || mc.player.isInWater() || mc.player.isInLava() || mc.gameSettings.keyBindJump.isKeyDown() || mc.player.fallDistance != 0 || !mc.player.onGround || mc.world.collidesWithAnyBlock(mc.player.getEntityBoundingBox().offset(forward[0], 0.9, forward[2]))) {
                 return;
             }
 
             // Step offsets
-            double[] offsets = { 0, 0 };
+            double[] offsets;
 
             // Chests
             if (height == 0.875) {
@@ -80,6 +80,11 @@ public class Step extends Module {
             // Normal blocks
             else if (height == 1) {
                 offsets = new double[]{ 0.42, 0.75 };
+            }
+
+            // IDK
+            else {
+                return;
             }
 
             // Send offsets

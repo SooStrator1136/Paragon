@@ -3,7 +3,7 @@ package com.paragon.api.util.calculations;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class MathUtil {
+public class MathsUtil {
 
     /**
      * Rounds a value to the nearest place

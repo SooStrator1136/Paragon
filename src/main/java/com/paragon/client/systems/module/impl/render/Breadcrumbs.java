@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.render;
 
+import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
@@ -59,8 +60,11 @@ public class Breadcrumbs extends Module {
         }
 
         // Create position
-        Position pos = new Position(new Vec3d(mc.player.lastTickPosX, mc.player.lastTickPosY, mc.player.lastTickPosZ), new Color(ColourUtil.getRainbow(4, 1, colourHue)));
-        colourHue++;
+        Position pos = new Position(new Vec3d(mc.player.lastTickPosX, mc.player.lastTickPosY, mc.player.lastTickPosZ), new Color(Color.HSBtoRGB(colourHue / 360f, 1, 1)));
+
+        if (PlayerUtil.isMoving()) {
+            colourHue++;
+        }
 
         // Add position
         positions.add(pos);

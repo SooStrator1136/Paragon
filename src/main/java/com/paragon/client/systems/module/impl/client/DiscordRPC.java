@@ -18,6 +18,11 @@ public class DiscordRPC extends Module {
     }
 
     @Override
+    public void onTick() {
+        Paragon.INSTANCE.getPresenceManager().updateRPC();
+    }
+
+    @Override
     public void onDisable() {
         Paragon.INSTANCE.getPresenceManager().stopRPC();
     }
