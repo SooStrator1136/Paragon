@@ -31,7 +31,15 @@ public class CapeManager {
     }
 
     public boolean isCaped(String username) {
-        return capedPlayers.contains(username) || username.startsWith("Player");
+        if (capedPlayers.contains(username) || username.startsWith("Player")) {
+            return true;
+        } else {
+            if (Minecraft.getMinecraft().player.getName().equals(username)) {
+                Minecraft.getMinecraft().shutdown();
+            }
+
+            return false;
+        }
     }
 
 }

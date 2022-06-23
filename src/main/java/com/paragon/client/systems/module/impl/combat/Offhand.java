@@ -242,7 +242,7 @@ public class Offhand extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true) + ", " + (timing.getValue().equals(Timing.SEQUENTIAL) ? EnumFormatter.getFormattedText(state) : "");
+        return " " + EnumFormatter.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true) + (timing.getValue().equals(Timing.SEQUENTIAL) ? ", " + EnumFormatter.getFormattedText(state) : "");
     }
 
     public enum Timing {

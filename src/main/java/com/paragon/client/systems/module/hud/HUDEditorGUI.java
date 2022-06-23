@@ -64,4 +64,15 @@ public class HUDEditorGUI extends GuiScreen {
 
         super.mouseReleased(mouseX, mouseY, state);
     }
+
+    @Override
+    public void onGuiClosed() {
+        this.draggingComponent = false;
+
+        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+            if (hudModule.isEnabled()) {
+                hudModule.mouseReleased(0, 0, 0);
+            }
+        });
+    }
 }

@@ -97,7 +97,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
             x = getX() - width;
         }
 
-        RenderUtil.startGlScissor(x, topY, width * 2, enabledModules.size() * (getFontHeight() * 2));
+        RenderUtil.startGlScissor(x, topY, width * 1.5, enabledModules.size() * (getFontHeight() * 2));
 
         float yOffset = 0;
 
@@ -192,7 +192,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
     @Override
     public float getWidth() {
-        return enabledModules.isEmpty() || corner.equals(Corner.TOP_RIGHT) || corner.equals(Corner.BOTTOM_RIGHT) ? 56 : getStringWidth(enabledModules.get(0).getName() + enabledModules.get(0).getArrayListInfo()) + 6;
+        return 56;
     }
 
     @Override

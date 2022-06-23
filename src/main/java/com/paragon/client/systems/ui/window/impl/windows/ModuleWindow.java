@@ -1,5 +1,6 @@
 package com.paragon.client.systems.ui.window.impl.windows;
 
+import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Category;
@@ -88,13 +89,13 @@ public class ModuleWindow extends Window {
 
             if (firstComponent.getY() > getY() + 40) {
                 for (ModuleComponent moduleComponent : selectedComponent.getModuleComponents()) {
-                    moduleComponent.setY(moduleComponent.getY() - 1);
+                    moduleComponent.setY(moduleComponent.getY() - 2);
                 }
             }
 
             if (lastComponent.getY() < getY() + getHeight() - (lastComponent.getTotalHeight() + 3) && !firstComponent.isWithinWindowBounds(getY() + 40, getY() + getHeight())) {
                 for (ModuleComponent moduleComponent : selectedComponent.getModuleComponents()) {
-                    moduleComponent.setY(moduleComponent.getY() + 1);
+                    moduleComponent.setY(moduleComponent.getY() + 2);
                 }
             }
 
@@ -102,6 +103,10 @@ public class ModuleWindow extends Window {
             for (ModuleComponent moduleComponent : selectedComponent.getModuleComponents()) {
                 moduleComponent.setX(getX() + 2);
                 moduleComponent.setY(y);
+
+                if (MathsUtil.isNearlyEqual(moduleComponent.getY(), getY() + 40, 2)) {
+                    moduleComponent.setY(getY() + 40);
+                }
 
                 moduleComponent.drawComponent(mouseX, mouseY);
 
