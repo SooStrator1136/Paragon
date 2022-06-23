@@ -12,6 +12,8 @@ import net.minecraft.util.ResourceLocation;
 import java.io.File;
 import java.io.IOException;
 
+import static org.lwjgl.opengl.GL11.glColor4f;
+
 public class WindowGUI extends GuiScreen {
 
     private final Window window;
@@ -27,6 +29,8 @@ public class WindowGUI extends GuiScreen {
         }
 
         window.drawWindow(mouseX, mouseY);
+
+        glColor4f(1, 1, 1, 1);
 
         if (ClickGUI.catgirl.getValue()) {
             ScaledResolution sr = new ScaledResolution(mc);
