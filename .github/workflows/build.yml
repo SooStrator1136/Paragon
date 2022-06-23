@@ -26,9 +26,6 @@ jobs:
       - name: Gradle
         run: chmod +x gradlew
 
-      - name: Decompile Minecraft workspace
-        run: ./gradlew setupDecompWorkspace
-
       - name: Build client
         run: ./gradlew build
 
