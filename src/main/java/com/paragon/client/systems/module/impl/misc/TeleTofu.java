@@ -21,7 +21,7 @@ public class TeleTofu extends Module {
             return;
         }
 
-        if (timer.hasMSPassed(100D)) {
+        if (timer.hasMSPassed(1000D)) {
             mc.player.sendChatMessage("I'M GAY FOR TELETOFU WOOOO");
 
             timer.reset();

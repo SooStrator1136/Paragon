@@ -61,9 +61,7 @@ public class BlockUtil implements Wrapper {
 
     public static boolean canSeePos(BlockPos pos) {
         for (EnumFacing facing : EnumFacing.values()) {
-            if (mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + (double) mc.player.getEyeHeight(), mc.player.posZ),
-                    new Vec3d(pos.offset(facing).getX() + 0.5, pos.offset(facing).getY() + 1, pos.offset(facing).getZ() + 0.5),
-                    false, true, false) == null) {
+            if (mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + (double) mc.player.getEyeHeight(), mc.player.posZ), new Vec3d(pos.offset(facing).getX() + 0.5, pos.offset(facing).getY() + 1, pos.offset(facing).getZ() + 0.5), false, true, false) == null) {
 
                 return true;
             }
@@ -82,17 +80,16 @@ public class BlockUtil implements Wrapper {
      * @return Whether the block is surrounded by blocks
      */
     public static boolean isSafeHole(BlockPos pos, boolean obbyBedrock) {
-        if (BlockUtil.getBlockAtPos(pos) != Blocks.AIR) {
+        if (!BlockUtil.getBlockAtPos(pos).isReplaceable(mc.world, pos)) {
             return false;
         }
 
-        boolean seenPosition = false;
         for (EnumFacing facing : EnumFacing.values()) {
             if (facing.equals(EnumFacing.UP)) {
                 continue;
             }
 
-            if (getBlockAtPos(pos.offset(facing)) == Blocks.AIR || getBlockAtPos(pos.offset(facing)) != Blocks.OBSIDIAN && getBlockAtPos(pos.offset(facing)) != Blocks.BEDROCK && obbyBedrock) {
+            if (getBlockAtPos(pos.offset(facing)) == Blocks.AIR || getBlockAtPos(pos.offset(facing)) != Blocks.OBSIDIAN && getBlockAtPos(pos.offset(facing)) != Blocks.BEDROCK && obbyBedrock || getBlockAtPos(pos.offset(facing)).isReplaceable(mc.world, pos.offset(facing))) {
                 return false;
             }
         }

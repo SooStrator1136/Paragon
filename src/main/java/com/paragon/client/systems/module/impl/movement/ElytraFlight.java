@@ -149,7 +149,7 @@ public class ElytraFlight extends Module {
                     handleStrict();
                     break;
                 case BOOST:
-                    if (mc.gameSettings.keyBindForward.isKeyDown()) {
+                    if (mc.gameSettings.keyBindForward.isKeyDown() && !(mc.player.posX - mc.player.lastTickPosX > flySpeed.getValue() || mc.player.posZ - mc.player.lastTickPosZ > flySpeed.getValue())) {
                         // Move forward
                         PlayerUtil.propel(flySpeed.getValue() * (cancelMotion.getValue() ? 1 : 0.015f));
                     }

@@ -45,6 +45,7 @@ public class ModuleManager {
                 new AutoCrystal(),
                 new BowRelease(),
                 new Criticals(),
+                new HoleFill(),
                 new Offhand(),
                 new Replenish(),
                 new Surround(),
