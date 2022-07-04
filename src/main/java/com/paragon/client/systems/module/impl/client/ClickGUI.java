@@ -7,6 +7,7 @@ import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Bind;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.animation.Easing;
+import com.paragon.client.systems.ui.panel.PanelGUI;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -17,6 +18,11 @@ public class ClickGUI extends Module {
             .setDescription("The style of the ClickGUI");
 
     // Panel settings
+    public static Setting<Boolean> background = new Setting<>("Background", true)
+            .setDescription("Whether or not to draw the background")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
+
     public static Setting<Float> scrollSpeed = new Setting<>("ScrollSpeed", 10f, 5f, 30f, 1f)
             .setDescription("How fast to scroll")
             .setParentSetting(style)
@@ -24,21 +30,6 @@ public class ClickGUI extends Module {
 
     public static Setting<Boolean> tooltips = new Setting<>("Tooltips", true)
             .setDescription("Render tooltips near the mouse when hovered over a button")
-            .setParentSetting(style)
-            .setVisibility(() -> style.getValue().equals(Style.PANEL));
-
-    public static Setting<Boolean> panelHeaderSeparator = new Setting<>("HeaderSeparator", true)
-            .setDescription("Draw a separator between the header and the module buttons")
-            .setParentSetting(style)
-            .setVisibility(() -> style.getValue().equals(Style.PANEL));
-
-    public static Setting<AnimationType> animation = new Setting<>("Animation", AnimationType.STATIC)
-            .setDescription("The type of animation")
-            .setParentSetting(style)
-            .setVisibility(() -> style.getValue().equals(Style.PANEL));
-
-    public static Setting<Float> cornerRadius = new Setting<>("CornerRadius", 1f, 1f, 7f, 1f)
-            .setDescription("The radius of the corners")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
@@ -83,10 +74,10 @@ public class ClickGUI extends Module {
                 return Paragon.INSTANCE.getWindowGUI();
 
             case PANEL:
-                return Paragon.INSTANCE.getPanelGUI();
+                return new PanelGUI();
         }
 
-        return Paragon.INSTANCE.getPanelGUI();
+        return new PanelGUI();
     }
 
     @Override
@@ -105,26 +96,6 @@ public class ClickGUI extends Module {
          * Window GUI
          */
         WINDOW
-    }
-
-    public enum AnimationType {
-        /**
-         * Leave the components in the same place
-         */
-        STATIC,
-
-        /**
-         * Move the components (like Momentum)
-         */
-        FACTOR;
-
-        public float getAnimationFactor(float animationIn) {
-            if (animation.getValue().equals(STATIC)) {
-                return 1;
-            } else {
-                return animationIn;
-            }
-        }
     }
 }
 

@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL11.glScalef;
 public class ParagonMenu extends GuiScreen implements TextRenderer {
 
     // Credits expand animation
-    private final Animation creditsAnimation = new Animation(500, false, () -> Easing.EXPO_IN_OUT);
+    private final Animation creditsAnimation = new Animation(() -> 500f, false, () -> Easing.EXPO_IN_OUT);
 
     // Whether the credits are displayed or not
     private boolean creditsExpanded = false;

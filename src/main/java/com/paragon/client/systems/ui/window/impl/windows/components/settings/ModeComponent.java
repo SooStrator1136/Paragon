@@ -1,8 +1,7 @@
 package com.paragon.client.systems.ui.window.impl.windows.components.settings;
 
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.string.EnumFormatter;
-import com.paragon.client.systems.module.impl.client.Colours;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.window.impl.Window;
 import net.minecraft.util.text.TextFormatting;
@@ -17,7 +16,7 @@ public class ModeComponent extends SettingComponent<Enum<?>> {
     public void drawComponent(int mouseX, int mouseY) {
         RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), 0x90000000);
 
-        renderText(getSetting().getName() + " " + TextFormatting.GRAY + EnumFormatter.getFormattedText(getSetting().getValue()), getX() + 4, getY() + 4, -1);
+        renderText(getSetting().getName() + " " + TextFormatting.GRAY + StringUtil.getFormattedText(getSetting().getValue()), getX() + 4, getY() + 4, -1);
 
         super.drawComponent(mouseX, mouseY);
     }

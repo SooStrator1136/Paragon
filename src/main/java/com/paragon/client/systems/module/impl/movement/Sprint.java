@@ -1,7 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.util.player.PlayerUtil;
-import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
@@ -59,7 +59,7 @@ public class Sprint extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getValue());
+        return " " + StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

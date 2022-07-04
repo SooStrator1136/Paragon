@@ -82,6 +82,14 @@ mixin {
 }
 
 processResources {
+    sourceSets {
+        main {
+            resources {
+                srcDir file('src/main/resources')
+            }
+        }
+    }
+
     from(sourceSets.main.resources) {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         include 'mcmod.info'

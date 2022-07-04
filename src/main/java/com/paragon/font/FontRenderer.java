@@ -77,6 +77,10 @@ public class FontRenderer implements Wrapper {
             float newY = 0.0f;
 
             for (String s : parts) {
+                if (dropShadow) {
+                    drawText(s, x + 0.6f, y + newY + 0.6f, new Color(0, 0, 0, 150).getRGB(), true);
+                }
+
                 drawText(s, x, y + newY, color, dropShadow);
                 newY += getHeight();
             }
@@ -85,7 +89,7 @@ public class FontRenderer implements Wrapper {
         }
 
         if (dropShadow) {
-            drawText(text, x + 0.9f, y + 0.9f, new Color(0, 0, 0, 150).getRGB(), true);
+            drawText(text, x + 0.6f, y + 0.6f, new Color(0, 0, 0, 150).getRGB(), true);
         }
 
         return drawText(text, x, y, color, false);

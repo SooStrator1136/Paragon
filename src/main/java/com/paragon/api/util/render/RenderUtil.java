@@ -45,11 +45,78 @@ public class RenderUtil implements Wrapper {
         GlStateManager.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
+
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
         bufferbuilder.pos(x + width, y, 0).color(c1, c2, c3, c).endVertex();
         bufferbuilder.pos(x, y, 0).color(c1, c2, c3, c).endVertex();
         bufferbuilder.pos(x, y + height, 0).color(c1, c2, c3, c).endVertex();
         bufferbuilder.pos(x + width, y + height, 0).color(c1, c2, c3, c).endVertex();
+        tessellator.draw();
+
+        GlStateManager.shadeModel(7424);
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
+    }
+
+    public static void drawHorizontalGradientRect(float x, float y, float width, float height, int leftColour, int rightColour) {
+        Color left = new Color(leftColour);
+        Color right = new Color(rightColour);
+
+        float lA = left.getAlpha() / 255.0F;
+        float lG = left.getGreen() / 255.0F;
+        float lB = left.getBlue() / 255.0F;
+        float lR = left.getRed() / 255.0F;
+
+        float rA = right.getAlpha() / 255.0F;
+        float rG = right.getGreen() / 255.0F;
+        float rB = right.getBlue() / 255.0F;
+        float rR = right.getRed() / 255.0F;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+
+        bufferbuilder.pos(x + width, y, 0).color(rR, rG, rB, rA).endVertex();
+
+        bufferbuilder.pos(x, y, 0).color(lR, lG, lB, lA).endVertex();
+        bufferbuilder.pos(x, y + height, 0).color(lR, lG, lB, lA).endVertex();
+
+        bufferbuilder.pos(x + width, y + height, 0).color(rR, rG, rB, rA).endVertex();
+
+        tessellator.draw();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
+    }
+
+    public static void drawVerticalGradientRect(float x, float y, float width, float height, int topColour, int bottomColour) {
+        Color top = new Color(topColour);
+        Color bottom = new Color(bottomColour);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+
+        bufferbuilder.pos(x + width, y, 0).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
+        bufferbuilder.pos(x, y, 0).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
+
+        bufferbuilder.pos(x, y + height, 0).color(bottom.getRed() / 255f, bottom.getGreen() / 255f, bottom.getBlue() / 255f, bottom.getAlpha() / 255f).endVertex();
+        bufferbuilder.pos(x + width, y + height, 0).color(bottom.getRed() / 255f, bottom.getGreen() / 255f, bottom.getBlue() / 255f, bottom.getAlpha() / 255f).endVertex();
+
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.enableAlpha();

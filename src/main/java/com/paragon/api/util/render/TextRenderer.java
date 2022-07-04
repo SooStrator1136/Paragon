@@ -6,11 +6,25 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
 
+import java.awt.*;
+
 public interface TextRenderer {
 
     default void renderText(String text, float x, float y, int colour) {
         if (ClientFont.INSTANCE.isEnabled()) {
             Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x, (y - 3.5f) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
+            return;
+        }
+
+        if (text.contains("\n")) {
+            String[] parts = text.split("\n");
+            float newY = 0.0f;
+
+            for (String s : parts) {
+                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(s, x, y + newY, colour);
+                newY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+            }
+
             return;
         }
 
@@ -35,6 +49,17 @@ public interface TextRenderer {
     }
 
     default float getStringWidth(String text) {
+        if (text.contains("\n")) {
+            String[] parts = text.split("\n");
+            float width = 0;
+
+            for (String s : parts) {
+                width = Math.max(width, getStringWidth(s));
+            }
+
+            return width;
+        }
+
         if (ClientFont.INSTANCE.isEnabled()) {
             return Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(text);
         }

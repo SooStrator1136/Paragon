@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class Animation {
 
     // animation time
-    public float time;
+    public Supplier<Float> time;
 
     // animation current state
     private State currentState = State.STATIC;
@@ -27,7 +27,7 @@ public class Animation {
     // The easing to apply
     private final Supplier<Easing> easing;
 
-    public Animation(int time, boolean initialState, Supplier<Easing> easing) {
+    public Animation(Supplier<Float> time, boolean initialState, Supplier<Easing> easing) {
         this.time = time;
         this.initialState = initialState;
         this.easing = easing;
@@ -45,9 +45,9 @@ public class Animation {
      */
     public double getAnimationFactor() {
         if (currentState.equals(State.EXPANDING)) {
-            return easing.get().ease(MathHelper.clamp((System.currentTimeMillis() - currentStateStart) / time, 0, 1));
+            return easing.get().ease(MathHelper.clamp((System.currentTimeMillis() - currentStateStart) / time.get(), 0, 1));
         } else if (currentState.equals(State.RETRACTING)) {
-            return easing.get().ease(MathHelper.clamp(1 - (System.currentTimeMillis() - currentStateStart) / time, 0, 1));
+            return easing.get().ease(MathHelper.clamp(1 - (System.currentTimeMillis() - currentStateStart) / time.get(), 0, 1));
         }
 
         return previousState.equals(State.EXPANDING) ? 1 : 0;

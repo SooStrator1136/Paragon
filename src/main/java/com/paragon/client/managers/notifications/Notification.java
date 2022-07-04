@@ -29,7 +29,7 @@ public class Notification implements TextRenderer {
 
     public void render(float y) {
         if (!started) {
-            animation = new Animation(500, false, () -> Easing.EXPO_IN_OUT);
+            animation = new Animation(() -> 500f, false, () -> Easing.EXPO_IN_OUT);
             animation.setState(true);
             started = true;
         }

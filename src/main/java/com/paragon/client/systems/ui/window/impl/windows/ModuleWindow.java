@@ -1,7 +1,7 @@
 package com.paragon.client.systems.ui.window.impl.windows;
 
+import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.calculations.MathsUtil;
-import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
@@ -9,13 +9,12 @@ import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.ui.window.impl.Window;
 import com.paragon.client.systems.ui.window.impl.windows.components.CategoryComponent;
 import com.paragon.client.systems.ui.window.impl.windows.components.ModuleComponent;
-import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModuleWindow extends Window {
+public class ModuleWindow extends Window implements Wrapper {
 
     private final List<CategoryComponent> categoryComponents = new ArrayList<>();
     private Category selected;
@@ -168,7 +167,7 @@ public class ModuleWindow extends Window {
     }
 
     public boolean isMouseOverHeader(int mouseX, int mouseY) {
-        return GuiUtil.mouseOver(getX(), getY(), getX() + getWidth(), getY() + 17, mouseX, mouseY);
+        return isHovered(getX(), getY(), getWidth(), 17, mouseX, mouseY);
     }
 
 }

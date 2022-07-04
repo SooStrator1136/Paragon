@@ -13,7 +13,7 @@ import java.awt.*;
 
 public class ParagonButton extends GuiButton implements TextRenderer {
 
-    private final Animation animation = new Animation(300, false, () -> Easing.EXPO_IN_OUT);
+    private final Animation animation = new Animation(() -> 300f, false, () -> Easing.EXPO_IN_OUT);
 
     public ParagonButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
         super(buttonId, x, y, widthIn, heightIn, buttonText);

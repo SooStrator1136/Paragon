@@ -134,6 +134,8 @@ public class Chams extends Module {
                 GL11.glDisable(GL_TEXTURE_2D);
             }
 
+            boolean originalBlend = GL11.glIsEnabled(GL_BLEND);
+
             // Enable blend
             if (blend.getValue()) {
                 GL11.glEnable(GL_BLEND);
@@ -210,7 +212,7 @@ public class Chams extends Module {
             }
 
             // Enable blending
-            if (blend.getValue()) {
+            if (!originalBlend) {
                 GL11.glDisable(GL_BLEND);
             }
 

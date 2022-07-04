@@ -37,7 +37,7 @@ public class Module extends Feature implements Wrapper {
             .setDescription("The keybind of the module");
 
     // Arraylist animation
-    public Animation animation = new Animation(100, false, ArrayListHUD.easing::getValue);
+    public Animation animation = new Animation(() -> ArrayListHUD.animationSpeed.getValue(), false, ArrayListHUD.easing::getValue);
 
     // Whether the module is enabled
     private boolean enabled;
@@ -116,7 +116,6 @@ public class Module extends Feature implements Wrapper {
             MinecraftForge.EVENT_BUS.register(this);
             Paragon.INSTANCE.getEventBus().register(this);
 
-            animation.time = ArrayListHUD.animationSpeed.getValue();
             animation.setState(true);
 
             // Call onEnable
@@ -126,7 +125,6 @@ public class Module extends Feature implements Wrapper {
             MinecraftForge.EVENT_BUS.unregister(this);
             Paragon.INSTANCE.getEventBus().unregister(this);
 
-            animation.time = ArrayListHUD.animationSpeed.getValue();
             animation.setState(false);
 
             // Call onDisable

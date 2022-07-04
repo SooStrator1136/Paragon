@@ -1,7 +1,6 @@
 package com.paragon.client.systems.ui.taskbar;
 
 import com.paragon.api.util.Wrapper;
-import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.ClientFont;
@@ -56,7 +55,7 @@ public class Taskbar implements Wrapper, TextRenderer {
             });
         }
 
-        if (GuiUtil.mouseOver(scaledResolution.getScaledWidth() - getStringWidth(open ? "Close" : "Open") - 3, scaledResolution.getScaledHeight() - getFontHeight() - 5, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), mouseX, mouseY)) {
+        if (isHovered(scaledResolution.getScaledWidth() - getStringWidth(open ? "Close" : "Open") - 3, scaledResolution.getScaledHeight() - getFontHeight() - 5, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), mouseX, mouseY)) {
             open = !open;
         }
     }

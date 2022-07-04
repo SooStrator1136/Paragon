@@ -1,10 +1,10 @@
 package com.paragon.client.systems.ui.window.impl.windows;
 
-import com.paragon.api.util.render.GuiUtil;
+import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.ui.window.impl.Window;
 
-public abstract class Component implements TextRenderer {
+public abstract class Component implements TextRenderer, Wrapper {
 
     private final Window window;
 
@@ -63,7 +63,7 @@ public abstract class Component implements TextRenderer {
     }
 
     public boolean isHovered(int mouseX, int mouseY) {
-        return GuiUtil.mouseOver(getX(), getY(), getX() + getWidth(), getY() + getHeight(), mouseX, mouseY);
+        return isHovered(getX(), getY(), getWidth(), getHeight(), mouseX, mouseY);
     }
 
     public boolean isWithinWindowBounds(float minY, float maxY) {

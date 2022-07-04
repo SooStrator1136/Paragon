@@ -2,7 +2,6 @@ package com.paragon.client.systems.ui.window.impl.windows.components.settings;
 
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.setting.Setting;
 import com.paragon.client.systems.ui.window.impl.Window;
@@ -219,9 +218,8 @@ public class ColourComponent extends SettingComponent<Color> {
 
             float x = getX() + 2;
             float y = getY() + 19;
-            float dimension = 100;
 
-            if (GuiUtil.mouseOver(x, y, x + dimension, y + dimension, mouseX, mouseY)) {
+            if (isHovered(x, y, 100, 100, mouseX, mouseY)) {
                 dragging = true;
             }
         }

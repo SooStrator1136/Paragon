@@ -1,7 +1,7 @@
 package com.paragon.client.systems.ui.alt;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.GuiUtil;
+import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.asm.mixins.accessor.IMinecraft;
@@ -17,7 +17,9 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AltManagerGUI extends GuiScreen implements TextRenderer {
+import static com.paragon.api.util.Wrapper.mc;
+
+public class AltManagerGUI extends GuiScreen implements TextRenderer, Wrapper {
 
     public static AltEntry selectedAltEntry;
     public static String renderString = TextFormatting.GRAY + "Idle";
@@ -88,8 +90,8 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         altEntries.forEach(altEntry -> {
-            if (GuiUtil.mouseOver(0, 150, width, 350, mouseX, mouseY)) {
-                if (GuiUtil.mouseOver(0, altEntry.getOffset(), width, altEntry.getOffset() + 20, mouseX, mouseY)) {
+            if (isHovered(0, 150, width, 350, mouseX, mouseY)) {
+                if (isHovered(0, altEntry.getOffset(), width, altEntry.getOffset() + 20, mouseX, mouseY)) {
                     if (selectedAltEntry == altEntry) {
                         renderString = "Logging in with the email: " + altEntry.getAlt().getEmail();
                         altEntry.clicked(mouseX, mouseY, width);
@@ -107,10 +109,10 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer {
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
             case 0:
-                mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+                Wrapper.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
                 break;
             case 1:
-                mc.displayGuiScreen(new AddAltGUI());
+                Wrapper.mc.displayGuiScreen(new AddAltGUI());
                 break;
             case 2:
                 Paragon.INSTANCE.getAltManager().getAlts().removeIf(alt -> alt.getEmail().equals(selectedAltEntry.getAlt().getEmail()) && alt.getPassword().equals(selectedAltEntry.getAlt().getPassword()));

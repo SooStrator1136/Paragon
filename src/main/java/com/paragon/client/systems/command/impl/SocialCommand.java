@@ -2,7 +2,6 @@ package com.paragon.client.systems.command.impl;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.TextRenderer;
-import com.paragon.api.util.string.EnumFormatter;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;

@@ -1,12 +1,11 @@
 package com.paragon.client.systems.ui.alt;
 
-import com.paragon.api.util.render.GuiUtil;
+import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.managers.alt.Alt;
-import net.minecraft.client.Minecraft;
 
-public class AltEntry implements TextRenderer {
+public class AltEntry implements TextRenderer, Wrapper {
 
     private Alt alt;
     private float offset;
@@ -22,7 +21,7 @@ public class AltEntry implements TextRenderer {
     }
 
     public void clicked(int mouseX, int mouseY, int screenWidth) {
-        if (GuiUtil.mouseOver(0, offset, screenWidth, offset + 20, mouseX, mouseY)) {
+        if (isHovered(0, offset, screenWidth, 20, mouseX, mouseY)) {
             alt.login();
         }
     }

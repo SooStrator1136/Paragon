@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
@@ -69,6 +70,7 @@ public class HoleFill extends Module {
             .setParentSetting(render);
 
     private final Map<BlockPos, EnumFacing> positions = new HashMap<>();
+    private final Map<BlockPos, Integer> attemptedPositions = new HashMap<>();
 
     private int ticks = 0;
 
@@ -89,9 +91,14 @@ public class HoleFill extends Module {
             return;
         }
 
+        if (PlayerUtil.isMoving()) {
+            attemptedPositions.clear();
+            return;
+        }
+
         positions.clear();
 
-        List<BlockPos> valid = BlockUtil.getSphere(range.getValue(), false).stream().filter(block -> BlockUtil.isSafeHole(block, obsidianBedrock.getValue()) && BlockUtil.canSeePos(block) && mc.player.getPosition() != block).collect(Collectors.toList());
+        List<BlockPos> valid = BlockUtil.getSphere(range.getValue(), false).stream().filter(block -> attemptedPositions.getOrDefault(block, 0) < 3 && BlockUtil.isSafeHole(block, obsidianBedrock.getValue()) && BlockUtil.canSeePos(block) && mc.player.getPosition() != block).collect(Collectors.toList());
 
         valid.sort(Comparator.comparingDouble(block -> mc.player.getDistanceSq(block)));
 
@@ -132,6 +139,8 @@ public class HoleFill extends Module {
 
                 // Place block
                 mc.playerController.processRightClickBlock(mc.player, mc.world, pos.offset(facing), facing.getOpposite(), new Vec3d(pos), EnumHand.MAIN_HAND);
+
+                attemptedPositions.put(pos, attemptedPositions.getOrDefault(pos, 0) + 1);
 
                 // Swing hand
                 mc.player.swingArm(EnumHand.MAIN_HAND);

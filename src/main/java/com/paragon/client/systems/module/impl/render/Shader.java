@@ -1,6 +1,6 @@
 package com.paragon.client.systems.module.impl.render;
 
-import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.client.shader.shaders.*;
 import com.paragon.client.systems.module.Module;
@@ -264,7 +264,7 @@ public class Shader extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(shaderType.getValue());
+        return " " + StringUtil.getFormattedText(shaderType.getValue());
     }
 
     public enum FragmentShader {

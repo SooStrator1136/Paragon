@@ -6,7 +6,7 @@ import com.paragon.api.event.render.entity.RenderEntityEvent;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.asm.mixins.accessor.IRenderGlobal;
 import com.paragon.asm.mixins.accessor.IShaderGroup;
@@ -32,7 +32,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -268,7 +267,7 @@ public class ESP extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getValue());
+        return " " + StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

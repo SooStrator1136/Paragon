@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.player.TravelEvent;
 import com.paragon.api.util.player.PlayerUtil;
-import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.Module;
@@ -196,7 +196,7 @@ public class ElytraFlight extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getValue());
+        return " " + StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

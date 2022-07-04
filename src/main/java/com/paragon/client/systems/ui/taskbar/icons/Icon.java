@@ -2,7 +2,6 @@ package com.paragon.client.systems.ui.taskbar.icons;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.ClientFont;
@@ -33,7 +32,7 @@ public class Icon implements Wrapper, TextRenderer {
 
         RenderUtil.drawRect(x, y, getStringWidth(name) + 6, 16, new Color(17, 17, 17).getRGB());
 
-        if (GuiUtil.mouseOver(x, y, x + getStringWidth(name) + 6, y + 16, mouseX, mouseY)) {
+        if (isHovered(x, y, getStringWidth(name) + 6, 16, mouseX, mouseY)) {
             RenderUtil.drawRect(x, y, getStringWidth(name) + 6, 16, new Color(23, 23, 23).getRGB());
         }
 
@@ -41,7 +40,7 @@ public class Icon implements Wrapper, TextRenderer {
     }
 
     public void whenClicked(int mouseX, int mouseY) {
-        if (GuiUtil.mouseOver(x, y, x + getStringWidth(name) + 6, y + 16, mouseX, mouseY)) {
+        if (isHovered(x, y, getStringWidth(name) + 6, 16, mouseX, mouseY)) {
             mc.displayGuiScreen(guiScreenSupplier.get());
         }
     }

@@ -4,7 +4,7 @@ import com.paragon.api.event.render.tileentity.RenderTileEntityEvent;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.OutlineUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IEntityRenderer;
 import com.paragon.client.shader.shaders.OutlineShader;
@@ -211,7 +211,7 @@ public class StorageESP extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(mode.getValue());
+        return " " + StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

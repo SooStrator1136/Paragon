@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.player.InventoryUtil;
-import com.paragon.api.util.string.EnumFormatter;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.setting.Setting;
@@ -242,7 +242,7 @@ public class Offhand extends Module {
 
     @Override
     public String getArrayListInfo() {
-        return " " + EnumFormatter.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true) + (timing.getValue().equals(Timing.SEQUENTIAL) ? ", " + EnumFormatter.getFormattedText(state) : "");
+        return " " + StringUtil.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true) + (timing.getValue().equals(Timing.SEQUENTIAL) ? ", " + StringUtil.getFormattedText(state) : "");
     }
 
     public enum Timing {

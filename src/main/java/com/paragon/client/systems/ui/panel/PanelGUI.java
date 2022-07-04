@@ -1,126 +1,122 @@
 package com.paragon.client.systems.ui.panel;
 
-import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
-import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.ui.panel.impl.Panel;
 import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
+import com.paragon.client.systems.ui.panel.panel.CategoryPanel;
+import com.paragon.client.systems.ui.panel.panel.Panel;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.input.Mouse;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * @author Wolfsurge
- */
-public class PanelGUI extends GuiScreen implements TextRenderer {
+public class PanelGUI extends GuiScreen {
 
-    // The tooltip being rendered
-    public static String tooltip = "";
-    // List of panels
-    private final ArrayList<Panel> panels = new ArrayList<>();
+    private final List<Panel> panels = new ArrayList<>();
+
 
     public PanelGUI() {
-        // X position of panel
-        float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 100) / 2f);
+        float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 110) / 2f);
 
-        // Add a panel for every category
         for (Category category : Category.values()) {
-            // Add panel
-            panels.add(new Panel(x, 30, 95, 16, category));
-
-            // Increase X
-            x += 100;
+            panels.add(new CategoryPanel(category, x, 30, 105, 22, 22));
+            x += 110;
         }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        // Reset tooltip
-        tooltip = "";
+        super.drawScreen(mouseX, mouseY, partialTicks);
 
-        // Make the background darker
         if (ClickGUI.darkenBackground.getValue()) {
             drawDefaultBackground();
         }
 
-        scrollPanels();
+        if (ClickGUI.background.getValue()) {
+            float[] topLeft = {182, 66, 245};
+            float[] topRight = {236, 66, 245};
+            float[] bottomRight = {245, 66, 141};
+            float[] bottomLeft = {212, 11, 57};
 
-        // Render panels
+            GlStateManager.pushMatrix();
+            GlStateManager.disableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.disableAlpha();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.shadeModel(7425);
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+
+            bufferbuilder.pos(width, 0, 0).color(topRight[0] / 360, topRight[1] / 360, topRight[2] / 360, 0.5f).endVertex();
+            bufferbuilder.pos(0, 0, 0).color(topLeft[0] / 360, topLeft[1] / 360, topLeft[2] / 360, 0.5f).endVertex();
+            bufferbuilder.pos(0, height, 0).color(bottomLeft[0] / 360, bottomLeft[1] / 360, bottomLeft[2] / 360, 0.5f).endVertex();
+            bufferbuilder.pos(width, height, 0).color(bottomRight[0] / 360, bottomRight[1] / 360, bottomRight[2] / 360, 0.5f).endVertex();
+
+            tessellator.draw();
+            GlStateManager.shadeModel(7424);
+            GlStateManager.enableAlpha();
+            GlStateManager.enableTexture2D();
+            GlStateManager.popMatrix();
+        }
+
+        int dWheel = Mouse.getDWheel();
+
+        Collections.reverse(panels);
+
         panels.forEach(panel -> {
-            panel.renderPanel(mouseX, mouseY);
+            panel.render(mouseX, mouseY, dWheel);
         });
 
-        Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
-
-        if (ClickGUI.tooltips.getValue() && !Objects.equals(tooltip, "")) {
-            RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
-            RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getValue().getRGB());
-            renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
-        }
-
-        if (ClickGUI.catgirl.getValue()) {
-            ScaledResolution sr = new ScaledResolution(mc);
-
-            mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
-            RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
-        }
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        Collections.reverse(panels);
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        // Clicks
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+
+        Collections.reverse(panels);
+
         panels.forEach(panel -> {
-            panel.mouseClicked(mouseX, mouseY, mouseButton);
+            panel.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton));
         });
 
-        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
-
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+        Collections.reverse(panels);
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-        // Click releases
+        super.mouseReleased(mouseX, mouseY, state);
+
+        Collections.reverse(panels);
+
         panels.forEach(panel -> {
-            panel.mouseReleased(mouseX, mouseY, state);
+            panel.mouseReleased(mouseX, mouseY, Click.getClick(state));
         });
 
-        super.mouseReleased(mouseX, mouseY, state);
+        Collections.reverse(panels);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
 
-        // Keys typed
+        Collections.reverse(panels);
+
         panels.forEach(panel -> {
-            panel.keyTyped(typedChar, keyCode);
+            panel.keyTyped(keyCode, typedChar);
         });
 
-        super.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    public void onGuiClosed() {
-        Paragon.INSTANCE.getStorageManager().saveModules("current");
-    }
-
-    public void scrollPanels() {
-        int dWheel = Mouse.getDWheel();
-
-        for (Panel panel : panels) {
-            panel.setY(panel.getY() + (dWheel / 100f) * ClickGUI.scrollSpeed.getValue());
-        }
+        Collections.reverse(panels);
     }
 
     @Override
@@ -129,12 +125,4 @@ public class PanelGUI extends GuiScreen implements TextRenderer {
         return ClickGUI.pause.getValue();
     }
 
-    /**
-     * Gets the panels
-     *
-     * @return The panels
-     */
-    public ArrayList<Panel> getPanels() {
-        return panels;
-    }
 }

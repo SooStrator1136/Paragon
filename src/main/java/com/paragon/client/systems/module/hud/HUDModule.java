@@ -1,14 +1,11 @@
 package com.paragon.client.systems.module.hud;
 
-import com.paragon.api.util.render.GuiUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
-
-import java.awt.*;
 
 public abstract class HUDModule extends Module implements TextRenderer {
 
@@ -57,7 +54,7 @@ public abstract class HUDModule extends Module implements TextRenderer {
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (GuiUtil.mouseOver(getX(), getY(), getX() + getWidth(), getY() + getHeight(), mouseX, mouseY)) {
+        if (isHovered(getX(), getY(), getWidth(), getHeight(), mouseX, mouseY)) {
             if (mouseButton == 0) {
                 this.lastX = mouseX - getX();
                 this.lastY = mouseY - getY();
