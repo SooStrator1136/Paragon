@@ -26,11 +26,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
  */
 object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically translates incoming/outgoing messages") {
     private val incoming = Setting("Incoming", true)
-    private val suffix = Setting("Mark Translation", true).setVisibility { incoming.value }
-        .setDescription("Suffix translated messages with \"[Translated]\"")
+    private val suffix = Setting("Mark Translation", true).setVisibility { incoming.value }.setDescription("Suffix translated messages with \"[Translated]\"")
     private val incomingLang = Setting("In Lang", "English").setVisibility { incoming.value }
     private val outgoing = Setting("Outgoing", false)
-    private val outgoingLang = Setting("Out Lang", "Albanian").setVisibility { outgoing.value }
+    private val outgoingLang = Setting("Out Lang", "English").setVisibility { outgoing.value }
 
     private val translator = Translator()
 

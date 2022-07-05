@@ -113,10 +113,7 @@ public class EventBus {
         if (subscribedMethodList != null) {
             // Iterate through the subscribed methods
             for (SubscribedMethod subscribedMethod1 : subscribedMethodList) {
-                try {
-                    // Invoke (run) the method
-                    subscribedMethod1.getMethod().invoke(subscribedMethod1.getSource(), obj);
-                } catch (Exception ignored) {}
+                subscribedMethod1.invoke(obj);
             }
         }
     }

@@ -14,6 +14,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Module extends Feature implements Wrapper {
@@ -53,13 +54,21 @@ public class Module extends Feature implements Wrapper {
             MinecraftForge.EVENT_BUS.register(this);
             Paragon.INSTANCE.getEventBus().register(this);
         }
+    }
 
+    public Module(String name, Category category, String description, Bind bind) {
+        this(name, category, description);
+
+        this.bind.setValue(bind);
+    }
+
+    // TEMPORARY
+    public void reflectSettings() {
         Arrays.stream(getClass().getDeclaredFields()).filter(field -> Setting.class.isAssignableFrom(field.getType())).forEach(field -> {
             field.setAccessible(true);
 
             try {
                 Setting<?> setting = (Setting<?>) field.get(this);
-
                 if (setting != null && setting.getParentSetting() == null) {
                     settings.add(setting);
                 }
@@ -67,15 +76,8 @@ public class Module extends Feature implements Wrapper {
                 e.printStackTrace();
             }
         });
-
         this.settings.add(this.visible);
         this.settings.add(this.bind);
-    }
-
-    public Module(String name, Category category, String description, Bind bind) {
-        this(name, category, description);
-
-        this.bind.setValue(bind);
     }
 
     public void onEnable() {

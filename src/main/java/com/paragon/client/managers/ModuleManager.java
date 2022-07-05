@@ -135,6 +135,12 @@ public class ModuleManager {
                 new Totems(),
                 new Watermark()
         );
+
+        // IM SORRY :SOB:
+        // Kotlin objects do some funky bytecode stuff and the fields aren't initialized until after the
+        // ctr is called, but if you end up making the whole client kotlin this will be temp
+        // as there are clean ways to do settings using delegates like `val someNum by int("Num Setting", 0..50, 10)`
+        modules.forEach(Module::reflectSettings);
     }
 
     /**
