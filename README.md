@@ -11,7 +11,7 @@ Wolfsurge <br>
 TeleTofu
 
 ## Developers
-Master7720
+Bush
 
 ## Other Contributors
 Doogie13
