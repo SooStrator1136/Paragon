@@ -109,6 +109,7 @@ public class ModuleManager {
                 new TeleTofu(),
                 new TimerModule(),
                 new XCarry(),
+                AutoTranslate.INSTANCE,
 
                 // Client
                 new ClientFont(),

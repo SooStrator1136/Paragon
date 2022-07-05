@@ -2,18 +2,23 @@ buildscript {
     repositories {
         mavenCentral()
 
-        maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url = 'https://repo.spongepowered.org/maven/' }
+        maven { url 'https://maven.minecraftforge.net/' }
+        maven { url 'https://repo.spongepowered.org/maven/' }
     }
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0"
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'kotlin'
+apply plugin: 'java'
+apply plugin: 'idea'
 
 version = "1.0.0"
 group = "com.paragon"
@@ -67,6 +72,11 @@ dependencies {
     libaries group: 'org.json', name: 'json', version: '20220320'
     libaries group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
     libaries group: 'club.minnced', name: 'java-discord-rpc', version: '2.0.1'
+    libaries group: 'com.github.therealbush', name: 'translator', version: '1.0.2'
+
+    libaries group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.7.0'
+    libaries group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.7.0'
+    libaries group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.6.2'
 
     implementation configurations.libaries
 }
