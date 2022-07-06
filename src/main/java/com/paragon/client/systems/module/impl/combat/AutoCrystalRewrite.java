@@ -2,10 +2,7 @@ package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
-import com.paragon.api.util.function.VoidFunction;
 import com.paragon.api.util.player.InventoryUtil;
-import com.paragon.api.util.player.RotationUtil;
-import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
@@ -20,7 +17,6 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
@@ -427,14 +423,14 @@ public class AutoCrystalRewrite extends Module {
             INSTANCE.explodeCrystals();
         });
 
-        private final VoidFunction function;
+        private final Runnable function;
 
-        Order(VoidFunction run) {
+        Order(Runnable run) {
             this.function = run;
         }
 
         public void run() {
-            function.invoke();
+            function.run();
         }
     }
 
@@ -505,7 +501,7 @@ public class AutoCrystalRewrite extends Module {
          */
         HUNDRED(0.01);
 
-        private double increase;
+        private final double increase;
 
         Raytrace(double increase) {
             this.increase = increase;
