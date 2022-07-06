@@ -241,7 +241,7 @@ public class Offhand extends Module {
     }
 
     @Override
-    public String getArrayListInfo() {
+    public String getData() {
         return " " + StringUtil.getFormattedText(priority.getValue()) + ", " + InventoryUtil.getCountOfItem(secondary.getValue().getItem(), false, true) + (timing.getValue().equals(Timing.SEQUENTIAL) ? ", " + StringUtil.getFormattedText(state) : "");
     }
 

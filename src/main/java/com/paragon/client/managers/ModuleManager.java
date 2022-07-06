@@ -43,6 +43,7 @@ public class ModuleManager {
                 // Combat
                 new Aura(),
                 new AutoCrystal(),
+                new AutoCrystalRewrite(),
                 new BowRelease(),
                 new Criticals(),
                 new HoleFill(),
@@ -90,6 +91,7 @@ public class ModuleManager {
                 new Announcer(),
                 new AutoEZ(),
                 new AutoLog(),
+                AutoTranslate.INSTANCE,
                 new AutoWalk(),
                 new Blink(),
                 new BuildHeight(),
@@ -109,7 +111,6 @@ public class ModuleManager {
                 new TeleTofu(),
                 new TimerModule(),
                 new XCarry(),
-                AutoTranslate.INSTANCE,
 
                 // Client
                 new ClientFont(),
@@ -218,12 +219,6 @@ public class ModuleManager {
                 module.onRender3D();
             }
         });
-    }
-
-    public Set<Class<?>> findAllClassesUsingClassLoader(String packageName) {
-        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        return reader.lines().filter(line -> line.endsWith(".class")).map(line -> getClass(line, packageName)).collect(Collectors.toSet());
     }
 
     private Class<?> getClass(String className, String packageName) {

@@ -1,28 +1,30 @@
 package com.paragon.client.systems.ui.panel;
 
+import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.ui.panel.panel.CategoryPanel;
 import com.paragon.client.systems.ui.panel.panel.Panel;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static org.lwjgl.opengl.GL11.glColor4f;
 
 public class PanelGUI extends GuiScreen {
 
     private final List<Panel> panels = new ArrayList<>();
-
 
     public PanelGUI() {
         float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 110) / 2f);
@@ -78,6 +80,17 @@ public class PanelGUI extends GuiScreen {
         });
 
         Collections.reverse(panels);
+
+        glColor4f(1, 1, 1, 1);
+
+        if (ClickGUI.catgirl.getValue()) {
+            ScaledResolution sr = new ScaledResolution(mc);
+
+            mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
+            RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
+        }
+
+        Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
     }
 
     @Override
@@ -91,6 +104,8 @@ public class PanelGUI extends GuiScreen {
         });
 
         Collections.reverse(panels);
+
+        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
     }
 
     @Override
@@ -117,6 +132,11 @@ public class PanelGUI extends GuiScreen {
         });
 
         Collections.reverse(panels);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        Paragon.INSTANCE.getStorageManager().saveModules("current");
     }
 
     @Override

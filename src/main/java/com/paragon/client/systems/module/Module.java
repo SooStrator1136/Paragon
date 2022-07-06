@@ -139,7 +139,7 @@ public class Module extends Feature implements Wrapper {
      *
      * @return The module's info
      */
-    public String getArrayListInfo() {
+    public String getData() {
         return "";
     }
 

@@ -174,7 +174,7 @@ public class Aura extends Module {
     }
 
     @Override
-    public String getArrayListInfo() {
+    public String getData() {
         return " " + (target == null ? "No target" : target.getName());
     }
 

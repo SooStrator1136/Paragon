@@ -263,7 +263,7 @@ public class Shader extends Module {
     }
 
     @Override
-    public String getArrayListInfo() {
+    public String getData() {
         return " " + StringUtil.getFormattedText(shaderType.getValue());
     }
 

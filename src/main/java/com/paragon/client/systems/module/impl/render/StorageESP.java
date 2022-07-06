@@ -210,7 +210,7 @@ public class StorageESP extends Module {
     }
 
     @Override
-    public String getArrayListInfo() {
+    public String getData() {
         return " " + StringUtil.getFormattedText(mode.getValue());
     }
 

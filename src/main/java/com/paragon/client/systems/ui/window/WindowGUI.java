@@ -39,12 +39,16 @@ public class WindowGUI extends GuiScreen {
             RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
         }
 
+        Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         window.mouseClicked(mouseX, mouseY, mouseButton);
+
+        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }

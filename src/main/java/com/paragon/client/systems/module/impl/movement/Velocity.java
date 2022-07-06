@@ -79,7 +79,7 @@ public class Velocity extends Module {
     }
 
     @Override
-    public String getArrayListInfo() {
+    public String getData() {
         return " H% " + horizontal.getValue() + ", V% " + vertical.getValue();
     }
 }

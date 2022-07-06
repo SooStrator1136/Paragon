@@ -104,7 +104,7 @@ public class EntityUtil implements Wrapper {
     }
 
     public static boolean isEntityAllowed(Entity entity, boolean players, boolean mobs, boolean passives) {
-        if (entity instanceof EntityPlayer && players) {
+        if (entity instanceof EntityPlayer && players && entity != mc.player) {
             return true;
         }
 

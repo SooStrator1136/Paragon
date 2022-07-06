@@ -74,10 +74,10 @@ public class ClickGUI extends Module {
                 return Paragon.INSTANCE.getWindowGUI();
 
             case PANEL:
-                return new PanelGUI();
+                return Paragon.INSTANCE.getPanelGUI();
         }
 
-        return new PanelGUI();
+        return Paragon.INSTANCE.getPanelGUI();
     }
 
     @Override

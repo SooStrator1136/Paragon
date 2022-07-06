@@ -54,12 +54,12 @@ public class SoundHighlight extends Module {
         if (event.getPacket() instanceof SPacketSoundEffect) {
             SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
-            String path = ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath();
+            String path = format.getValue() ? I18n.format("subtitles." + ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath()) : ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath();
 
             // Exclude sounds that don't have translations
-            if (!(path.equals("entity.player.attack.strong") || path.equals("entity.player.attack.weak"))) {
+            if (!path.contains("subtitles.")) {
                 // Add sound to map
-                soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(format.getValue() ? I18n.format("subtitles." + ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath()) : ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath(), 255L));
+                soundMap.put(new Vec3d(packet.getX(), packet.getY(), packet.getZ()), Pair.of(path, 255L));
             }
         }
     }

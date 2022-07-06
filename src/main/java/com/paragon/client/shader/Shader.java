@@ -30,7 +30,7 @@ public class Shader implements Wrapper {
             InputStream vertStream = getClass().getResourceAsStream("/assets/paragon/glsl/vertex.vert");
 
             if (vertStream != null) {
-                vertex = createShader(IOUtils.toString(vertStream, Charset.defaultCharset()), 35633);
+                vertex = createShader(IOUtils.toString(vertStream, Charset.defaultCharset()), GL_VERTEX_SHADER);
                 IOUtils.closeQuietly(vertStream);
 
                 System.out.println(path + " Vertex shader loaded");
@@ -39,7 +39,7 @@ public class Shader implements Wrapper {
             InputStream fragStream = getClass().getResourceAsStream(path);
 
             if (fragStream != null) {
-                fragment = createShader(IOUtils.toString(fragStream, Charset.defaultCharset()), 35632);
+                fragment = createShader(IOUtils.toString(fragStream, Charset.defaultCharset()), GL_FRAGMENT_SHADER);
                 IOUtils.closeQuietly(fragStream);
 
                 System.out.println(path + " Fragment shader loaded");
@@ -100,6 +100,7 @@ public class Shader implements Wrapper {
             }
         } catch (Exception e) {
             ARBShaderObjects.glDeleteObjectARB(shader);
+            e.printStackTrace();
             throw e;
         }
     }
