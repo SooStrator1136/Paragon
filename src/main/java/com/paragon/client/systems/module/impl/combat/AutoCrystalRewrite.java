@@ -1,8 +1,10 @@
 package com.paragon.client.systems.module.impl.combat;
 
+import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.function.VoidFunction;
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
@@ -18,12 +20,13 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.CombatRules;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
 
 import java.awt.*;
@@ -34,6 +37,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author Wolfsurge
+ */
 public class AutoCrystalRewrite extends Module {
 
     public static AutoCrystalRewrite INSTANCE;
@@ -67,6 +73,10 @@ public class AutoCrystalRewrite extends Module {
     public static Setting<Boolean> place = new Setting<>("Place", true)
             .setDescription("Whether to place crystals");
 
+    public static Setting<Float> placeDelay = new Setting<>("Delay", 50f, 0f, 1000f, 1f)
+            .setDescription("The delay between placing crystals")
+            .setParentSetting(place);
+
     public static Setting<Perform> placePerform = new Setting<>("Perform", Perform.SILENT_SWITCH)
             .setDescription("When to perform the action of placing crystals")
             .setParentSetting(place);
@@ -85,6 +95,18 @@ public class AutoCrystalRewrite extends Module {
 
     public static Setting<Double> placeMaximum = new Setting<>("Maximum", 10.0D, 1.0D, 36.0D, 1D)
             .setDescription("The maximum damage the crystal can deal to you to place")
+            .setParentSetting(place);
+
+    public static Setting<Raytrace> placeRaytrace = new Setting<>("Raytrace", Raytrace.HALF)
+            .setDescription("The raytrace method to use when placing crystals")
+            .setParentSetting(place);
+
+    public static Setting<Place> placeMode = new Setting<>("Place", Place.VANILLA)
+            .setDescription("How to place the crystal")
+            .setParentSetting(place);
+
+    public static Setting<Boolean> placeSwing = new Setting<>("Swing", true)
+            .setDescription("Whether to swing the item when placing")
             .setParentSetting(place);
 
     // EXPLODE
@@ -115,6 +137,7 @@ public class AutoCrystalRewrite extends Module {
             .setVisibility(() -> !renderMode.getValue().equals(Render.FILL));
 
     private BlockPos placementPosition;
+    private Timer placeTimer = new Timer();
     private float placementDamage;
 
     public AutoCrystalRewrite() {
@@ -187,9 +210,27 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void placeCrystals() {
-        if (!place.getValue()) {
+        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2)) {
             return;
         }
+
+        ArrayList<BlockPos> placeablePositions = BlockUtil.getSphere(placeRange.getValue().floatValue(), true).stream().filter(this::isPlaceable).collect(Collectors.toCollection(ArrayList::new));
+
+        EntityLivingBase target = findTarget(placeablePositions, 1);
+
+        if (target == null) {
+            return;
+        }
+
+        BlockPos placement = findBestPlacement(target, placeablePositions);
+
+        if (placement == null) {
+            placementPosition = null;
+            return;
+        }
+
+        placementPosition = placement;
+        placementDamage = Math.round(calculateDamage(new Vec3d(placement.getX() + 0.5, placement.getY() + 1, placement.getZ() + 0.5), target));
 
         int previousSlot = mc.player.inventory.currentItem;
 
@@ -222,37 +263,67 @@ public class AutoCrystalRewrite extends Module {
                 break;
         }
 
-        ArrayList<BlockPos> placeablePositions = BlockUtil.getSphere(placeRange.getValue().floatValue(), true).stream().filter(this::isPlaceable).collect(Collectors.toCollection(ArrayList::new));
+        EnumHand crystalHand = alreadyHolding ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND;
 
-        EntityLivingBase target = findTarget(placeablePositions, 1);
-
-        if (target == null) {
-            System.out.println("No target found");
+        if (crystalHand == null) {
             return;
         }
 
-        BlockPos placement = findBestPlacement(target, placeablePositions);
+        double eye = mc.player.posY + mc.player.eyeHeight;
 
-        if (placement == null) {
-            System.out.println("No placement found");
-            placementPosition = null;
-            return;
+        EnumFacing facing = EnumFacing.UP;
+        float distance = 0;
+
+        Vec3d facingVec = new Vec3d(0.5, 0.5, 0.5);
+
+        if (!placeRaytrace.getValue().equals(Raytrace.NONE)) {
+            if (placement.getY() > eye) {
+                for (float x = 0; x <= 1; x += placeRaytrace.getValue().getIncrease()) {
+                    for (float y = 0; y <= 1; y += placeRaytrace.getValue().getIncrease()) {
+                        for (float z = 0; z <= 1; z += placeRaytrace.getValue().getIncrease()) {
+                            Vec3d vector = new Vec3d(placement).add(x, y, z);
+
+                            RayTraceResult result = mc.world.rayTraceBlocks(mc.player.getPositionEyes(mc.getRenderPartialTicks()), vector, false, true, false);
+
+                            if (result != null && result.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
+                                double vectorDistance = vector.distanceTo(mc.player.getPositionEyes(mc.getRenderPartialTicks()));
+
+                                if (vectorDistance < distance || distance == 0) {
+                                    distance = (float) vectorDistance;
+                                    facing = result.sideHit;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        placementPosition = placement;
-        placementDamage = Math.round(calculateDamage(new Vec3d(placement.getX() + 0.5, placement.getY() + 1, placement.getZ() + 0.5), target));
+        if (placeMode.getValue().equals(Place.VANILLA)) {
+            mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand);
+        }
 
-        // PERFORM PLACING HERE
+        else if (placeMode.getValue().equals(Place.PACKET)) {
+            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(placement, facing, crystalHand, (float) facingVec.x, (float) facingVec.y, (float) facingVec.z));
+        }
 
-
+        if (placeSwing.getValue()) {
+            mc.player.swingArm(crystalHand);
+        }
 
         if (placePerform.getValue().equals(Perform.SILENT_SWITCH) && !alreadyHolding) {
             mc.player.inventory.currentItem = previousSlot;
             ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
         }
+
+        placeTimer.reset();
     }
 
     private BlockPos findBestPlacement(EntityLivingBase target, ArrayList<BlockPos> positions) {
+        if (positions.isEmpty()) {
+            return null;
+        }
+
         Collections.reverse(positions);
 
         BlockPos placement = positions.get(0);
@@ -399,6 +470,50 @@ public class AutoCrystalRewrite extends Module {
          * Switch to crystals, then switch back once completed
          */
         SILENT_SWITCH
+    }
+
+    public enum Place {
+        /**
+         * Use a vanilla method
+         */
+        VANILLA,
+
+        /**
+         * Send a packet
+         */
+        PACKET
+    }
+
+    public enum Raytrace {
+        /**
+         * Don't raytrace
+         */
+        NONE(0),
+
+        /**
+         * Check every 0.5
+         */
+        HALF(0.5),
+
+        /**
+         * Check every 0.05
+         */
+        TWENTY(0.05),
+
+        /**
+         * Check every 0.01
+         */
+        HUNDRED(0.01);
+
+        private double increase;
+
+        Raytrace(double increase) {
+            this.increase = increase;
+        }
+
+        public double getIncrease() {
+            return increase;
+        }
     }
 
     public enum Render {
