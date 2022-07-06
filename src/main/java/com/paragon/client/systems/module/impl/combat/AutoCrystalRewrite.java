@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.combat;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.function.VoidFunction;
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
@@ -192,6 +193,9 @@ public class AutoCrystalRewrite extends Module {
 
         int previousSlot = mc.player.inventory.currentItem;
 
+        // For silent switch
+        boolean alreadyHolding = false;
+
         switch (placePerform.getValue()) {
             case HOLDING:
                 if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
@@ -204,9 +208,13 @@ public class AutoCrystalRewrite extends Module {
             case KEEP:
                 int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
 
-                if (crystalSlot > -1 && !InventoryUtil.isHolding(Items.END_CRYSTAL)) {
-                    mc.player.inventory.currentItem = crystalSlot;
-                    ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
+                if (crystalSlot > -1) {
+                    if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
+                        alreadyHolding = true;
+                    } else {
+                        mc.player.inventory.currentItem = crystalSlot;
+                        ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
+                    }
                 } else {
                     return;
                 }
@@ -236,7 +244,9 @@ public class AutoCrystalRewrite extends Module {
 
         // PERFORM PLACING HERE
 
-        if (placePerform.getValue().equals(Perform.SILENT_SWITCH)) {
+
+
+        if (placePerform.getValue().equals(Perform.SILENT_SWITCH) && !alreadyHolding) {
             mc.player.inventory.currentItem = previousSlot;
             ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
         }

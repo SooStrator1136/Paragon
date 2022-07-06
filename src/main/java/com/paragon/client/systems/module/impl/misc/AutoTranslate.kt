@@ -29,24 +29,24 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     private val suffix = Setting("Mark Translation", true)
         .setDescription("Suffix translated messages with \"[Translated]\"")
-        .setVisibility { incoming.value }
+        .setVisibility { incoming.getValue() }
 
     private val incomingLang = Setting("In Lang", Language.ENGLISH)
         .setDescription("Language to translate incoming messages to")
-        .setVisibility { incoming.value }
+        .setVisibility { incoming.getValue() }
 
     private val outgoing = Setting("Outgoing", false)
         .setDescription("Automatically translate outgoing messages")
 
     private val outgoingLang = Setting("Out Lang", Language.ENGLISH)
         .setDescription("Language to translate outgoing messages to")
-        .setVisibility { outgoing.value }
+        .setVisibility { outgoing.getValue() }
 
     private val translator = Translator()
 
     @SubscribeEvent(priority = EventPriority.LOWEST) // We are cancelling the event, so let other listeners do their thing first
     fun onChatReceived(event: ClientChatReceivedEvent) {
-        if (!incoming.value) {
+        if (!incoming.getValue()) {
             return
         }
 
@@ -54,10 +54,10 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
         // Run translation on another thread
         backgroundThread {
-            translate(event.message.unformattedText, incomingLang.value) {
+            translate(event.message.unformattedText, incomingLang.getValue()) {
                 // Send chat on main thread
                 mainThread {
-                    val messageSuffix = if (suffix.value && sourceLanguage != targetLanguage)
+                    val messageSuffix = if (suffix.getValue() && sourceLanguage != targetLanguage)
                         "$GRAY [Translated]" else ""
                     mc.ingameGUI?.chatGUI?.printChatMessage(TextComponentString(translatedText + messageSuffix))
                 }
@@ -67,14 +67,14 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onChatSend(event: ClientChatEvent) {
-        if (!outgoing.value || event.message.startsWith("/") || event.message.startsWith(CommandManager.prefix)) {
+        if (!outgoing.getValue() || event.message.startsWith("/") || event.message.startsWith(CommandManager.prefix)) {
             return
         }
 
         event.isCanceled = true
 
         backgroundThread {
-            translate(event.message, outgoingLang.value) {
+            translate(event.message, outgoingLang.getValue()) {
                 mainThread {
                     mc.player?.sendChatMessage(translatedText)
                 }

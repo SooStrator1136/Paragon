@@ -70,7 +70,7 @@ public class ModuleManager {
                 new ChinaHat(),
                 new ClearChat(),
                 new ESP(),
-                new Fullbright(),
+                Fullbright.INSTANCE,
                 new HitColour(),
                 new HoleESP(),
                 new MobOwner(),
