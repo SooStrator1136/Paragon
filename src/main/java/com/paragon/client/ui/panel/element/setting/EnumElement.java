@@ -43,6 +43,10 @@ public class EnumElement extends Element {
             else if (subsetting.getValue() instanceof Color) {
                 getSubElements().add(new ColourElement(layer + 1, (Setting<Color>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
             }
+
+            else if (subsetting.getValue() instanceof String) {
+                getSubElements().add(new StringElement(layer + 1, (Setting<String>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
+            }
         });
     }
 

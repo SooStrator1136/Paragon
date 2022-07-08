@@ -12,6 +12,7 @@ import com.paragon.api.setting.Setting
 import me.bush.translator.Language
 import me.bush.translator.Translation
 import me.bush.translator.Translator
+import me.bush.translator.languageOf
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.client.event.ClientChatEvent
 import net.minecraftforge.client.event.ClientChatReceivedEvent
@@ -30,14 +31,14 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
         .setDescription("Suffix translated messages with \"[Translated]\"")
         .setVisibility { incoming.getValue() }
 
-    private val incomingLang = Setting("In Lang", Language.ENGLISH)
+    private val incomingLang = Setting("In Lang", "English")
         .setDescription("Language to translate incoming messages to")
         .setVisibility { incoming.getValue() }
 
     private val outgoing = Setting("Outgoing", false)
         .setDescription("Automatically translate outgoing messages")
 
-    private val outgoingLang = Setting("Out Lang", Language.ENGLISH)
+    private val outgoingLang = Setting("Out Lang", "English")
         .setDescription("Language to translate outgoing messages to")
         .setVisibility { outgoing.getValue() }
 
@@ -49,11 +50,13 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
             return
         }
 
+        val language = getLanguage(incomingLang.getValue()) ?: return
+
         event.isCanceled = true
 
         // Run translation on another thread
         backgroundThread {
-            translate(event.message.unformattedText, incomingLang.getValue()) {
+            translate(event.message.unformattedText, language) {
                 // Send chat on main thread
                 mainThread {
                     val messageSuffix = if (suffix.getValue() && sourceLanguage != targetLanguage)
@@ -66,14 +69,16 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onChatSend(event: ClientChatEvent) {
-        if (!outgoing.getValue() || event.message.startsWith("/") || Paragon.INSTANCE.commandManager.startsWithPrefix(event.message)) {
+        if (!outgoing.getValue() || Paragon.INSTANCE.commandManager.startsWithPrefix(event.message)) {
             return
         }
+
+        val language = getLanguage(outgoingLang.getValue()) ?: return
 
         event.isCanceled = true
 
         backgroundThread {
-            translate(event.message, outgoingLang.getValue()) {
+            translate(event.message, language) {
                 mainThread {
                     mc.player?.sendChatMessage(translatedText)
                 }
@@ -86,5 +91,14 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
             Paragon.INSTANCE.notificationManager.addNotification(Notification("Could not process translation request. Disabling AutoTranslate", NotificationType.ERROR))
             toggle()
         }.getOrNull()?.run(block)
+    }
+
+    private fun getLanguage(language: String) = languageOf(language).also {
+        if (it == null) {
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification("\"$language\" is not a valid language! Disabling AutoTranslate.", NotificationType.ERROR)
+            )
+            toggle()
+        }
     }
 }

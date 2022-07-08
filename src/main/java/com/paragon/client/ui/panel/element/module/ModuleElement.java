@@ -46,6 +46,10 @@ public class ModuleElement extends Element {
             else if (setting.getValue() instanceof Color) {
                 getSubElements().add(new ColourElement(1, (Setting<Color>) setting, this, getX(), getY(), getWidth(), getHeight()));
             }
+
+            else if (setting.getValue() instanceof String) {
+                getSubElements().add(new StringElement(1, (Setting<String>) setting, this, getX(), getY(), getWidth(), getHeight()));
+            }
         });
     }
 

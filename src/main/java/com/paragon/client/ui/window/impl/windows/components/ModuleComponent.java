@@ -52,6 +52,11 @@ public class ModuleComponent extends Component {
                 settingComponents.add(new ColourComponent(window, (Setting<Color>) setting, x + 2, y + offset, width - 4, 15));
                 offset += 15;
             }
+
+            else if (setting.getValue() instanceof String) {
+                settingComponents.add(new StringComponent(window, (Setting<String>) setting, x + 2, y + offset, width - 4, 15));
+                offset += 15;
+            }
         }
     }
 

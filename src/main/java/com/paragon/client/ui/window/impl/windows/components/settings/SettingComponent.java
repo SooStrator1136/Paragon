@@ -46,6 +46,11 @@ public class SettingComponent<T> extends Component {
                 subsettings.add(new ColourComponent(window, (Setting<Color>) subsetting, x + 2, y + offset, width - 4, 15));
                 offset += 15;
             }
+
+            else if (subsetting.getValue() instanceof String) {
+                subsettings.add(new StringComponent(window, (Setting<String>) subsetting, x + 2, y + offset, width - 4, 15));
+                offset += 15;
+            }
         }
     }
 
