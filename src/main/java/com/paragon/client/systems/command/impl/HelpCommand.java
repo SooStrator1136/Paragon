@@ -13,7 +13,7 @@ public class HelpCommand extends Command {
     @Override
     public void whenCalled(String[] args, boolean fromConsole) {
         for (Command command : Paragon.INSTANCE.getCommandManager().getCommands()) {
-            CommandManager.sendClientMessage(command.getName(), fromConsole);
+            Paragon.INSTANCE.getCommandManager().sendClientMessage(command.getName(), fromConsole);
         }
     }
 }

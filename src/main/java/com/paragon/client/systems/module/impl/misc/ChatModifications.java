@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.misc;
 
+import com.paragon.Paragon;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
@@ -28,7 +29,7 @@ public class ChatModifications extends Module {
 
     @SubscribeEvent
     public void onChat(ClientChatEvent event) {
-        if (event.getMessage().startsWith(CommandManager.prefix) || event.getMessage().startsWith("/")) {
+        if (Paragon.INSTANCE.getCommandManager().startsWithPrefix(event.getMessage())) {
             return;
         }
 

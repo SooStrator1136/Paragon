@@ -132,7 +132,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
         // int scissorHeight = (int) (MathHelper.clamp(moduleHeight, 0, 352) * animation.getAnimationFactor());
 
-        int scissorHeight = (int) MathHelper.clamp(MathHelper.clamp(moduleHeight, 0,(lastElement.getY() + lastElement.getHeight()) - (getY() + barHeight)) * animation.getAnimationFactor(), 0, 352);
+        float scissorHeight = (float) MathHelper.clamp(MathHelper.clamp(moduleHeight, 0,(lastElement.getY() + lastElement.getHeight()) - (getY() + barHeight)) * animation.getAnimationFactor(), 0, 352);
 
         if (scrollFactor != 0) {
             if (lastElement.getY() + lastElement.getTotalHeight() > getY() + barHeight + scissorHeight) {
@@ -180,15 +180,15 @@ public class CategoryPanel extends Panel implements TextRenderer {
             offset += element.getTotalHeight();
         }
 
-        RenderUtil.startGlScissor(getX(), getY() + barHeight, getWidth(), scissorHeight * animation.getAnimationFactor());
+        RenderUtil.drawHorizontalGradientRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, Color.HSBtoRGB(getLeftHue() / 360, 1, 1), Color.HSBtoRGB(rightHue / 360, 1, 1));
+
+        RenderUtil.startGlScissor(getX(), getY() + barHeight, getWidth(), scissorHeight);
 
         for (Element element : elements) {
             element.render(mouseX, mouseY, dWheel);
         }
 
         RenderUtil.endGlScissor();
-
-        RenderUtil.drawHorizontalGradientRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, Color.HSBtoRGB(getLeftHue() / 360, 1, 1), Color.HSBtoRGB(rightHue / 360, 1, 1));
 
         if (ClickGUI.tooltips.getValue() && animation.getAnimationFactor() > 0) {
             for (Element element : elements) {

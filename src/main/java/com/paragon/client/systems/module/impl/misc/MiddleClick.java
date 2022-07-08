@@ -58,11 +58,11 @@ public class MiddleClick extends Module {
                     if (Paragon.INSTANCE.getSocialManager().isFriend(player.getName())) {
                         // Remove player from social list
                         Paragon.INSTANCE.getSocialManager().removePlayer(player.getName());
-                        CommandManager.sendClientMessage(TextFormatting.RED + "Removed player " + TextFormatting.GRAY + player.getName() + TextFormatting.RED + " from your socials list!", false);
+                        Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "Removed player " + TextFormatting.GRAY + player.getName() + TextFormatting.RED + " from your socials list!", false);
                     } else {
                         // Add player to social list
                         Paragon.INSTANCE.getSocialManager().addPlayer(player);
-                        CommandManager.sendClientMessage(TextFormatting.GREEN + "Added player " + TextFormatting.GRAY + player.getName() + TextFormatting.GREEN + " to your friends list!", false);
+                        Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.GREEN + "Added player " + TextFormatting.GRAY + player.getName() + TextFormatting.GREEN + " to your friends list!", false);
                     }
                 }
 

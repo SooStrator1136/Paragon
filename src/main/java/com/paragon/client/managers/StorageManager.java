@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -394,6 +395,14 @@ public class StorageManager {
 
             try {
                 jsonObject.put("mainmenu", Paragon.INSTANCE.isParagonMainMenu());
+
+                String prefixes = "";
+                for (String prefix : Paragon.INSTANCE.getCommandManager().getCommonPrefixes()) {
+                    prefixes += prefix + " ";
+                }
+
+                jsonObject.put("ignored_prefixes", prefixes);
+
                 fileWriter.write(jsonObject.toString(4));
             } catch (IOException exception) {
                 exception.printStackTrace();
@@ -416,6 +425,10 @@ public class StorageManager {
             JSONObject jsonObject = getJSON(new File("paragon/client.json"));
 
             Paragon.INSTANCE.setParagonMainMenu(jsonObject.getBoolean("mainmenu"));
+
+            if (jsonObject.has("ignored_prefixes")) {
+                Paragon.INSTANCE.getCommandManager().getCommonPrefixes().addAll(Arrays.asList(String.valueOf(jsonObject.getString("ignored_prefixes")).split(" ")));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

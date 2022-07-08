@@ -7,6 +7,7 @@ import com.paragon.client.systems.command.impl.ConfigCommand;
 import com.paragon.client.systems.command.impl.HelpCommand;
 import com.paragon.client.systems.command.impl.SocialCommand;
 import com.paragon.client.systems.command.impl.SyntaxCommand;
+import com.paragon.client.systems.module.impl.misc.Cryptic;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ClientChatEvent;
@@ -16,16 +17,19 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Wolfsurge
  */
 public class CommandManager implements Wrapper {
 
-    public static String prefix = "$";
+    private String prefix = "$";
     private static String lastCommand = "";
 
-    private static ArrayList<Command> commands = new ArrayList<>();
+    private final ArrayList<Command> commands = new ArrayList<>();
+
+    private List<String> commonPrefixes = Arrays.asList("/", ".", "*", ";", ",");
 
     public CommandManager() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -38,7 +42,7 @@ public class CommandManager implements Wrapper {
         Paragon.INSTANCE.getLogger().info("Loaded Command Manager");
     }
 
-    public static void handleCommands(String message, boolean fromConsole) {
+    public void handleCommands(String message, boolean fromConsole) {
         if (message.split(" ").length > 0) {
             boolean commandFound = false;
             String commandName = message.split(" ")[0];
@@ -46,7 +50,7 @@ public class CommandManager implements Wrapper {
             for (Command command : commands) {
                 if (command.getName().equalsIgnoreCase(commandName)) {
                     command.whenCalled(Arrays.copyOfRange(message.split(" "), 1, message.split(" ").length), fromConsole);
-                    lastCommand = prefix + message;
+                    lastCommand = getPrefix() + message;
                     commandFound = true;
                     break;
                 }
@@ -58,7 +62,7 @@ public class CommandManager implements Wrapper {
         }
     }
 
-    public static void sendClientMessage(String message, boolean fromConsole) {
+    public void sendClientMessage(String message, boolean fromConsole) {
         // Only send chat message if the message wasn't sent from the console
         if (!fromConsole) {
             mc.player.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "Paragon " + TextFormatting.WHITE + "> " + message));
@@ -70,11 +74,23 @@ public class CommandManager implements Wrapper {
     @SubscribeEvent
     public void onChatMessage(ClientChatEvent event) {
         // Check if the message starts with the prefix
-        if (event.getMessage().startsWith(prefix)) {
+        if (event.getMessage().startsWith(getPrefix())) {
             event.setCanceled(true);
 
             handleCommands(event.getMessage().substring(prefix.length()), false);
         }
+    }
+
+    public boolean startsWithPrefix(String message) {
+        return message.split(" ")[0].toLowerCase().startsWith(getPrefix().toLowerCase(Locale.ROOT)) || commonPrefixes.contains(message.split(" ")[0].toLowerCase()) || message.startsWith("crypt") && Cryptic.INSTANCE.isEnabled();
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public List<String> getCommonPrefixes() {
+        return commonPrefixes;
     }
 
     /**

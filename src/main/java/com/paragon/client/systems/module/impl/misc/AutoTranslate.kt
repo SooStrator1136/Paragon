@@ -67,7 +67,7 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onChatSend(event: ClientChatEvent) {
-        if (!outgoing.getValue() || event.message.startsWith("/") || event.message.startsWith(CommandManager.prefix)) {
+        if (!outgoing.getValue() || event.message.startsWith("/") || Paragon.INSTANCE.commandManager.startsWithPrefix(event.message)) {
             return
         }
 

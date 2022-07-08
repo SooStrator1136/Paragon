@@ -21,12 +21,12 @@ public class SocialCommand extends Command implements TextRenderer {
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             // List all players
             if (Paragon.INSTANCE.getSocialManager().players.isEmpty()) {
-                CommandManager.sendClientMessage(TextFormatting.RED + "You haven't added anyone to your social list!", fromConsole);
+                Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "You haven't added anyone to your social list!", fromConsole);
                 return;
             }
 
             for (Player player : Paragon.INSTANCE.getSocialManager().players) {
-                CommandManager.sendClientMessage(player.getName() + " - " + player.getRelationship().getTextFormatting() + player.getRelationship().toString(), fromConsole);
+                Paragon.INSTANCE.getCommandManager().sendClientMessage(player.getName() + " - " + player.getRelationship().getTextFormatting() + player.getRelationship().toString(), fromConsole);
             }
         } else if (args.length == 3 && args[0].equalsIgnoreCase("add")) {
             // Add a player
@@ -36,25 +36,25 @@ public class SocialCommand extends Command implements TextRenderer {
                 Player player = new Player(name, Relationship.valueOf(relationship.toUpperCase()));
 
                 Paragon.INSTANCE.getSocialManager().addPlayer(player);
-                CommandManager.sendClientMessage(TextFormatting.GREEN + "Added player " + name + " to your socials list!", fromConsole);
+                Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.GREEN + "Added player " + name + " to your socials list!", fromConsole);
 
                 // Save social
                 Paragon.INSTANCE.getStorageManager().saveSocial();
             } catch (IllegalArgumentException exception) {
-                CommandManager.sendClientMessage(TextFormatting.RED + "Invalid argument! Should be 'friend', 'neutral', or 'enemy'", fromConsole);
+                Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "Invalid argument! Should be 'friend', 'neutral', or 'enemy'", fromConsole);
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("remove")) {
             // Remove a player
             String name = args[1];
 
             Paragon.INSTANCE.getSocialManager().removePlayer(name);
-            CommandManager.sendClientMessage(TextFormatting.GREEN + "Removed player " + name + " from your socials list!", fromConsole);
+            Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.GREEN + "Removed player " + name + " from your socials list!", fromConsole);
 
             // Save social
             Paragon.INSTANCE.getStorageManager().saveSocial();
         } else {
             // Say that we have invalid syntax
-            CommandManager.sendClientMessage(TextFormatting.RED + "Invalid Syntax!", fromConsole);
+            Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "Invalid Syntax!", fromConsole);
         }
     }
 

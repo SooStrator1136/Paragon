@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.combat;
 
+import com.paragon.Paragon;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
@@ -113,7 +114,7 @@ public class Surround extends Module {
 
         // We don't have obsidian in our hotbar
         if (InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN) == -1) {
-            CommandManager.sendClientMessage(TextFormatting.RED + "No obsidian available, Surround disabled!", false);
+            Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "No obsidian available, Surround disabled!", false);
             toggle();
             return;
         }

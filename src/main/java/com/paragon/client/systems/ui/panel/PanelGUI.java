@@ -137,6 +137,7 @@ public class PanelGUI extends GuiScreen {
     @Override
     public void onGuiClosed() {
         Paragon.INSTANCE.getStorageManager().saveModules("current");
+        Paragon.INSTANCE.getStorageManager().saveOther();
     }
 
     @Override

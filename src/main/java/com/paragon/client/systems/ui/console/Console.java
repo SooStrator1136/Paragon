@@ -1,5 +1,6 @@
 package com.paragon.client.systems.ui.console;
 
+import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
@@ -86,7 +87,7 @@ public class Console implements Wrapper, TextRenderer {
 
     public void keyTyped(char typedChar, int keyCode) {
         if (keyCode == Keyboard.KEY_RETURN) {
-            CommandManager.handleCommands(guiTextField.getText(), true);
+            Paragon.INSTANCE.getCommandManager().handleCommands(guiTextField.getText(), true);
 
             guiTextField.setText("");
             guiTextField.setFocused(false);

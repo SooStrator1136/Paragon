@@ -71,7 +71,7 @@ public class Notifications extends HUDModule {
                 }
             } else if (renderType.getValue().equals(RenderType.CHAT)) {
                 for (Notification notification : Paragon.INSTANCE.getNotificationManager().getNotifications()) {
-                    CommandManager.sendClientMessage(notification.getMessage(), false);
+                    Paragon.INSTANCE.getCommandManager().sendClientMessage(notification.getMessage(), false);
                 }
 
                 Paragon.INSTANCE.getNotificationManager().getNotifications().clear();

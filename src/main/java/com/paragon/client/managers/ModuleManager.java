@@ -96,6 +96,7 @@ public class ModuleManager {
                 new Blink(),
                 new BuildHeight(),
                 new ChatModifications(),
+                Cryptic.INSTANCE,
                 new CustomWorld(),
                 new ExtraTab(),
                 new FakePlayer(),

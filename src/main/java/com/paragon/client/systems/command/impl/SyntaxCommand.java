@@ -16,12 +16,12 @@ public class SyntaxCommand extends Command {
         if (args.length == 1) {
             for (Command command : Paragon.INSTANCE.getCommandManager().getCommands()) {
                 if (command.getName().equalsIgnoreCase(args[0])) {
-                    CommandManager.sendClientMessage(command.getSyntax(), fromConsole);
+                    Paragon.INSTANCE.getCommandManager().sendClientMessage(command.getSyntax(), fromConsole);
                     break;
                 }
             }
         } else {
-            CommandManager.sendClientMessage(TextFormatting.RED + "Invalid syntax!", fromConsole);
+            Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "Invalid syntax!", fromConsole);
         }
     }
 

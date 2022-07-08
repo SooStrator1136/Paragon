@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.misc;
 
+import com.paragon.Paragon;
 import com.paragon.client.managers.CommandManager;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.Category;
@@ -48,7 +49,7 @@ public class OnDeath extends Module {
                         TextFormatting.WHITE + " Z " + TextFormatting.GRAY + pos.getZ();
 
                 // Display the client message
-                CommandManager.sendClientMessage(string, false);
+                Paragon.INSTANCE.getCommandManager().sendClientMessage(string, false);
             }
 
             if (respawn.getValue()) {
