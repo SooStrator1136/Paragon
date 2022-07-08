@@ -1,14 +1,17 @@
 package com.paragon.client.systems.module.impl.combat;
 
+import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
+import com.paragon.asm.mixins.accessor.ICPacketUseEntity;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.systems.module.Category;
 import com.paragon.client.systems.module.Module;
 import com.paragon.client.systems.module.setting.Setting;
+import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,21 +20,19 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.util.CombatRules;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Wolfsurge
@@ -77,6 +78,10 @@ public class AutoCrystalRewrite extends Module {
             .setDescription("When to perform the action of placing crystals")
             .setParentSetting(place);
 
+    public static Setting<Boolean> swapBack = new Setting<>("SwapBack", true)
+            .setDescription("Whether to swap back to the original item after placing crystals")
+            .setParentSetting(place);
+
     public static Setting<Double> placeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
             .setDescription("The furthest distance a crystal can be placed")
             .setParentSetting(place);
@@ -97,7 +102,7 @@ public class AutoCrystalRewrite extends Module {
             .setDescription("The raytrace method to use when placing crystals")
             .setParentSetting(place);
 
-    public static Setting<Place> placeMode = new Setting<>("Place", Place.VANILLA)
+    public static Setting<PlaceMode> placeMode = new Setting<>("Place", PlaceMode.VANILLA)
             .setDescription("How to place the crystal")
             .setParentSetting(place);
 
@@ -109,6 +114,26 @@ public class AutoCrystalRewrite extends Module {
 
     public static Setting<Boolean> explode = new Setting<>("Explode", true)
             .setDescription("Whether to explode crystals");
+
+    public static Setting<Float> explodeDelay = new Setting<>("Delay", 50f, 0f, 1000f, 1f)
+            .setDescription("The delay between exploding crystals")
+            .setParentSetting(explode);
+
+    public static Setting<Double> explodeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
+            .setDescription("The furthest distance a crystal can be exploded away from you")
+            .setParentSetting(explode);
+
+    public static Setting<Float> explodeTicks = new Setting<>("Ticks", 1f, 0f, 5f, 1f)
+            .setDescription("The number of ticks the crystal has to have existed before exploding")
+            .setParentSetting(explode);
+
+    public static Setting<ExplodeMode> explodeMode = new Setting<>("Explode", ExplodeMode.VANILLA)
+            .setDescription("How to explode the crystal")
+            .setParentSetting(explode);
+
+    public static Setting<Sync> sync = new Setting<>("Sync", Sync.ATTACK)
+            .setDescription("When to sync the explosion")
+            .setParentSetting(explode);
 
     // RENDER
     public static Setting<Boolean> render = new Setting<>("Render", true)
@@ -132,14 +157,33 @@ public class AutoCrystalRewrite extends Module {
             .setParentSetting(render)
             .setVisibility(() -> !renderMode.getValue().equals(Render.FILL));
 
+    public static Setting<Text> renderText = new Setting<>("Text", Text.BOTH)
+            .setDescription("The text to render")
+            .setParentSetting(render);
+
     private BlockPos placementPosition;
-    private Timer placeTimer = new Timer();
+    private final Timer placeTimer = new Timer();
+    private final Timer explodeTimer = new Timer();
     private float placementDamage;
+
+    private int originalSlot = -1;
+
+    private final Map<BlockPos, Float> renderPositions = new HashMap<>();
 
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", Category.COMBAT, "Automatically places and explodes ender crystals");
 
         INSTANCE = this;
+    }
+
+    @Override
+    public void onDisable() {
+        renderPositions.clear();
+
+        if (originalSlot != -1 && swapBack.getValue()) {
+            mc.player.inventory.currentItem = originalSlot;
+            originalSlot = -1;
+        }
     }
 
     @Override
@@ -154,14 +198,91 @@ public class AutoCrystalRewrite extends Module {
     @Override
     public void onRender3D() {
         if (render.getValue() && placementPosition != null) {
-            // Render fill
-            if (renderMode.getValue().equals(Render.FILL) || renderMode.getValue().equals(Render.BOTH)) {
-                RenderUtil.drawFilledBox(BlockUtil.getBlockBox(placementPosition), renderColour.getValue());
-            }
+            renderPositions.forEach((pos, factor) -> {
 
-            // Render outline
-            if (renderMode.getValue().equals(Render.OUTLINE) || renderMode.getValue().equals(Render.BOTH)) {
-                RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(placementPosition), renderOutlineWidth.getValue(), renderOutlineColour.getValue());
+                // Block bounding box
+                AxisAlignedBB bb = BlockUtil.getBlockBox(pos);
+
+                // Render values
+                double x = bb.minX + (bb.maxX - bb.minX) / 2;
+                double y = bb.minY + (bb.maxY - bb.minY) / 2;
+                double z = bb.minZ + (bb.maxZ - bb.minZ) / 2;
+
+                double sizeX = factor * (bb.maxX - x);
+                double sizeY = factor * (bb.maxY - y);
+                double sizeZ = factor * (bb.maxZ - z);
+
+                // The bounding box we will highlight
+                AxisAlignedBB highlightBB = new AxisAlignedBB(x - sizeX, y - sizeY, z - sizeZ, x + sizeX, y + sizeY, z + sizeZ);
+
+                // Draw the highlight
+                switch (renderMode.getValue()) {
+                    case FILL:
+                        RenderUtil.drawFilledBox(highlightBB, renderColour.getValue());
+                        break;
+
+                    case OUTLINE:
+                        RenderUtil.drawBoundingBox(highlightBB, renderOutlineWidth.getValue(), renderOutlineColour.getValue());
+                        break;
+
+                    case BOTH:
+                        RenderUtil.drawFilledBox(highlightBB, renderColour.getValue());
+                        RenderUtil.drawBoundingBox(highlightBB, renderOutlineWidth.getValue(), renderOutlineColour.getValue());
+                        break;
+                }
+
+                // Draw the text
+                if (!renderText.getValue().equals(Text.NONE) && pos.equals(placementPosition)) {
+                    switch (renderText.getValue()) {
+                        case TARGET:
+                            RenderUtil.drawNametagText((int) placementDamage + "", new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f), -1);
+                            break;
+
+                        case SELF:
+                            RenderUtil.drawNametagText("" + (int) calculateDamage(new Vec3d(pos.getX(), pos.getY() + 1, pos.getZ()), mc.player), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f), -1);
+                            break;
+
+                        case BOTH:
+                            RenderUtil.drawNametagText((int) placementDamage + "", new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f), -1);
+                            RenderUtil.drawNametagText("" + (int) calculateDamage(new Vec3d(pos.getX(), pos.getY() + 1, pos.getZ()), mc.player), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.4f, pos.getZ() + 0.5f), -1);
+                            break;
+                    }
+                }
+
+                if (pos.getX() == placementPosition.getX() && pos.getY() == placementPosition.getY() && pos.getZ() == placementPosition.getZ()) {
+                    renderPositions.put(pos, MathHelper.clamp(factor + 0.025f, 0f, 1f));
+                }
+
+                else {
+                    renderPositions.put(pos, factor - 0.025f);
+                }
+            });
+        }
+
+        renderPositions.values().removeIf(factor -> factor <= 0);
+    }
+
+    @Listener
+    public void onPacketReceive(PacketEvent.PreReceive event) {
+        if (event.getPacket() instanceof SPacketSoundEffect && sync.getValue().equals(Sync.SOUND)) {
+            // Get packet
+            SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+
+            // Check it's an explosion sound
+            if (packet.getSound().equals(SoundEvents.ENTITY_GENERIC_EXPLODE) && packet.getCategory().equals(SoundCategory.BLOCKS)) {
+                // Iterate through loaded entities
+                for (Entity entity : mc.world.loadedEntityList) {
+                    // If the entity isn't an ender crystal, or it is dead, ignore
+                    if (!(entity instanceof EntityEnderCrystal) || entity.isDead) {
+                        continue;
+                    }
+
+                    // If the crystal is close to the explosion sound origin, set the crystals state to dead
+                    if (entity.getDistance(packet.getX(), packet.getY(), packet.getZ()) <= 6) {
+                        entity.setDead();
+                        // mc.world.removeEntityFromWorld(entity.getEntityId());
+                    }
+                }
             }
         }
     }
@@ -200,9 +321,46 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void explodeCrystals() {
-        if (!explode.getValue()) {
+        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue())) {
             return;
         }
+
+        ArrayList<BlockPos> positions = getExplodeableCrystals();
+
+        if (positions.isEmpty()) {
+            return;
+        }
+
+        EntityLivingBase target = findTarget(positions, 0.5f);
+
+        if (target == null) {
+            return;
+        }
+
+        positions.sort(Comparator.comparingDouble(pos -> calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), target)));
+
+        EntityEnderCrystal crystal = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(positions.get(0))).get(0);
+
+        if (crystal == null) {
+            return;
+        }
+
+        switch (explodeMode.getValue()) {
+            case VANILLA:
+                mc.playerController.attackEntity(mc.player, crystal);
+                break;
+
+            case PACKET:
+                mc.player.connection.sendPacket(generateInstantHit(crystal.getEntityId()));
+                break;
+        }
+
+        if (sync.getValue().equals(Sync.ATTACK)) {
+            crystal.setDead();
+            // mc.world.removeEntityFromWorld(crystal.getEntityId());
+        }
+
+        explodeTimer.reset();
     }
 
     private void placeCrystals() {
@@ -228,16 +386,24 @@ public class AutoCrystalRewrite extends Module {
         placementPosition = placement;
         placementDamage = Math.round(calculateDamage(new Vec3d(placement.getX() + 0.5, placement.getY() + 1, placement.getZ() + 0.5), target));
 
+        if (!renderPositions.containsKey(placement)) {
+            renderPositions.put(placement, 0f);
+        }
+
         int previousSlot = mc.player.inventory.currentItem;
 
         // For silent switch
         boolean alreadyHolding = false;
+
+        EnumHand crystalHand = null;
 
         switch (placePerform.getValue()) {
             case HOLDING:
                 if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
                     return;
                 }
+
+                crystalHand = InventoryUtil.getHandHolding(Items.END_CRYSTAL);
 
                 break;
 
@@ -246,20 +412,32 @@ public class AutoCrystalRewrite extends Module {
                 int crystalSlot = InventoryUtil.getItemInHotbar(Items.END_CRYSTAL);
 
                 if (crystalSlot > -1) {
-                    if (!InventoryUtil.isHolding(Items.END_CRYSTAL)) {
+                    if (swapBack.getValue() && originalSlot == -1) {
+                        originalSlot = mc.player.inventory.currentItem;
+                    }
+
+                    if (InventoryUtil.isHolding(Items.END_CRYSTAL, EnumHand.MAIN_HAND)) {
                         alreadyHolding = true;
-                    } else {
+                    }
+
+                    else {
                         mc.player.inventory.currentItem = crystalSlot;
                         ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
                     }
-                } else {
+
+                    crystalHand = EnumHand.MAIN_HAND;
+                }
+
+                else if (InventoryUtil.isHolding(Items.END_CRYSTAL, EnumHand.OFF_HAND)) {
+                    crystalHand = EnumHand.OFF_HAND;
+                }
+
+                else {
                     return;
                 }
 
                 break;
         }
-
-        EnumHand crystalHand = alreadyHolding ? InventoryUtil.getHandHolding(Items.END_CRYSTAL) : EnumHand.MAIN_HAND;
 
         if (crystalHand == null) {
             return;
@@ -281,7 +459,7 @@ public class AutoCrystalRewrite extends Module {
 
                             RayTraceResult result = mc.world.rayTraceBlocks(mc.player.getPositionEyes(mc.getRenderPartialTicks()), vector, false, true, false);
 
-                            if (result != null && result.typeOfHit.equals(RayTraceResult.Type.BLOCK)) {
+                            if (result != null && result.typeOfHit.equals(RayTraceResult.Type.BLOCK) && result.getBlockPos().equals(placement)) {
                                 double vectorDistance = vector.distanceTo(mc.player.getPositionEyes(mc.getRenderPartialTicks()));
 
                                 if (vectorDistance < distance || distance == 0) {
@@ -295,11 +473,11 @@ public class AutoCrystalRewrite extends Module {
             }
         }
 
-        if (placeMode.getValue().equals(Place.VANILLA)) {
+        if (placeMode.getValue().equals(PlaceMode.VANILLA)) {
             mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand);
         }
 
-        else if (placeMode.getValue().equals(Place.PACKET)) {
+        else if (placeMode.getValue().equals(PlaceMode.PACKET)) {
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(placement, facing, crystalHand, (float) facingVec.x, (float) facingVec.y, (float) facingVec.z));
         }
 
@@ -320,20 +498,21 @@ public class AutoCrystalRewrite extends Module {
             return null;
         }
 
-        Collections.reverse(positions);
+        BlockPos placement = null;
 
-        BlockPos placement = positions.get(0);
-
-        float placementDamage = calculateDamage(new Vec3d(placement.getX() + 0.5, placement.getY() + 1, placement.getZ() + 0.5), target);
+        float placementDamage = 0;
 
         for (BlockPos pos : positions) {
             float positionDamage = calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), target);
 
-            if (positionDamage <= placementDamage || positionDamage <= placeMinimum.getValue() || calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), mc.player) > placeMaximum.getValue()) {
+            if (positionDamage < placeMinimum.getValue() || calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), mc.player) > placeMaximum.getValue()) {
                 continue;
             }
 
-            placement = pos;
+            if (positionDamage > placementDamage) {
+                placement = pos;
+                placementDamage = positionDamage;
+            }
         }
 
         return placement;
@@ -353,10 +532,12 @@ public class AutoCrystalRewrite extends Module {
             return false;
         }
 
-        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(offset))) {
-            if (entity instanceof EntityEnderCrystal || !multiplace.getValue()) {
-                return false;
+        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.up()))) {
+            if (entity.isDead || !multiplace.getValue() && entity instanceof EntityEnderCrystal) {
+                continue;
             }
+
+            return false;
         }
 
         return true;
@@ -399,6 +580,29 @@ public class AutoCrystalRewrite extends Module {
         }
 
         return Math.max(damage, 0.0F);
+    }
+
+    private ArrayList<BlockPos> getExplodeableCrystals() {
+        ArrayList<BlockPos> explodeableCrystals = new ArrayList<>();
+
+        for (EntityEnderCrystal entity : mc.world.loadedEntityList.stream().filter(EntityEnderCrystal.class::isInstance).map(EntityEnderCrystal.class::cast).collect(Collectors.toList())) {
+            if (mc.player.getDistance(entity) >= explodeRange.getValue() || entity.ticksExisted <= explodeTicks.getValue() || entity.isDead) {
+                continue;
+            }
+
+            explodeableCrystals.add(entity.getPosition());
+        }
+
+        return explodeableCrystals;
+    }
+
+    private CPacketUseEntity generateInstantHit(int entityID) {
+        CPacketUseEntity packet = new CPacketUseEntity();
+
+        ((ICPacketUseEntity) packet).setEntityID(entityID);
+        ((ICPacketUseEntity) packet).setAction(CPacketUseEntity.Action.ATTACK);
+
+        return packet;
     }
 
     @Override
@@ -468,7 +672,7 @@ public class AutoCrystalRewrite extends Module {
         SILENT_SWITCH
     }
 
-    public enum Place {
+    public enum PlaceMode {
         /**
          * Use a vanilla method
          */
@@ -478,6 +682,35 @@ public class AutoCrystalRewrite extends Module {
          * Send a packet
          */
         PACKET
+    }
+
+    public enum ExplodeMode {
+        /**
+         * Use a vanilla method
+         */
+        VANILLA,
+
+        /**
+         * Send a packet
+         */
+        PACKET
+    }
+
+    public enum Sync {
+        /**
+         * Sync on attack
+         */
+        ATTACK,
+
+        /**
+         * Sync on spawn
+         */
+        SPAWN,
+
+        /**
+         * Sync on sound
+         */
+        SOUND
     }
 
     public enum Raytrace {
@@ -527,6 +760,28 @@ public class AutoCrystalRewrite extends Module {
          * Render both
          */
         BOTH
+    }
+
+    public enum Text {
+        /**
+         * Draw target damage
+         */
+        TARGET,
+
+        /**
+         * Draw self damage
+         */
+        SELF,
+
+        /**
+         * Draw both
+         */
+        BOTH,
+
+        /**
+         * No text
+         */
+        NONE
     }
 
 }

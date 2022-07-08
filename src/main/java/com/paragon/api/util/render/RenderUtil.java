@@ -450,7 +450,7 @@ public class RenderUtil implements Wrapper {
         GlStateManager.scale(-scale, -scale, scale);
 
         GlStateManager.disableDepth();
-        GlStateManager.translate(-(getStringWidth(text) / 2f), 0, 0);
+        GlStateManager.translate(-(getStringWidth(text) / 2), 0, 0);
 
         renderText(text, 0, 0, textColour);
 

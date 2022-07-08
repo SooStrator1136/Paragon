@@ -15,10 +15,16 @@ public class InventoryUtil implements Wrapper {
         return mc.player.getHeldItemMainhand().getItem().equals(item) || mc.player.getHeldItemOffhand().getItem().equals(item);
     }
 
+    public static boolean isHolding(Item item, EnumHand hand) {
+        return mc.player.getHeldItem(hand).getItem().equals(item);
+    }
+
     public static EnumHand getHandHolding(Item item) {
         if (mc.player.getHeldItemMainhand().getItem() == item) {
             return EnumHand.MAIN_HAND;
-        } else if (mc.player.getHeldItemOffhand().getItem() == item) {
+        }
+
+        else if (mc.player.getHeldItemOffhand().getItem() == item) {
             return EnumHand.OFF_HAND;
         }
 

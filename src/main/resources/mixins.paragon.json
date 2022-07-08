@@ -6,6 +6,7 @@
   "client": [
     "accessor.ICPacketCloseWindow",
     "accessor.ICPacketPlayer",
+    "accessor.ICPacketUseEntity",
     "accessor.IEntity",
     "accessor.IEntityRenderer",
     "accessor.IKeyBinding",

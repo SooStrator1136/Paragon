@@ -188,7 +188,9 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
         RenderUtil.endGlScissor();
 
-        if (ClickGUI.tooltips.getValue()) {
+        RenderUtil.drawHorizontalGradientRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, Color.HSBtoRGB(getLeftHue() / 360, 1, 1), Color.HSBtoRGB(rightHue / 360, 1, 1));
+
+        if (ClickGUI.tooltips.getValue() && animation.getAnimationFactor() > 0) {
             for (Element element : elements) {
                 if (element instanceof ModuleElement) {
                     {
@@ -247,6 +249,48 @@ public class CategoryPanel extends Panel implements TextRenderer {
                             renderText(description, subElement.getX() + getWidth() + 5, subElement.getY() + 3, 0xFFFFFFFF);
 
                             RenderUtil.endGlScissor();
+
+                            subElement.getSubElements().forEach(subSubElement -> {
+                                float subHover = 0;
+                                String subDesc = "";
+
+                                if (subSubElement instanceof BooleanElement) {
+                                    subDesc = StringUtil.wrap(((BooleanElement) subSubElement).getSetting().getDescription(), 20);
+                                    subHover = ((BooleanElement) subSubElement).getHover();
+                                }
+
+                                else if (subSubElement instanceof SliderElement) {
+                                    subDesc = StringUtil.wrap(((SliderElement) subSubElement).getSetting().getDescription(), 20);
+                                    subHover = ((SliderElement) subSubElement).getHover();
+                                }
+
+                                else if (subSubElement instanceof EnumElement) {
+                                    subDesc = StringUtil.wrap(((EnumElement) subSubElement).getSetting().getDescription(), 20);
+                                    subHover = ((EnumElement) subSubElement).getHover();
+                                }
+
+                                else if (subSubElement instanceof ColourElement) {
+                                    subDesc = StringUtil.wrap(((ColourElement) subSubElement).getSetting().getDescription(), 20);
+                                    subHover = ((ColourElement) subSubElement).getHover();
+                                }
+
+                                else if (subSubElement instanceof BindElement) {
+                                    subDesc = StringUtil.wrap(((BindElement) subSubElement).getSetting().getDescription(), 20);
+                                    subHover = ((BindElement) subSubElement).getHover();
+                                }
+
+                                if (subHover == 0) {
+                                    return;
+                                }
+
+                                RenderUtil.startGlScissor(subElement.getX() + 2 + getWidth(), subElement.getY(), (getStringWidth(subDesc) + 10) * subHover, 100);
+
+                                RenderUtil.drawRect(subElement.getX() + 2 + getWidth(), subElement.getY(), getStringWidth(subDesc) + 10, (subDesc.split("\n").length * getFontHeight()) + 2 + (ClientFont.INSTANCE.isEnabled() ? 0 : 3), Colours.mainColour.getValue().getRGB());
+
+                                renderText(subDesc, subElement.getX() + getWidth() + 5, subElement.getY() + 3, 0xFFFFFFFF);
+
+                                RenderUtil.endGlScissor();
+                            });
                         });
                     }
                 }
