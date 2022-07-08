@@ -4,12 +4,11 @@ import com.mojang.realmsclient.gui.ChatFormatting.GRAY
 import com.paragon.Paragon
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.system.mainThread
-import com.paragon.client.managers.CommandManager
 import com.paragon.client.managers.notifications.Notification
 import com.paragon.client.managers.notifications.NotificationType
-import com.paragon.client.systems.module.Category
-import com.paragon.client.systems.module.Module
-import com.paragon.client.systems.module.setting.Setting
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
 import me.bush.translator.Language
 import me.bush.translator.Translation
 import me.bush.translator.Translator

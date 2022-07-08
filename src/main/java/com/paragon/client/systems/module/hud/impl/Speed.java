@@ -4,7 +4,7 @@ import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.function.Function;

@@ -1,10 +1,10 @@
 package com.paragon.client.systems.module.hud.impl;
 
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.IgnoredByNotifications;
-import com.paragon.client.systems.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.IgnoredByNotifications;
+import com.paragon.api.module.Module;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
-import com.paragon.client.systems.module.setting.Bind;
+import com.paragon.api.setting.Bind;
 import org.lwjgl.input.Keyboard;
 
 @IgnoredByNotifications

@@ -1,6 +1,6 @@
 package com.paragon.api.event.client;
 
-import com.paragon.client.systems.module.Module;
+import com.paragon.api.module.Module;
 import me.wolfsurge.cerauno.event.CancellableEvent;
 
 /**

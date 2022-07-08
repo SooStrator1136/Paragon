@@ -15,12 +15,12 @@ import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.systems.module.impl.client.rotation.Rotate;
 import com.paragon.client.systems.module.impl.client.rotation.Rotation;
 import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
-import com.paragon.client.systems.module.setting.Bind;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Bind;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -953,9 +953,7 @@ public class AutoCrystal extends Module {
                 }
 
                 // We are overriding if the lowest durability is less or equal to the total armour value setting
-                if (lowest <= overrideTotalArmourValue.getValue()) {
-                    return true;
-                }
+                return lowest <= overrideTotalArmourValue.getValue();
             }
         }
 

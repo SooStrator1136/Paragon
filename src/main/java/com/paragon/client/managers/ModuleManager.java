@@ -1,8 +1,8 @@
 package com.paragon.client.managers;
 
 import com.paragon.Paragon;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.hud.impl.*;
 import com.paragon.client.systems.module.impl.client.*;
@@ -18,14 +18,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Wolfsurge

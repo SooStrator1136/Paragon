@@ -1,9 +1,9 @@
 package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.event.render.gui.RenderChatEvent;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 
 import java.awt.*;

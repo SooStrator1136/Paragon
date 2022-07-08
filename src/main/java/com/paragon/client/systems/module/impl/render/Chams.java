@@ -3,18 +3,16 @@ package com.paragon.client.systems.module.impl.render;
 import com.paragon.api.event.render.entity.RenderCrystalEvent;
 import com.paragon.api.event.render.entity.RenderEntityEvent;
 import com.paragon.api.util.render.RubiksCrystalUtil;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.setting.Setting;
-import com.paragon.client.systems.ui.animation.Easing;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
+import com.paragon.client.ui.animation.Easing;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
@@ -553,7 +551,7 @@ public class Chams extends Module {
     public void drawCubeletRotating(float scale, int x, int y, int z) {
         int id = RubiksCrystalUtil.cubeletLookup[x + 1][y + 1][z + 1];
 
-        if (!Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).anyMatch(i -> i == id)) {
+        if (Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).noneMatch(i -> i == id)) {
             return;
         }
 
@@ -565,7 +563,7 @@ public class Chams extends Module {
     public void applyRotation(int x, int y, int z, int rX, int rY, int rZ) {
         int id = RubiksCrystalUtil.cubeletLookup[x + 1][y + 1][z + 1];
 
-        if (!Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).anyMatch(i -> i == id)) {
+        if (Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).noneMatch(i -> i == id)) {
             return;
         }
 

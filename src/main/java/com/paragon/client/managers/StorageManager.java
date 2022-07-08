@@ -5,8 +5,8 @@ import com.paragon.client.managers.alt.Alt;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
 import com.paragon.client.systems.module.hud.HUDModule;
-import com.paragon.client.systems.module.setting.Bind;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Bind;
+import com.paragon.api.setting.Setting;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Wolfsurge

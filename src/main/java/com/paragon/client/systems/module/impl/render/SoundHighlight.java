@@ -2,11 +2,10 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.math.MathHelper;

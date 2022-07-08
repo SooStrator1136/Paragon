@@ -1,6 +1,6 @@
 package com.paragon.api.event.client;
 
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.event.Event;
 
 public class SettingUpdateEvent extends Event {

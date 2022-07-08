@@ -5,13 +5,13 @@ import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
 import com.paragon.client.systems.module.impl.client.rotation.Rotate;
 import com.paragon.client.systems.module.impl.client.rotation.Rotation;
 import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
 import com.paragon.client.systems.module.impl.client.rotation.Rotations;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.util.EnumFacing;
@@ -98,9 +98,7 @@ public class HoleFill extends Module {
 
         positions.clear();
 
-        List<BlockPos> valid = BlockUtil.getSphere(range.getValue(), false).stream().filter(block -> attemptedPositions.getOrDefault(block, 0) < 3 && BlockUtil.isSafeHole(block, obsidianBedrock.getValue()) && BlockUtil.canSeePos(block) && mc.player.getPosition() != block).collect(Collectors.toList());
-
-        valid.sort(Comparator.comparingDouble(block -> mc.player.getDistanceSq(block)));
+        List<BlockPos> valid = BlockUtil.getSphere(range.getValue(), false).stream().filter(block -> attemptedPositions.getOrDefault(block, 0) < 3 && BlockUtil.isSafeHole(block, obsidianBedrock.getValue()) && BlockUtil.canSeePos(block) && mc.player.getPosition() != block).sorted(Comparator.comparingDouble(block -> mc.player.getDistanceSq(block))).collect(Collectors.toList());
 
         Collections.reverse(valid);
 

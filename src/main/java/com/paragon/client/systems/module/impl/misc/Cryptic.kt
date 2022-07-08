@@ -1,8 +1,8 @@
 package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.client.systems.module.Category
-import com.paragon.client.systems.module.Module
-import com.paragon.client.systems.module.setting.Setting
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
 import net.minecraft.util.text.TextComponentString
 import net.minecraftforge.client.event.ClientChatEvent
 import net.minecraftforge.client.event.ClientChatReceivedEvent

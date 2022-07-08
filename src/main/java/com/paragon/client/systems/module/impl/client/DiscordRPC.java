@@ -1,9 +1,9 @@
 package com.paragon.client.systems.module.impl.client;
 
 import com.paragon.Paragon;
-import com.paragon.client.systems.module.IgnoredByNotifications;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.IgnoredByNotifications;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 
 @IgnoredByNotifications
 public class DiscordRPC extends Module {

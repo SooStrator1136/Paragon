@@ -1,8 +1,8 @@
 package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.world.LiquidInteractEvent;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 
 public class LiquidInteract extends Module {

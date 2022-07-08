@@ -2,8 +2,8 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.passive.AbstractHorse;
 import net.minecraft.util.math.Vec3d;

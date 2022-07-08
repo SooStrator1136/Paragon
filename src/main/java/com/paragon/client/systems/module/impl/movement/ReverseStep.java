@@ -1,7 +1,7 @@
 package com.paragon.client.systems.module.impl.movement;
 
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 
 /**
  * @author Wolfsurge

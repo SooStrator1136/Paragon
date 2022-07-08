@@ -2,9 +2,9 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;

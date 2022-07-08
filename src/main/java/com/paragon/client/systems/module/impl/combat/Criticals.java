@@ -1,8 +1,8 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.event.network.PacketEvent;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.CPacketPlayer;

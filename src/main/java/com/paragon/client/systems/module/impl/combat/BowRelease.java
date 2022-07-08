@@ -1,14 +1,12 @@
 package com.paragon.client.systems.module.impl.combat;
 
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 
 /**
  * @author Wolfsurge

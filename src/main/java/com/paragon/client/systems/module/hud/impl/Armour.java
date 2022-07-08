@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.hud.impl;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

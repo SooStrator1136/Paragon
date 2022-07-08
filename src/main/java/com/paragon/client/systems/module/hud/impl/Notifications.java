@@ -2,17 +2,12 @@ package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.notifications.Notification;
-import com.paragon.client.systems.module.Constant;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 import com.paragon.client.systems.module.hud.HUDModule;
-import com.paragon.client.systems.module.impl.misc.Notifier;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Notifications extends HUDModule {
 

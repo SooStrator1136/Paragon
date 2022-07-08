@@ -1,13 +1,12 @@
 package com.paragon.client.systems.module.impl.client;
 
 import com.paragon.Paragon;
-import com.paragon.client.systems.module.IgnoredByNotifications;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.setting.Bind;
-import com.paragon.client.systems.module.setting.Setting;
-import com.paragon.client.systems.ui.animation.Easing;
-import com.paragon.client.systems.ui.panel.PanelGUI;
+import com.paragon.api.module.IgnoredByNotifications;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.setting.Bind;
+import com.paragon.api.setting.Setting;
+import com.paragon.client.ui.animation.Easing;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 

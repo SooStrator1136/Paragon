@@ -5,10 +5,10 @@ import com.paragon.api.event.player.RotationUpdateEvent;
 import com.paragon.api.event.player.UpdateEvent;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.asm.mixins.accessor.ICPacketPlayer;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Constant;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Constant;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketPlayer;
 

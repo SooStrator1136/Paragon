@@ -7,19 +7,16 @@ import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.asm.mixins.accessor.IRenderManager;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.impl.client.ClientFont;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
-import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -29,15 +26,12 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -138,13 +132,12 @@ public class Nametags extends Module implements TextRenderer {
             }
 
             if (ping.getValue() && mc.getConnection() != null) {
-                if (mc.getConnection().getPlayerInfo(player.getUniqueID()) != null) {
-                    stringBuilder.append(" ").append(getPingColour(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime())).append(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime());
-                }
+                mc.getConnection().getPlayerInfo(player.getUniqueID());
+                stringBuilder.append(" ").append(getPingColour(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime())).append(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime());
             }
 
             if (pops.getValue()) {
-                stringBuilder.append(" " + TextFormatting.GOLD + "-").append((player instanceof EntityFakePlayer) ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
+                stringBuilder.append(" ").append(TextFormatting.GOLD).append("-").append((player instanceof EntityFakePlayer) ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
             }
 
             float potionWidth = 0;

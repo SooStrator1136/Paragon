@@ -5,9 +5,9 @@ import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.StringUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketEntityAction;
 

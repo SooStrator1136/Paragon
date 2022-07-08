@@ -1,6 +1,6 @@
 package com.paragon.asm.mixins.render.gui;
 
-import com.paragon.client.systems.ui.alt.AltManagerGUI;
+import com.paragon.client.ui.alt.AltManagerGUI;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiScreen;

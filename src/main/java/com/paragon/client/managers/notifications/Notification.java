@@ -3,11 +3,8 @@ package com.paragon.client.managers.notifications;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.hud.impl.Notifications;
-import com.paragon.client.systems.ui.animation.Animation;
-import com.paragon.client.systems.ui.animation.Easing;
-import net.minecraft.util.math.MathHelper;
-
-import static org.lwjgl.opengl.GL11.glScalef;
+import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 
 /**
  * ew.

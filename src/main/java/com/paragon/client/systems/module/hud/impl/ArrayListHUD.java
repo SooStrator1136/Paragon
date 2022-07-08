@@ -4,12 +4,12 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
-import com.paragon.client.systems.module.Module;
+import com.paragon.api.module.Module;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.setting.Setting;
-import com.paragon.client.systems.ui.animation.Easing;
+import com.paragon.api.setting.Setting;
+import com.paragon.client.ui.animation.Easing;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
 

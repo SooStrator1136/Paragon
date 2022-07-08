@@ -2,8 +2,8 @@ package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.TextRenderer;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 
 public class HUD extends Module implements TextRenderer {

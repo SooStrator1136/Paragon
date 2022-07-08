@@ -1,8 +1,8 @@
 package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.util.calculations.Timer;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
 
 /*
  * ehehehehhehehehehhe

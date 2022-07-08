@@ -2,13 +2,12 @@ package com.paragon.asm.mixins.render.gui;
 
 import com.paragon.Paragon;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.ui.menu.ParagonButton;
-import com.paragon.client.systems.ui.menu.ParagonMenu;
+import com.paragon.client.ui.menu.ParagonButton;
+import com.paragon.client.ui.menu.ParagonMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

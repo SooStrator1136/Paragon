@@ -1,9 +1,9 @@
 package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.api.event.network.PacketEvent;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.server.SPacketEffect;

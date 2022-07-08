@@ -4,15 +4,12 @@ import com.paragon.Paragon;
 import com.paragon.api.event.client.ModuleToggleEvent;
 import com.paragon.api.event.combat.PlayerDeathEvent;
 import com.paragon.api.event.combat.TotemPopEvent;
-import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.notifications.Notification;
-import com.paragon.client.managers.notifications.NotificationManager;
 import com.paragon.client.managers.notifications.NotificationType;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.util.text.TextFormatting;
 
 /**
  * @author Wolfsurge

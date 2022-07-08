@@ -1,8 +1,7 @@
 package com.paragon.client.managers;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.TextRenderer;
-import com.paragon.font.FontRenderer;
+import com.paragon.api.util.render.font.FontRenderer;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -61,7 +60,6 @@ public class FontManager {
             try {
                 JSONObject json = new JSONObject();
                 FileWriter fileWriter = new FileWriter(fontConfigFile);
-                ;
 
                 try {
                     json.put("size", 40);

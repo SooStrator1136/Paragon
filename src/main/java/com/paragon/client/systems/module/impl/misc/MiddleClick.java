@@ -2,12 +2,11 @@ package com.paragon.client.systems.module.impl.misc;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.player.InventoryUtil;
-import com.paragon.client.managers.CommandManager;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
-import com.paragon.client.systems.module.Module;
-import com.paragon.client.systems.module.Category;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.module.Module;
+import com.paragon.api.module.Category;
+import com.paragon.api.setting.Setting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.EnumHand;

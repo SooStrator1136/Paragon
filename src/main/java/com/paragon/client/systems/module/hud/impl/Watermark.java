@@ -3,10 +3,9 @@ package com.paragon.client.systems.module.hud.impl;
 import com.paragon.Paragon;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.systems.module.setting.Setting;
+import com.paragon.api.setting.Setting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
