@@ -426,7 +426,11 @@ public class StorageManager {
             Paragon.INSTANCE.setParagonMainMenu(jsonObject.getBoolean("mainmenu"));
 
             if (jsonObject.has("ignored_prefixes")) {
-                Paragon.INSTANCE.getCommandManager().getCommonPrefixes().addAll(Arrays.asList(String.valueOf(jsonObject.getString("ignored_prefixes")).split(" ")));
+                String[] prefixes = String.valueOf(jsonObject.getString("ignored_prefixes")).split(" ");
+
+                for (String prefix : prefixes) {
+                    Paragon.INSTANCE.getCommandManager().getCommonPrefixes().add(prefix);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

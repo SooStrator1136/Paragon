@@ -104,6 +104,7 @@ public class ModuleManager {
                 new NoTrace(),
                 new OnDeath(),
                 new RotationLock(),
+                Spammer.INSTANCE,
                 new TeleTofu(),
                 new TimerModule(),
                 new XCarry(),
