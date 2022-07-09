@@ -4,7 +4,26 @@
 A 1.12.2 Anarchy Client. Still in development.
 
 The discord can be joined here:
-https://discord.gg/zSn2a5AZNq
+https://discord.gg/28JNQsXUzb
+
+# FAQ
+<details>
+  <summary> How do I open the ClickGUI? </summary>
+  
+  > The default ClickGUI bind is `RSHIFT`
+</details>
+
+<details>
+  <summary> How do I use commands? </summary>
+  
+  > The command prefix is `$`, and you can run `$help` to get a list of all commands
+</details>
+
+<details>
+  <summary> How do I request help, or suggest a feature? </summary>
+  
+  > You can join the discord server (linked above) and use the appropriate channels
+</details>
 
 # Founders
 Wolfsurge <br>
@@ -12,15 +31,13 @@ TeleTofu
 
 ## Developers
 Bush
+Master7720 (kinda)
 
 ## Other Contributors
 Doogie13
 
 ## Other Credits
-Tigermouthbear, linustouchtips - Animation class <br>
-linustouchtips / Cosmos - GL Shader code, Font renderer
-
-If I have not credited something, please let me know. (Although I am pretty sure I have)
+Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Wolfsurge wrote it
 
 # Build instructions
 Windows:
@@ -36,6 +53,13 @@ Linux/Mac (or any other based UNIX/UNIX-LIKE OS):
 `./gradlew setupDecompWorkspace`
 
 `./gradlew build`
+
+# Contributing
+Fork the repository and push your changes to the fork. Then, create a pull request to this repository and it will be reviewed.
+
+Try and follow the code style found in the rest of the client, such as using `lowerCamelCase` and not letting `{`s have their own lines.
+
+Both Kotlin and Java are allowed (Kotlin preferred)
 
 # Using the Custom Font
 A directory is created in the Paragon config folder (/.minecraft/paragon), called "font". In here, upon first opening the client, two files will be present.
