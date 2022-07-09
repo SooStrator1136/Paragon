@@ -1,11 +1,13 @@
 package com.paragon.client.systems.module.impl.combat;
 
+import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
+import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
@@ -14,6 +16,10 @@ import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Setting;
+import com.paragon.client.systems.module.impl.client.rotation.Rotate;
+import com.paragon.client.systems.module.impl.client.rotation.Rotation;
+import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
+import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -133,6 +139,14 @@ public class AutoCrystalRewrite extends Module {
             .setDescription("The number of ticks the crystal has to have existed before exploding")
             .setParentSetting(explode);
 
+    public static Setting<Double> explodeMinimum = new Setting<>("Minimum", 4.0D, 1.0D, 36.0D, 1D)
+            .setDescription("The minimum damage the crystal must deal to explode")
+            .setParentSetting(explode);
+
+    public static Setting<Double> explodeMaximum = new Setting<>("Maximum", 10.0D, 1.0D, 36.0D, 1D)
+            .setDescription("The maximum damage the crystal can deal to you to explode")
+            .setParentSetting(explode);
+
     public static Setting<ExplodeMode> explodeMode = new Setting<>("Explode", ExplodeMode.VANILLA)
             .setDescription("How to explode the crystal")
             .setParentSetting(explode);
@@ -198,6 +212,16 @@ public class AutoCrystalRewrite extends Module {
     public static Setting<Boolean> maxIgnore = new Setting<>("MaxIgnore", true)
             .setDescription("Ignore the maximum damage settings when certain things are occurring")
             .setParentSetting(override);
+
+
+    // ROTATIONS
+
+    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
+            .setDescription("Rotate the player");
+
+    public static Setting<Boolean> rotateBack = new Setting<>("Back", true)
+            .setDescription("Whether to rotate back to your original original after rotating")
+            .setParentSetting(rotate);
 
     // RENDER
 
@@ -401,6 +425,24 @@ public class AutoCrystalRewrite extends Module {
             return;
         }
 
+        positions.removeIf(pos -> {
+            if (calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), target) < placeMinimum.getValue()) {
+                if (!shouldOverride(target)) {
+                    return true;
+                }
+            }
+
+            if (calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), mc.player) > placeMaximum.getValue()) {
+                return !(shouldOverride(target) && maxIgnore.getValue());
+            }
+
+            return false;
+        });
+
+        if (positions.isEmpty()) {
+            return;
+        }
+
         positions.sort(Comparator.comparingDouble(pos -> calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), target)));
 
         EntityEnderCrystal crystal = mc.world.getEntitiesWithinAABB(EntityEnderCrystal.class, new AxisAlignedBB(positions.get(0))).get(0);
@@ -408,6 +450,11 @@ public class AutoCrystalRewrite extends Module {
         if (crystal == null) {
             return;
         }
+
+        Vec2f playerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
+        Vec2f rotation = RotationUtil.getRotationToVec3d(new Vec3d(crystal.posX, crystal.posY + 0.5, crystal.posZ));
+
+        Rotations.INSTANCE.addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
 
         switch (explodeMode.getValue()) {
             case VANILLA:
@@ -417,6 +464,12 @@ public class AutoCrystalRewrite extends Module {
             case PACKET:
                 mc.player.connection.sendPacket(generateInstantHit(crystal.getEntityId()));
                 break;
+        }
+
+        mc.player.resetCooldown();
+
+        if (rotateBack.getValue()) {
+            Rotations.INSTANCE.addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
         }
 
         if (sync.getValue().equals(Sync.ATTACK)) {
@@ -515,6 +568,7 @@ public class AutoCrystalRewrite extends Module {
         float distance = 0;
 
         Vec3d facingVec = new Vec3d(0.5, 0.5, 0.5);
+        Vec3d raytraceVector = new Vec3d(placement).add(0.5, 0.5, 0.5);
 
         if (!placeRaytrace.getValue().equals(Raytrace.NONE)) {
             if (placement.getY() > eye) {
@@ -531,6 +585,8 @@ public class AutoCrystalRewrite extends Module {
                                 if (vectorDistance < distance || distance == 0) {
                                     distance = (float) vectorDistance;
                                     facing = result.sideHit;
+
+                                    raytraceVector = vector;
                                 }
                             }
                         }
@@ -538,6 +594,11 @@ public class AutoCrystalRewrite extends Module {
                 }
             }
         }
+
+        Vec2f playerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
+        Vec2f rotation = RotationUtil.getRotationToVec3d(raytraceVector);
+
+        Rotations.INSTANCE.addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
 
         if (placeMode.getValue().equals(PlaceMode.VANILLA)) {
             mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand);
@@ -549,6 +610,10 @@ public class AutoCrystalRewrite extends Module {
 
         if (placeSwing.getValue()) {
             mc.player.swingArm(crystalHand);
+        }
+
+        if (rotateBack.getValue()) {
+            Rotations.INSTANCE.addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
         }
 
         if (placePerform.getValue().equals(Perform.SILENT_SWITCH) && !alreadyHolding) {
@@ -583,7 +648,7 @@ public class AutoCrystalRewrite extends Module {
                 }
             }
 
-            if (positionDamage > placementDamage) {
+            if (positionDamage >= 1 && positionDamage > placementDamage) {
                 placement = pos;
                 placementDamage = positionDamage;
             }
@@ -606,8 +671,12 @@ public class AutoCrystalRewrite extends Module {
             return false;
         }
 
-        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.up()))) {
-            if (entity.isDead || !multiplace.getValue() && entity instanceof EntityEnderCrystal) {
+        for (Entity entity : mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(offset.getX(), offset.getY(), offset.getZ(), offset.getX() + 1, offset.getY() + 1, offset.getZ() + 1))) {
+            if (entity.isDead) {
+                continue;
+            }
+
+            if (entity instanceof EntityEnderCrystal && !multiplace.getValue()) {
                 continue;
             }
 
@@ -724,9 +793,7 @@ public class AutoCrystalRewrite extends Module {
             }
 
             if (overrideHealth.getValue()) {
-                if (EntityUtil.getEntityHealth(target) <= healthAmount.getValue()) {
-                    return true;
-                }
+                return EntityUtil.getEntityHealth(target) <= overrideHealthAmount.getValue();
             }
         }
 
@@ -831,14 +898,14 @@ public class AutoCrystalRewrite extends Module {
         ATTACK,
 
         /**
-         * Sync on spawn
-         */
-        SPAWN,
-
-        /**
          * Sync on sound
          */
-        SOUND
+        SOUND,
+
+        /**
+         * Do not sync
+         */
+        NEVER
     }
 
     public enum Raytrace {

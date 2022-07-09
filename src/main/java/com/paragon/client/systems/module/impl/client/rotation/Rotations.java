@@ -60,16 +60,28 @@ public class Rotations extends Module {
             if (!rotationsQueue.isEmpty()) {
                 rotationsQueue.sort(Comparator.comparing(rotation -> rotation.getPriority().getPriority()));
 
-                rotationsQueue.removeIf(rotation -> rotation.getYaw() == mc.player.rotationYaw && rotation.getPitch() == mc.player.rotationPitch || rotation.getRotate().equals(Rotate.NONE));
-
                 if (rotationsQueue.isEmpty()) {
                     return;
                 }
 
                 Rotation rotation = rotationsQueue.get(0);
 
+                switch (rotation.getRotate()) {
+                    case LEGIT:
+                        mc.player.rotationYaw = rotation.getYaw();
+                        mc.player.rotationYawHead = rotation.getYaw();
+                        mc.player.rotationPitch = rotation.getPitch();
+
+                    case PACKET:
+                        ((ICPacketPlayer) event.getPacket()).setYaw(rotation.getYaw());
+                        ((ICPacketPlayer) event.getPacket()).setPitch(rotation.getPitch());
+                        break;
+                }
+
+                rotationsQueue.clear();
+
                 // Default to full rotation
-                float finYaw = rotation.getYaw();
+                /* float finYaw = rotation.getYaw();
                 float finPitch = rotation.getPitch();
 
                 if (yawStep.getValue().equals(Step.THRESHOLD)) {
@@ -110,14 +122,17 @@ public class Rotations extends Module {
                 ((ICPacketPlayer) event.getPacket()).setPitch(finPitch);
 
                 if (rotation.getRotate().equals(Rotate.LEGIT)) {
-                    mc.player.rotationYaw = finYaw;
-                    mc.player.rotationPitch = finPitch;
+                    mc.player.rotationYaw = rotation.getYaw();
+                    mc.player.rotationPitch = rotation.getPitch();
+
+                    ((ICPacketPlayer) event.getPacket()).setYaw(rotation.getYaw());
+                    ((ICPacketPlayer) event.getPacket()).setPitch(rotation.getPitch());
                 }
 
                 // Clear rotations queue when we have reached our final rotation
                 if (finYaw == rotation.getYaw() && finPitch == rotation.getPitch()) {
-                    rotationsQueue.clear();
-                }
+                    rotationsQueue.remove(0);
+                } */
             }
         }
     }
@@ -131,6 +146,10 @@ public class Rotations extends Module {
     }
 
     public void addRotation(Rotation rotation) {
+        if (rotation.getRotate().equals(Rotate.NONE)) {
+            return;
+        }
+
         this.rotationsQueue.add(rotation);
     }
 
