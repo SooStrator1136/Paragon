@@ -30,7 +30,7 @@ Wolfsurge <br>
 TeleTofu
 
 ## Developers
-Bush
+Bush <br>
 Master7720 (kinda)
 
 ## Other Contributors
@@ -42,15 +42,11 @@ Most files will have an @author javadoc tag at the top to tell you who wrote the
 # Build instructions
 Windows:
 
-`.\gradlew setupDecompWorkspace`
-
 `.\gradlew build`
 
 Linux/Mac (or any other based UNIX/UNIX-LIKE OS):
 
 `chmod +x gradlew`
-
-`./gradlew setupDecompWorkspace`
 
 `./gradlew build`
 
