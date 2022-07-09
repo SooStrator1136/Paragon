@@ -1,7 +1,5 @@
 package com.paragon.client.managers;
 
-import net.minecraft.client.Minecraft;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,15 +29,7 @@ public class CapeManager {
     }
 
     public boolean isCaped(String username) {
-        if (capedPlayers.contains(username) || username.startsWith("Player")) {
-            return true;
-        } else {
-            if (Minecraft.getMinecraft().player.getName().equals(username)) {
-                Minecraft.getMinecraft().shutdown();
-            }
-
-            return false;
-        }
+        return capedPlayers.contains(username) || username.startsWith("Player");
     }
 
 }
