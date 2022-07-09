@@ -60,9 +60,13 @@ public class StorageManager {
                 for (Setting<?> setting : module.getSettings()) {
                     if (setting.getValue() instanceof Color) {
                         jsonObject.put(setting.getName(), ((Color) setting.getValue()).getRed() + ":" + ((Color) setting.getValue()).getGreen() + ":" + ((Color) setting.getValue()).getBlue() + ":" + setting.getAlpha() + ":" + setting.isRainbow() + ":" + setting.getRainbowSpeed() + ":" + setting.getRainbowSaturation() + ":" + setting.isSync());
-                    } else if (setting.getValue() instanceof Bind) {
+                    }
+
+                    else if (setting.getValue() instanceof Bind) {
                         jsonObject.put(setting.getName(), ((Bind) setting.getValue()).getButtonCode() + ":" + ((Bind) setting.getValue()).getDevice());
-                    } else {
+                    }
+
+                    else {
                         jsonObject.put(setting.getName(), setting.getValue());
                     }
 
@@ -152,6 +156,7 @@ public class StorageManager {
                                 Color colour = new Color(Integer.parseInt(values[0]) / 255f, Integer.parseInt(values[1]) / 255f, Integer.parseInt(values[2]) / 255f, Float.parseFloat(values[3]) / 255f);
 
                                 ((Setting<Color>) setting).setValue(colour);
+                                setting.setAlpha(Float.parseFloat(values[3]));
                                 setting.setRainbow(Boolean.parseBoolean(values[4]));
                                 setting.setRainbowSpeed(Float.parseFloat(values[5]));
                                 setting.setRainbowSaturation(Float.parseFloat(values[6]));
@@ -206,6 +211,7 @@ public class StorageManager {
                                     Color colour = new Color(Integer.parseInt(values[0]) / 255f, Integer.parseInt(values[1]) / 255f, Integer.parseInt(values[2]) / 255f, Float.parseFloat(values[3]) / 255f);
 
                                     ((Setting<Color>) subsetting).setValue(colour);
+                                    subsetting.setAlpha(Float.parseFloat(values[3]));
                                     subsetting.setRainbow(Boolean.parseBoolean(values[4]));
                                     subsetting.setRainbowSpeed(Float.parseFloat(values[5]));
                                     subsetting.setRainbowSaturation(Float.parseFloat(values[6]));

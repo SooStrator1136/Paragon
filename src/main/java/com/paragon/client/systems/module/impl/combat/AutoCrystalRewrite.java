@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.setting.Bind;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
@@ -23,12 +24,15 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.*;
@@ -156,11 +160,44 @@ public class AutoCrystalRewrite extends Module {
 
     public static Setting<Float> healthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
             .setDescription("The amount of health needed to pause")
-            .setParentSetting(lowHealth);
+            .setParentSetting(lowHealth)
+            .setVisibility(lowHealth::getValue);
 
     public static Setting<Boolean> mending = new Setting<>("Mending", true)
             .setDescription("Pause when mending")
             .setParentSetting(pause);
+
+
+    // OVERRIDE
+
+    public static Setting<Boolean> override = new Setting<>("Override", true)
+            .setDescription("Override the minimum damage settings when certain things are occurring");
+
+    public static Setting<Boolean> overrideHealth = new Setting<>("Health", true)
+            .setDescription("Override when the target's health is low")
+            .setParentSetting(override);
+
+    public static Setting<Float> overrideHealthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
+            .setDescription("The amount of health needed to override")
+            .setParentSetting(overrideHealth)
+            .setVisibility(overrideHealth::getValue);
+
+    public static Setting<Boolean> overrideArmour = new Setting<>("Armour", true)
+            .setDescription("Override when the target's armour is low")
+            .setParentSetting(override);
+
+    public static Setting<Float> armourDurability = new Setting<>("Durability", 100f, 0f, 200f, 1f)
+            .setDescription("Override when one of the target's armour pieces has less than this durability")
+            .setParentSetting(override)
+            .setVisibility(overrideArmour::getValue);
+
+    public static Setting<Bind> forceOverride = new Setting<>("ForceOverride", new Bind(0, Bind.Device.KEYBOARD))
+            .setDescription("Force the override to be used")
+            .setParentSetting(override);
+
+    public static Setting<Boolean> maxIgnore = new Setting<>("MaxIgnore", true)
+            .setDescription("Ignore the maximum damage settings when certain things are occurring")
+            .setParentSetting(override);
 
     // RENDER
 
@@ -534,8 +571,16 @@ public class AutoCrystalRewrite extends Module {
         for (BlockPos pos : positions) {
             float positionDamage = calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), target);
 
-            if (positionDamage < placeMinimum.getValue() || calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), mc.player) > placeMaximum.getValue()) {
-                continue;
+            if (positionDamage < placeMinimum.getValue()) {
+                if (!shouldOverride(target)) {
+                    continue;
+                }
+            }
+
+            if (calculateDamage(new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), mc.player) > placeMaximum.getValue()) {
+                if (!(shouldOverride(target) && maxIgnore.getValue())) {
+                    continue;
+                }
             }
 
             if (positionDamage > placementDamage) {
@@ -632,6 +677,60 @@ public class AutoCrystalRewrite extends Module {
         ((ICPacketUseEntity) packet).setAction(CPacketUseEntity.Action.ATTACK);
 
         return packet;
+    }
+
+    private boolean shouldOverride(EntityLivingBase target) {
+        if (override.getValue()) {
+            // isPressed() doesn't work :(
+            if (forceOverride.getValue().getButtonCode() != 0) {
+                switch (forceOverride.getValue().getDevice()) {
+                    case KEYBOARD:
+                        if (Keyboard.isKeyDown(forceOverride.getValue().getButtonCode())) {
+                            return true;
+                        }
+
+                        break;
+
+                    case MOUSE:
+                        if (Mouse.isButtonDown(forceOverride.getValue().getButtonCode())) {
+                            return true;
+                        }
+
+                        break;
+                }
+            }
+
+            if (overrideArmour.getValue()) {
+                float lowest = armourDurability.getValue() + 1;
+
+                // Iterate through target's armour
+                for (ItemStack armourPiece : target.getArmorInventoryList()) {
+                    // If it is an actual piece of armour
+                    if (armourPiece != null && armourPiece.getItem() != Items.AIR) {
+                        // Get durability
+                        float durability = (armourPiece.getMaxDamage() - armourPiece.getItemDamage());
+
+                        // If it is less than the last lowest, set the lowest to this durability
+                        if (durability < lowest) {
+                            lowest = durability;
+                        }
+                    }
+                }
+
+                // We are overriding if the lowest durability is less or equal to the total armour value setting
+                if (lowest <= armourDurability.getValue()) {
+                    return true;
+                }
+            }
+
+            if (overrideHealth.getValue()) {
+                if (EntityUtil.getEntityHealth(target) <= healthAmount.getValue()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
