@@ -185,48 +185,4 @@ public class ModuleManager {
         return hudModules;
     }
 
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
-        modules.forEach(module -> {
-            if (module.getBind().getValue().isPressed() && Minecraft.getMinecraft().currentScreen == null) {
-                module.toggle();
-            }
-
-            if (module.isEnabled()) {
-                module.onTick();
-            }
-        });
-    }
-
-    @SubscribeEvent
-    public void onRender2D(RenderGameOverlayEvent event) {
-        if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT) {
-            modules.forEach(module -> {
-                if (module.isEnabled()) {
-                    module.onRender2D();
-                }
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public void onRender3D(RenderWorldLastEvent event) {
-        modules.forEach(module -> {
-            if (module.isEnabled()) {
-                module.onRender3D();
-            }
-        });
-    }
-
-    private Class<?> getClass(String className, String packageName) {
-        try {
-            return Class.forName(packageName + "."
-                    + className.substring(0, className.lastIndexOf('.')));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
 }

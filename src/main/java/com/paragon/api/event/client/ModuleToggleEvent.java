@@ -1,12 +1,12 @@
 package com.paragon.api.event.client;
 
 import com.paragon.api.module.Module;
-import me.wolfsurge.cerauno.event.CancellableEvent;
+import me.wolfsurge.cerauno.event.Event;
 
 /**
  * @author Wolfsurge
  */
-public class ModuleToggleEvent extends CancellableEvent {
+public class ModuleToggleEvent extends Event {
 
     private final Module module;
 

@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.movement;
 
+import com.paragon.Paragon;
 import com.paragon.api.event.player.StepEvent;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.StringUtil;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
  * @author Wolfsurge, Doogie13
+ * Used Cosmos' StepEvent (Doogie's original code was buggy)
  */
 public class Step extends Module {
 
@@ -45,21 +47,19 @@ public class Step extends Module {
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {
-        if (nullCheck()) {
+        if (nullCheck() ||
+                // wtf
+                !isEnabled()) {
             return;
         }
 
-        // Increase step height
-        mc.player.stepHeight = stepHeight.getValue();
-
-        if (mode.getValue().equals(Mode.PACKET)) {
-            mc.player.stepHeight = 1;
-        }
+        // Set step height
+        mc.player.stepHeight = mode.getValue().equals(Mode.VANILLA) ? stepHeight.getValue() : 1f;
     }
 
     @Listener
     public void onStep(StepEvent event) {
-        if (event.getEntity().equals(mc.player) && mode.getValue().equals(Mode.PACKET)) {
+        if (mode.getValue().equals(Mode.PACKET) && event.getEntity().equals(mc.player)) {
             double height = event.getBB().minY - mc.player.posY;
 
             double[] forward = PlayerUtil.forward(0.1);

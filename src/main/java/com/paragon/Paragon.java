@@ -1,6 +1,6 @@
 package com.paragon;
 
-import com.paragon.api.event.EventParser;
+import com.paragon.api.event.EventFactory;
 import com.paragon.client.managers.*;
 import com.paragon.client.managers.alt.AltManager;
 import com.paragon.client.managers.notifications.NotificationManager;
@@ -36,7 +36,7 @@ public class Paragon {
     private StorageManager storageManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
-    private EventParser eventParser;
+    private EventFactory eventParser;
     private PopManager popManager;
     private SocialManager socialManager;
     private AltManager altManager;
@@ -72,7 +72,7 @@ public class Paragon {
 
         commandManager = new CommandManager();
 
-        eventParser = new EventParser();
+        eventParser = new EventFactory();
         popManager = new PopManager();
 
         socialManager = new SocialManager();
@@ -164,7 +164,7 @@ public class Paragon {
      *
      * @return The event parser
      */
-    public EventParser getEventParser() {
+    public EventFactory getEventParser() {
         return eventParser;
     }
 

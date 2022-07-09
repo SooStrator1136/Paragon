@@ -36,7 +36,7 @@ public abstract class MixinEntity {
 
     @Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endSection()V", shift = At.Shift.BEFORE, ordinal = 0))
     public void onMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
-        StepEvent stepEvent = new StepEvent(getEntityBoundingBox(), (Entity) (Object) this, stepHeight);
+        StepEvent stepEvent = new StepEvent(getEntityBoundingBox(), (Entity) (Object) this, 0.5f);
         Paragon.INSTANCE.getEventBus().post(stepEvent);
 
         if (stepEvent.isCancelled()) {

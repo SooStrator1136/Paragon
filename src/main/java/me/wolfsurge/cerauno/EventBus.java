@@ -127,4 +127,8 @@ public class EventBus {
         return method.getParameters().length == 1 && method.isAnnotationPresent(Listener.class);
     }
 
+    public boolean isRegistered(Object obj) {
+        return subscribedMethods.containsKey(obj.getClass());
+    }
+
 }

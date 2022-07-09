@@ -107,10 +107,6 @@ public class Module extends Feature implements Wrapper {
         ModuleToggleEvent moduleToggleEvent = new ModuleToggleEvent(this);
         Paragon.INSTANCE.getEventBus().post(moduleToggleEvent);
 
-        if (moduleToggleEvent.isCancelled()) {
-            return;
-        }
-
         if (enabled) {
             // Register events
             MinecraftForge.EVENT_BUS.register(this);
@@ -120,7 +116,9 @@ public class Module extends Feature implements Wrapper {
 
             // Call onEnable
             onEnable();
-        } else {
+        }
+
+        else {
             // Unregister events
             MinecraftForge.EVENT_BUS.unregister(this);
             Paragon.INSTANCE.getEventBus().unregister(this);

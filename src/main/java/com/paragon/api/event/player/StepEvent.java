@@ -40,4 +40,12 @@ public class StepEvent extends CancellableEvent {
         return height;
     }
 
+    /**
+     * Sets the height
+     * @param height The height
+     */
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
 }
