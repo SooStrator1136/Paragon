@@ -3,10 +3,7 @@ package com.paragon.client.managers;
 import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.client.systems.command.Command;
-import com.paragon.client.systems.command.impl.ConfigCommand;
-import com.paragon.client.systems.command.impl.HelpCommand;
-import com.paragon.client.systems.command.impl.SocialCommand;
-import com.paragon.client.systems.command.impl.SyntaxCommand;
+import com.paragon.client.systems.command.impl.*;
 import com.paragon.client.systems.module.impl.misc.Cryptic;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -27,17 +24,20 @@ public class CommandManager implements Wrapper {
     private String prefix = "$";
     private static String lastCommand = "";
 
-    private final ArrayList<Command> commands = new ArrayList<>();
+    private final List<Command> commands;
 
-    private List<String> commonPrefixes = Arrays.asList("/", ".", "*", ";", ",");
+    private final List<String> commonPrefixes = Arrays.asList("/", ".", "*", ";", ",");
 
     public CommandManager() {
         MinecraftForge.EVENT_BUS.register(this);
 
-        commands.add(new ConfigCommand());
-        commands.add(new HelpCommand());
-        commands.add(new SocialCommand());
-        commands.add(new SyntaxCommand());
+        commands = Arrays.asList(
+                new ConfigCommand(),
+                new HelpCommand(),
+                OpenFolderCommand.INSTANCE,
+                new SocialCommand(),
+                new SyntaxCommand()
+        );
 
         Paragon.INSTANCE.getLogger().info("Loaded Command Manager");
     }

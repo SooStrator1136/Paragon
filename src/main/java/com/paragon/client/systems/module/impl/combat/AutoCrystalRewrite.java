@@ -4,6 +4,7 @@ import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
@@ -136,7 +137,33 @@ public class AutoCrystalRewrite extends Module {
             .setDescription("When to sync the explosion")
             .setParentSetting(explode);
 
+    // PAUSE
+
+    public static Setting<Boolean> pause = new Setting<>("Pause", true)
+            .setDescription("Pause when certain things are occurring");
+
+    public static Setting<Boolean> eating = new Setting<>("Eating", true)
+            .setDescription("Pause when eating")
+            .setParentSetting(pause);
+
+    public static Setting<Boolean> drinking = new Setting<>("Drinking", true)
+            .setDescription("Pause when drinking")
+            .setParentSetting(pause);
+
+    public static Setting<Boolean> lowHealth = new Setting<>("LowHealth", true)
+            .setDescription("Pause when health is low")
+            .setParentSetting(pause);
+
+    public static Setting<Float> healthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
+            .setDescription("The amount of health needed to pause")
+            .setParentSetting(lowHealth);
+
+    public static Setting<Boolean> mending = new Setting<>("Mending", true)
+            .setDescription("Pause when mending")
+            .setParentSetting(pause);
+
     // RENDER
+
     public static Setting<Boolean> render = new Setting<>("Render", true)
             .setDescription("Whether to render the placement position");
 
@@ -189,7 +216,7 @@ public class AutoCrystalRewrite extends Module {
 
     @Override
     public void onTick() {
-        if (nullCheck()) {
+        if (nullCheck() || pause.getValue() && (eating.getValue() && PlayerUtil.isPlayerEating() || drinking.getValue() && PlayerUtil.isPlayerDrinking() || lowHealth.getValue() && EntityUtil.getEntityHealth(mc.player) <= healthAmount.getValue() || mending.getValue() && mc.player.isHandActive() && mc.player.getActiveItemStack().getItem().equals(Items.EXPERIENCE_BOTTLE))) {
             return;
         }
 
@@ -281,7 +308,6 @@ public class AutoCrystalRewrite extends Module {
                     // If the crystal is close to the explosion sound origin, set the crystals state to dead
                     if (entity.getDistance(packet.getX(), packet.getY(), packet.getZ()) <= 6) {
                         entity.setDead();
-                        // mc.world.removeEntityFromWorld(entity.getEntityId());
                     }
                 }
             }
@@ -358,7 +384,6 @@ public class AutoCrystalRewrite extends Module {
 
         if (sync.getValue().equals(Sync.ATTACK)) {
             crystal.setDead();
-            // mc.world.removeEntityFromWorld(crystal.getEntityId());
         }
 
         explodeTimer.reset();
@@ -374,6 +399,8 @@ public class AutoCrystalRewrite extends Module {
         EntityLivingBase target = findTarget(placeablePositions, 1);
 
         if (target == null) {
+            placementPosition = null;
+            placementDamage = 0;
             return;
         }
 
@@ -381,6 +408,7 @@ public class AutoCrystalRewrite extends Module {
 
         if (placement == null) {
             placementPosition = null;
+            placementDamage = 0;
             return;
         }
 

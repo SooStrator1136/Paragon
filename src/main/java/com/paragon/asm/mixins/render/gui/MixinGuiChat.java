@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GuiChat.class)
 public abstract class MixinGuiChat {
 
-    @Shadow protected abstract void setText(String newChatText, boolean shouldOverwrite);
+    @Shadow
+    protected abstract void setText(String newChatText, boolean shouldOverwrite);
 
     @Inject(method = "drawScreen", at = @At("HEAD"))
     public void onDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
