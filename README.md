@@ -30,7 +30,7 @@ Wolfsurge <br>
 TeleTofu
 
 ## Developers
-Bush
+Bush <br>
 Master7720 (kinda)
 
 ## Other Contributors
