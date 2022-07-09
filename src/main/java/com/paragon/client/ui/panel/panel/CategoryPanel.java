@@ -80,7 +80,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
         leftHue = MathHelper.clamp(leftHue, 0, 360);
         rightHue = MathHelper.clamp(rightHue, 0, 360);
 
-        RenderUtil.drawHorizontalGradientRect(getX(), getY(), getWidth(), barHeight, Color.HSBtoRGB(getLeftHue() / 360, 1, 0.75f + (0.25f * hover)), Color.HSBtoRGB(rightHue / 360, 1, 0.75f + (0.25f * hover)));
+        RenderUtil.drawHorizontalRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.radius.getValue(), ClickGUI.radius.getValue(), 1, 1, Color.HSBtoRGB(getLeftHue() / 360, 1, 0.75f + (0.25f * hover)), Color.HSBtoRGB(rightHue / 360, 1, 0.75f + (0.25f * hover)));
 
         glScalef(1.25f, 1.25f, 1.25f);
         {
@@ -91,7 +91,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
             glScalef(scaleFactor, scaleFactor, scaleFactor);
         }
 
-        RenderUtil.drawRect(getX(), getY(), barHeight, barHeight, 0x90000000);
+        RenderUtil.drawRoundedRect(getX(), getY(), barHeight, barHeight, ClickGUI.radius.getValue(), 1, 1, 1, 0x90000000);
 
         // Eye of ender is offset weirdly...
         if (category.equals(Category.RENDER)) {
@@ -152,10 +152,8 @@ public class CategoryPanel extends Panel implements TextRenderer {
             }
         }
 
-        if (isElementVisible(elements.get(0)) && isElementVisible(lastElement) || elements.get(0).getY() > getY() + barHeight) {
-            scrollFactor = 0;
-
-            elements.get(0).setY(getY() + barHeight);
+        if (lastElement.getY() + lastElement.getHeight() < getY() + barHeight + moduleHeight && moduleHeight <= 352 && !isElementVisible(elements.get(0))) {
+            elements.get(0).setY(elements.get(0).getY() + 1);
         }
 
         if (isElementVisible(lastElement) && lastElement.getY() < scissorHeight) {
@@ -169,6 +167,12 @@ public class CategoryPanel extends Panel implements TextRenderer {
             elements.get(0).setY(elements.get(0).getY() + 1);
         }
 
+        if (isElementVisible(elements.get(0)) && isElementVisible(lastElement) || elements.get(0).getY() > getY() + barHeight) {
+            scrollFactor = 0;
+
+            elements.get(0).setY(getY() + barHeight);
+        }
+
         float offset = elements.get(0).getY();
         for (Element element : elements) {
             element.setX(getX());
@@ -177,7 +181,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
             offset += element.getTotalHeight();
         }
 
-        RenderUtil.drawHorizontalGradientRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, Color.HSBtoRGB(getLeftHue() / 360, 1, 1), Color.HSBtoRGB(rightHue / 360, 1, 1));
+        RenderUtil.drawHorizontalRoundedRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, 1, 1, MathHelper.clamp(ClickGUI.radius.getValue(), 1, 2), MathHelper.clamp(ClickGUI.radius.getValue(), 1, 2), Color.HSBtoRGB(getLeftHue() / 360, 1, 0.75f + (0.25f * hover)), Color.HSBtoRGB(rightHue / 360, 1, 0.75f + (0.25f * hover)));
 
         RenderUtil.startGlScissor(getX(), getY() + barHeight, getWidth(), scissorHeight);
 

@@ -22,8 +22,8 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
-    public static Setting<Float> scrollSpeed = new Setting<>("ScrollSpeed", 10f, 5f, 30f, 1f)
-            .setDescription("How fast to scroll")
+    public static Setting<Float> radius = new Setting<>("Radius", 1f, 1f, 15f, 1f)
+            .setDescription("The radius of the panel's corners")
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 

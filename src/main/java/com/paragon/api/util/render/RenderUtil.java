@@ -164,9 +164,64 @@ public class RenderUtil implements Wrapper {
         glEnd();
 
         glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+
+        glScaled(2.0D, 2.0D, 2.0D);
+        glPopAttrib();
+        glLineWidth(1);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public static void drawHorizontalRoundedRect(double x, double y, double width, double height, double tLeft, double tRight, double bLeft, double bRight, int left, int right) {
+        glPushAttrib(0);
+        glScaled(0.5D, 0.5D, 0.5D);
+        x *= 2.0D;
+        y *= 2.0D;
+        width *= 2.0D;
+        height *= 2.0D;
+
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(true);
+
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        glBegin(GL_POLYGON);
+
+        int i;
+
+        ColourUtil.setColour(left);
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + tLeft + Math.sin(i * Math.PI / 180.0D) * tLeft * -1.0D, y + tLeft + Math.cos(i * Math.PI / 180.0D) * tLeft * -1.0D);
+        }
+
+        for (i = 90; i <= 180; i += 3) {
+            glVertex2d(x + bLeft + Math.sin(i * Math.PI / 180.0D) * bLeft * -1.0D, y + height - bLeft + Math.cos(i * Math.PI / 180.0D) * bLeft * -1.0D);
+        }
+
+        ColourUtil.setColour(right);
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + width - bRight + Math.sin(i * Math.PI / 180.0D) * bRight, y + height - bRight + Math.cos(i * Math.PI / 180.0D) * bRight);
+        }
+
+        for (i = 90; i <= 180; i += 3) {
+            glVertex2d(x + width - tRight + Math.sin(i * Math.PI / 180.0D) * tRight, y + tRight + Math.cos(i * Math.PI / 180.0D) * tRight);
+        }
+
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+
+        glDisable(GL_LINE_SMOOTH);
+
         glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
         glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
 

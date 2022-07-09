@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glScalef;
 
 public class PanelGUI extends GuiScreen {
 

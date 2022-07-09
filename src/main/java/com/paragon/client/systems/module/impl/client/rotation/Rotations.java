@@ -62,6 +62,10 @@ public class Rotations extends Module {
 
                 rotationsQueue.removeIf(rotation -> rotation.getYaw() == mc.player.rotationYaw && rotation.getPitch() == mc.player.rotationPitch || rotation.getRotate().equals(Rotate.NONE));
 
+                if (rotationsQueue.isEmpty()) {
+                    return;
+                }
+
                 Rotation rotation = rotationsQueue.get(0);
 
                 // Default to full rotation

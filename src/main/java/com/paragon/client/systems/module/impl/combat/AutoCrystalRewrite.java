@@ -4,6 +4,7 @@ import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
+import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.ICPacketUseEntity;
@@ -79,7 +80,8 @@ public class AutoCrystalRewrite extends Module {
 
     public static Setting<Boolean> swapBack = new Setting<>("SwapBack", true)
             .setDescription("Whether to swap back to the original item after placing crystals")
-            .setParentSetting(place);
+            .setParentSetting(place)
+            .setVisibility(() -> placePerform.getValue().equals(Perform.KEEP));
 
     public static Setting<Double> placeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
             .setDescription("The furthest distance a crystal can be placed")
@@ -217,7 +219,7 @@ public class AutoCrystalRewrite extends Module {
                 // Draw the highlight
                 switch (renderMode.getValue()) {
                     case FILL:
-                        RenderUtil.drawFilledBox(highlightBB, renderColour.getValue());
+                        RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getAlpha() * factor));
                         break;
 
                     case OUTLINE:
@@ -225,7 +227,7 @@ public class AutoCrystalRewrite extends Module {
                         break;
 
                     case BOTH:
-                        RenderUtil.drawFilledBox(highlightBB, renderColour.getValue());
+                        RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getAlpha() * factor));
                         RenderUtil.drawBoundingBox(highlightBB, renderOutlineWidth.getValue(), renderOutlineColour.getValue());
                         break;
                 }
@@ -729,7 +731,7 @@ public class AutoCrystalRewrite extends Module {
         TWENTY(0.05),
 
         /**
-         * Check every 0.01
+         * Check every 0.01. Can cause lag if there are too many placeable positions
          */
         HUNDRED(0.01);
 
