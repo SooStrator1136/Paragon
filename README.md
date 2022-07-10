@@ -1,7 +1,6 @@
 ![ParagonBanner1](https://user-images.githubusercontent.com/85251388/154859895-65627d8d-0753-43ea-91c4-d8c092e478c3.png)
 
 [![Downloads](https://img.shields.io/github/downloads/Wolfsurge/Paragon/total.svg)](https://github.com/Wolfsurge/Paragon/releases/)
-[![Discord](https://img.shields.io/discord/936976249300086854?color=blueviolet&logo=discord&logoColor=white)](https://discord.gg/28JNQsXUzb)
 ![Lines of code](https://img.shields.io/tokei/lines/github/Wolfsurge/Paragon?color=blueviolet&label=lines%20of%20code)
 
 # Paragon
