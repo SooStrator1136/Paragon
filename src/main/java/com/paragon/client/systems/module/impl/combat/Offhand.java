@@ -204,7 +204,7 @@ public class Offhand extends Module {
 
         // Apply safety
         if (safety.getValue()) {
-            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() <= healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
+            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() + mc.player.getAbsorptionAmount() <= healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
                 swap = Items.TOTEM_OF_UNDYING;
             }
 
