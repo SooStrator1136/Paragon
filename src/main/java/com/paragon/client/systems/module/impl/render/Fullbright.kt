@@ -16,7 +16,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
     private val mode = Setting("Mode", Mode.GAMMA)
         .setDescription("The mode to use for the brightness")
 
-    var originalGamma: Float = 0f
+    private var originalGamma: Float = 0f
 
     override fun onEnable() {
         // Set original gamma to current
@@ -39,28 +39,18 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
 
         when (mode.getValue()) {
-            Mode.GAMMA -> {
-                // Increase gamma
-                mc.gameSettings.gammaSetting = 50000f
-            }
-
+            Mode.GAMMA -> mc.gameSettings.gammaSetting = 50000f // Increase gamma
             Mode.EFFECT -> {
                 // Apply night vision
                 if (!mc.player.isPotionActive(MobEffects.NIGHT_VISION)) {
                     mc.player.addPotionEffect(PotionEffect(MobEffects.NIGHT_VISION, 999999, 255))
                 }
             }
-
-            Mode.ANTI -> {
-                // Decrease gamma
-                mc.gameSettings.gammaSetting = -Float.MAX_VALUE
-            }
+            Mode.ANTI -> mc.gameSettings.gammaSetting = -Float.MAX_VALUE // Decrease gamma
         }
     }
 
-    override fun getData(): String {
-        return " " + StringUtil.getFormattedText(mode.getValue())
-    }
+    override fun getData() = " " + StringUtil.getFormattedText(mode.getValue())
 
     enum class Mode {
         /**
