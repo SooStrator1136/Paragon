@@ -108,7 +108,7 @@ public class ModuleManager {
                 new ClientFont(),
                 new Colours(),
                 new ClickGUI(),
-                new DiscordRPC(),
+                DiscordRPCkt.INSTANCE,
                 new Rotations(),
 
                 // HUD
