@@ -11,12 +11,7 @@ import com.paragon.client.systems.module.impl.combat.*;
 import com.paragon.client.systems.module.impl.misc.*;
 import com.paragon.client.systems.module.impl.movement.*;
 import com.paragon.client.systems.module.impl.render.*;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +57,7 @@ public class ModuleManager {
                 new Breadcrumbs(),
                 new BreakESP(),
                 new Chams(),
-                new ChinaHat(),
+                ChinaHat.INSTANCE,
                 new ClearChat(),
                 new ESP(),
                 Fullbright.INSTANCE,
@@ -113,7 +108,7 @@ public class ModuleManager {
                 new ClientFont(),
                 new Colours(),
                 new ClickGUI(),
-                new DiscordRPC(),
+                DiscordRPCkt.INSTANCE,
                 new Rotations(),
 
                 // HUD

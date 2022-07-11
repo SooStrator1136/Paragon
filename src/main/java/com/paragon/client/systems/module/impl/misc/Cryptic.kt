@@ -8,6 +8,7 @@ import net.minecraftforge.client.event.ClientChatEvent
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.util.*
+import kotlin.random.Random
 
 /**
  * @author Wolfsurge
@@ -22,7 +23,22 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
         .setDescription("Cancel showing the original chat message")
 
     const val alpha = "abcdefghijklmnopqrstuvwxyz"
-    private val suffixes: Array<String> = arrayOf("1p421p",  "74jcd9", "ju9287", "odsn21", "98h421", "i9j89g", "i98h23", "jkind7", "o082jf", "prgn12", "fckyou", "retard", "u8r2h3", "h8h7y3")
+    private val suffixes: Array<String> = arrayOf(
+        "1p421p",
+        "74jcd9",
+        "ju9287",
+        "odsn21",
+        "98h421",
+        "i9j89g",
+        "i98h23",
+        "jkind7",
+        "o082jf",
+        "prgn12",
+        "fckyou",
+        "retard",
+        "u8r2h3",
+        "h8h7y3"
+    )
 
     @SubscribeEvent
     fun onChatSend(event: ClientChatEvent) {
@@ -30,8 +46,8 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
             return
         }
 
-        val rand = Random().nextInt(8) + 1
-        val suffix = Random().nextInt(suffixes.size)
+        val rand = Random.nextInt(8) + 1
+        val suffix = Random.nextInt(suffixes.size)
 
         event.message = encrypt(event.message.replace("crypt ", ""), rand) + rand + suffixes[suffix]
     }
@@ -91,9 +107,7 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
 
                 val replaceVal: Char = alpha[keyVal]
                 message += replaceVal
-            }
-
-            else {
+            } else {
                 message += element
             }
         }
