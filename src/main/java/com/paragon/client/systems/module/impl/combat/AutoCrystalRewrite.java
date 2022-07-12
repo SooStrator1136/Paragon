@@ -16,10 +16,9 @@ import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Setting;
-import com.paragon.client.systems.module.impl.client.rotation.Rotate;
-import com.paragon.client.systems.module.impl.client.rotation.Rotation;
-import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
-import com.paragon.client.systems.module.impl.client.rotation.Rotations;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -37,12 +36,16 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -257,7 +260,7 @@ public class AutoCrystalRewrite extends Module {
 
     private int originalSlot = -1;
 
-    private final Map<BlockPos, Float> renderPositions = new HashMap<>();
+    private final Map<BlockPos, Float> renderPositions = new ConcurrentHashMap<>();
 
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", Category.COMBAT, "Automatically places and explodes ender crystals");
@@ -275,8 +278,8 @@ public class AutoCrystalRewrite extends Module {
         }
     }
 
-    @Override
-    public void onTick() {
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onTick(TickEvent.ClientTickEvent event) {
         if (nullCheck() || pause.getValue() && (eating.getValue() && PlayerUtil.isPlayerEating() || drinking.getValue() && PlayerUtil.isPlayerDrinking() || lowHealth.getValue() && EntityUtil.getEntityHealth(mc.player) <= healthAmount.getValue() || mending.getValue() && mc.player.isHandActive() && mc.player.getActiveItemStack().getItem().equals(Items.EXPERIENCE_BOTTLE))) {
             return;
         }
@@ -384,7 +387,7 @@ public class AutoCrystalRewrite extends Module {
      * @return The best target
      */
     private EntityLivingBase findTarget(ArrayList<BlockPos> positions, float positionOffset) {
-        List<EntityLivingBase> validEntities = mc.world.loadedEntityList.stream().filter(entity -> mc.player.getDistance(entity) <= targetRange.getValue() && EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), animals.getValue())).sorted(Comparator.comparingDouble(entity -> {
+        List<EntityLivingBase> validEntities = mc.world.loadedEntityList.stream().filter(entity -> !entity.isDead && mc.player.getDistance(entity) <= targetRange.getValue() && EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), animals.getValue())).sorted(Comparator.comparingDouble(entity -> {
             switch (targeting.getValue()) {
                 case DISTANCE:
                     return mc.player.getDistance(entity);
@@ -454,7 +457,7 @@ public class AutoCrystalRewrite extends Module {
         Vec2f playerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
         Vec2f rotation = RotationUtil.getRotationToVec3d(new Vec3d(crystal.posX, crystal.posY + 0.5, crystal.posZ));
 
-        Rotations.INSTANCE.addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+        Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
 
         switch (explodeMode.getValue()) {
             case VANILLA:
@@ -469,7 +472,7 @@ public class AutoCrystalRewrite extends Module {
         mc.player.resetCooldown();
 
         if (rotateBack.getValue()) {
-            Rotations.INSTANCE.addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
         }
 
         if (sync.getValue().equals(Sync.ATTACK)) {
@@ -598,7 +601,7 @@ public class AutoCrystalRewrite extends Module {
         Vec2f playerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
         Vec2f rotation = RotationUtil.getRotationToVec3d(raytraceVector);
 
-        Rotations.INSTANCE.addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+        Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
 
         if (placeMode.getValue().equals(PlaceMode.VANILLA)) {
             mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand);
@@ -613,7 +616,7 @@ public class AutoCrystalRewrite extends Module {
         }
 
         if (rotateBack.getValue()) {
-            Rotations.INSTANCE.addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
         }
 
         if (placePerform.getValue().equals(Perform.SILENT_SWITCH) && !alreadyHolding) {

@@ -12,12 +12,11 @@ import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
-import com.paragon.client.systems.module.impl.client.rotation.Rotate;
-import com.paragon.client.systems.module.impl.client.rotation.Rotation;
-import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
-import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import com.paragon.client.systems.module.impl.misc.AutoEZ;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
@@ -614,7 +613,7 @@ public class AutoCrystal extends Module {
                 Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, explodeRotate.getValue(), RotationPriority.HIGHEST);
 
                 // Send rotation
-                Rotations.INSTANCE.addRotation(rotation);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
             }
 
             if (confirmRotate.getValue() && !MathsUtil.isNearlyEqual(mc.player.rotationYaw, rotationVec.x, confirmThreshold.getValue()) && !MathsUtil.isNearlyEqual(mc.player.rotationPitch, rotationVec.y, confirmThreshold.getValue()) && placeRotate.getValue().equals(Rotate.LEGIT)) {
@@ -645,7 +644,7 @@ public class AutoCrystal extends Module {
                 Rotation rotation = new Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.getValue(), RotationPriority.HIGHEST);
 
                 // Send rotation
-                Rotations.INSTANCE.addRotation(rotation);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
             }
 
             // Check we want to switch
@@ -710,7 +709,7 @@ public class AutoCrystal extends Module {
         // Check we want to rotate
         if (!placeRotate.getValue().equals(Rotate.NONE)) {
             Rotation rotation = new Rotation(placeRotation.x, placeRotation.y, placeRotate.getValue(), RotationPriority.HIGHEST);
-            Rotations.INSTANCE.addRotation(rotation);
+            Paragon.INSTANCE.getRotationManager().addRotation(rotation);
         }
 
         // Confirm rotations for strict
@@ -744,7 +743,7 @@ public class AutoCrystal extends Module {
         if (!placeRotate.getValue().equals(Rotate.NONE) && placeRotateBack.getValue()) {
             // Rotate back
             Rotation rotation = new Rotation(originalRotation.x, originalRotation.y, placeRotate.getValue(), RotationPriority.HIGHEST);
-            Rotations.INSTANCE.addRotation(rotation);
+            Paragon.INSTANCE.getRotationManager().addRotation(rotation);
         }
 
         if (placeWhen.getValue().equals(When.SILENT_SWITCH)) {

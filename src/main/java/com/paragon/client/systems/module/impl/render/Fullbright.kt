@@ -20,16 +20,16 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
 
     override fun onEnable() {
         // Set original gamma to current
-        this.originalGamma = mc.gameSettings.gammaSetting
+        this.originalGamma = minecraft.gameSettings.gammaSetting
     }
 
     override fun onDisable() {
         // Reset gamma to original
-        mc.gameSettings.gammaSetting = this.originalGamma
+        minecraft.gameSettings.gammaSetting = this.originalGamma
 
         // Remove night vision
         if (!nullCheck()) {
-            mc.player.removePotionEffect(MobEffects.NIGHT_VISION)
+            minecraft.player.removePotionEffect(MobEffects.NIGHT_VISION)
         }
     }
 
@@ -39,14 +39,16 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
 
         when (mode.getValue()) {
-            Mode.GAMMA -> mc.gameSettings.gammaSetting = 50000f // Increase gamma
+            Mode.GAMMA -> minecraft.gameSettings.gammaSetting = 50000f // Increase gamma
+
             Mode.EFFECT -> {
                 // Apply night vision
-                if (!mc.player.isPotionActive(MobEffects.NIGHT_VISION)) {
-                    mc.player.addPotionEffect(PotionEffect(MobEffects.NIGHT_VISION, 999999, 255))
+                if (!minecraft.player.isPotionActive(MobEffects.NIGHT_VISION)) {
+                    minecraft.player.addPotionEffect(PotionEffect(MobEffects.NIGHT_VISION, 999999, 255))
                 }
             }
-            Mode.ANTI -> mc.gameSettings.gammaSetting = -Float.MAX_VALUE // Decrease gamma
+
+            Mode.ANTI -> minecraft.gameSettings.gammaSetting = -Float.MAX_VALUE // Decrease gamma
         }
     }
 

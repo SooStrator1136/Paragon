@@ -9,7 +9,7 @@ object OpenFolderCommand : Command("OpenFolder", "openfolder") {
 
     override fun whenCalled(args: Array<out String>?, fromConsole: Boolean) {
         Desktop.getDesktop().open(File("paragon"))
-        Paragon.INSTANCE.commandManager.sendClientMessage("Opened Paragon folder", false)
+        Paragon.INSTANCE.commandManager!!.sendClientMessage("Opened Paragon folder", false)
     }
 
 }

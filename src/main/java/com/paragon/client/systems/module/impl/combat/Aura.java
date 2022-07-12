@@ -6,12 +6,11 @@ import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
-import com.paragon.client.systems.module.impl.client.rotation.Rotate;
-import com.paragon.client.systems.module.impl.client.rotation.Rotation;
-import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
-import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import com.paragon.api.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,7 +44,7 @@ public class Aura extends Module {
     public static Setting<Boolean> players = new Setting<>("Players", true)
             .setDescription("Attack players");
 
-    private static Setting<Boolean> mobs = new Setting<>("Mobs", true)
+    public static Setting<Boolean> mobs = new Setting<>("Mobs", true)
             .setDescription("Attack mobs");
 
     public static Setting<Boolean> passives = new Setting<>("Passives", true)
@@ -141,7 +140,7 @@ public class Aura extends Module {
                 Rotation rotation = new Rotation(rotationVec.x, rotationVec.y, rotate.getValue(), RotationPriority.HIGH);
 
                 // Rotate to the target
-                Rotations.INSTANCE.addRotation(rotation);
+                Paragon.INSTANCE.getRotationManager().addRotation(rotation);
 
                 // Attack the target
                 if (packetAttack.getValue()) {
@@ -160,7 +159,7 @@ public class Aura extends Module {
                 if (rotateBack.getValue() && !rotate.getValue().equals(Rotate.NONE)) {
                     Rotation rotationBack = new Rotation(originalRotation.x, originalRotation.y, rotate.getValue(), RotationPriority.NORMAL);
 
-                    Rotations.INSTANCE.addRotation(rotationBack);
+                    Paragon.INSTANCE.getRotationManager().addRotation(rotationBack);
                 }
 
                 // Switch back to the old slot

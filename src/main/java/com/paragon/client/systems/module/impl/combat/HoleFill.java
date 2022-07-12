@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.combat;
 
+import com.paragon.Paragon;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
@@ -7,10 +8,9 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
-import com.paragon.client.systems.module.impl.client.rotation.Rotate;
-import com.paragon.client.systems.module.impl.client.rotation.Rotation;
-import com.paragon.client.systems.module.impl.client.rotation.RotationPriority;
-import com.paragon.client.systems.module.impl.client.rotation.Rotations;
+import com.paragon.client.managers.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotation;
+import com.paragon.client.managers.rotation.RotationPriority;
 import com.paragon.api.setting.Setting;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -120,7 +120,7 @@ public class HoleFill extends Module {
             // Get rotation
             Vec2f rotation = RotationUtil.getRotationToBlockPos(pos, 0.5);
 
-            Rotations.INSTANCE.addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGH));
+            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGH));
 
             // Get current item
             int slot = mc.player.inventory.currentItem;
@@ -152,7 +152,7 @@ public class HoleFill extends Module {
 
             // Rotate back
             if (rotateBack.getValue()) {
-                Rotations.INSTANCE.addRotation(new Rotation(originalRotation.x, originalRotation.y, rotate.getValue(), RotationPriority.NORMAL));
+                Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(originalRotation.x, originalRotation.y, rotate.getValue(), RotationPriority.NORMAL));
             }
         }
     }

@@ -18,11 +18,11 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
 
     override fun onDisable() {
         // Stop us sprinting when we disable
-        mc.player?.isSprinting = false
+        minecraft.player?.isSprinting = false
     }
 
     override fun onTick() {
-        mc?.player?.let { player ->
+        minecraft?.player?.let { player ->
             when (mode.getValue()) {
                 Mode.OMNI -> {
                     // If we aren't moving, do not make us sprint

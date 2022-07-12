@@ -6,7 +6,6 @@ import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.hud.impl.*;
 import com.paragon.client.systems.module.impl.client.*;
-import com.paragon.client.systems.module.impl.client.rotation.Rotations;
 import com.paragon.client.systems.module.impl.combat.*;
 import com.paragon.client.systems.module.impl.misc.*;
 import com.paragon.client.systems.module.impl.movement.*;
@@ -109,7 +108,6 @@ public class ModuleManager {
                 new Colours(),
                 new ClickGUI(),
                 DiscordRPC.INSTANCE,
-                new Rotations(),
 
                 // HUD
                 new Armour(),

@@ -63,7 +63,7 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
             val rawMessage = message.substring(message.indexOf('>'), message.length - 7)
             val decoded: String = player + decrypt(rawMessage, message.substring(message.length - 7, message.length - 6).toInt())
 
-            if (player.equals(mc.player.name, true)) {
+            if (player.equals(minecraft.player.name, true)) {
                 return
             }
 
@@ -71,7 +71,7 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
                 event.isCanceled = true
             }
 
-            mc.ingameGUI.chatGUI.printChatMessage(TextComponentString("$decoded [Decrypted by Paragon]"))
+            minecraft.ingameGUI.chatGUI.printChatMessage(TextComponentString("$decoded [Decrypted by Paragon]"))
         }
     }
 

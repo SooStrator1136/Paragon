@@ -61,7 +61,7 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
                 mainThread {
                     val messageSuffix = if (suffix.getValue() && sourceLanguage != targetLanguage)
                         "$GRAY [Translated]" else ""
-                    mc.ingameGUI?.chatGUI?.printChatMessage(TextComponentString(translatedText + messageSuffix))
+                    minecraft.ingameGUI?.chatGUI?.printChatMessage(TextComponentString(translatedText + messageSuffix))
                 }
             }
         }
@@ -69,7 +69,7 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onChatSend(event: ClientChatEvent) {
-        if (!outgoing.getValue() || Paragon.INSTANCE.commandManager.startsWithPrefix(event.message)) {
+        if (!outgoing.getValue() || Paragon.INSTANCE.commandManager!!.startsWithPrefix(event.message)) {
             return
         }
 
@@ -80,7 +80,7 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
         backgroundThread {
             translate(event.message, language) {
                 mainThread {
-                    mc.player?.sendChatMessage(translatedText)
+                    minecraft.player?.sendChatMessage(translatedText)
                 }
             }
         }
@@ -88,14 +88,14 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     private suspend inline fun translate(text: String, language: Language, block: Translation.() -> Unit) {
         translator.translateCatching(text, language).onFailure {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("Could not process translation request. Disabling AutoTranslate", NotificationType.ERROR))
+            Paragon.INSTANCE.notificationManager!!.addNotification(Notification("Could not process translation request. Disabling AutoTranslate", NotificationType.ERROR))
             toggle()
         }.getOrNull()?.run(block)
     }
 
     private fun getLanguage(language: String) = languageOf(language).also {
         if (it == null) {
-            Paragon.INSTANCE.notificationManager.addNotification(
+            Paragon.INSTANCE.notificationManager!!.addNotification(
                 Notification("\"$language\" is not a valid language! Disabling AutoTranslate.", NotificationType.ERROR)
             )
             toggle()

@@ -51,7 +51,7 @@ public class FastUse extends Module {
         }
 
         // Check we want to set the delay timer to 0
-        if (xp.getValue() && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) || crystals.getValue() && InventoryUtil.isHolding(Items.END_CRYSTAL)) {
+        if (xp.getValue() && mc.player.isHandActive() && mc.player.getActiveItemStack().getItem().equals(Items.EXPERIENCE_BOTTLE) || crystals.getValue() && mc.player.isHandActive() && mc.player.getActiveItemStack().getItem().equals(Items.END_CRYSTAL)) {
             Random random = new Random();
 
             if (randomPause.getValue() && random.nextInt(randomChance.getValue().intValue()) == 1) {

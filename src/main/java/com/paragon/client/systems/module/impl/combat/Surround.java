@@ -6,7 +6,7 @@ import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
-import com.paragon.client.systems.module.impl.client.rotation.Rotate;
+import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
 import com.paragon.api.setting.Setting;

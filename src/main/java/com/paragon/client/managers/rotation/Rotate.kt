@@ -1,10 +1,10 @@
-package com.paragon.client.systems.module.impl.client.rotation;
+package com.paragon.client.managers.rotation
 
 /**
  * @author Wolfsurge
  * @since 23/03/22
  */
-public enum Rotate {
+enum class Rotate {
     /**
      * Rotate with a packet
      */

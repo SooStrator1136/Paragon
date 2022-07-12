@@ -29,7 +29,7 @@ object Spammer : Module("Spammer", Category.MISC, "Spams messages in chat (defin
                 loadLines()
             }
 
-            mc.player.sendChatMessage(lines[(Math.random() * lines.size).toInt()])
+            minecraft.player.sendChatMessage(lines[(Math.random() * lines.size).toInt()])
         }
     }
 

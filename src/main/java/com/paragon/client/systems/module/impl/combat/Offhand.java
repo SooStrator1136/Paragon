@@ -1,7 +1,6 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.api.util.calculations.Timer;
-import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.string.StringUtil;
 import com.paragon.api.module.Module;
@@ -194,7 +193,7 @@ public class Offhand extends Module {
      *
      * @return The slot to switch to
      */
-    private int getSwapSlot() {
+    public int getSwapSlot() {
         // Get priority slot
         Item swap = priority.getValue().getItem();
 
@@ -204,8 +203,8 @@ public class Offhand extends Module {
         }
 
         // Apply safety
-        if (safety.getValue()) {
-            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && EntityUtil.getEntityHealth(mc.player) <= healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
+        if (safety.getValue() && InventoryUtil.getCountOfItem(Items.TOTEM_OF_UNDYING, false, true) > 0) {
+            if (elytra.getValue() && mc.player.isElytraFlying() || falling.getValue() && mc.player.fallDistance > 3 || health.getValue() && mc.player.getHealth() <= healthValue.getValue() || lava.getValue() && mc.player.isInLava() || fire.getValue() && mc.player.isBurning()) {
                 swap = Items.TOTEM_OF_UNDYING;
             }
 
