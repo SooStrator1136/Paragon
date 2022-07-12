@@ -32,6 +32,7 @@ TeleTofu
 
 ## Developers
 Bush <br>
+SooStrator <br>
 Master7720 (kinda)
 
 ## Other Contributors
