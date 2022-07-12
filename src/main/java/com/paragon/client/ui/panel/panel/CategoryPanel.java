@@ -213,33 +213,44 @@ public class CategoryPanel extends Panel implements TextRenderer {
                         element.getSubElements().forEach(subElement -> {
                             float hover = 0;
                             String description = "";
+                            boolean visible = true;
 
                             if (subElement instanceof BooleanElement) {
-                                description = StringUtil.wrap(((BooleanElement) subElement).getSetting().getDescription(), 20);
-                                hover = ((BooleanElement) subElement).getHover();
+                                BooleanElement sElement = ((BooleanElement) subElement);
+                                description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
+                                hover = sElement.getHover();
+                                visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof SliderElement) {
-                                description = StringUtil.wrap(((SliderElement) subElement).getSetting().getDescription(), 20);
-                                hover = ((SliderElement) subElement).getHover();
+                                SliderElement sElement = ((SliderElement) subElement);
+                                description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
+                                hover = sElement.getHover();
+                                visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof EnumElement) {
-                                description = StringUtil.wrap(((EnumElement) subElement).getSetting().getDescription(), 20);
-                                hover = ((EnumElement) subElement).getHover();
+                                EnumElement sElement = ((EnumElement) subElement);
+                                description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
+                                hover = sElement.getHover();
+                                visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof ColourElement) {
-                                description = StringUtil.wrap(((ColourElement) subElement).getSetting().getDescription(), 20);
-                                hover = ((ColourElement) subElement).getHover();
+                                ColourElement sElement = ((ColourElement) subElement);
+                                description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
+                                hover = sElement.getHover();
+                                visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof BindElement) {
-                                description = StringUtil.wrap(((BindElement) subElement).getSetting().getDescription(), 20);
-                                hover = ((BindElement) subElement).getHover();
+                                BindElement sElement = ((BindElement) subElement);
+                                description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
+                                hover = sElement.getHover();
+                                visible = sElement.getSetting().isVisible();
                             }
 
-                            if (hover == 0) {
+                            if (hover == 0 || !visible) {
                                 return;
                             }
 
@@ -255,32 +266,44 @@ public class CategoryPanel extends Panel implements TextRenderer {
                                 float subHover = 0;
                                 String subDesc = "";
 
+                                boolean subVisible = true;
+
                                 if (subSubElement instanceof BooleanElement) {
-                                    subDesc = StringUtil.wrap(((BooleanElement) subSubElement).getSetting().getDescription(), 20);
-                                    subHover = ((BooleanElement) subSubElement).getHover();
+                                    BooleanElement ssElement = ((BooleanElement) subSubElement);
+                                    subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
+                                    subHover = ssElement.getHover();
+                                    subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof SliderElement) {
-                                    subDesc = StringUtil.wrap(((SliderElement) subSubElement).getSetting().getDescription(), 20);
-                                    subHover = ((SliderElement) subSubElement).getHover();
+                                    SliderElement ssElement = ((SliderElement) subSubElement);
+                                    subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
+                                    subHover = ssElement.getHover();
+                                    subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof EnumElement) {
-                                    subDesc = StringUtil.wrap(((EnumElement) subSubElement).getSetting().getDescription(), 20);
-                                    subHover = ((EnumElement) subSubElement).getHover();
+                                    EnumElement ssElement = ((EnumElement) subSubElement);
+                                    subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
+                                    subHover = ssElement.getHover();
+                                    subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof ColourElement) {
-                                    subDesc = StringUtil.wrap(((ColourElement) subSubElement).getSetting().getDescription(), 20);
-                                    subHover = ((ColourElement) subSubElement).getHover();
+                                    ColourElement ssElement = ((ColourElement) subSubElement);
+                                    subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
+                                    subHover = ssElement.getHover();
+                                    subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof BindElement) {
-                                    subDesc = StringUtil.wrap(((BindElement) subSubElement).getSetting().getDescription(), 20);
-                                    subHover = ((BindElement) subSubElement).getHover();
+                                    BindElement ssElement = ((BindElement) subSubElement);
+                                    subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
+                                    subHover = ssElement.getHover();
+                                    subVisible = ssElement.getSetting().isVisible();
                                 }
 
-                                if (subHover == 0) {
+                                if (subHover == 0 || !subVisible) {
                                     return;
                                 }
 
@@ -347,4 +370,5 @@ public class CategoryPanel extends Panel implements TextRenderer {
     public float getLeftHue() {
         return leftHue;
     }
+
 }

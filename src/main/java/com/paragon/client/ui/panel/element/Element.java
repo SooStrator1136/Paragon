@@ -25,7 +25,7 @@ public abstract class Element implements Wrapper, TextRenderer {
     private List<Element> subelements = new ArrayList<>();
 
     private CategoryPanel parent;
-    private final Animation animation = new Animation(() -> ClickGUI.animationSpeed.getValue(), false, () -> ClickGUI.easing.getValue());
+    private final Animation animation = new Animation(ClickGUI.animationSpeed::getValue, false, ClickGUI.easing::getValue);
     private boolean open;
 
     public Element(int layer, float x, float y, float width, float height) {
@@ -79,7 +79,7 @@ public abstract class Element implements Wrapper, TextRenderer {
     }
 
     public boolean isHovered(int mouseX, int mouseY) {
-        return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY >= getY() && mouseY <= getY() + getHeight();
+        return mouseX >= getX() && mouseX <= getX() + getWidth() && mouseY > getY() && mouseY <= getY() + getHeight();
     }
 
     public float getX() {

@@ -9,7 +9,7 @@ import com.paragon.api.module.Module
  * @author Wolfsurge
  */
 @IgnoredByNotifications
-object DiscordRPCkt : Module("DiscordRPC", Category.CLIENT, "Changes your Discord presence to reflect the client's current state") {
+object DiscordRPC : Module("DiscordRPC", Category.CLIENT, "Changes your Discord presence to reflect the client's current state") {
 
     override fun onEnable() {
         Paragon.INSTANCE.presenceManager.startRPC()

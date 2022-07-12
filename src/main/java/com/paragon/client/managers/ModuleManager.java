@@ -46,8 +46,8 @@ public class ModuleManager {
                 new Flight(),
                 new NoFall(),
                 new NoSlow(),
-                new ReverseStep(),
-                new Sprint(),
+                ReverseStep.INSTANCE,
+                Sprint.INSTANCE,
                 new Step(),
                 new Velocity(),
 
@@ -108,7 +108,7 @@ public class ModuleManager {
                 new ClientFont(),
                 new Colours(),
                 new ClickGUI(),
-                DiscordRPCkt.INSTANCE,
+                DiscordRPC.INSTANCE,
                 new Rotations(),
 
                 // HUD
