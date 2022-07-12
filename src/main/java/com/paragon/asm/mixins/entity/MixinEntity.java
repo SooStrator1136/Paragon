@@ -17,10 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinEntity {
 
     @Shadow
-    public abstract AxisAlignedBB getEntityBoundingBox();
-
-    @Shadow
     public float stepHeight;
+
+    @Shadow private AxisAlignedBB boundingBox;
 
     @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target="Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
     public void onEntityCollision(Entity entity, double x, double y, double z) {
@@ -36,7 +35,7 @@ public abstract class MixinEntity {
 
     @Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endSection()V", shift = At.Shift.BEFORE, ordinal = 0))
     public void onMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
-        StepEvent stepEvent = new StepEvent(getEntityBoundingBox(), (Entity) (Object) this, 0.5f);
+        StepEvent stepEvent = new StepEvent(boundingBox, (Entity) (Object) this, 0.5f);
         Paragon.INSTANCE.getEventBus().post(stepEvent);
 
         if (stepEvent.isCancelled()) {

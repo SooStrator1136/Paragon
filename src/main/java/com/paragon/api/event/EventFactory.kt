@@ -25,7 +25,7 @@ class EventFactory : Wrapper {
             if (module.isEnabled) {
                 module.onTick()
             }
-            if (module.bind.getValue().isPressed && Minecraft.getMinecraft().currentScreen == null) {
+            if (module.bind.value.isPressed && Minecraft.getMinecraft().currentScreen == null) {
                 Paragon.INSTANCE.eventBus.unregister(module)
                 module.toggle()
             }

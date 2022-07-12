@@ -18,7 +18,22 @@ class Setting<T> {
         private set
 
     // Value of the setting
-    private var value: T
+    var value: T
+        private set
+
+        get() {
+            if (field is Color) {
+                if (isSync && this !== Colours.mainColour) {
+                    return Colours.mainColour.value as T
+                }
+
+                if (isRainbow) {
+                    return ColourUtil.integrateAlpha(Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)), alpha) as T
+                }
+            }
+
+            return field
+        }
 
     // For numeric settings
     var min: T? = null
@@ -76,24 +91,6 @@ class Setting<T> {
     fun setDescription(description: String): Setting<T> {
         this.description = description
         return this
-    }
-
-    /**
-     * Gets the value of the setting.
-     *
-     * @return the value of the setting.
-     */
-    fun getValue(): T {
-        if (value is Color) {
-            if (isSync && this !== Colours.mainColour) {
-                return Colours.mainColour.value as T
-            }
-
-            if (isRainbow) {
-                return ColourUtil.integrateAlpha(Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)), alpha) as T
-            }
-        }
-        return value
     }
 
     /**

@@ -29,28 +29,28 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     private val suffix = Setting("Mark Translation", true)
         .setDescription("Suffix translated messages with \"[Translated]\"")
-        .setVisibility { incoming.getValue() }
+        .setVisibility { incoming.value }
 
     private val incomingLang = Setting("In Lang", "English")
         .setDescription("Language to translate incoming messages to")
-        .setVisibility { incoming.getValue() }
+        .setVisibility { incoming.value}
 
     private val outgoing = Setting("Outgoing", false)
         .setDescription("Automatically translate outgoing messages")
 
     private val outgoingLang = Setting("Out Lang", "English")
         .setDescription("Language to translate outgoing messages to")
-        .setVisibility { outgoing.getValue() }
+        .setVisibility { outgoing.value }
 
     private val translator = Translator()
 
     @SubscribeEvent(priority = EventPriority.LOWEST) // We are cancelling the event, so let other listeners do their thing first
     fun onChatReceived(event: ClientChatReceivedEvent) {
-        if (!incoming.getValue()) {
+        if (!incoming.value) {
             return
         }
 
-        val language = getLanguage(incomingLang.getValue()) ?: return
+        val language = getLanguage(incomingLang.value) ?: return
 
         event.isCanceled = true
 
@@ -59,7 +59,7 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
             translate(event.message.unformattedText, language) {
                 // Send chat on main thread
                 mainThread {
-                    val messageSuffix = if (suffix.getValue() && sourceLanguage != targetLanguage)
+                    val messageSuffix = if (suffix.value && sourceLanguage != targetLanguage)
                         "$GRAY [Translated]" else ""
                     minecraft.ingameGUI?.chatGUI?.printChatMessage(TextComponentString(translatedText + messageSuffix))
                 }
@@ -69,11 +69,11 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onChatSend(event: ClientChatEvent) {
-        if (!outgoing.getValue() || Paragon.INSTANCE.commandManager!!.startsWithPrefix(event.message)) {
+        if (!outgoing.value || Paragon.INSTANCE.commandManager!!.startsWithPrefix(event.message)) {
             return
         }
 
-        val language = getLanguage(outgoingLang.getValue()) ?: return
+        val language = getLanguage(outgoingLang.value) ?: return
 
         event.isCanceled = true
 

@@ -38,7 +38,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
             return
         }
 
-        when (mode.getValue()) {
+        when (mode.value) {
             Mode.GAMMA -> minecraft.gameSettings.gammaSetting = 50000f // Increase gamma
 
             Mode.EFFECT -> {
@@ -52,7 +52,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
     }
 
-    override fun getData() = " " + StringUtil.getFormattedText(mode.getValue())
+    override fun getData() = " " + StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
         /**

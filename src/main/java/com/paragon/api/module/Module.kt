@@ -33,7 +33,7 @@ open class Module(name: String?, val category: Category?, description: String?) 
 
     // Arraylist animation
     @JvmField
-    var animation = Animation({ ArrayListHUD.animationSpeed.getValue() }, false) { ArrayListHUD.easing.getValue() }
+    var animation = Animation({ ArrayListHUD.animationSpeed.value }, false) { ArrayListHUD.easing.value }
 
     // Whether the module is enabled
     var isEnabled = false
@@ -114,7 +114,7 @@ open class Module(name: String?, val category: Category?, description: String?) 
      * @return The module's visibility
      */
     fun isVisible(): Boolean {
-        return visible.getValue()
+        return visible.value
     }
 
     /**

@@ -5,6 +5,7 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
+import com.paragon.client.systems.module.hud.HUDModule;
 
 public class HUD extends Module implements TextRenderer {
 
@@ -22,9 +23,9 @@ public class HUD extends Module implements TextRenderer {
             return;
         }
 
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+        Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
             if (hudModule.isEnabled()) {
-                hudModule.render();
+                ((HUDModule) hudModule).render();
             }
         });
     }

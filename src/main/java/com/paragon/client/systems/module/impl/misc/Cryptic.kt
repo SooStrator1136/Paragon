@@ -42,7 +42,7 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
 
     @SubscribeEvent
     fun onChatSend(event: ClientChatEvent) {
-        if (requirePrefix.getValue() && !event.message.startsWith("crypt ")) {
+        if (requirePrefix.value && !event.message.startsWith("crypt ")) {
             return
         }
 
@@ -67,7 +67,7 @@ object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts message
                 return
             }
 
-            if (cancel.getValue()) {
+            if (cancel.value) {
                 event.isCanceled = true
             }
 

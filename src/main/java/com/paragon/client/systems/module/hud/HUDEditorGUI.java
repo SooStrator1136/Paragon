@@ -23,10 +23,10 @@ public class HUDEditorGUI extends GuiScreen {
         RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - 0.5f, 0, 1, scaledResolution.getScaledHeight(), new Color(255, 255, 255, 100).getRGB());
         RenderUtil.drawRect(0, (scaledResolution.getScaledHeight() / 2f) - 0.5f, scaledResolution.getScaledWidth(), 1, new Color(255, 255, 255, 100).getRGB());
 
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+        Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
             if (hudModule.isEnabled()) {
-                hudModule.updateComponent(mouseX, mouseY);
-                hudModule.render();
+                ((HUDModule) hudModule).updateComponent(mouseX, mouseY);
+                ((HUDModule) hudModule).render();
             }
         });
 
@@ -37,11 +37,11 @@ public class HUDEditorGUI extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         Collections.reverse(Paragon.INSTANCE.getModuleManager().getModules());
 
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+        Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
             if (hudModule.isEnabled() && !draggingComponent) {
-                hudModule.mouseClicked(mouseX, mouseY, mouseButton);
+                ((HUDModule) hudModule).mouseClicked(mouseX, mouseY, mouseButton);
 
-                if (hudModule.isDragging()) {
+                if (((HUDModule) hudModule).isDragging()) {
                     draggingComponent = true;
                 }
             }
@@ -56,9 +56,9 @@ public class HUDEditorGUI extends GuiScreen {
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         draggingComponent = false;
 
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+        Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
             if (hudModule.isEnabled()) {
-                hudModule.mouseReleased(mouseX, mouseY, state);
+                ((HUDModule) hudModule).mouseReleased(mouseX, mouseY, state);
             }
         });
 
@@ -69,9 +69,9 @@ public class HUDEditorGUI extends GuiScreen {
     public void onGuiClosed() {
         this.draggingComponent = false;
 
-        Paragon.INSTANCE.getModuleManager().getHUDModules().forEach(hudModule -> {
+        Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
             if (hudModule.isEnabled()) {
-                hudModule.mouseReleased(0, 0, 0);
+                ((HUDModule) hudModule).mouseReleased(0, 0, 0);
             }
         });
     }

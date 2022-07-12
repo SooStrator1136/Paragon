@@ -36,7 +36,7 @@ object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :(("
     override fun onRender3D() {
         minecraft.world.playerEntities.forEach {
             // We don't want to render the hat
-            if (it === minecraft.player && !firstPerson.getValue() && minecraft.gameSettings.thirdPersonView == 0 || !others.getValue() && it !== minecraft.player) {
+            if (it === minecraft.player && !firstPerson.value && minecraft.gameSettings.thirdPersonView == 0 || !others.value && it !== minecraft.player) {
                 return
             }
 
@@ -74,13 +74,13 @@ object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :(("
             i += Math.PI * 4 / 128 // There is no classic for loop in kt
 
             // Set bottom colour
-            ColourUtil.setColour(bottomColour.getValue().rgb)
+            ColourUtil.setColour(bottomColour.value.rgb)
 
             // Add bottom point
             glVertex3d(vec.x + 0.65 * cos(i), vec.y - 0.25, vec.z + 0.65 * sin(i))
 
             // Set top colour
-            ColourUtil.setColour(topColour.getValue().rgb)
+            ColourUtil.setColour(topColour.value.rgb)
 
             // Add top point
             glVertex3d(vec.x, vec.y, vec.z)

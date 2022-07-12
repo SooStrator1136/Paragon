@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
+import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.panel.panel.CategoryPanel;
 import com.paragon.client.ui.panel.panel.Panel;
 import net.minecraft.client.gui.GuiScreen;
@@ -20,12 +21,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.*;
 
 public class PanelGUI extends GuiScreen {
 
     private final List<Panel> panels = new ArrayList<>();
+
+    private final Animation openAnimation = new Animation(ClickGUI.animationSpeed::getValue, false, ClickGUI.easing::getValue);
 
     public PanelGUI() {
         float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 110) / 2f);
@@ -34,6 +36,11 @@ public class PanelGUI extends GuiScreen {
             panels.add(new CategoryPanel(category, x, 30, 105, 22, 22));
             x += 110;
         }
+    }
+
+    @Override
+    public void initGui() {
+        openAnimation.setState(true);
     }
 
     @Override
@@ -60,10 +67,10 @@ public class PanelGUI extends GuiScreen {
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
 
-            bufferbuilder.pos(width, 0, 0).color(topRight[0] / 360, topRight[1] / 360, topRight[2] / 360, 0.5f).endVertex();
-            bufferbuilder.pos(0, 0, 0).color(topLeft[0] / 360, topLeft[1] / 360, topLeft[2] / 360, 0.5f).endVertex();
-            bufferbuilder.pos(0, height, 0).color(bottomLeft[0] / 360, bottomLeft[1] / 360, bottomLeft[2] / 360, 0.5f).endVertex();
-            bufferbuilder.pos(width, height, 0).color(bottomRight[0] / 360, bottomRight[1] / 360, bottomRight[2] / 360, 0.5f).endVertex();
+            bufferbuilder.pos(width, 0, 0).color(topRight[0] / 360, topRight[1] / 360, topRight[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
+            bufferbuilder.pos(0, 0, 0).color(topLeft[0] / 360, topLeft[1] / 360, topLeft[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
+            bufferbuilder.pos(0, height, 0).color(bottomLeft[0] / 360, bottomLeft[1] / 360, bottomLeft[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
+            bufferbuilder.pos(width, height, 0).color(bottomRight[0] / 360, bottomRight[1] / 360, bottomRight[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
 
             tessellator.draw();
             GlStateManager.shadeModel(7424);
@@ -74,6 +81,12 @@ public class PanelGUI extends GuiScreen {
 
         int dWheel = Mouse.getDWheel();
 
+        glPushMatrix();
+
+        // pop out
+        glScaled(openAnimation.getAnimationFactor(), openAnimation.getAnimationFactor(), 1);
+        glTranslated((width / 2f) * (1 - openAnimation.getAnimationFactor()), (height / 2f) * (1 - openAnimation.getAnimationFactor()), 0);
+
         Collections.reverse(panels);
 
         panels.forEach(panel -> panel.render(mouseX, mouseY, dWheel));
@@ -82,6 +95,8 @@ public class PanelGUI extends GuiScreen {
 
         glColor4f(1, 1, 1, 1);
 
+        glPopMatrix();
+
         if (ClickGUI.catgirl.getValue()) {
             ScaledResolution sr = new ScaledResolution(mc);
 
@@ -89,7 +104,10 @@ public class PanelGUI extends GuiScreen {
             RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
         }
 
+        glPushMatrix();
+        glTranslated(0, 24 - (24 * openAnimation.getAnimationFactor()), 0);
         Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
+        glPopMatrix();
     }
 
     @Override
@@ -131,6 +149,8 @@ public class PanelGUI extends GuiScreen {
     public void onGuiClosed() {
         Paragon.INSTANCE.getStorageManager().saveModules("current");
         Paragon.INSTANCE.getStorageManager().saveOther();
+
+        openAnimation.setState(false);
     }
 
     @Override

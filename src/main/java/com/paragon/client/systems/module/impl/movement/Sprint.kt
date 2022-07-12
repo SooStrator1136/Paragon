@@ -14,7 +14,7 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
     private val mode = Setting("Mode", Mode.LEGIT).setDescription("The mode to sprint in")
     private val onlyWhenMoving = Setting("WhenMoving", true)
         .setDescription("Only omni sprint when actually moving")
-        .setVisibility { mode.getValue() === Mode.OMNI }
+        .setVisibility { mode.value === Mode.OMNI }
 
     override fun onDisable() {
         // Stop us sprinting when we disable
@@ -23,10 +23,10 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
 
     override fun onTick() {
         minecraft?.player?.let { player ->
-            when (mode.getValue()) {
+            when (mode.value) {
                 Mode.OMNI -> {
                     // If we aren't moving, do not make us sprint
-                    if (onlyWhenMoving.getValue() && !PlayerUtil.isMoving()) {
+                    if (onlyWhenMoving.value && !PlayerUtil.isMoving()) {
                         return
                     }
 
@@ -38,7 +38,7 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
         }
     }
 
-    override fun getData() = " " + StringUtil.getFormattedText(mode.getValue())
+    override fun getData() = " " + StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
 

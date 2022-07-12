@@ -22,7 +22,7 @@ object Spammer : Module("Spammer", Category.MISC, "Spams messages in chat (defin
             return
         }
 
-        if (System.currentTimeMillis() - lastMS > (delay.getValue() * 60) * 1000) {
+        if (System.currentTimeMillis() - lastMS > (delay.value * 60) * 1000) {
             lastMS = System.currentTimeMillis()
 
             if (lines.isEmpty()) {

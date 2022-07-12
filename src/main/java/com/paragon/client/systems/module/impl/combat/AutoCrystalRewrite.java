@@ -695,7 +695,7 @@ public class AutoCrystalRewrite extends Module {
      * @param entity The target
      * @return The damage done to the target
      */
-    private float calculateDamage(Vec3d vec, EntityLivingBase entity) {
+    public float calculateDamage(Vec3d vec, EntityLivingBase entity) {
         float doubleExplosionSize = 12.0F;
         double distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / (double) doubleExplosionSize;
         double blockDensity = entity.world.getBlockDensity(new Vec3d(vec.x, vec.y, vec.z), entity.getEntityBoundingBox());

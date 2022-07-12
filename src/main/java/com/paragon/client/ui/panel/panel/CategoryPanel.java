@@ -52,7 +52,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
         this.barHeight = barHeight;
 
         float offset = getY() + barHeight;
-        for (Module module : Paragon.INSTANCE.getModuleManager().getModulesInCategory(category)) {
+        for (Module module : Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module.getCategory().equals(category))) {
             elements.add(new ModuleElement(this, module, getX(), offset, getWidth(), 16));
             offset += 16;
         }

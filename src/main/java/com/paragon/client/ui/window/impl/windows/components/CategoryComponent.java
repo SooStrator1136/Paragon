@@ -23,7 +23,7 @@ public class CategoryComponent extends Component {
         this.category = category;
 
         float offset = y + height + 8;
-        for (Module module : Paragon.INSTANCE.getModuleManager().getModulesInCategory(category)) {
+        for (Module module : Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module.getCategory().equals(category))) {
             moduleComponents.add(new ModuleComponent(window, module, window.getX() + 2, offset, getWindow().getWidth() - 4, 15));
             offset += 19;
         }
