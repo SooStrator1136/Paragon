@@ -30,67 +30,67 @@ class Paragon {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent?) {
-        logger!!.info("Starting Paragon $modVersion initialisation")
+        logger.info("Starting Paragon $modVersion initialisation")
 
         // Set up managers
 
         storageManager = StorageManager()
-        logger!!.info("Storage Manager Initialised")
+        logger.info("Storage Manager Initialised")
 
         popManager = PopManager()
-        logger!!.info("Pop Manager Initialised")
+        logger.info("Pop Manager Initialised")
 
         rotationManager = RotationManager()
-        logger!!.info("Rotation Manager Initialised")
+        logger.info("Rotation Manager Initialised")
 
         socialManager = SocialManager()
-        logger!!.info("Social Manager Initialised")
+        logger.info("Social Manager Initialised")
 
         altManager = AltManager()
-        logger!!.info("Alt Manager Initialised")
+        logger.info("Alt Manager Initialised")
 
         notificationManager = NotificationManager()
-        logger!!.info("Notification Manager Initialised")
+        logger.info("Notification Manager Initialised")
 
         capeManager = CapeManager()
-        logger!!.info("Cape Manager Initialised")
+        logger.info("Cape Manager Initialised")
 
         moduleManager = ModuleManager()
-        logger!!.info("Module Manager Initialised")
+        logger.info("Module Manager Initialised")
 
         commandManager = CommandManager()
-        logger!!.info("Command Manager Initialised")
+        logger.info("Command Manager Initialised")
 
 
         // GUIs
 
         taskbar = Taskbar()
-        logger!!.info("Taskbar Initialised")
+        logger.info("Taskbar Initialised")
 
         panelGUI = PanelGUI()
-        logger!!.info("Panel GUI Initialised")
+        logger.info("Panel GUI Initialised")
 
         windowGUI = WindowGUI()
-        logger!!.info("Window GUI Initialised")
+        logger.info("Window GUI Initialised")
 
         console = Console("Paragon Console", 400f, 300f)
-        logger!!.info("Console Initialised")
+        logger.info("Console Initialised")
 
 
         // Load config
-        storageManager!!.loadModules("current")
-        logger!!.info("Modules Loaded")
+        storageManager.loadModules("current")
+        logger.info("Modules Loaded")
 
-        storageManager!!.loadSocial()
-        logger!!.info("Social Loaded")
+        storageManager.loadSocial()
+        logger.info("Social Loaded")
 
-        storageManager!!.loadAlts()
-        logger!!.info("Alts Loaded")
+        storageManager.loadAlts()
+        logger.info("Alts Loaded")
 
-        storageManager!!.loadOther()
-        logger!!.info("Other Loaded")
+        storageManager.loadOther()
+        logger.info("Other Loaded")
 
-        logger!!.info("Paragon $modVersion Initialised Successfully")
+        logger.info("Paragon $modVersion Initialised Successfully")
     }
 
     companion object {
@@ -106,61 +106,62 @@ class Paragon {
     val eventBus = EventBus()
 
     // Client stuff
-    var logger: Logger? = null
+    lateinit var logger: Logger
         private set
 
     val presenceManager = DiscordPresenceManager()
 
     // Managers
-    var fontManager: FontManager? = null
+    lateinit var fontManager: FontManager
         private set
 
-    var storageManager: StorageManager? = null
+    lateinit var storageManager: StorageManager
         private set
 
-    var moduleManager: ModuleManager? = null
+    lateinit var moduleManager: ModuleManager
         private set
 
-    var commandManager: CommandManager? = null
+    lateinit var commandManager: CommandManager
         private set
 
-    var eventParser: EventFactory? = null
+    lateinit var eventParser: EventFactory
         private set
 
-    var popManager: PopManager? = null
+    lateinit var popManager: PopManager
         private set
 
-    var rotationManager: RotationManager? = null
+    lateinit var rotationManager: RotationManager
         private set
 
-    var socialManager: SocialManager? = null
+    lateinit var socialManager: SocialManager
         private set
 
-    var altManager: AltManager? = null
+    lateinit var altManager: AltManager
         private set
 
-    var notificationManager: NotificationManager? = null
+    lateinit var notificationManager: NotificationManager
         private set
 
-    var capeManager: CapeManager? = null
+    lateinit var capeManager: CapeManager
         private set
 
     // GUIs
-    var taskbar: Taskbar? = null
+    lateinit var taskbar: Taskbar
         private set
 
-    var panelGUI: PanelGUI? = null
+    lateinit var panelGUI: PanelGUI
         private set
 
-    var windowGUI: WindowGUI? = null
+    lateinit var windowGUI: WindowGUI
         private set
 
-    var console: Console? = null
+    lateinit var console: Console
         private set
 
     var isParagonMainMenu = false
         set(paragonMainMenu) {
             field = paragonMainMenu
-            storageManager!!.saveOther()
+            storageManager.saveOther()
         }
+
 }

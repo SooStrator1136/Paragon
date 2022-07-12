@@ -69,14 +69,14 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private val inventorySpoof = Setting("InventorySpoof", true)
         .setDescription("Spoof opening your inventory")
 
-    private val swapTimer: Timer = Timer()
+    private val swapTimer = Timer()
 
     override fun onTick() {
         if (nullCheck() || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
             return
         }
 
-        val item: Int = getSwitchSlot()
+        val item = getSwitchSlot()
 
         if (item == -1) {
             return
@@ -120,22 +120,23 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     }
 
     private fun shouldApplySafety(): Boolean {
-        minecraft.player?.let { player ->
+        if (crystal.value) {
             var deadlyCrystals = 0
-
-            minecraft.world.loadedEntityList.stream().filter { entity -> entity.getDistance(minecraft.player) <= 6 && entity is EntityEnderCrystal }.forEach { entity ->
-                if (AutoCrystalRewrite.INSTANCE.calculateDamage(Vec3d(entity.posX, entity.posY, entity.posZ), minecraft.player) > EntityUtil.getEntityHealth(minecraft.player)) {
-                    deadlyCrystals++
+            minecraft.world.loadedEntityList.stream()
+                .filter { entity -> entity is EntityEnderCrystal && entity.getDistance(minecraft.player) <= 6 }
+                .forEach { entity ->
+                    if (AutoCrystalRewrite.INSTANCE.calculateDamage(Vec3d(entity.posX, entity.posY, entity.posZ), minecraft.player) > EntityUtil.getEntityHealth(minecraft.player)) {
+                        deadlyCrystals++
+                    }
                 }
-            }
+            return true
+        }
 
-            return health.value && EntityUtil.getEntityHealth(player) <= healthValue.value ||
-                    falling.value && minecraft.player.fallDistance >= 3 ||
-                    elytra.value && minecraft.player.isElytraFlying ||
-                    lava.value && minecraft.player.isInLava ||
-                    fire.value && minecraft.player.isBurning ||
-                    crystal.value && deadlyCrystals > 0
-        }?: return false
+        return health.value && EntityUtil.getEntityHealth(minecraft.player) <= healthValue.value ||
+                falling.value && minecraft.player.fallDistance >= 3 ||
+                elytra.value && minecraft.player.isElytraFlying ||
+                lava.value && minecraft.player.isInLava ||
+                fire.value && minecraft.player.isBurning
     }
 
     private fun swapOffhand(slot: Int) {
