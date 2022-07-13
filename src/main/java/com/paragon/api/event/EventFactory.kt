@@ -21,11 +21,11 @@ class EventFactory : Wrapper {
 
     @SubscribeEvent
     fun onTick(event: ClientTickEvent?) {
-        Paragon.INSTANCE.moduleManager!!.modules.forEach(Consumer { module: Module ->
+        Paragon.INSTANCE.moduleManager.modules.forEach(Consumer { module: Module ->
             if (module.isEnabled) {
                 module.onTick()
             }
-            if (module.bind.value.isPressed && Minecraft.getMinecraft().currentScreen == null) {
+            if (module.bind.value.isPressed() && Minecraft.getMinecraft().currentScreen == null) {
                 Paragon.INSTANCE.eventBus.unregister(module)
                 module.toggle()
             }
@@ -35,7 +35,7 @@ class EventFactory : Wrapper {
     @SubscribeEvent
     fun onRender2D(event: RenderGameOverlayEvent) {
         if (event.type.equals(RenderGameOverlayEvent.ElementType.TEXT)) {
-            Paragon.INSTANCE.moduleManager!!.modules.forEach(Consumer { module: Module ->
+            Paragon.INSTANCE.moduleManager.modules.forEach(Consumer { module: Module ->
                 if (module.isEnabled) {
                     module.onRender2D()
                 }
@@ -45,7 +45,7 @@ class EventFactory : Wrapper {
 
     @SubscribeEvent
     fun onRender3D(event: RenderWorldLastEvent?) {
-        Paragon.INSTANCE.moduleManager!!.modules.forEach(Consumer { module: Module ->
+        Paragon.INSTANCE.moduleManager.modules.forEach(Consumer { module: Module ->
             if (module.isEnabled) {
                 module.onRender3D()
             }
@@ -78,4 +78,5 @@ class EventFactory : Wrapper {
         MinecraftForge.EVENT_BUS.register(this)
         Paragon.INSTANCE.eventBus.register(this)
     }
+
 }
