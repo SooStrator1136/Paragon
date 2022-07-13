@@ -9,14 +9,17 @@ import com.paragon.client.ui.taskbar.icons.Icon;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 
 /**
  * @author Wolfsurge
  */
-public class Taskbar implements Wrapper, TextRenderer {
+@SideOnly(Side.CLIENT)
+public final class Taskbar implements Wrapper, TextRenderer {
 
     private ArrayList<Icon> icons = new ArrayList<>();
     private boolean open = true;

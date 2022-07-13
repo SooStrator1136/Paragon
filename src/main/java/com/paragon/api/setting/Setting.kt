@@ -20,7 +20,6 @@ class Setting<T> {
     // Value of the setting
     var value: T
         private set
-
         get() {
             if (field is Color) {
                 if (isSync && this !== Colours.mainColour) {

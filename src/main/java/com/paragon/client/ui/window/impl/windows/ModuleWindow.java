@@ -70,7 +70,7 @@ public class ModuleWindow extends Window implements Wrapper {
 
             if (mouse > 0) {
                 for (ModuleComponent moduleComponent : selectedComponent.getModuleComponents()) {
-                    if (firstComponent.getY() + 1 > getY() + 40 && ClickGUI.scrollClamp.getValue()) {
+                    if (firstComponent.getY() + 1 > getY() + 40 && ClickGUI.getScrollClamp().getValue()) {
                         continue;
                     }
 
@@ -78,7 +78,7 @@ public class ModuleWindow extends Window implements Wrapper {
                 }
             } else if (mouse < 0) {
                 for (ModuleComponent moduleComponent : selectedComponent.getModuleComponents()) {
-                    if (lastComponent.getY() < getY() + getHeight() - lastComponent.getTotalHeight() && ClickGUI.scrollClamp.getValue()) {
+                    if (lastComponent.getY() < getY() + getHeight() - lastComponent.getTotalHeight() && ClickGUI.getScrollClamp().getValue()) {
                         continue;
                     }
 

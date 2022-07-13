@@ -6,8 +6,14 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.animation.Easing;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.client.gui.GuiOptions;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiWorldSelection;
 import net.minecraft.util.ResourceLocation;
+
 import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.glScalef;
@@ -15,7 +21,7 @@ import static org.lwjgl.opengl.GL11.glScalef;
 /**
  * @author Wolfsurge
  */
-public class ParagonMenu extends GuiScreen implements TextRenderer {
+public final class ParagonMenu extends GuiScreen implements TextRenderer {
 
     // Credits expand animation
     private final Animation creditsAnimation = new Animation(() -> 500f, false, () -> Easing.EXPO_IN_OUT);
@@ -50,7 +56,7 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
         // Title
         glScalef(2.5f, 2.5f, 2.5f);
         {
-            float scaleFactor = 1 / 2.5f;
+            float scaleFactor = 1.0F / 2.5f;
 
             renderCenteredString("Paragon", (width / 2f) * scaleFactor, (height / 2f - 30) * scaleFactor, Colours.mainColour.getValue().getRGB(), true);
 
@@ -128,4 +134,5 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
 
         super.actionPerformed(button);
     }
+
 }

@@ -100,7 +100,7 @@ class ModuleManager {
             // Client
             ClientFont(),
             Colours(),
-            ClickGUI(),
+            ClickGUI,
             DiscordRPC,
 
             // HUD

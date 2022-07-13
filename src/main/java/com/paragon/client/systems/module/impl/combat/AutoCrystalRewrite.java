@@ -39,6 +39,8 @@ import net.minecraft.world.Explosion;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -51,6 +53,7 @@ import java.util.stream.Collectors;
 /**
  * @author Wolfsurge
  */
+@SideOnly(Side.CLIENT)
 public class AutoCrystalRewrite extends Module {
 
     public static AutoCrystalRewrite INSTANCE;

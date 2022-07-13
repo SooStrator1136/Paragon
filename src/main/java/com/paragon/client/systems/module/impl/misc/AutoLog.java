@@ -4,10 +4,13 @@ import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
 import com.paragon.api.setting.Setting;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * @author Wolfsurge
  */
+@SideOnly(Side.CLIENT)
 public class AutoLog extends Module {
 
     public static AutoLog INSTANCE;

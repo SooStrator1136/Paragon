@@ -17,11 +17,11 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AltManagerGUI extends GuiScreen implements TextRenderer, Wrapper {
+public final class AltManagerGUI extends GuiScreen implements TextRenderer, Wrapper {
 
     public static AltEntry selectedAltEntry;
     public static String renderString = TextFormatting.GRAY + "Idle";
-    private final ArrayList<AltEntry> altEntries = new ArrayList<>();
+    private final ArrayList<AltEntry> altEntries = new ArrayList<>(3);
 
     @Override
     public void initGui() {
@@ -33,7 +33,7 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer, Wrapper {
         for (Alt alt : Paragon.INSTANCE.getAltManager().getAlts()) {
             altEntries.add(new AltEntry(alt, offset));
 
-            offset += 20;
+            offset += 20.0F;
         }
 
         this.buttonList.add(new GuiButton(0, 5, 5, 75, 20, "Back"));
@@ -121,4 +121,5 @@ public class AltManagerGUI extends GuiScreen implements TextRenderer, Wrapper {
     public void onGuiClosed() {
         Paragon.INSTANCE.getStorageManager().saveAlts();
     }
+
 }

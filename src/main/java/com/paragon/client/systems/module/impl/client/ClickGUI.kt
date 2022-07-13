@@ -1,0 +1,108 @@
+package com.paragon.client.systems.module.impl.client
+
+import com.paragon.Paragon
+import com.paragon.api.module.Category
+import com.paragon.api.module.IgnoredByNotifications
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Bind
+import com.paragon.api.setting.Setting
+import com.paragon.client.ui.animation.Easing
+import org.lwjgl.input.Keyboard
+
+/**
+ * @author SooStrator1136
+ */
+@IgnoredByNotifications
+object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Bind(Keyboard.KEY_RSHIFT, Bind.Device.KEYBOARD)) {
+
+    @JvmStatic
+    val style: Setting<Style> = Setting("Style", Style.PANEL)
+        .setDescription("The style of the ClickGUI")
+
+    // Panel settings
+    @JvmStatic
+    val background = Setting("Background", true)
+        .setDescription("Whether or not to draw the background")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.PANEL }
+
+    @JvmStatic
+    val radius = Setting("Radius", 1f, 1f, 15f, 1f)
+        .setDescription("The radius of the panel's corners")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.PANEL }
+
+    @JvmStatic
+    val tooltips = Setting("Tooltips", true)
+        .setDescription("Render tooltips near the mouse when hovered over a button")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.PANEL }
+
+    @JvmStatic
+    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f)
+        .setDescription("How fast animations are")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.PANEL }
+
+    @JvmStatic
+    val easing = Setting("Easing", Easing.EXPO_IN_OUT)
+        .setDescription("The easing type of the animation")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.PANEL }
+
+    @JvmStatic
+    val iconBackground = Setting("IconBackground", true)
+        .setDescription("Whether or not to draw the background behind the icon")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.PANEL }
+
+    @JvmStatic
+    // Window settings
+    val scrollClamp = Setting("ScrollClamp", false)
+        .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.WINDOW }
+
+    // Shared settings
+    @JvmStatic
+    val darkenBackground = Setting("DarkenBackground", true)
+        .setDescription("Darkens the background whilst in the GUI")
+
+    @JvmStatic
+    val pause = Setting("Pause Game", false)
+        .setDescription("Pause the game whilst in the GUI")
+
+    @JvmStatic
+    val catgirl = Setting("Catgirl", false)
+        .setDescription("deadshot is a weeb")
+
+    @JvmStatic
+    fun getGUI() = when (style.value) {
+        Style.WINDOW -> Paragon.INSTANCE.windowGUI
+        Style.PANEL -> Paragon.INSTANCE.panelGUI
+    }
+
+    override fun onEnable() {
+        minecraft.displayGuiScreen(getGUI())
+        toggle()
+    }
+
+    enum class Style {
+        /**
+         * Panel GUI
+         */
+        /**
+         * Panel GUI
+         */
+        PANEL,
+
+        /**
+         * Window GUI
+         */
+        /**
+         * Window GUI
+         */
+        WINDOW
+    }
+
+}

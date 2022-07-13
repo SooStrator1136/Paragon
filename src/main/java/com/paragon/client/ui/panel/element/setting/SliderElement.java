@@ -10,9 +10,10 @@ import com.paragon.client.ui.panel.element.module.ModuleElement;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class SliderElement extends Element {
+@SuppressWarnings("unchecked")
+public final class SliderElement extends Element {
 
     private final Setting<Number> setting;
 
@@ -32,25 +33,15 @@ public class SliderElement extends Element {
         setting.getSubsettings().forEach(subsetting -> {
             if (subsetting.getValue() instanceof Boolean) {
                 getSubElements().add(new BooleanElement(layer + 1, (Setting<Boolean>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Enum<?>) {
+            } else if (subsetting.getValue() instanceof Enum<?>) {
                 getSubElements().add(new EnumElement(layer + 1, (Setting<Enum<?>>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Number) {
+            } else if (subsetting.getValue() instanceof Number) {
                 getSubElements().add(new SliderElement(layer + 1, (Setting<Number>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Bind) {
+            } else if (subsetting.getValue() instanceof Bind) {
                 getSubElements().add(new BindElement(layer + 1, (Setting<Bind>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Color) {
+            } else if (subsetting.getValue() instanceof Color) {
                 getSubElements().add(new ColourElement(layer + 1, (Setting<Color>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof String) {
+            } else if (subsetting.getValue() instanceof String) {
                 getSubElements().add(new StringElement(layer + 1, (Setting<String>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
             }
         });
@@ -131,10 +122,8 @@ public class SliderElement extends Element {
     @Override
     public void mouseClicked(int mouseX, int mouseY, Click click) {
         if (setting.isVisible()) {
-            if (isHovered(mouseX, mouseY) && getParent().isElementVisible(this)) {
-                if (click.equals(Click.LEFT)) {
-                    dragging = true;
-                }
+            if (isHovered(mouseX, mouseY) && getParent().isElementVisible(this) && click.equals(Click.LEFT)) {
+                this.dragging = true;
             }
 
             super.mouseClicked(mouseX, mouseY, click);
@@ -183,4 +172,5 @@ public class SliderElement extends Element {
     public float getHover() {
         return hover;
     }
+
 }

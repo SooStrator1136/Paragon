@@ -8,7 +8,6 @@ import com.paragon.client.managers.alt.Alt
 import com.paragon.client.managers.social.Player
 import com.paragon.client.managers.social.Relationship
 import com.paragon.client.systems.module.hud.HUDModule
-import org.apache.commons.io.Charsets
 import org.apache.commons.io.FileUtils
 import org.json.JSONArray
 import org.json.JSONException
@@ -17,6 +16,7 @@ import java.awt.Color
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 
 /**
  * @author SooStrator1136
@@ -28,7 +28,7 @@ class StorageManager {
     private val socialFolder = File("paragon${File.separator}social")
 
     @Throws(IOException::class, JSONException::class)
-    private fun getJSON(file: File) = JSONObject(FileUtils.readFileToString(file, Charsets.UTF_8))
+    private fun getJSON(file: File) = JSONObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8))
 
     fun saveModules(configName: String) {
         // Create configs folder if it doesn't already exist

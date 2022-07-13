@@ -7,10 +7,10 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 
-public class AddAltGUI extends GuiScreen implements TextRenderer {
+public final class AddAltGUI extends GuiScreen implements TextRenderer {
 
     private GuiTextField emailField;
     private GuiTextField passwordField;
@@ -27,7 +27,6 @@ public class AddAltGUI extends GuiScreen implements TextRenderer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
-
 
         emailField.drawTextBox();
         passwordField.drawTextBox();
@@ -65,8 +64,7 @@ public class AddAltGUI extends GuiScreen implements TextRenderer {
     protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case 0:
-                Alt alt = new Alt(emailField.getText(), passwordField.getText());
-                Paragon.INSTANCE.getAltManager().addAlt(alt);
+                Paragon.INSTANCE.getAltManager().addAlt(new Alt(emailField.getText(), passwordField.getText()));
                 mc.displayGuiScreen(new AltManagerGUI());
                 break;
             case 1:

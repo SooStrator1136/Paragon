@@ -15,17 +15,18 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ColourElement extends Element {
+@SuppressWarnings("unchecked")
+public final class ColourElement extends Element {
 
     private final Setting<Color> setting;
 
     private float hover;
 
-    private Animation animation = new Animation(() -> ClickGUI.animationSpeed.getValue(), false, () -> ClickGUI.easing.getValue());
+    private Animation animation = new Animation(ClickGUI.getAnimationSpeed()::getValue, false, ClickGUI.getEasing()::getValue);
     private boolean open;
 
     private final Setting<Float> hue = new Setting<>("Hue", 0f, 0f, 360f, 1f)
@@ -77,9 +78,7 @@ public class ColourElement extends Element {
         for (Setting<?> setting1 : settings) {
             if (setting1.getValue() instanceof Boolean) {
                 getSubElements().add(new BooleanElement(layer + 1, (Setting<Boolean>) setting1, moduleElement, getX(), getY(), getWidth(), height));
-            }
-
-            else if (setting1.getValue() instanceof Number) {
+            } else if (setting1.getValue() instanceof Number) {
                 getSubElements().add(new SliderElement(layer + 1, (Setting<Number>) setting1, moduleElement, getX(), getY(), getWidth(), height));
             }
 
@@ -219,11 +218,9 @@ public class ColourElement extends Element {
     @Override
     public void mouseClicked(int mouseX, int mouseY, Click click) {
         if (setting.isVisible()) {
-            if (isHovered(mouseX, mouseY) && getParent().isElementVisible(this)) {
-                if (click.equals(Click.RIGHT)) {
-                    open = !open;
-                    animation.setState(open);
-                }
+            if (isHovered(mouseX, mouseY) && getParent().isElementVisible(this) && click.equals(Click.RIGHT)) {
+                open = !open;
+                animation.setState(open);
             }
 
             float x = getX() + 1;
@@ -278,4 +275,5 @@ public class ColourElement extends Element {
     public float getHover() {
         return hover;
     }
+
 }

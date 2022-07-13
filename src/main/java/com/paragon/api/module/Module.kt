@@ -1,7 +1,6 @@
 package com.paragon.api.module
 
 import com.paragon.client.systems.module.hud.impl.ArrayListHUD
-import java.lang.IllegalAccessException
 import com.paragon.api.event.client.ModuleToggleEvent
 import com.paragon.Paragon
 import com.paragon.api.feature.Feature
@@ -11,11 +10,9 @@ import com.paragon.api.util.Wrapper
 import com.paragon.client.ui.animation.Animation
 import net.minecraftforge.common.MinecraftForge
 import org.lwjgl.input.Keyboard
-import java.lang.IllegalArgumentException
-import java.lang.reflect.Field
 import java.util.*
 
-open class Module(name: String?, val category: Category?, description: String?) : Feature(name, description), Wrapper {
+open class Module(name: String, val category: Category, description: String) : Feature(name, description), Wrapper {
 
     // Whether the module is visible in the Array List or not
     private val visible = Setting("Visible", true).setDescription("Whether the module is visible in the array list or not")
@@ -38,24 +35,22 @@ open class Module(name: String?, val category: Category?, description: String?) 
     var isEnabled = false
         private set
 
-    constructor(name: String?, category: Category?, description: String?, bind: Bind) : this(name, category, description) {
+    constructor(name: String, category: Category, description: String, bind: Bind) : this(name, category, description) {
         this.bind.setValue(bind)
     }
 
     // TEMPORARY
     fun reflectSettings() {
         Arrays.stream(javaClass.declaredFields)
-            .filter { field: Field -> Setting::class.java.isAssignableFrom(field.type) }
-            .forEach { field: Field ->
+            .filter { field -> Setting::class.java.isAssignableFrom(field.type) }
+            .forEach { field ->
                 field.isAccessible = true
                 try {
                     val setting = field[this] as Setting<*>
                     if (setting.parentSetting == null) {
                         settings.add(setting)
                     }
-                } catch (e: IllegalAccessException) {
-                    e.printStackTrace()
-                } catch (e: IllegalArgumentException) {
+                } catch (e: Throwable) {
                     e.printStackTrace()
                 }
             }
@@ -70,9 +65,7 @@ open class Module(name: String?, val category: Category?, description: String?) 
     open fun onRender2D() {}
     open fun onRender3D() {}
 
-    open fun getData(): String {
-        return ""
-    }
+    open fun getData() = ""
 
     /**
      * Toggles the module
@@ -112,9 +105,7 @@ open class Module(name: String?, val category: Category?, description: String?) 
      *
      * @return The module's visibility
      */
-    fun isVisible(): Boolean {
-        return visible.value
-    }
+    fun isVisible(): Boolean = visible.value
 
     /**
      * Sets the module's visibility
@@ -130,9 +121,7 @@ open class Module(name: String?, val category: Category?, description: String?) 
      *
      * @return The module's settings
      */
-    fun getSettings(): List<Setting<*>> {
-        return settings
-    }
+    fun getSettings() = settings
 
     init {
         if (isConstant) {
@@ -143,4 +132,5 @@ open class Module(name: String?, val category: Category?, description: String?) 
             Paragon.INSTANCE.eventBus.register(this)
         }
     }
+
 }

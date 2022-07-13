@@ -5,9 +5,9 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.managers.alt.Alt;
 
-public class AltEntry implements TextRenderer, Wrapper {
+public final class AltEntry implements TextRenderer, Wrapper {
 
-    private Alt alt;
+    private final Alt alt;
     private float offset;
 
     public AltEntry(Alt alt, float offset) {

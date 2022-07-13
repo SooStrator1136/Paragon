@@ -25,7 +25,7 @@ public abstract class Element implements Wrapper, TextRenderer {
     private List<Element> subelements = new ArrayList<>();
 
     private CategoryPanel parent;
-    private final Animation animation = new Animation(ClickGUI.animationSpeed::getValue, false, ClickGUI.easing::getValue);
+    private final Animation animation = new Animation(ClickGUI.getAnimationSpeed()::getValue, false, ClickGUI.getEasing()::getValue);
     private boolean open;
 
     public Element(int layer, float x, float y, float width, float height) {

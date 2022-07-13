@@ -11,10 +11,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Color;
 
 import static org.lwjgl.opengl.GL11.*;
 
+@SuppressWarnings("unchecked")
 public class StringElement extends Element {
 
     private final Setting<String> setting;
@@ -33,25 +34,15 @@ public class StringElement extends Element {
         setting.getSubsettings().forEach(subsetting -> {
             if (subsetting.getValue() instanceof Boolean) {
                 getSubElements().add(new BooleanElement(layer + 1, (Setting<Boolean>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Enum<?>) {
+            } else if (subsetting.getValue() instanceof Enum<?>) {
                 getSubElements().add(new EnumElement(layer + 1, (Setting<Enum<?>>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Number) {
+            } else if (subsetting.getValue() instanceof Number) {
                 getSubElements().add(new SliderElement(layer + 1, (Setting<Number>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Bind) {
+            } else if (subsetting.getValue() instanceof Bind) {
                 getSubElements().add(new BindElement(layer + 1, (Setting<Bind>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof Color) {
+            } else if (subsetting.getValue() instanceof Color) {
                 getSubElements().add(new ColourElement(layer + 1, (Setting<Color>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
-            }
-
-            else if (subsetting.getValue() instanceof String) {
+            } else if (subsetting.getValue() instanceof String) {
                 getSubElements().add(new StringElement(layer + 1, (Setting<String>) subsetting, moduleElement, getX(), getY(), getWidth(), getHeight()));
             }
         });
@@ -117,13 +108,9 @@ public class StringElement extends Element {
                     if (getSetting().getValue().length() > 0){
                         getSetting().setValue(getSetting().getValue().substring(0, getSetting().getValue().length() - 1));
                     }
-                }
-
-                else if (keyCode == Keyboard.KEY_RETURN) {
+                } else if (keyCode == Keyboard.KEY_RETURN) {
                     focused = false;
-                }
-
-                else if (ChatAllowedCharacters.isAllowedCharacter(keyChar)) {
+                } else if (ChatAllowedCharacters.isAllowedCharacter(keyChar)) {
                     getSetting().setValue(getSetting().getValue() + keyChar);
                 }
             }
@@ -154,4 +141,5 @@ public class StringElement extends Element {
     public float getHover() {
         return hover;
     }
+
 }

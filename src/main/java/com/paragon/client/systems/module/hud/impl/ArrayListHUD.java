@@ -12,6 +12,8 @@ import com.paragon.api.setting.Setting;
 import com.paragon.client.ui.animation.Easing;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+@SideOnly(Side.CLIENT)
 public class ArrayListHUD extends HUDModule implements TextRenderer {
 
     public static ArrayListHUD INSTANCE;

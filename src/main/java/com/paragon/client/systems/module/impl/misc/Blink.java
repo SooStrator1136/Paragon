@@ -9,6 +9,8 @@ import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,6 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @author Wolfsurge
  */
+@SideOnly(Side.CLIENT)
 public class Blink extends Module {
 
     public static Blink INSTANCE;

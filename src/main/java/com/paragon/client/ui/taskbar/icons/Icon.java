@@ -7,11 +7,14 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.function.Supplier;
 
-public class Icon implements Wrapper, TextRenderer {
+@SideOnly(Side.CLIENT)
+public final class Icon implements Wrapper, TextRenderer {
 
     private String name;
     private int x, y;

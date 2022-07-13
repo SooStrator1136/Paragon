@@ -10,11 +10,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class ParagonButton extends GuiButton implements TextRenderer {
+public final class ParagonButton extends GuiButton implements TextRenderer {
 
-    private final Animation animation = new Animation(() -> 300f, false, () -> Easing.EXPO_IN_OUT);
+    private final Animation animation = new Animation(() -> 300.0f, false, () -> Easing.EXPO_IN_OUT);
 
     public ParagonButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
         super(buttonId, x, y, widthIn, heightIn, buttonText);
@@ -42,6 +42,6 @@ public class ParagonButton extends GuiButton implements TextRenderer {
 
             renderCenteredString(this.displayString, this.x + this.width / 2f, this.y + ((this.height - 1) / 2f), 0xFFFFFF, true);
         }
-
     }
+
 }

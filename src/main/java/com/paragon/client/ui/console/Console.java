@@ -7,6 +7,8 @@ import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -14,16 +16,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class Console implements Wrapper, TextRenderer {
 
     // Title of window
-    private String title;
+    private final String title;
 
     // Coordinates and dimensions
-    private float width, height;
+    private final float width, height;
 
     // List of lines
-    private List<String> lines = new ArrayList<>();
+    private final List<String> lines = new ArrayList<>(5);
 
     private GuiTextField guiTextField;
 
@@ -126,4 +129,5 @@ public class Console implements Wrapper, TextRenderer {
     public float getHeight() {
         return height;
     }
+
 }

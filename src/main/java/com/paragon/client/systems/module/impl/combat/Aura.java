@@ -21,6 +21,8 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
  *
  * @author Wolfsurge
  */
+@SideOnly(Side.CLIENT)
 public class Aura extends Module {
 
     public static Aura INSTANCE;

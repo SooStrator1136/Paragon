@@ -23,11 +23,11 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class PanelGUI extends GuiScreen {
+public final class PanelGUI extends GuiScreen {
 
     private final List<Panel> panels = new ArrayList<>();
 
-    private final Animation openAnimation = new Animation(ClickGUI.animationSpeed::getValue, false, ClickGUI.easing::getValue);
+    private final Animation openAnimation = new Animation(ClickGUI.getAnimationSpeed()::getValue, false, ClickGUI.getEasing()::getValue);
 
     public PanelGUI() {
         float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 110) / 2f);
@@ -47,11 +47,11 @@ public class PanelGUI extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        if (ClickGUI.darkenBackground.getValue()) {
+        if (ClickGUI.getDarkenBackground().getValue()) {
             drawDefaultBackground();
         }
 
-        if (ClickGUI.background.getValue()) {
+        if (ClickGUI.getBackground().getValue()) {
             float[] topLeft = {182, 66, 245};
             float[] topRight = {236, 66, 245};
             float[] bottomRight = {245, 66, 141};
@@ -97,7 +97,7 @@ public class PanelGUI extends GuiScreen {
 
         glPopMatrix();
 
-        if (ClickGUI.catgirl.getValue()) {
+        if (ClickGUI.getCatgirl().getValue()) {
             ScaledResolution sr = new ScaledResolution(mc);
 
             mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
@@ -156,7 +156,7 @@ public class PanelGUI extends GuiScreen {
     @Override
     public boolean doesGuiPauseGame() {
         // Pause the game if pause is enabled in the GUI settings
-        return ClickGUI.pause.getValue();
+        return ClickGUI.getPause().getValue();
     }
 
     public Animation getAnimation() {

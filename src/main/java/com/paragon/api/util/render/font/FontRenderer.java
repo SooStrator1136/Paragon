@@ -2,6 +2,8 @@ package com.paragon.api.util.render.font;
 
 import com.paragon.api.util.Wrapper;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -16,6 +18,7 @@ import java.util.Random;
 /**
  * @author Cosmos
  */
+@SideOnly(Side.CLIENT)
 public class FontRenderer implements Wrapper {
 
     public final int FONT_HEIGHT;

@@ -29,6 +29,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.util.List;
@@ -39,6 +41,7 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 /**
  * @author Wolfsurge, with shader stuff from Cosmos (first time using shaders / glsl lel)
  */
+@SideOnly(Side.CLIENT)
 public class ESP extends Module {
 
     public static ESP INSTANCE;

@@ -22,7 +22,7 @@ public class FakePlayer extends Module {
         }
 
         // Create new fake player
-        fakePlayer = new EntityFakePlayer();
+        fakePlayer = new EntityFakePlayer(getMinecraft().world);
     }
 
     @Override

@@ -18,6 +18,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import java.util.Map;
  * @author Wolfsurge
  * @since 08/05/2022
  */
+@SideOnly(Side.CLIENT)
 public class Surround extends Module {
 
     public static Surround INSTANCE;

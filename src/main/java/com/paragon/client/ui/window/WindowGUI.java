@@ -23,7 +23,7 @@ public class WindowGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        if (ClickGUI.darkenBackground.getValue()) {
+        if (ClickGUI.getDarkenBackground().getValue()) {
             drawDefaultBackground();
         }
 
@@ -31,7 +31,7 @@ public class WindowGUI extends GuiScreen {
 
         glColor4f(1, 1, 1, 1);
 
-        if (ClickGUI.catgirl.getValue()) {
+        if (ClickGUI.getCatgirl().getValue()) {
             ScaledResolution sr = new ScaledResolution(mc);
 
             mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
@@ -73,6 +73,6 @@ public class WindowGUI extends GuiScreen {
 
     @Override
     public boolean doesGuiPauseGame() {
-        return ClickGUI.pause.getValue();
+        return ClickGUI.getPause().getValue();
     }
 }

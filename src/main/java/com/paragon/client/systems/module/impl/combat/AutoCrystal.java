@@ -39,6 +39,8 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.util.*;
@@ -48,6 +50,7 @@ import java.util.List;
  * somewhat bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded.
  * @author Wolfsurge
  */
+@SideOnly(Side.CLIENT)
 public class AutoCrystal extends Module {
 
     public static AutoCrystal INSTANCE;

@@ -10,19 +10,17 @@ import java.util.function.Supplier
 class Animation(val length: Supplier<Float>, private val initialState: Boolean, val easing: Supplier<Easing>) {
 
     // Time since last state update
-    var lastMillis: Long = 0L
+    private var lastMillis = 0L
 
     // Current state of the animation
     // True = Expanding / Expanded
     // False = Contracting / Collapsed
-    var state: Boolean = initialState
+    var state = initialState
         set(value) {
-            val factor = getFactor()
-
             lastMillis = if (!value) {
-                System.currentTimeMillis() - ((1 - factor) * length.get().toLong()).toLong()
+                System.currentTimeMillis() - ((1 - getFactor()) * length.get().toLong()).toLong()
             } else {
-                System.currentTimeMillis() - (factor * length.get().toLong()).toLong()
+                System.currentTimeMillis() - (getFactor() * length.get().toLong()).toLong()
             }
 
             field = value
@@ -33,12 +31,10 @@ class Animation(val length: Supplier<Float>, private val initialState: Boolean, 
      *
      * @return The animation factor
      */
-    fun getAnimationFactor(): Double {
-        return if (state) {
-            easing.get().ease(MathHelper.clamp((System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0))
-        } else {
-            easing.get().ease(MathHelper.clamp(1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0))
-        }
+    fun getAnimationFactor() = if (state) {
+        easing.get().ease(MathHelper.clamp((System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0))
+    } else {
+        easing.get().ease(MathHelper.clamp(1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0))
     }
 
     /**
@@ -47,38 +43,30 @@ class Animation(val length: Supplier<Float>, private val initialState: Boolean, 
     fun resetToDefault() {
         state = initialState
 
-        val factor = getFactor()
-
         lastMillis = if (initialState) {
-            System.currentTimeMillis() - ((1 - factor) * length.get().toLong()).toLong()
+            System.currentTimeMillis() - ((1 - getFactor()) * length.get().toLong()).toLong()
         } else {
-            System.currentTimeMillis() - (factor * length.get().toLong()).toLong()
+            System.currentTimeMillis() - (getFactor() * length.get().toLong()).toLong()
         }
     }
 
     /**
      * For internal use only!
      */
-    private fun getFactor(): Double {
-        var x: Double = MathHelper.clamp((System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0)
-
-        if (!state) {
-            x = MathHelper.clamp(1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0)
-        }
-
-        return x
-    }
+    private fun getFactor() = if (!state) MathHelper.clamp(
+        1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(),
+        0.0,
+        1.0
+    ) else MathHelper.clamp((System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0)
 
     /**
      * Constructor.
      */
     init {
-        val factor = getFactor()
-
         lastMillis = if (initialState) {
-            System.currentTimeMillis() - ((1 - factor) * length.get().toLong()).toLong()
+            System.currentTimeMillis() - ((1 - getFactor()) * length.get().toLong()).toLong()
         } else {
-            System.currentTimeMillis() - (factor * length.get().toLong()).toLong()
+            System.currentTimeMillis() - (getFactor() * length.get().toLong()).toLong()
         }
     }
 

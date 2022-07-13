@@ -17,7 +17,7 @@ public class ConsoleGUI extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // Make the background darker
-        if (ClickGUI.darkenBackground.getValue()) {
+        if (ClickGUI.getDarkenBackground().getValue()) {
             drawDefaultBackground();
         }
 
@@ -46,6 +46,7 @@ public class ConsoleGUI extends GuiScreen {
 
     @Override
     public boolean doesGuiPauseGame() {
-        return ClickGUI.pause.getValue();
+        return ClickGUI.getPause().getValue();
     }
+
 }
