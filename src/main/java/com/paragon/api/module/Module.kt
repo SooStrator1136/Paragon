@@ -32,7 +32,6 @@ open class Module(name: String?, val category: Category?, description: String?) 
     private val settings: MutableList<Setting<*>> = ArrayList()
 
     // Arraylist animation
-    @JvmField
     var animation = Animation({ ArrayListHUD.animationSpeed.value }, false) { ArrayListHUD.easing.value }
 
     // Whether the module is enabled

@@ -150,13 +150,17 @@ public class PanelGUI extends GuiScreen {
         Paragon.INSTANCE.getStorageManager().saveModules("current");
         Paragon.INSTANCE.getStorageManager().saveOther();
 
-        openAnimation.setState(false);
+        openAnimation.resetToDefault();
     }
 
     @Override
     public boolean doesGuiPauseGame() {
         // Pause the game if pause is enabled in the GUI settings
         return ClickGUI.pause.getValue();
+    }
+
+    public Animation getAnimation() {
+        return openAnimation;
     }
 
 }

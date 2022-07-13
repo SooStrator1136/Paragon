@@ -42,6 +42,11 @@ public class ClickGUI extends Module {
             .setParentSetting(style)
             .setVisibility(() -> style.getValue().equals(Style.PANEL));
 
+    public static Setting<Boolean> iconBackground = new Setting<>("IconBackground", true)
+            .setDescription("Whether or not to draw the background behind the icon")
+            .setParentSetting(style)
+            .setVisibility(() -> style.getValue().equals(Style.PANEL));
+
     // Window settings
     public static Setting<Boolean> scrollClamp = new Setting<>("ScrollClamp", false)
             .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")

@@ -82,7 +82,7 @@ public class ParagonMenu extends GuiScreen implements TextRenderer {
             float scaleFactor = 1 / 0.65f;
 
             float y = 270;
-            for (String str : new String[]{"Created by Wolfsurge & Teletofu", "Animation class - Tigermouthbear, linustouchtips", "Shader OpenGL code - linustouchtips", "Font Renderer - Cosmos Client"}) {
+            for (String str : new String[]{"Created by Wolfsurge & Teletofu", "Shader OpenGL code - linustouchtips", "Font Renderer - Cosmos Client"}) {
                 renderText(str, 10 * scaleFactor, y * scaleFactor, -1);
                 y += 10;
             }

@@ -75,7 +75,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
         enabledModules.clear();
 
         for (Module module : Paragon.INSTANCE.getModuleManager().getModules()) {
-            if (module.animation.getAnimationFactor() > 0 && module.isVisible()) {
+            if (module.getAnimation().getAnimationFactor() > 0 && module.isVisible()) {
                 enabledModules.add(module);
             }
         }
@@ -106,7 +106,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
                 for (Module module : enabledModules) {
                     float originX = getX() - (getStringWidth(module.getName() + module.getData()) + 4);
-                    float textX = (float) (originX + ((getStringWidth(module.getName() + module.getData()) + 4) * module.animation.getAnimationFactor()));
+                    float textX = (float) (originX + ((getStringWidth(module.getName() + module.getData()) + 4) * module.getAnimation().getAnimationFactor()));
 
                     if (background.getValue()) {
                         RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getData()) + 4, 11, 0x90000000);
@@ -114,7 +114,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
                     renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getData(), textX + 2, getY() + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
 
-                    yOffset += 11 * module.animation.getAnimationFactor();
+                    yOffset += 11 * module.getAnimation().getAnimationFactor();
                     index++;
                 }
 
@@ -125,15 +125,15 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
                 int index = 0;
 
                 for (Module module : enabledModules) {
-                    float textX = (float) ((getX() + getWidth()) - ((getStringWidth(module.getName() + module.getData()) + 6) * module.animation.getAnimationFactor()));
+                    float textX = (float) ((getX() + getWidth()) - ((getStringWidth(module.getName() + module.getData()) + 6) * module.getAnimation().getAnimationFactor()));
 
                     if (background.getValue()) {
-                        RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getData()) + 4, (float) (11 * module.animation.getAnimationFactor()), 0x90000000);
+                        RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getData()) + 4, (float) (11 * module.getAnimation().getAnimationFactor()), 0x90000000);
                     }
 
                     renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getData(), textX + 2, getY() + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
 
-                    yOffset += 11 * module.animation.getAnimationFactor();
+                    yOffset += 11 * module.getAnimation().getAnimationFactor();
                     index++;
                 }
 
@@ -144,7 +144,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
                 int index = 0;
 
                 for (Module module : enabledModules) {
-                    float textX = (float) ((getX() + getWidth()) - ((getStringWidth(module.getName() + module.getData()) + 6) * module.animation.getAnimationFactor()));
+                    float textX = (float) ((getX() + getWidth()) - ((getStringWidth(module.getName() + module.getData()) + 6) * module.getAnimation().getAnimationFactor()));
 
                     if (background.getValue()) {
                         RenderUtil.drawRect(textX, getY() + yOffset, getStringWidth(module.getName() + module.getData()) + 4, 11, 0x90000000);
@@ -152,7 +152,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
                     renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getData(), textX + 2, getY() + (getHeight() - getFontHeight()) + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
 
-                    yOffset -= 11 * module.animation.getAnimationFactor();
+                    yOffset -= 11 * module.getAnimation().getAnimationFactor();
                     index++;
                 }
 
@@ -164,7 +164,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
                 for (Module module : enabledModules) {
                     float originX = getX() - (getStringWidth(module.getName() + module.getData()) + 4);
-                    float textX = (float) (originX + ((getStringWidth(module.getName() + module.getData()) + 4) * module.animation.getAnimationFactor()));
+                    float textX = (float) (originX + ((getStringWidth(module.getName() + module.getData()) + 4) * module.getAnimation().getAnimationFactor()));
 
                     if (background.getValue()) {
                         RenderUtil.drawRect(textX, yOffset, getStringWidth(module.getName() + module.getData()) + 4, 11, 0x90000000);
@@ -172,7 +172,7 @@ public class ArrayListHUD extends HUDModule implements TextRenderer {
 
                     renderText(module.getName() + formatCode(TextFormatting.GRAY) + module.getData(), textX + 2, getY() + (getHeight() - getFontHeight()) + yOffset + 1.5f, arrayListColour.getValue().getColour(index * 150));
 
-                    yOffset -= 11 * module.animation.getAnimationFactor();
+                    yOffset -= 11 * module.getAnimation().getAnimationFactor();
                     index++;
                 }
 

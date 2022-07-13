@@ -14,6 +14,7 @@ import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
 import com.paragon.client.ui.panel.element.module.ModuleElement;
 import com.paragon.client.ui.panel.element.setting.*;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
@@ -91,7 +92,9 @@ public class CategoryPanel extends Panel implements TextRenderer {
             glScalef(scaleFactor, scaleFactor, scaleFactor);
         }
 
-        RenderUtil.drawRoundedRect(getX(), getY(), barHeight, barHeight, ClickGUI.radius.getValue(), 1, 1, 1, 0x90000000);
+        if (ClickGUI.iconBackground.getValue()) {
+            RenderUtil.drawRoundedRect(getX(), getY(), barHeight, barHeight, ClickGUI.radius.getValue(), 1, 1, 1, 0x90000000);
+        }
 
         // Eye of ender is offset weirdly...
         if (category.equals(Category.RENDER)) {
@@ -128,8 +131,6 @@ public class CategoryPanel extends Panel implements TextRenderer {
                 }
             }
         }
-
-        // int scissorHeight = (int) (MathHelper.clamp(moduleHeight, 0, 352) * animation.getAnimationFactor());
 
         float scissorHeight = (float) MathHelper.clamp(MathHelper.clamp(moduleHeight, 0,(lastElement.getY() + lastElement.getHeight()) - (getY() + barHeight)) * animation.getAnimationFactor(), 0, 352);
 
