@@ -4,6 +4,8 @@ import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
 import com.paragon.client.ui.panel.element.module.ModuleElement;
@@ -21,13 +23,12 @@ public final class SliderElement extends Element {
 
     private boolean dragging = false;
 
-    private final ModuleElement moduleElement;
+    private final Animation scrollAnimation = new Animation(() -> 1500f, false, () -> Easing.LINEAR);
 
     public SliderElement(int layer, Setting<Number> setting, ModuleElement moduleElement, float x, float y, float width, float height) {
         super(layer, x, y, width, height);
 
         setParent(moduleElement.getParent());
-        this.moduleElement = moduleElement;
         this.setting = setting;
 
         setting.getSubsettings().forEach(subsetting -> {
@@ -112,7 +113,27 @@ public final class SliderElement extends Element {
 
             RenderUtil.drawRect(getX() + getLayer(), getY(), renderWidth, getHeight(), Color.HSBtoRGB(getParent().getLeftHue() / 360, 1, 0.5f + (0.25f * hover)));
 
-            renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            float x = getX() + (getLayer() * 2) + 5;
+            float totalWidth = getWidth() - (getLayer() * 2);
+            float maxTextWidth = totalWidth - getStringWidth(setting.getValue().toString()) - 5;
+
+            float visibleX = getStringWidth(setting.getName()) - maxTextWidth;
+
+            scrollAnimation.setState(isHovered(mouseX, mouseY));
+
+            if (getStringWidth(setting.getName()) > maxTextWidth) {
+                x -= (visibleX + 9) * scrollAnimation.getAnimationFactor();
+            }
+
+            float scissorY = MathHelper.clamp(getY(), getParent().getY() + 22, getParent().getY() + MathHelper.clamp(getParent().getModuleHeight(), 0, 352));
+            float scissorHeight = getHeight();
+
+            RenderUtil.startGlScissor(getX() + (getLayer() * 2), scissorY, totalWidth - (getStringWidth(setting.getValue().toString()) + 9), scissorHeight);
+
+            renderText(setting.getName(), x, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+
+            RenderUtil.endGlScissor();
+
             renderText(setting.getValue().toString(), getX() + getWidth() - (getLayer() * 2) - getStringWidth(setting.getValue().toString()) - 3, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
             super.render(mouseX, mouseY, dWheel);

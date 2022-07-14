@@ -18,7 +18,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,28 +83,34 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
         RenderUtil.drawHorizontalRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getRadius().getValue(), ClickGUI.getRadius().getValue(), 1, 1, Color.HSBtoRGB(getLeftHue() / 360, 1, 0.75f + (0.25f * hover)), Color.HSBtoRGB(rightHue / 360, 1, 0.75f + (0.25f * hover)));
 
+        float titleOffset = 5;
+
+        if (!ClickGUI.getIcon().getValue().equals(ClickGUI.Icon.NONE)) {
+            if (ClickGUI.getIcon().getValue().equals(ClickGUI.Icon.BACKGROUND)) {
+                RenderUtil.drawRoundedRect(getX(), getY(), barHeight, barHeight, ClickGUI.getRadius().getValue(), 1, 1, 1, 0x90000000);
+            }
+
+            // Eye of ender is offset weirdly...
+            if (category.equals(Category.RENDER)) {
+                glTranslated(-0.5, -0.5, 0);
+            }
+
+            RenderUtil.renderItemStack(new ItemStack(category.getIndicator()), getX() + 3.5f, getY() + 3.5f, false);
+
+            if (category.equals(Category.RENDER)) {
+                glTranslated(0.5, 0.5, 0);
+            }
+
+            titleOffset = 30;
+        }
+
         glScalef(1.25f, 1.25f, 1.25f);
         {
             float scaleFactor = 1 / 1.25f;
 
-            renderText(category.getName(), (getX() + 30) * scaleFactor, (getY() + barHeight * scaleFactor / 2 - 2f) * scaleFactor, 0xFFFFFFFF);
+            renderText(category.getName(), (getX() + titleOffset) * scaleFactor, (getY() + barHeight * scaleFactor / 2 - 2f) * scaleFactor, 0xFFFFFFFF);
 
             glScalef(scaleFactor, scaleFactor, scaleFactor);
-        }
-
-        if (ClickGUI.getIconBackground().getValue()) {
-            RenderUtil.drawRoundedRect(getX(), getY(), barHeight, barHeight, ClickGUI.getRadius().getValue(), 1, 1, 1, 0x90000000);
-        }
-
-        // Eye of ender is offset weirdly...
-        if (category.equals(Category.RENDER)) {
-            glTranslated(-0.5, -0.5, 0);
-        }
-
-        RenderUtil.renderItemStack(new ItemStack(category.getIndicator()), getX() + 3.5f, getY() + 3.5f, false);
-
-        if (category.equals(Category.RENDER)) {
-            glTranslated(0.5, 0.5, 0);
         }
 
         Element lastModuleElement = elements.get(elements.size() - 1);
@@ -370,6 +376,10 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
     public float getLeftHue() {
         return leftHue;
+    }
+
+    public float getModuleHeight() {
+        return moduleHeight;
     }
 
 }

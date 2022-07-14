@@ -51,13 +51,13 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         .setVisibility { style.value == Style.PANEL }
 
     @JvmStatic
-    val iconBackground = Setting("IconBackground", true)
-        .setDescription("Whether or not to draw the background behind the icon")
+    val icon = Setting("Icon", Icon.BACKGROUND)
+        .setDescription("How to draw the background")
         .setParentSetting(style)
         .setVisibility { style.value == Style.PANEL }
 
-    @JvmStatic
     // Window settings
+    @JvmStatic
     val scrollClamp = Setting("ScrollClamp", false)
         .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
         .setParentSetting(style)
@@ -91,18 +91,29 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         /**
          * Panel GUI
          */
-        /**
-         * Panel GUI
-         */
         PANEL,
 
         /**
          * Window GUI
          */
-        /**
-         * Window GUI
-         */
         WINDOW
+    }
+
+    enum class Icon {
+        /**
+         * No icon
+         */
+        NONE,
+
+        /**
+         * Just the icon
+         */
+        PLAIN,
+
+        /**
+         * Icon with a background
+         */
+        BACKGROUND
     }
 
 }
