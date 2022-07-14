@@ -22,11 +22,7 @@ public final class ParagonButton extends GuiButton implements TextRenderer {
 
     public void drawButton(@NotNull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            if (!(animation.getAnimationFactor() > 0) && this.hovered) {
-                animation.setState(true);
-            } else if (animation.getAnimationFactor() == 1 && !this.hovered) {
-                animation.setState(false);
-            }
+            animation.setState(this.hovered);
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;

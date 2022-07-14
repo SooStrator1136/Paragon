@@ -3,6 +3,8 @@ package com.paragon.client.ui.panel.element.setting;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
 import com.paragon.client.ui.panel.element.module.ModuleElement;
@@ -22,8 +24,7 @@ public class StringElement extends Element {
 
     private boolean focused;
 
-    private float hover;
-    private float listeningFactor;
+    private final Animation listeningAnimation = new Animation(() -> 200f, false, () -> Easing.LINEAR);
 
     public StringElement(int layer, Setting<String> setting, ModuleElement moduleElement, float x, float y, float width, float height) {
         super(layer, x, y, width, height);
@@ -51,12 +52,11 @@ public class StringElement extends Element {
     @Override
     public void render(int mouseX, int mouseY, int dWheel) {
         if (setting.isVisible()) {
-            hover = MathHelper.clamp(hover + (isHovered(mouseX, mouseY) ? 0.02f : -0.02f), 0, 1);
-            listeningFactor = MathHelper.clamp(listeningFactor + (focused ? 0.02f : -0.02f), 0, 1);
+            listeningAnimation.setState(focused);
 
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(40, 40, 45).getRGB());
-            RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * hover)), (int) (40 + (30 * hover)), (int) (45 + (30 * hover))).getRGB());
-            RenderUtil.drawRect(getX() + getLayer(), getY(), 1, getHeight() * listeningFactor, Color.HSBtoRGB(getParent().getLeftHue() / 360, 1, 0.5f + (0.25f * hover)));
+            RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
+            RenderUtil.drawRect(getX() + getLayer(), getY(), 1, (float) (getHeight() * listeningAnimation.getAnimationFactor()), Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.5f + (0.25f * getHover().getAnimationFactor()))));
 
             renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
@@ -136,10 +136,6 @@ public class StringElement extends Element {
 
     public Setting<String> getSetting() {
         return setting;
-    }
-
-    public float getHover() {
-        return hover;
     }
 
 }

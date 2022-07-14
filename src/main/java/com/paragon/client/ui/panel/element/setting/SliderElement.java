@@ -19,8 +19,6 @@ public final class SliderElement extends Element {
 
     private final Setting<Number> setting;
 
-    private float hover;
-
     private boolean dragging = false;
 
     private final Animation scrollAnimation = new Animation(() -> 1500f, false, () -> Easing.LINEAR);
@@ -51,8 +49,6 @@ public final class SliderElement extends Element {
     @Override
     public void render(int mouseX, int mouseY, int dWheel) {
         if (setting.isVisible()) {
-            hover = MathHelper.clamp(hover + (isHovered(mouseX, mouseY) ? 0.02f : -0.02f), 0, 1);
-
             float renderWidth = 0;
             float maxWidth = getWidth() - getLayer() * 2;
 
@@ -109,9 +105,9 @@ public final class SliderElement extends Element {
             }
 
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(40, 40, 45).getRGB());
-            RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * hover)), (int) (40 + (30 * hover)), (int) (45 + (30 * hover))).getRGB());
+            RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
 
-            RenderUtil.drawRect(getX() + getLayer(), getY(), renderWidth, getHeight(), Color.HSBtoRGB(getParent().getLeftHue() / 360, 1, 0.5f + (0.25f * hover)));
+            RenderUtil.drawRect(getX() + getLayer(), getY(), renderWidth, getHeight(), Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.5f + (0.25f * getHover().getAnimationFactor()))));
 
             float x = getX() + (getLayer() * 2) + 5;
             float totalWidth = getWidth() - (getLayer() * 2);
@@ -188,10 +184,6 @@ public final class SliderElement extends Element {
 
     public Setting<Number> getSetting() {
         return setting;
-    }
-
-    public float getHover() {
-        return hover;
     }
 
 }

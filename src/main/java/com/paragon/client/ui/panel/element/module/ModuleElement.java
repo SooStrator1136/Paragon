@@ -5,6 +5,8 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
 import com.paragon.client.ui.panel.element.setting.*;
@@ -17,8 +19,7 @@ public final class ModuleElement extends Element {
 
     private final Module module;
 
-    private float hover;
-    private float enabled;
+    private final Animation enabledAnimation = new Animation(() -> 200f, false, () -> Easing.LINEAR);
 
     public ModuleElement(CategoryPanel parent, Module module, float x, float y, float width, float height) {
         super(0, x, y, width, height);
@@ -45,19 +46,14 @@ public final class ModuleElement extends Element {
 
     @Override
     public void render(int mouseX, int mouseY, int dWheel) {
-        hover = MathHelper.clamp(hover + (isHovered(mouseX, mouseY) ? 0.02f : -0.02f), 0, 1);
-        enabled = MathHelper.clamp(enabled + (module.isEnabled() ? 0.02f : -0.02f), 0, 1);
-
-        if (!getParent().isElementVisible(this)) {
-            hover = 0;
-        }
+        enabledAnimation.setState(module.isEnabled());
 
         RenderUtil.drawRect(getX(), getY(), getWidth(), getTotalHeight(), new Color(40, 40, 45).getRGB());
-        RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color((int) (40 + (30 * hover)), (int) (40 + (30 * hover)), (int) (45 + (30 * hover))).getRGB());
+        RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
 
-        RenderUtil.drawRect(getX() + getWidth() - 4, getY() + 1, 2, (getHeight() - 2) * enabled, ColourUtil.integrateAlpha(new Color(Color.HSBtoRGB(getParent().getLeftHue() / 360, 1, 0.5f + (0.25f * hover))), (int) (255 * enabled)).getRGB());
+        RenderUtil.drawRect(getX() + getWidth() - 4, getY() + 1, 2, (float) ((getHeight() - 2) * enabledAnimation.getAnimationFactor()), ColourUtil.integrateAlpha(new Color(Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.5f + (0.25f * getHover().getAnimationFactor())))), (int) (255 * enabledAnimation.getAnimationFactor())).getRGB());
 
-        renderText(module.getName(), getX() + 5, getY() + getHeight() / 2 - 3.5f, new Color((int) (155 + (100 * enabled)), (int) (155 + (100 * enabled)), (int) (155 + (100 * enabled))).getRGB());
+        renderText(module.getName(), getX() + 5, getY() + getHeight() / 2 - 3.5f, new Color((int) (155 + (100 * enabledAnimation.getAnimationFactor())), (int) (155 + (100 * enabledAnimation.getAnimationFactor())), (int) (155 + (100 * enabledAnimation.getAnimationFactor()))).getRGB());
 
         super.render(mouseX, mouseY, dWheel);
     }
@@ -83,10 +79,6 @@ public final class ModuleElement extends Element {
 
     public Module getModule() {
         return module;
-    }
-
-    public float getHover() {
-        return hover;
     }
 
 }

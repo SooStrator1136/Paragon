@@ -173,4 +173,8 @@ public abstract class Element implements Wrapper, TextRenderer {
         return animation;
     }
 
+    public Animation getHover() {
+        return hover;
+    }
+
 }

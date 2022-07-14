@@ -42,8 +42,6 @@ public class CategoryPanel extends Panel implements TextRenderer {
     private float scrollFactor = 0;
     private float moduleHeight = 0;
 
-    private float hover;
-
     private boolean dragging;
 
     public CategoryPanel(Category category, float x, float y, float width, float height, float barHeight) {
@@ -60,7 +58,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
     }
 
     public void render(int mouseX, int mouseY, int dWheel) {
-        hover = MathHelper.clamp(hover + (isHoveredOverBar(mouseX, mouseY) ? 0.02f : -0.02f), 0, 1);
+        getHover().setState(isHoveredOverBar(mouseX, mouseY));
 
         if (dragging) {
             this.setX(mouseX - getLastX());
@@ -81,7 +79,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
         leftHue = MathHelper.clamp(leftHue, 0, 360);
         rightHue = MathHelper.clamp(rightHue, 0, 360);
 
-        RenderUtil.drawHorizontalRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getRadius().getValue(), ClickGUI.getRadius().getValue(), 1, 1, Color.HSBtoRGB(getLeftHue() / 360, 1, 0.75f + (0.25f * hover)), Color.HSBtoRGB(rightHue / 360, 1, 0.75f + (0.25f * hover)));
+        RenderUtil.drawHorizontalRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getRadius().getValue(), ClickGUI.getRadius().getValue(), 1, 1, Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
 
         float titleOffset = 5;
 
@@ -130,7 +128,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
         else {
             if (scrollFactor != 0) {
-                scrollFactor *= 0.95f;
+                scrollFactor *= 0.9f;
 
                 if (scrollFactor < 0.1 && scrollFactor > -0.1) {
                     scrollFactor = 0;
@@ -188,7 +186,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
             offset += element.getTotalHeight();
         }
 
-        RenderUtil.drawHorizontalRoundedRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, 1, 1, MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), Color.HSBtoRGB(getLeftHue() / 360, 1, 0.75f + (0.25f * hover)), Color.HSBtoRGB(rightHue / 360, 1, 0.75f + (0.25f * hover)));
+        RenderUtil.drawHorizontalRoundedRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, 1, 1, MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
 
         RenderUtil.startGlScissor(getX(), getY() + barHeight, getWidth(), scissorHeight);
 
@@ -202,8 +200,8 @@ public class CategoryPanel extends Panel implements TextRenderer {
             for (Element element : elements) {
                 if (element instanceof ModuleElement) {
                     {
-                        if (((ModuleElement) element).getHover() > 0) {
-                            float hover = ((ModuleElement) element).getHover();
+                        if (((ModuleElement) element).getHover().getAnimationFactor() > 0) {
+                            double hover = ((ModuleElement) element).getHover().getAnimationFactor();
                             String description = StringUtil.wrap(((ModuleElement) element).getModule().getDescription(), 20) + "\n\nBind: " + ((ModuleElement) element).getModule().getBind().getValue().getButtonName();
 
                             RenderUtil.startGlScissor(element.getX() + 2 + getWidth(), element.getY(), (getStringWidth(description) + 10) * hover, 100);
@@ -218,42 +216,42 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
                     if (element.getAnimation().getAnimationFactor() > 0) {
                         element.getSubElements().forEach(subElement -> {
-                            float hover = 0;
+                            double hover = 0;
                             String description = "";
                             boolean visible = true;
 
                             if (subElement instanceof BooleanElement) {
                                 BooleanElement sElement = ((BooleanElement) subElement);
                                 description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                                hover = sElement.getHover();
+                                hover = sElement.getHover().getAnimationFactor();
                                 visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof SliderElement) {
                                 SliderElement sElement = ((SliderElement) subElement);
                                 description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                                hover = sElement.getHover();
+                                hover = sElement.getHover().getAnimationFactor();
                                 visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof EnumElement) {
                                 EnumElement sElement = ((EnumElement) subElement);
                                 description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                                hover = sElement.getHover();
+                                hover = sElement.getHover().getAnimationFactor();
                                 visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof ColourElement) {
                                 ColourElement sElement = ((ColourElement) subElement);
                                 description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                                hover = sElement.getHover();
+                                hover = sElement.getHover().getAnimationFactor();
                                 visible = sElement.getSetting().isVisible();
                             }
 
                             else if (subElement instanceof BindElement) {
                                 BindElement sElement = ((BindElement) subElement);
                                 description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                                hover = sElement.getHover();
+                                hover = sElement.getHover().getAnimationFactor();
                                 visible = sElement.getSetting().isVisible();
                             }
 
@@ -270,7 +268,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
                             RenderUtil.endGlScissor();
 
                             subElement.getSubElements().forEach(subSubElement -> {
-                                float subHover = 0;
+                                double subHover = 0;
                                 String subDesc = "";
 
                                 boolean subVisible = true;
@@ -278,35 +276,35 @@ public class CategoryPanel extends Panel implements TextRenderer {
                                 if (subSubElement instanceof BooleanElement) {
                                     BooleanElement ssElement = ((BooleanElement) subSubElement);
                                     subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                    subHover = ssElement.getHover();
+                                    subHover = ssElement.getHover().getAnimationFactor();
                                     subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof SliderElement) {
                                     SliderElement ssElement = ((SliderElement) subSubElement);
                                     subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                    subHover = ssElement.getHover();
+                                    subHover = ssElement.getHover().getAnimationFactor();
                                     subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof EnumElement) {
                                     EnumElement ssElement = ((EnumElement) subSubElement);
                                     subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                    subHover = ssElement.getHover();
+                                    subHover = ssElement.getHover().getAnimationFactor();
                                     subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof ColourElement) {
                                     ColourElement ssElement = ((ColourElement) subSubElement);
                                     subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                    subHover = ssElement.getHover();
+                                    subHover = ssElement.getHover().getAnimationFactor();
                                     subVisible = ssElement.getSetting().isVisible();
                                 }
 
                                 else if (subSubElement instanceof BindElement) {
                                     BindElement ssElement = ((BindElement) subSubElement);
                                     subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                    subHover = ssElement.getHover();
+                                    subHover = ssElement.getHover().getAnimationFactor();
                                     subVisible = ssElement.getSetting().isVisible();
                                 }
 

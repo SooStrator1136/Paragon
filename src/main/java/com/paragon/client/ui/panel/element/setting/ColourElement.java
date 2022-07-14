@@ -24,8 +24,6 @@ public final class ColourElement extends Element {
 
     private final Setting<Color> setting;
 
-    private float hover;
-
     private Animation animation = new Animation(ClickGUI.getAnimationSpeed()::getValue, false, ClickGUI.getEasing()::getValue);
     private boolean open;
 
@@ -91,10 +89,8 @@ public final class ColourElement extends Element {
     @Override
     public void render(int mouseX, int mouseY, int dWheel) {
         if (setting.isVisible()) {
-            hover = MathHelper.clamp(hover + (isHovered(mouseX, mouseY) ? 0.02f : -0.02f), 0, 1);
-
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(40, 40, 45).getRGB());
-            RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * hover)), (int) (40 + (30 * hover)), (int) (45 + (30 * hover))).getRGB());
+            RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), (float) MathHelper.clamp(((getWidth() - getLayer() * 2) * animation.getAnimationFactor()), 1, getWidth()), getHeight(), getSetting().getValue().getRGB());
 
             renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
@@ -270,10 +266,6 @@ public final class ColourElement extends Element {
 
     public Setting<Color> getSetting() {
         return setting;
-    }
-
-    public float getHover() {
-        return hover;
     }
 
 }
