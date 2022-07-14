@@ -1,35 +1,52 @@
-package com.paragon.client.managers;
+package com.paragon.client.managers
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.net.URL
+import java.util.*
 
-public class CapeManager {
+class CapeManager {
+    private val capedPlayers: MutableMap<String, Cape> = HashMap()
 
-    private final List<String> capedPlayers = new ArrayList<>();
+    fun isCaped(username: String): Boolean {
+        return capedPlayers.containsKey(username) || username.startsWith("Player")
+    }
 
-    public CapeManager() {
+    fun getCape(username: String): Cape? {
+        return if (username.startsWith("Player")) {
+            Cape.BASED
+        } else capedPlayers[username]
+    }
+
+    init {
         try {
-            URL url = new URL("https://pastebin.com/raw/5070fcBz");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            val url = URL("https://ParagonBot.wolfsurge.repl.co")
+            val reader = BufferedReader(InputStreamReader(url.openStream()))
+            var line: String?
 
-            String line;
+            while (reader.readLine().also { line = it } != null) {
+                val data = line!!.split(":".toRegex()).toTypedArray()
 
-            while ((line = reader.readLine()) != null) {
-                capedPlayers.add(line);
+                capedPlayers[data[0]] = java.lang.Enum.valueOf(Cape::class.java, data[1].uppercase(Locale.getDefault()))
             }
 
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            reader.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    public boolean isCaped(String username) {
-        return capedPlayers.contains(username) || username.startsWith("Player");
-    }
+    enum class Cape(val path: String) {
+        /**
+         * Cape for cool ppl (boosters etc)
+         */
+        COOL("textures/cape/cool.png"),
 
+        /**
+         * Cape for based ppl (contributors etc)
+         */
+        BASED("textures/cape/based.png");
+
+    }
 }
