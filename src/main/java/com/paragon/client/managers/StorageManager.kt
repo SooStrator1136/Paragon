@@ -17,6 +17,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
 /**
  * @author SooStrator1136
@@ -28,7 +29,13 @@ class StorageManager {
     private val socialFolder = File("paragon${File.separator}social")
 
     @Throws(IOException::class, JSONException::class)
-    private fun getJSON(file: File) = JSONObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8))
+    private fun getJSON(file: File): JSONObject? {
+        if (!Files.exists(file.toPath())) {
+            return null;
+        }
+
+        return JSONObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8))
+    }
 
     fun saveModules(configName: String) {
         // Create configs folder if it doesn't already exist
@@ -114,8 +121,12 @@ class StorageManager {
         }
 
         Paragon.INSTANCE.moduleManager.modules.forEach { module ->
+<<<<<<< master
+            val moduleJSON = getJSON(File(loadFolder, module.name + ".json")) ?: return@forEach
+=======
             try {
                 val moduleJSON = getJSON(File(loadFolder, module.name + ".json"))
+>>>>>>> master
 
                 if (moduleJSON.has("x") && moduleJSON.has("y")) {
                     module as HUDModule
@@ -231,8 +242,10 @@ class StorageManager {
         }
 
         runCatching {
-            val array =
-                getJSON(File("paragon${File.separator}social${File.separator}social_interactions.json")).getJSONArray("acquaintances")
+            val json =
+                getJSON(File("paragon${File.separator}social${File.separator}social_interactions.json")) ?: return
+
+            val array = json.getJSONArray("acquaintances")
 
             //For every value in array, create add a player to the SocialManager
             for (i in 0 until array.length()) {
@@ -273,7 +286,8 @@ class StorageManager {
         }
 
         runCatching {
-            val alts = getJSON(File("paragon${File.separator}alts.json")).getJSONArray("alts")
+            val json = getJSON(File("paragon${File.separator}alts.json")) ?: return
+            val alts = json.getJSONArray("alts")
 
             //For every entry in the array, add a new alt
             for (i in 0 until alts.length()) {
@@ -316,7 +330,7 @@ class StorageManager {
         }
 
         runCatching {
-            val jsonObject = getJSON(File("paragon${File.separator}client.json"))
+            val jsonObject = getJSON(File("paragon${File.separator}client.json")) ?: return
 
             Paragon.INSTANCE.isParagonMainMenu = jsonObject.getBoolean("mainmenu")
 

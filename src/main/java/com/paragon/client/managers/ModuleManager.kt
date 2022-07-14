@@ -37,6 +37,7 @@ class ModuleManager {
             // Movement
             ElytraFlight(),
             Flight(),
+            InventoryWalk(),
             NoFall(),
             NoSlow(),
             ReverseStep,
