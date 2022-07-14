@@ -37,7 +37,7 @@ SooStrator <br>
 Master7720 (kinda)
 
 ## Other Contributors
-Doogie13
+Doogie13 <br>
 Sxmurai / Astheticall
 
 ## Other Credits
