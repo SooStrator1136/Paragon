@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GuiChat.class)
-public abstract class MixinGuiChat {
+@Mixin(value = GuiChat.class, priority = Integer.MAX_VALUE)
+public class MixinGuiChat {
 
     @Shadow
     protected GuiTextField inputField;
