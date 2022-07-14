@@ -60,9 +60,8 @@ Try and follow the code style found in the rest of the client, such as using `lo
 Both Kotlin and Java are allowed (Kotlin preferred)
 
 # Using the Custom Font
-A directory is created in the Paragon config folder (/.minecraft/paragon), called "font". In here, upon first opening the client, two files will be present.
+A directory is created in the Paragon config folder (/.minecraft/paragon), called "font". Here, upon first opening the client, two files will be present.
 "font.ttf" is the font that will be used when the Font module is enabled. The second file is "font_config.json". Here you can find a couple of font rendering
-settings. "size" is an integer (whole number) value that determines the font's size. "y_offset" is a float (decimal) value to determin how much to add to the Y value when text is rendered. (this is so you can center it so it looks good (*cough* wp3 *cough*).
+settings. "size" is an integer (whole number) value that determines the font's size. "y_offset" is a float (decimal) value to determine how much to add to the Y value when text is rendered. (this is so you can center it so it looks good (*cough* wp3 *cough*).
 
-You can change the custom font by simply deleting "font.ttf" in the font folder, and replacing it with a different TTF font file, which is also called "font.ttf". It is
-imperative that it is named this as otherwise the client will not detect the font, and will therefore default to Java's default font. Support for fonts with different file names might be added in the future.
+You can change the custom font by simply deleting "font.ttf" in the font folder, and replacing it with a different TTF font file, which is also called "font.ttf". It must be named this as otherwise the client will not detect the font, and will therefore default to Java's default font. Support for fonts with different file names might be added in the future.
