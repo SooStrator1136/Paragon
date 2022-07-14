@@ -4,6 +4,7 @@ import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.TextRenderer;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.panel.CategoryPanel;
 
@@ -22,6 +23,8 @@ public abstract class Element implements Wrapper, TextRenderer {
 
     private final int layer;
 
+    private final Animation hover = new Animation(() -> 200f, false, () -> Easing.LINEAR);
+
     private List<Element> subelements = new ArrayList<>();
 
     private CategoryPanel parent;
@@ -39,6 +42,8 @@ public abstract class Element implements Wrapper, TextRenderer {
     }
 
     public void render(int mouseX, int mouseY, int dWheel) {
+        hover.setState(isHovered(mouseX, mouseY));
+
         if (animation.getAnimationFactor() > 0) {
             float offset = getY() + getHeight();
             for (Element subElement : getSubElements()) {

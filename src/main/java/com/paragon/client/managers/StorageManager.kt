@@ -121,13 +121,9 @@ class StorageManager {
         }
 
         Paragon.INSTANCE.moduleManager.modules.forEach { module ->
-<<<<<<< master
             val moduleJSON = getJSON(File(loadFolder, module.name + ".json")) ?: return@forEach
-=======
-            try {
-                val moduleJSON = getJSON(File(loadFolder, module.name + ".json"))
->>>>>>> master
 
+            try {
                 if (moduleJSON.has("x") && moduleJSON.has("y")) {
                     module as HUDModule
                     module.x = moduleJSON.getInt("x").toFloat()
