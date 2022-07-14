@@ -5,6 +5,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.panel.CategoryPanel;
 import com.paragon.client.ui.panel.panel.Panel;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,11 +24,13 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public final class PanelGUI extends GuiScreen {
+public class PanelGUI extends GuiScreen {
 
     private final List<Panel> panels = new ArrayList<>();
 
-    private final Animation openAnimation = new Animation(ClickGUI.getAnimationSpeed()::getValue, false, ClickGUI.getEasing()::getValue);
+    private final Animation openAnimation = new Animation(() ->
+            // Linear is apparently slower than other easings, so we decrease the delay
+            ClickGUI.getEasing().getValue().equals(Easing.LINEAR) ? 200f : 500f, false, ClickGUI.getEasing()::getValue);
 
     public PanelGUI() {
         float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 110) / 2f);

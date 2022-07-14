@@ -18,6 +18,10 @@ public class NoRotate extends Module {
 
     @Listener
     public void onPacketReceive(PacketEvent.PreReceive event) {
+        if (nullCheck() || event.getPacket() == null) {
+            return;
+        }
+
         if (event.getPacket() instanceof SPacketPlayerPosLook) {
             // Set packet yaw
             ((ISPacketPlayerPosLook) event.getPacket()).setYaw(mc.player.rotationYaw);
