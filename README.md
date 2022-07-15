@@ -37,8 +37,8 @@ SooStrator <br>
 Master7720 (kinda)
 
 ## Other Contributors
-Doogie13
-Sxmurai / Astheticall
+Doogie13 <br>
+Sxmurai / Aestheticall
 
 ## Other Credits
 Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Wolfsurge wrote it
