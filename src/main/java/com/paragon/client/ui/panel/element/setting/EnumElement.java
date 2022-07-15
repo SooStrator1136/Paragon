@@ -4,6 +4,8 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.string.StringUtil;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.client.ui.animation.Animation;
+import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
 import com.paragon.client.ui.panel.element.module.ModuleElement;
@@ -15,6 +17,7 @@ import java.awt.Color;
 public final class EnumElement extends Element {
 
     private final Setting<Enum<?>> setting;
+    private final Animation scrollAnimation = new Animation(() -> 1250f, false, () -> Easing.LINEAR);
 
     public EnumElement(int layer, Setting<Enum<?>> setting, ModuleElement moduleElement, float x, float y, float width, float height) {
         super(layer, x, y, width, height);
@@ -45,8 +48,31 @@ public final class EnumElement extends Element {
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(40, 40, 45).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
 
-            renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
-            renderText(StringUtil.getFormattedText(setting.getValue()), (getX() + getWidth() - (getLayer() * 2)) - getStringWidth(StringUtil.getFormattedText(setting.getValue())) - 3, getY() + getHeight() / 2 - 3.5f, new Color(150, 150, 155).getRGB());
+            // renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            // renderText(StringUtil.getFormattedText(setting.getValue()), (getX() + getWidth() - (getLayer() * 2)) - getStringWidth(StringUtil.getFormattedText(setting.getValue())) - 3, getY() + getHeight() / 2 - 3.5f, new Color(150, 150, 155).getRGB());
+
+            float x = getX() + (getLayer() * 2) + 5;
+            float totalWidth = getWidth() - (getLayer() * 2);
+            float maxTextWidth = totalWidth - getStringWidth(StringUtil.getFormattedText(setting.getValue())) - 5;
+
+            float visibleX = getStringWidth(setting.getName()) - maxTextWidth;
+
+            scrollAnimation.setState(isHovered(mouseX, mouseY));
+
+            if (getStringWidth(setting.getName()) > maxTextWidth) {
+                x -= (visibleX + 9) * scrollAnimation.getAnimationFactor();
+            }
+
+            float scissorY = MathHelper.clamp(getY(), getParent().getY() + 22, getParent().getY() + MathHelper.clamp(getParent().getModuleHeight(), 0, 352));
+            float scissorHeight = getHeight();
+
+            RenderUtil.startGlScissor(getX() + (getLayer() * 2), scissorY, totalWidth - (getStringWidth(StringUtil.getFormattedText(setting.getValue())) + 9), scissorHeight);
+
+            renderText(setting.getName(), x, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+
+            RenderUtil.endGlScissor();
+
+            renderText(StringUtil.getFormattedText(setting.getValue()), getX() + getWidth() - (getLayer() * 2) - getStringWidth(StringUtil.getFormattedText(setting.getValue())) - 3, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
             super.render(mouseX, mouseY, dWheel);
         }

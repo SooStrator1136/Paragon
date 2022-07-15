@@ -21,7 +21,7 @@ public final class SliderElement extends Element {
 
     private boolean dragging = false;
 
-    private final Animation scrollAnimation = new Animation(() -> 1500f, false, () -> Easing.LINEAR);
+    private final Animation scrollAnimation = new Animation(() -> 1250f, false, () -> Easing.LINEAR);
 
     public SliderElement(int layer, Setting<Number> setting, ModuleElement moduleElement, float x, float y, float width, float height) {
         super(layer, x, y, width, height);

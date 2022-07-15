@@ -2,6 +2,8 @@ package com.paragon.client.systems.module.impl.combat
 
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
+import com.paragon.api.setting.Bind
+import com.paragon.api.setting.Bind.Device
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.Wrapper.mc
 import com.paragon.api.util.calculations.Timer
@@ -17,8 +19,9 @@ import net.minecraft.network.play.client.CPacketCloseWindow
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Mouse
 import kotlin.math.floor
-
 
 /**
  * @author Wolfsurge
@@ -28,10 +31,20 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private val item = Setting("Item", EnumItem.CRYSTAL)
         .setDescription("The item to prioritise in your offhand")
 
-    private val fallback = Setting("Fallback", EnumItem.TOTEM)
+    private val fallback = Setting("Fallback", EnumItem.GAPPLE)
         .setDescription("The item to fallback to if the priority item isn't found")
 
-    // TODO: Add dynamic gapple switching
+    private val keySwap = Setting("KeySwap", EnumItem.TOTEM)
+        .setDescription("Swap the item in your offhand when you press a key")
+
+    private val key = Setting("Key", Bind(0, Device.KEYBOARD))
+        .setDescription("The key to press to swap the item in your offhand")
+        .setParentSetting(keySwap)
+
+    private val overrideSafety = Setting("OverrideSafety", false)
+        .setDescription("Override the safety check to swap the item in your offhand")
+        .setParentSetting(keySwap)
+
     private val dynamicGapple = Setting("DynamicGapple", DynamicGapple.SWORD)
         .setDescription("When to dynamically switch to a gapple")
 
@@ -115,12 +128,35 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
             fallback.value.item
         }
 
+        var keyPressed = false
+
+        // isPressed() doesn't work :(
+        if (key.value.buttonCode != 0) {
+            when (key.value.device) {
+                Device.KEYBOARD -> if (Keyboard.isKeyDown(key.value.buttonCode)) {
+                    keyPressed = true
+                }
+
+                Device.MOUSE -> if (Mouse.isButtonDown(key.value.buttonCode)) {
+                    keyPressed = true
+                }
+            }
+        }
+
         if (shouldDynamicGapple()) {
             swapItem = Items.GOLDEN_APPLE
         }
 
+        if (keyPressed) {
+            swapItem = keySwap.value.item
+        }
+
         if (safety.value && InventoryUtil.getItemSlot(Items.TOTEM_OF_UNDYING) > -1 && shouldApplySafety()) {
             swapItem = Items.TOTEM_OF_UNDYING
+        }
+
+        if (keyPressed && overrideSafety.value) {
+            swapItem = keySwap.value.item
         }
 
         return if (minecraft.player.heldItemOffhand.item == swapItem) {
