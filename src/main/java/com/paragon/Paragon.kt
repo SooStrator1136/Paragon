@@ -11,11 +11,18 @@ import com.paragon.client.ui.taskbar.Taskbar
 import com.paragon.client.ui.panel.PanelGUI
 import com.paragon.client.ui.window.WindowGUI
 import me.wolfsurge.cerauno.EventBus
+import net.minecraft.client.Minecraft
+import net.minecraftforge.common.ForgeVersion
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.lwjgl.opengl.Display
+import java.awt.Desktop
+import java.net.URI
+import javax.swing.JOptionPane
 
 @Mod(name = Paragon.modName, modid = Paragon.modID, version = Paragon.modVersion)
 class Paragon {
@@ -23,6 +30,17 @@ class Paragon {
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent?) {
         logger = LogManager.getLogger("Paragon")
+
+        if (ForgeVersion.buildVersion < 2860) {
+            JOptionPane.showMessageDialog(null, "Forge version is too old. Paragon requires Forge to be at least build 2860.", "Outdated Forge!", JOptionPane.ERROR_MESSAGE)
+            Desktop.getDesktop().browse(URI("https://files.minecraftforge.net/net/minecraftforge/forge/index_1.12.2.html"))
+            Minecraft.getMinecraft().shutdown()
+
+            // When trying to exit throws an exception lmao
+            Display.destroy()
+
+            return
+        }
 
         fontManager = FontManager()
         eventParser = EventFactory()

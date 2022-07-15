@@ -21,7 +21,7 @@ class CapeManager {
 
     init {
         try {
-            val url = URL("https://ParagonBot.wolfsurge.repl.co")
+            val url = URL("https://ParagonBot.wolfsurge.repl.co/capes")
             val reader = BufferedReader(InputStreamReader(url.openStream()))
             var line: String?
 

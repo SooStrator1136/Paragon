@@ -200,7 +200,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
             for (Element element : elements) {
                 if (element instanceof ModuleElement) {
                     {
-                        if (((ModuleElement) element).getHover().getAnimationFactor() > 0) {
+                        if (((ModuleElement) element).getHover().getAnimationFactor() > 0 && isElementVisible(element)) {
                             double hover = ((ModuleElement) element).getHover().getAnimationFactor();
                             String description = StringUtil.wrap(((ModuleElement) element).getModule().getDescription(), 20) + "\n\nBind: " + ((ModuleElement) element).getModule().getBind().getValue().getButtonName();
 
@@ -216,6 +216,10 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
                     if (element.getAnimation().getAnimationFactor() > 0) {
                         element.getSubElements().forEach(subElement -> {
+                            if (!isElementVisible(subElement)) {
+                                return;
+                            }
+
                             double hover = 0;
                             String description = "";
                             boolean visible = true;
