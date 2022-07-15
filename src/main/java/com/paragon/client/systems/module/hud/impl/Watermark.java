@@ -32,10 +32,10 @@ public class Watermark extends HUDModule {
             case IMAGE:
                 mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/paragon.png"));
 
-                // Set image colour
-                ColourUtil.setColour(Colours.mainColour.getValue().getRGB());
+                float width = 880 / 4f;
+                float height = 331 / 4f;
 
-                RenderUtil.drawModalRectWithCustomSizedTexture(getX(), getY(), 0, 0, 160, 25, 160, 25);
+                RenderUtil.drawModalRectWithCustomSizedTexture(getX(), getY(), 0, 0, width, height, width, height);
                 break;
         }
     }
