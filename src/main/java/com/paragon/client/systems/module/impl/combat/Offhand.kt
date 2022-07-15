@@ -3,9 +3,11 @@ package com.paragon.client.systems.module.impl.combat
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper.mc
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.player.InventoryUtil
+import com.paragon.api.util.world.BlockUtil
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Items
@@ -13,7 +15,10 @@ import net.minecraft.inventory.ClickType
 import net.minecraft.item.Item
 import net.minecraft.network.play.client.CPacketCloseWindow
 import net.minecraft.network.play.client.CPacketEntityAction
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import kotlin.math.floor
+
 
 /**
  * @author Wolfsurge
@@ -27,6 +32,8 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         .setDescription("The item to fallback to if the priority item isn't found")
 
     // TODO: Add dynamic gapple switching
+    private val dynamicGapple = Setting("DynamicGapple", DynamicGapple.SWORD)
+        .setDescription("When to dynamically switch to a gapple")
 
     private val safety = Setting("Safety", true)
         .setDescription("Switch to a totem in dangerous situations")
@@ -108,6 +115,10 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
             fallback.value.item
         }
 
+        if (shouldDynamicGapple()) {
+            swapItem = Items.GOLDEN_APPLE
+        }
+
         if (safety.value && InventoryUtil.getItemSlot(Items.TOTEM_OF_UNDYING) > -1 && shouldApplySafety()) {
             swapItem = Items.TOTEM_OF_UNDYING
         }
@@ -122,6 +133,7 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private fun shouldApplySafety(): Boolean {
         if (crystal.value) {
             var deadlyCrystals = 0
+
             minecraft.world.loadedEntityList.stream()
                 .filter { entity -> entity is EntityEnderCrystal && entity.getDistance(minecraft.player) <= 6 }
                 .forEach { entity ->
@@ -129,7 +141,10 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
                         deadlyCrystals++
                     }
                 }
-            return true
+
+            if (deadlyCrystals > 0) {
+                return true
+            }
         }
 
         return health.value && EntityUtil.getEntityHealth(minecraft.player) <= healthValue.value ||
@@ -139,18 +154,31 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
                 fire.value && minecraft.player.isBurning
     }
 
+    private fun shouldDynamicGapple(): Boolean {
+        if (dynamicGapple.value == DynamicGapple.NEVER) {
+            return false
+        }
+
+        if ((dynamicGapple.value == DynamicGapple.SWORD || dynamicGapple.value == DynamicGapple.BOTH) && InventoryUtil.isHoldingSword()) {
+            return true
+        }
+
+        if ((dynamicGapple.value == DynamicGapple.HOLE || dynamicGapple.value == DynamicGapple.BOTH) && BlockUtil.isSafeHole(BlockPos(floor(minecraft.player.posX), floor(minecraft.player.posY), floor(minecraft.player.posZ)), true)) {
+            return true
+        }
+
+        return false
+    }
+
     private fun swapOffhand(slot: Int) {
         val window = minecraft.player.inventoryContainer.windowId
 
         var returnSlot = -1
-        if (minecraft.player.inventory.getStackInSlot(slot).isEmpty) {
-            returnSlot = slot
-        } else {
-            for (i in 9..44) {
-                if (minecraft.player.inventory.getStackInSlot(i).isEmpty) {
-                    returnSlot = i
-                    break
-                }
+
+        for (i in 9..44) {
+            if (minecraft.player.inventory.getStackInSlot(i).isEmpty) {
+                returnSlot = i
+                break
             }
         }
 
@@ -158,7 +186,8 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         minecraft.playerController.windowClick(window, 45, 0, ClickType.PICKUP, minecraft.player)
 
         if (returnSlot != -1) {
-            minecraft.playerController.windowClick(window, slot, 0, ClickType.PICKUP, minecraft.player)
+            mc.playerController.windowClick(0, returnSlot, 0, ClickType.PICKUP_ALL, mc.player)
+            mc.playerController.updateController()
         }
     }
 
@@ -177,6 +206,28 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
          * Switch to gapple
          */
         GAPPLE(Items.GOLDEN_APPLE)
+    }
+
+    enum class DynamicGapple {
+        /**
+         * Swap to gapple when holding a sword in your main hand
+         */
+        SWORD,
+
+        /**
+         * Swap to gapple when you're in a hole
+         */
+        HOLE,
+
+        /**
+         * Swap to gapple for both events
+         */
+        BOTH,
+
+        /**
+         * Never switch to gapples
+         */
+        NEVER
     }
 
 }

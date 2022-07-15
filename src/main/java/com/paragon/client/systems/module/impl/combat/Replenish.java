@@ -19,9 +19,6 @@ public class Replenish extends Module {
     public static Setting<Boolean> inventorySpoof = new Setting<>("InventorySpoof", true)
             .setDescription("Spoofs opening your inventory");
 
-    public static Setting<Double> stacksPerTick = new Setting<>("StacksPerTick", 1D, 1D, 9D, 1D)
-            .setDescription("The max amount of stacks to merge per tick");
-
     // General
     public static Setting<Float> percent = new Setting<>("Percent", 50f, 1f, 100f, 1f)
             .setDescription("The point at which to refill");
@@ -34,12 +31,11 @@ public class Replenish extends Module {
 
     @Override
     public void onTick() {
-        if (nullCheck()) {
+        if (nullCheck() || mc.player.ticksExisted < 20 || mc.player.isDead) {
             return;
         }
 
         // Loop through hotbar items
-        int mergedStacks = 0;
         for (int i = 0; i < 9; i++) {
             // Get the stack
             ItemStack stack = mc.player.inventory.getStackInSlot(i);
@@ -56,11 +52,8 @@ public class Replenish extends Module {
             if (stackPercent <= percent.getValue().intValue()) {
                 mergeStack(i, stack);
 
-                mergedStacks++;
-
-                if (mergedStacks > stacksPerTick.getValue()) {
-                    break;
-                }
+                // Stop merging - 1 per tick
+                break;
             }
         }
     }

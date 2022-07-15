@@ -74,7 +74,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
     @JvmStatic
     val catgirl = Setting("Catgirl", false)
-        .setDescription("deadshot is a weeb")
+        .setDescription("kassuk is a weeb")
 
     @JvmStatic
     fun getGUI() = when (style.value) {
