@@ -2,22 +2,18 @@ package com.paragon.client.managers.rotation
 
 import com.paragon.Paragon
 import com.paragon.api.event.network.PacketEvent.PreSend
-import com.paragon.api.event.player.RotationUpdateEvent
 import com.paragon.api.util.Wrapper
 import com.paragon.api.util.player.RotationUtil
 import com.paragon.asm.mixins.accessor.ICPacketPlayer
-import io.ktor.client.engine.*
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.math.Vec2f
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
 import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
-import kotlin.math.min
 
 /**
  * @author Wolfsurge
@@ -28,13 +24,6 @@ class RotationManager : Wrapper {
     private var packetPitch = -1f
 
     private var serverRotation: Vec2f = Vec2f(-1f, -1f)
-
-    @Listener
-    fun onRotationUpdate(event: RotationUpdateEvent) {
-        if (!rotationsQueue.isEmpty()) {
-            event.cancel()
-        }
-    }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     fun onTick(event: TickEvent.ClientTickEvent) {

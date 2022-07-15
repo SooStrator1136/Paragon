@@ -2,11 +2,14 @@ package com.paragon.api.util.world
 
 import com.paragon.api.util.Wrapper
 import net.minecraft.block.Block
+import net.minecraft.entity.Entity
 import net.minecraft.init.Blocks
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
+
 
 /**
  * @author SooStrator1136

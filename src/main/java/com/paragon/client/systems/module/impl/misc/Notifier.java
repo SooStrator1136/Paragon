@@ -9,6 +9,7 @@ import com.paragon.client.managers.notifications.NotificationType;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
 import com.paragon.api.setting.Setting;
+import com.paragon.client.systems.module.hud.HUDModule;
 import me.wolfsurge.cerauno.listener.Listener;
 
 /**
@@ -40,7 +41,7 @@ public class Notifier extends Module {
     @Listener
     public void onModuleToggle(ModuleToggleEvent moduleToggleEvent) {
         if (moduleEnabled.getValue()) {
-            if (!moduleToggleEvent.getModule().isIgnored()) {
+            if (!moduleToggleEvent.getModule().isIgnored() && !(moduleToggleEvent.getModule() instanceof HUDModule)) {
                 Paragon.INSTANCE.getNotificationManager().addNotification(new Notification(moduleToggleEvent.getModule().getName() + " was " + (moduleToggleEvent.getModule().isEnabled() ? "Enabled" : "Disabled"), NotificationType.INFO));
             }
         }

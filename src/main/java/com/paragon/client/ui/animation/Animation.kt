@@ -10,17 +10,17 @@ import java.util.function.Supplier
 class Animation(val length: Supplier<Float>, private val initialState: Boolean, val easing: Supplier<Easing>) {
 
     // Time since last state update
-    private var lastMillis = 0L
+    private var lastMillis: Long = 0L
 
     // Current state of the animation
     // True = Expanding / Expanded
     // False = Contracting / Collapsed
-    var state = initialState
+    var state: Boolean = initialState
         set(value) {
             lastMillis = if (!value) {
-                System.currentTimeMillis() - ((1 - getFactor()) * length.get().toLong()).toLong()
+                System.currentTimeMillis() - ((1 - getLinearFactor()) * length.get().toLong()).toLong()
             } else {
-                System.currentTimeMillis() - (getFactor() * length.get().toLong()).toLong()
+                System.currentTimeMillis() - (getLinearFactor() * length.get().toLong()).toLong()
             }
 
             field = value
@@ -31,7 +31,7 @@ class Animation(val length: Supplier<Float>, private val initialState: Boolean, 
      *
      * @return The animation factor
      */
-    fun getAnimationFactor() = if (state) {
+    fun getAnimationFactor(): Double = if (state) {
         easing.get().ease(MathHelper.clamp((System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0))
     } else {
         easing.get().ease(MathHelper.clamp(1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0))
@@ -44,30 +44,19 @@ class Animation(val length: Supplier<Float>, private val initialState: Boolean, 
         state = initialState
 
         lastMillis = if (initialState) {
-            System.currentTimeMillis() - ((1 - getFactor()) * length.get().toLong()).toLong()
+            System.currentTimeMillis() - ((1 - getLinearFactor()) * length.get().toLong()).toLong()
         } else {
-            System.currentTimeMillis() - (getFactor() * length.get().toLong()).toLong()
+            System.currentTimeMillis() - (getLinearFactor() * length.get().toLong()).toLong()
         }
     }
 
     /**
      * For internal use only!
      */
-    private fun getFactor() = if (!state) MathHelper.clamp(
+    private fun getLinearFactor(): Double = if (!state) MathHelper.clamp(
         1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(),
         0.0,
         1.0
     ) else MathHelper.clamp((System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(), 0.0, 1.0)
-
-    /**
-     * Constructor.
-     */
-    init {
-        lastMillis = if (initialState) {
-            System.currentTimeMillis() - ((1 - getFactor()) * length.get().toLong()).toLong()
-        } else {
-            System.currentTimeMillis() - (getFactor() * length.get().toLong()).toLong()
-        }
-    }
 
 }

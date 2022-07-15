@@ -43,6 +43,7 @@ class ModuleManager {
             ReverseStep,
             Sprint,
             Step(),
+            Strafe,
             Velocity(),
 
             // Render

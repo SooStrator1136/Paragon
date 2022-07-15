@@ -3,8 +3,10 @@ package com.paragon.api.util.player;
 import com.paragon.api.util.Wrapper;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3d;
 
 public class PlayerUtil implements Wrapper {
 
@@ -27,7 +29,7 @@ public class PlayerUtil implements Wrapper {
     }
 
     public static boolean isMoving() {
-        return mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.posX != mc.player.lastTickPosX || mc.player.posZ != mc.player.lastTickPosZ || mc.player.posY != mc.player.lastTickPosY;
+        return mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.posX != mc.player.lastTickPosX || mc.player.posZ != mc.player.lastTickPosZ;
     }
 
     public static void move(float speed) {
@@ -68,40 +70,38 @@ public class PlayerUtil implements Wrapper {
         }
     }
 
-    public static double[] forward(double speed) {
-        Entity mover = mc.player.isRiding() ? mc.player.getRidingEntity() : mc.player;
+    public static Vec3d forward(double speed) {
+        float forwardInput = mc.player.movementInput.moveForward;
+        float strafeInput = mc.player.movementInput.moveStrafe;
+        float playerYaw = mc.player.prevRotationYaw + (mc.player.rotationYaw - mc.player.prevRotationYaw) * mc.getRenderPartialTicks();
 
-        float forward = mc.player.movementInput.moveForward;
-        float strafe = mc.player.movementInput.moveStrafe;
-        float playerYaw = mc.player.rotationYaw;
-
-        if (mover != null) {
-            if (forward != 0) {
-                if (strafe >= 1) {
-                    playerYaw += (float) (forward > 0 ? -45 : 45);
-                    strafe = 0;
-                } else if (strafe <= -1) {
-                    playerYaw += (float) (forward > 0 ? 45 : -45);
-                    strafe = 0;
-                }
-
-                if (forward > 0) {
-                    forward = 1;
-                } else if (forward < 0) {
-                    forward = -1;
-                }
+        if (forwardInput != 0.0f) {
+            if (strafeInput > 0.0f) {
+                playerYaw += ((forwardInput > 0.0f) ? -45 : 45);
             }
 
-            double sin = Math.sin(Math.toRadians(playerYaw + 90));
-            double cos = Math.cos(Math.toRadians(playerYaw + 90));
+            else if (strafeInput < 0.0f) {
+                playerYaw += ((forwardInput > 0.0f) ? 45 : -45);
+            }
 
-            double motionX = forward * speed * cos + strafe * speed * sin;
-            double motionZ = forward * speed * sin - strafe * speed * cos;
+            strafeInput = 0.0f;
 
-            return new double[]{ mc.player.posX + motionX, mc.player.posY, mc.player.posZ + motionZ };
+            if (forwardInput > 0.0f) {
+                forwardInput = 1.0f;
+            }
+
+            else if (forwardInput < 0.0f) {
+                forwardInput = -1.0f;
+            }
         }
 
-        return new double[]{mc.player.posX, mc.player.posY, mc.player.posZ};
+        double sin = Math.sin(Math.toRadians(playerYaw + 90.0f));
+        double cos = Math.cos(Math.toRadians(playerYaw + 90.0f));
+
+        double posX = forwardInput * speed * cos + strafeInput * speed * sin;
+        double posZ = forwardInput * speed * sin - strafeInput * speed * cos;
+
+        return new Vec3d(posX, mc.player.posY, posZ);
     }
 
     public static void propel(float speed) {
@@ -145,6 +145,10 @@ public class PlayerUtil implements Wrapper {
         }
 
         return "";
+    }
+
+    public static double getBaseMoveSpeed() {
+        return 0.2873 * (mc.player.isPotionActive(MobEffects.SPEED) ? 1 + (0.2 * (mc.player.getActivePotionEffect(MobEffects.SPEED).getAmplifier() + 1)) : 1);
     }
 
 }

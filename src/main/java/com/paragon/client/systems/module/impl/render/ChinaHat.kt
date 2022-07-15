@@ -66,7 +66,7 @@ object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :(("
 
         // Change vec if elytra flying
         if (player.isElytraFlying) {
-            vec.add(Vec3d(PlayerUtil.forward(2.0)[0], -0.8, PlayerUtil.forward(2.0)[2]))
+            vec.add(Vec3d(PlayerUtil.forward(2.0).x, -0.8, PlayerUtil.forward(2.0).y))
         }
 
         var i = 0.0

@@ -62,7 +62,7 @@ public class Breadcrumbs extends Module {
         // Create position
         Position pos = new Position(new Vec3d(mc.player.lastTickPosX, mc.player.lastTickPosY, mc.player.lastTickPosZ), new Color(Color.HSBtoRGB(colourHue / 360f, 1, 1)));
 
-        if (PlayerUtil.isMoving()) {
+        if (PlayerUtil.isMoving() || mc.player.posY != mc.player.lastTickPosY) {
             colourHue++;
         }
 
