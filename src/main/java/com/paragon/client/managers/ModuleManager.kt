@@ -35,6 +35,7 @@ class ModuleManager {
             Surround(),
 
             // Movement
+            AntiVoidinq,
             ElytraFlight(),
             Flight(),
             InventoryWalk(),

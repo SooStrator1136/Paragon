@@ -11,14 +11,13 @@ import com.paragon.client.ui.animation.Easing
  */
 class Notification(val message: String, val type: NotificationType) : TextRenderer {
 
-    lateinit var animation: Animation
+    val animation: Animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
     private var started = false
     private var reachedFirst = false
     private var renderTicks = 0
 
     fun render(y: Float) {
         if (!started) {
-            animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
             animation.state = true
             started = true
         }
