@@ -34,9 +34,7 @@ public class Notifications extends HUDModule {
         if (mc.currentScreen instanceof HUDEditorGUI) {
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(23, 23, 23, 200).getRGB());
             renderText("[Notifications]" , getX() + 5, getY() + 5, -1);
-        }
-
-        else {
+        } else {
             if (renderType.getValue().equals(RenderType.DISPLAY)) {
                 float y = Notifications.INSTANCE.getY();
 
@@ -107,4 +105,5 @@ public class Notifications extends HUDModule {
          */
         DOWN
     }
+
 }

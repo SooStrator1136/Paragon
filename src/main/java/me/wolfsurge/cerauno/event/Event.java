@@ -2,10 +2,13 @@ package me.wolfsurge.cerauno.event;
 
 /**
  * A basic event
+ *
  * @author Wolfsurge
  * @since 05/03/22
  */
 public class Event {
+
+    //TODO uhm why is there like a state of the event? I mean I get it but it's private? There is no setter, just a getter huh?
 
     // The state of the event
     private State state;

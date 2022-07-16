@@ -7,24 +7,18 @@ import java.net.URL
 import java.util.*
 
 class CapeManager {
+
     private val capedPlayers: MutableMap<String, Cape> = HashMap()
 
-    fun isCaped(username: String): Boolean {
-        return capedPlayers.containsKey(username) || username.startsWith("Player")
-    }
+    fun isCaped(username: String) = capedPlayers.containsKey(username) || username.startsWith("Player")
 
-    fun getCape(username: String): Cape? {
-        return if (username.startsWith("Player")) {
-            Cape.BASED
-        } else capedPlayers[username]
-    }
+    fun getCape(username: String) = if (username.startsWith("Player")) Cape.BASED else capedPlayers[username]
 
     init {
         try {
-            val url = URL("https://ParagonBot.wolfsurge.repl.co/capes")
-            val reader = BufferedReader(InputStreamReader(url.openStream()))
-            var line: String?
+            val reader = BufferedReader(InputStreamReader(URL("https://ParagonBot.wolfsurge.repl.co/capes").openStream()))
 
+            var line: String?
             while (reader.readLine().also { line = it } != null) {
                 val data = line!!.split(":".toRegex()).toTypedArray()
 
@@ -39,14 +33,14 @@ class CapeManager {
 
     enum class Cape(val path: String) {
         /**
-         * Cape for cool ppl (boosters etc)
+         * Cape for cool ppl (boosters etc.)
          */
         COOL("textures/cape/cool.png"),
 
         /**
-         * Cape for based ppl (contributors etc)
+         * Cape for based ppl (contributors etc.)
          */
         BASED("textures/cape/based.png");
-
     }
+
 }

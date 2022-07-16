@@ -29,13 +29,7 @@ class StorageManager {
     private val socialFolder = File("paragon${File.separator}social")
 
     @Throws(IOException::class, JSONException::class)
-    private fun getJSON(file: File): JSONObject? {
-        if (!Files.exists(file.toPath())) {
-            return null;
-        }
-
-        return JSONObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8))
-    }
+    private fun getJSON(file: File) = if (!Files.exists(file.toPath())) null else JSONObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8))
 
     fun saveModules(configName: String) {
         // Create configs folder if it doesn't already exist

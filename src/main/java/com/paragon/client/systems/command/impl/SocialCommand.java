@@ -20,13 +20,13 @@ public class SocialCommand extends Command implements TextRenderer {
     public void whenCalled(String[] args, boolean fromConsole) {
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             // List all players
-            if (Paragon.INSTANCE.getSocialManager().players.isEmpty()) {
+            if (Paragon.INSTANCE.getSocialManager().getPlayers().isEmpty()) {
                 Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "You haven't added anyone to your social list!", fromConsole);
                 return;
             }
 
-            for (Player player : Paragon.INSTANCE.getSocialManager().players) {
-                Paragon.INSTANCE.getCommandManager().sendClientMessage(player.getName() + " - " + player.getRelationship().getTextFormatting() + player.getRelationship().toString(), fromConsole);
+            for (Player player : Paragon.INSTANCE.getSocialManager().getPlayers()) {
+                Paragon.INSTANCE.getCommandManager().sendClientMessage(player.getName() + " - " + player.getRelationship().getTextFormatting() + player.getRelationship(), fromConsole);
             }
         } else if (args.length == 3 && args[0].equalsIgnoreCase("add")) {
             // Add a player
