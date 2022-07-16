@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -92,7 +93,17 @@ public class PanelGUI extends GuiScreen {
 
         Collections.reverse(panels);
 
-        panels.forEach(panel -> panel.render(mouseX, mouseY, dWheel));
+        // grr lambdas
+        String[] tooltip = {""};
+        panels.forEach(panel -> {
+            panel.render(mouseX, mouseY, dWheel);
+
+            if (panel instanceof CategoryPanel && tooltip[0].isEmpty()) {
+                if (((CategoryPanel) panel).getTooltip() != "") {
+                    tooltip[0] = ((CategoryPanel) panel).getTooltip();
+                }
+            }
+        });
 
         Collections.reverse(panels);
 
@@ -109,7 +120,10 @@ public class PanelGUI extends GuiScreen {
 
         glPushMatrix();
         glTranslated(0, 24 - (24 * openAnimation.getAnimationFactor()), 0);
+
+        Paragon.INSTANCE.getTaskbar().setTooltip(tooltip[0]);
         Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
+
         glPopMatrix();
     }
 

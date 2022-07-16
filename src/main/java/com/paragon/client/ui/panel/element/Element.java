@@ -46,6 +46,7 @@ public abstract class Element implements Wrapper, TextRenderer {
 
         if (animation.getAnimationFactor() > 0) {
             float offset = getY() + getHeight();
+
             for (Element subElement : getSubElements()) {
                 subElement.setX(getX());
                 subElement.setY(offset);
@@ -53,6 +54,12 @@ public abstract class Element implements Wrapper, TextRenderer {
                 subElement.render(mouseX, mouseY, dWheel);
 
                 offset += subElement.getTotalHeight();
+            }
+        }
+
+        else {
+            for (Element subElement : getSubElements()) {
+                subElement.getHover().setState(false);
             }
         }
     }

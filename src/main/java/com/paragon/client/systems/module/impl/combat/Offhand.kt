@@ -92,7 +92,7 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private val swapTimer = Timer()
 
     override fun onTick() {
-        if (nullCheck() || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
+        if (nullCheck() || minecraft.player.isDead || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
             return
         }
 
@@ -111,10 +111,6 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         }
 
         swapOffhand(item)
-
-        if (inventorySpoof.value) {
-            minecraft.player.connection.sendPacket(CPacketCloseWindow(minecraft.player.inventoryContainer.windowId))
-        }
 
         swapTimer.reset()
     }
@@ -209,6 +205,9 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private fun swapOffhand(slot: Int) {
         val window = minecraft.player.inventoryContainer.windowId
 
+        minecraft.playerController.windowClick(window, slot, 0, ClickType.PICKUP, minecraft.player)
+        minecraft.playerController.windowClick(window, 45, 0, ClickType.PICKUP, minecraft.player)
+
         var returnSlot = -1
 
         for (i in 9..44) {
@@ -218,12 +217,14 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
             }
         }
 
-        minecraft.playerController.windowClick(window, slot, 0, ClickType.PICKUP, minecraft.player)
-        minecraft.playerController.windowClick(window, 45, 0, ClickType.PICKUP, minecraft.player)
-
         if (returnSlot != -1) {
-            mc.playerController.windowClick(0, returnSlot, 0, ClickType.PICKUP_ALL, mc.player)
-            mc.playerController.updateController()
+            mc.playerController.windowClick(0, slot, 0, ClickType.PICKUP, mc.player)
+        }
+
+        mc.playerController.updateController()
+
+        if (inventorySpoof.value && mc.connection != null) {
+            mc.connection!!.sendPacket(CPacketCloseWindow(window))
         }
     }
 

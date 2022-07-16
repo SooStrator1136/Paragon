@@ -33,12 +33,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         .setVisibility { style.value == Style.PANEL }
 
     @JvmStatic
-    val tooltips = Setting("Tooltips", true)
-        .setDescription("Render tooltips near the mouse when hovered over a button")
-        .setParentSetting(style)
-        .setVisibility { style.value == Style.PANEL }
-
-    @JvmStatic
     val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f)
         .setDescription("How fast animations are")
         .setParentSetting(style)
@@ -75,6 +69,10 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     @JvmStatic
     val catgirl = Setting("Catgirl", false)
         .setDescription("kassuk is a weeb")
+
+    @JvmStatic
+    val tooltips = Setting("Tooltips", true)
+        .setDescription("Render tooltips on the taskbar")
 
     @JvmStatic
     fun getGUI() = when (style.value) {
