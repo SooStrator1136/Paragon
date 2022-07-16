@@ -4,6 +4,7 @@ import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.combat.Aura;
 import com.paragon.client.systems.module.impl.combat.AutoCrystal;
+import com.paragon.client.systems.module.impl.combat.AutoCrystalRewrite;
 import net.minecraft.util.text.TextFormatting;
 
 public class CombatInfo extends HUDModule {
@@ -19,17 +20,18 @@ public class CombatInfo extends HUDModule {
     @Override
     public void render() {
         renderText("KA " + (Aura.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY(), Colours.mainColour.getValue().getRGB());
-        renderText("CA " + (AutoCrystal.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + 10, Colours.mainColour.getValue().getRGB());
+        renderText("CA " + (AutoCrystal.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + getFontHeight(), Colours.mainColour.getValue().getRGB());
+        renderText("ACR " + (AutoCrystalRewrite.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + getFontHeight() * 2, Colours.mainColour.getValue().getRGB());
     }
 
     @Override
     public float getWidth() {
-        // Basically the same for both
-        return getStringWidth("KA Disabled");
+        // Longest
+        return getStringWidth("ACR Disabled");
     }
 
     @Override
     public float getHeight() {
-        return 20;
+        return getFontHeight() * 3;
     }
 }
