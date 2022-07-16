@@ -607,15 +607,19 @@ public class AutoCrystalRewrite extends Module {
         Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
 
         if (placeMode.getValue().equals(PlaceMode.VANILLA)) {
-            mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand);
+            if (mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand).equals(EnumActionResult.SUCCESS)) {
+                if (placeSwing.getValue()) {
+                    mc.player.swingArm(crystalHand);
+                }
+            }
         }
 
         else if (placeMode.getValue().equals(PlaceMode.PACKET)) {
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(placement, facing, crystalHand, (float) facingVec.x, (float) facingVec.y, (float) facingVec.z));
-        }
 
-        if (placeSwing.getValue()) {
-            mc.player.swingArm(crystalHand);
+            if (placeSwing.getValue()) {
+                mc.player.swingArm(crystalHand);
+            }
         }
 
         if (rotateBack.getValue()) {
@@ -721,11 +725,15 @@ public class AutoCrystalRewrite extends Module {
         DamageSource source = DamageSource.causeExplosionDamage(explosion);
         damage = CombatRules.getDamageAfterAbsorb(damage, (float) entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
 
-        int enchantmentModifier = MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), source), 0, 20);
-        damage *= 1.0F - enchantmentModifier / 25.0F;
+        try {
+            int enchantmentModifier = MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), source), 0, 20);
+            damage *= 1.0F - enchantmentModifier / 25.0F;
 
-        if (entity.isPotionActive(MobEffects.WEAKNESS)) {
-            damage = damage - (damage / 4);
+            if (entity.isPotionActive(MobEffects.WEAKNESS)) {
+                damage = damage - (damage / 4);
+            }
+        } catch (NullPointerException exception) {
+            exception.printStackTrace();
         }
 
         return Math.max(damage, 0.0F);

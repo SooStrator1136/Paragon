@@ -14,13 +14,14 @@ import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
 import com.paragon.client.ui.panel.element.module.ModuleElement;
 import com.paragon.client.ui.panel.element.setting.*;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -188,143 +189,13 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
         RenderUtil.drawHorizontalRoundedRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, 1, 1, MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
 
-        RenderUtil.startGlScissor(getX(), getY() + barHeight, getWidth(), scissorHeight);
+        RenderUtil.startGlScissor(getX(), (getY() * Paragon.INSTANCE.getPanelGUI().getAnimation().getAnimationFactor()) + (barHeight * Paragon.INSTANCE.getPanelGUI().getAnimation().getAnimationFactor()), getWidth(), scissorHeight);
 
         for (Element element : elements) {
             element.render(mouseX, mouseY, dWheel);
         }
 
         RenderUtil.endGlScissor();
-
-        if (ClickGUI.getTooltips().getValue() && animation.getAnimationFactor() > 0) {
-            for (Element element : elements) {
-                if (element instanceof ModuleElement) {
-                    {
-                        if (((ModuleElement) element).getHover().getAnimationFactor() > 0 && isElementVisible(element)) {
-                            double hover = ((ModuleElement) element).getHover().getAnimationFactor();
-                            String description = StringUtil.wrap(((ModuleElement) element).getModule().getDescription(), 20) + "\n\nBind: " + ((ModuleElement) element).getModule().getBind().getValue().getButtonName();
-
-                            RenderUtil.startGlScissor(element.getX() + 2 + getWidth(), element.getY(), (getStringWidth(description) + 10) * hover, 100);
-
-                            RenderUtil.drawRect(element.getX() + 2 + getWidth(), element.getY(), getStringWidth(description) + 10, (description.split("\n").length * getFontHeight()) + 2 + (ClientFont.INSTANCE.isEnabled() ? 0 : 3), Colours.mainColour.getValue().getRGB());
-
-                            renderText(description, element.getX() + getWidth() + 5, element.getY() + 3, 0xFFFFFFFF);
-
-                            RenderUtil.endGlScissor();
-                        }
-                    }
-
-                    element.getSubElements().forEach(subElement -> {
-                        if (!isElementVisible(subElement)) {
-                            return;
-                        }
-
-                        double hover = 0;
-                        String description = "";
-                        boolean visible = true;
-
-                        if (subElement instanceof BooleanElement) {
-                            BooleanElement sElement = ((BooleanElement) subElement);
-                            description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                            hover = sElement.getHover().getAnimationFactor();
-                            visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof SliderElement) {
-                            SliderElement sElement = ((SliderElement) subElement);
-                            description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                            hover = sElement.getHover().getAnimationFactor();
-                            visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof EnumElement) {
-                            EnumElement sElement = ((EnumElement) subElement);
-                            description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                            hover = sElement.getHover().getAnimationFactor();
-                            visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof ColourElement) {
-                            ColourElement sElement = ((ColourElement) subElement);
-                            description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                            hover = sElement.getHover().getAnimationFactor();
-                            visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof BindElement) {
-                            BindElement sElement = ((BindElement) subElement);
-                            description = StringUtil.wrap(sElement.getSetting().getDescription(), 20);
-                            hover = sElement.getHover().getAnimationFactor();
-                            visible = sElement.getSetting().isVisible();
-                        }
-
-                        if (hover > 0 && visible) {
-                            RenderUtil.startGlScissor(subElement.getX() + 2 + getWidth(), subElement.getY(), (getStringWidth(description) + 10) * hover, 100);
-
-                            RenderUtil.drawRect(subElement.getX() + 2 + getWidth(), subElement.getY(), getStringWidth(description) + 10, (description.split("\n").length * getFontHeight()) + 2 + (ClientFont.INSTANCE.isEnabled() ? 0 : 3), Colours.mainColour.getValue().getRGB());
-
-                            renderText(description, subElement.getX() + getWidth() + 5, subElement.getY() + 3, 0xFFFFFFFF);
-
-                            RenderUtil.endGlScissor();
-                        }
-
-                        subElement.getSubElements().forEach(subSubElement -> {
-                            double subHover = 0;
-                            String subDesc = "";
-
-                            boolean subVisible = true;
-
-                            if (subSubElement instanceof BooleanElement) {
-                                BooleanElement ssElement = ((BooleanElement) subSubElement);
-                                subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                subHover = ssElement.getHover().getAnimationFactor();
-                                subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof SliderElement) {
-                                SliderElement ssElement = ((SliderElement) subSubElement);
-                                subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                subHover = ssElement.getHover().getAnimationFactor();
-                                subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof EnumElement) {
-                                EnumElement ssElement = ((EnumElement) subSubElement);
-                                subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                subHover = ssElement.getHover().getAnimationFactor();
-                                subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof ColourElement) {
-                                ColourElement ssElement = ((ColourElement) subSubElement);
-                                subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                subHover = ssElement.getHover().getAnimationFactor();
-                                subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof BindElement) {
-                                BindElement ssElement = ((BindElement) subSubElement);
-                                subDesc = StringUtil.wrap(ssElement.getSetting().getDescription(), 20);
-                                subHover = ssElement.getHover().getAnimationFactor();
-                                subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            if (subHover == 0 || !subVisible) {
-                                return;
-                            }
-
-                            RenderUtil.startGlScissor(subSubElement.getX() + 2 + getWidth(), subSubElement.getY(), (getStringWidth(subDesc) + 10) * subHover, 100);
-
-                            RenderUtil.drawRect(subSubElement.getX() + 2 + getWidth(), subSubElement.getY(), getStringWidth(subDesc) + 10, (subDesc.split("\n").length * getFontHeight()) + 2 + (ClientFont.INSTANCE.isEnabled() ? 0 : 3), Colours.mainColour.getValue().getRGB());
-
-                            renderText(subDesc, subSubElement.getX() + getWidth() + 5, subSubElement.getY() + 3, 0xFFFFFFFF);
-
-                            RenderUtil.endGlScissor();
-                        });
-                    });
-                }
-            }
-        }
     }
 
     @Override
@@ -378,6 +249,124 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
     public float getModuleHeight() {
         return moduleHeight;
+    }
+
+    public String getTooltip() {
+        AtomicReference<String> tooltip = new AtomicReference<>("");
+
+        if (animation.getAnimationFactor() > 0) {
+            for (Element element : elements) {
+                if (element instanceof ModuleElement) {
+                    {
+                        if (((ModuleElement) element).getHover().getAnimationFactor() > 0 && isElementVisible(element)) {
+                            double hover = ((ModuleElement) element).getHover().getAnimationFactor();
+                            String description = ((ModuleElement) element).getModule().getDescription() + TextFormatting.GRAY + "   [Bind: " + ((ModuleElement) element).getModule().getBind().getValue().getButtonName() + "]";
+
+                            tooltip.set(description);
+                        }
+                    }
+
+                    element.getSubElements().forEach(subElement -> {
+                        if (!isElementVisible(subElement)) {
+                            return;
+                        }
+
+                        double hover = 0;
+                        String description = "";
+                        boolean visible = true;
+
+                        if (subElement instanceof BooleanElement) {
+                            BooleanElement sElement = ((BooleanElement) subElement);
+                            description = sElement.getSetting().getDescription();
+                            hover = sElement.getHover().getAnimationFactor();
+                            visible = sElement.getSetting().isVisible();
+                        }
+
+                        else if (subElement instanceof SliderElement) {
+                            SliderElement sElement = ((SliderElement) subElement);
+                            description = sElement.getSetting().getDescription();
+                            hover = sElement.getHover().getAnimationFactor();
+                            visible = sElement.getSetting().isVisible();
+                        }
+
+                        else if (subElement instanceof EnumElement) {
+                            EnumElement sElement = ((EnumElement) subElement);
+                            description = sElement.getSetting().getDescription();
+                            hover = sElement.getHover().getAnimationFactor();
+                            visible = sElement.getSetting().isVisible();
+                        }
+
+                        else if (subElement instanceof ColourElement) {
+                            ColourElement sElement = ((ColourElement) subElement);
+                            description = sElement.getSetting().getDescription();
+                            hover = sElement.getHover().getAnimationFactor();
+                            visible = sElement.getSetting().isVisible();
+                        }
+
+                        else if (subElement instanceof BindElement) {
+                            BindElement sElement = ((BindElement) subElement);
+                            description = sElement.getSetting().getDescription();
+                            hover = sElement.getHover().getAnimationFactor();
+                            visible = sElement.getSetting().isVisible();
+                        }
+
+                        if (hover > 0 && visible) {
+                            tooltip.set(description);
+                        }
+
+                        subElement.getSubElements().forEach(subSubElement -> {
+                            double subHover = 0;
+                            String subDesc = "";
+
+                            boolean subVisible = true;
+
+                            if (subSubElement instanceof BooleanElement) {
+                                BooleanElement ssElement = ((BooleanElement) subSubElement);
+                                subDesc = ssElement.getSetting().getDescription();
+                                subHover = ssElement.getHover().getAnimationFactor();
+                                subVisible = ssElement.getSetting().isVisible();
+                            }
+
+                            else if (subSubElement instanceof SliderElement) {
+                                SliderElement ssElement = ((SliderElement) subSubElement);
+                                subDesc = ssElement.getSetting().getDescription();
+                                subHover = ssElement.getHover().getAnimationFactor();
+                                subVisible = ssElement.getSetting().isVisible();
+                            }
+
+                            else if (subSubElement instanceof EnumElement) {
+                                EnumElement ssElement = ((EnumElement) subSubElement);
+                                subDesc = ssElement.getSetting().getDescription();
+                                subHover = ssElement.getHover().getAnimationFactor();
+                                subVisible = ssElement.getSetting().isVisible();
+                            }
+
+                            else if (subSubElement instanceof ColourElement) {
+                                ColourElement ssElement = ((ColourElement) subSubElement);
+                                subDesc = ssElement.getSetting().getDescription();
+                                subHover = ssElement.getHover().getAnimationFactor();
+                                subVisible = ssElement.getSetting().isVisible();
+                            }
+
+                            else if (subSubElement instanceof BindElement) {
+                                BindElement ssElement = ((BindElement) subSubElement);
+                                subDesc = ssElement.getSetting().getDescription();
+                                subHover = ssElement.getHover().getAnimationFactor();
+                                subVisible = ssElement.getSetting().isVisible();
+                            }
+
+                            if (subHover == 0 || !subVisible) {
+                                return;
+                            }
+
+                            tooltip.set(subDesc);
+                        });
+                    });
+                }
+            }
+        }
+
+        return tooltip.get();
     }
 
 }
