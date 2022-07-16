@@ -3,12 +3,9 @@ package com.paragon.client.ui.panel.panel;
 import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.TextRenderer;
-import com.paragon.api.util.string.StringUtil;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.client.systems.module.impl.client.ClientFont;
-import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.panel.Click;
 import com.paragon.client.ui.panel.element.Element;
@@ -25,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.lwjgl.opengl.GL11.*;
 
-// fuck warnings :)
 @SuppressWarnings("all")
 public class CategoryPanel extends Panel implements TextRenderer {
 
@@ -42,6 +38,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
     private float scrollFactor = 0;
     private float moduleHeight = 0;
+    private float scissorHeight = 0;
 
     private boolean dragging;
 
@@ -137,7 +134,7 @@ public class CategoryPanel extends Panel implements TextRenderer {
             }
         }
 
-        float scissorHeight = (float) MathHelper.clamp(MathHelper.clamp(moduleHeight, 0,(lastElement.getY() + lastElement.getHeight()) - (getY() + barHeight)) * animation.getAnimationFactor(), 0, 352);
+        scissorHeight = (float) MathHelper.clamp(MathHelper.clamp(moduleHeight, 0,(lastElement.getY() + lastElement.getHeight()) - (getY() + barHeight)) * animation.getAnimationFactor(), 0, 352);
 
         if (scrollFactor != 0) {
             if (lastElement.getY() + lastElement.getTotalHeight() > getY() + barHeight + scissorHeight) {
@@ -249,6 +246,10 @@ public class CategoryPanel extends Panel implements TextRenderer {
 
     public float getModuleHeight() {
         return moduleHeight;
+    }
+
+    public float getScissorHeight() {
+        return scissorHeight;
     }
 
     public String getTooltip() {

@@ -53,6 +53,10 @@ public final class BooleanElement extends Element {
 
             renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
+            if (!getSubElements().isEmpty()) {
+                renderText("...", getX() + getWidth() - getStringWidth("...") - 5, getY() + 2f, -1);
+            }
+
             super.render(mouseX, mouseY, dWheel);
         }
     }

@@ -89,6 +89,8 @@ public final class ColourElement extends Element {
     @Override
     public void render(int mouseX, int mouseY, int dWheel) {
         if (setting.isVisible()) {
+            getHover().setState(isHovered(mouseX, mouseY));
+
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(40, 40, 45).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), (float) MathHelper.clamp(((getWidth() - getLayer() * 2) * animation.getAnimationFactor()), 1, getWidth()), getHeight(), getSetting().getValue().getRGB());

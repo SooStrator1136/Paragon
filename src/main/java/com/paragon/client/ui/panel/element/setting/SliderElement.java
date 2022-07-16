@@ -121,7 +121,10 @@ public final class SliderElement extends Element {
                 x -= (visibleX + 9) * scrollAnimation.getAnimationFactor();
             }
 
-            float scissorY = MathHelper.clamp(getY(), getParent().getY() + 22, getParent().getY() + MathHelper.clamp(getParent().getModuleHeight(), 0, 352));
+            float scissorY = MathHelper.clamp(getY(), getParent().getY() + 22, getParent().getY() + MathHelper.clamp(
+                    // Scissor comedy
+                    getParent().getScissorHeight() + 8, 0, 358));
+
             float scissorHeight = getHeight();
 
             RenderUtil.startGlScissor(getX() + (getLayer() * 2), scissorY, totalWidth - (getStringWidth(setting.getValue().toString()) + 9), scissorHeight);

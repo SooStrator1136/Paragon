@@ -71,6 +71,7 @@ class ModuleManager {
             Trajectories(),
             ViewClip(),
             ViewModel(),
+            VoidinqESP,
             Xray(),
 
             // Misc

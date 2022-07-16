@@ -5,6 +5,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.animation.Easing;
 import com.paragon.client.ui.panel.Click;
@@ -51,9 +52,17 @@ public final class ModuleElement extends Element {
         RenderUtil.drawRect(getX(), getY(), getWidth(), getTotalHeight(), new Color(40, 40, 45).getRGB());
         RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
 
-        RenderUtil.drawRect(getX() + getWidth() - 4, getY() + 1, 2, (float) ((getHeight() - 2) * enabledAnimation.getAnimationFactor()), ColourUtil.integrateAlpha(new Color(Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.5f + (0.25f * getHover().getAnimationFactor())))), (int) (255 * enabledAnimation.getAnimationFactor())).getRGB());
+        RenderUtil.drawRect(getX(), getY(), (float) (getWidth() * enabledAnimation.getAnimationFactor()), (float) (getHeight()), new Color(Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor())))).getRGB());
 
-        renderText(module.getName(), getX() + 5, getY() + getHeight() / 2 - 3.5f, new Color((int) (155 + (100 * enabledAnimation.getAnimationFactor())), (int) (155 + (100 * enabledAnimation.getAnimationFactor())), (int) (155 + (100 * enabledAnimation.getAnimationFactor()))).getRGB());
+        int factor = (int) (155 + (100 * enabledAnimation.getAnimationFactor()));
+
+        Color textColour = new Color(factor, factor, factor);
+
+        renderText(module.getName(), getX() + 5, getY() + getHeight() / 2 - 3.5f, textColour.getRGB());
+
+        if (getSubElements().size() > 2) {
+            renderText("...", getX() + getWidth() - getStringWidth("...") - 5, getY() + 2f, -1);
+        }
 
         super.render(mouseX, mouseY, dWheel);
     }
