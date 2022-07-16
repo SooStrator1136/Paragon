@@ -113,6 +113,7 @@ class ModuleManager {
             CombatInfo(),
             Coordinates(),
             Crystals(),
+            CustomText,
             Direction(),
             FPS(),
             HUD(),
