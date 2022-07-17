@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.lwjgl.opengl.GL11.*;
 
-@SuppressWarnings("all")
 public class CategoryPanel extends Panel implements ITextRenderer {
 
     private final Category category;
@@ -281,30 +280,22 @@ public class CategoryPanel extends Panel implements ITextRenderer {
                             description = sElement.getSetting().getDescription();
                             hover = sElement.getHover().getAnimationFactor();
                             visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof SliderElement) {
+                        } else if (subElement instanceof SliderElement) {
                             SliderElement sElement = ((SliderElement) subElement);
                             description = sElement.getSetting().getDescription();
                             hover = sElement.getHover().getAnimationFactor();
                             visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof EnumElement) {
+                        } else if (subElement instanceof EnumElement) {
                             EnumElement sElement = ((EnumElement) subElement);
                             description = sElement.getSetting().getDescription();
                             hover = sElement.getHover().getAnimationFactor();
                             visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof ColourElement) {
+                        } else if (subElement instanceof ColourElement) {
                             ColourElement sElement = ((ColourElement) subElement);
                             description = sElement.getSetting().getDescription();
                             hover = sElement.getHover().getAnimationFactor();
                             visible = sElement.getSetting().isVisible();
-                        }
-
-                        else if (subElement instanceof BindElement) {
+                        } else if (subElement instanceof BindElement) {
                             BindElement sElement = ((BindElement) subElement);
                             description = sElement.getSetting().getDescription();
                             hover = sElement.getHover().getAnimationFactor();
@@ -326,30 +317,22 @@ public class CategoryPanel extends Panel implements ITextRenderer {
                                 subDesc = ssElement.getSetting().getDescription();
                                 subHover = ssElement.getHover().getAnimationFactor();
                                 subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof SliderElement) {
+                            } else if (subSubElement instanceof SliderElement) {
                                 SliderElement ssElement = ((SliderElement) subSubElement);
                                 subDesc = ssElement.getSetting().getDescription();
                                 subHover = ssElement.getHover().getAnimationFactor();
                                 subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof EnumElement) {
+                            } else if (subSubElement instanceof EnumElement) {
                                 EnumElement ssElement = ((EnumElement) subSubElement);
                                 subDesc = ssElement.getSetting().getDescription();
                                 subHover = ssElement.getHover().getAnimationFactor();
                                 subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof ColourElement) {
+                            } else if (subSubElement instanceof ColourElement) {
                                 ColourElement ssElement = ((ColourElement) subSubElement);
                                 subDesc = ssElement.getSetting().getDescription();
                                 subHover = ssElement.getHover().getAnimationFactor();
                                 subVisible = ssElement.getSetting().isVisible();
-                            }
-
-                            else if (subSubElement instanceof BindElement) {
+                            } else if (subSubElement instanceof BindElement) {
                                 BindElement ssElement = ((BindElement) subSubElement);
                                 subDesc = ssElement.getSetting().getDescription();
                                 subHover = ssElement.getHover().getAnimationFactor();

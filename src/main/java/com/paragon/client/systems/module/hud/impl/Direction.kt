@@ -7,7 +7,7 @@ import com.paragon.client.systems.module.impl.client.Colours
 import net.minecraft.util.text.TextFormatting
 
 /**
- * @author SooStrator1136
+ * @author Wolfsurge
  */
 object Direction : HUDModule("Direction", "Displays what direction you are facing") {
 

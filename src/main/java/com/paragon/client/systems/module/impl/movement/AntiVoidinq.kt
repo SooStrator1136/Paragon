@@ -42,24 +42,20 @@ object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes
                 Mode.MOTION -> {
                     event.y = 0.0624
                     minecraft.player.setVelocity(0.0, 0.0624, 0.0)
-
                     renderPosition = BlockPos(minecraft.player.posX, 0.0, minecraft.player.posZ)
                 }
-
                 Mode.LAGBACK -> {
                     minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY + 100, minecraft.player.posZ, minecraft.player.onGround))
                 }
             }
-        }
-
-        else {
+        } else {
             renderPosition = null
         }
     }
 
     override fun onRender3D() {
         if (renderPosition != null) {
-            RenderUtil.drawFilledBox(BlockUtil.getBlockBox(renderPosition!!), Color(200, 0, 0, 150))
+            RenderUtil.drawFilledBox(BlockUtil.getBlockBox(renderPosition ?: return), Color(200, 0, 0, 150))
         }
     }
 

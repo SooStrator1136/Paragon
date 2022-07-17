@@ -26,4 +26,5 @@ public abstract class Panel extends Element {
     public void setLastY(float lastY) {
         this.lastY = lastY;
     }
+
 }

@@ -17,7 +17,7 @@ public final class Icon implements Wrapper, ITextRenderer {
 
     private final String name;
     private final int x;
-    private int y;
+    private float y;
     private final Supplier<GuiScreen> guiScreenSupplier;
 
     public Icon(String name, final int x, Supplier<GuiScreen> whenClicked) {
@@ -29,7 +29,7 @@ public final class Icon implements Wrapper, ITextRenderer {
     public void draw(int mouseX, int mouseY) {
         ScaledResolution scaledResolution = new ScaledResolution(mc);
 
-        float y = scaledResolution.getScaledHeight() - 16.5f;
+        y = scaledResolution.getScaledHeight() - 16.5f;
 
         ColourUtil.setColour(-1);
 

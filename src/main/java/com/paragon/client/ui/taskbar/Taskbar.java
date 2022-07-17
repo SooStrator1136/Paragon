@@ -64,9 +64,7 @@ public final class Taskbar implements Wrapper, ITextRenderer {
     public void setTooltip(String tooltipIn) {
         if (Objects.equals(tooltipIn, "")) {
             tooltipAnimation.setState(false);
-        }
-
-        else {
+        } else {
             tooltip = tooltipIn;
             tooltipAnimation.setState(true);
         }
