@@ -7,6 +7,7 @@
 
 # Paragon
 A 1.12.2 Anarchy Client. Still in development.
+Download the client from the latest commit [here](https://nightly.link/Wolfsurge/Paragon/workflows/build/master/Package.zip)
 
 # FAQ
 <details>
