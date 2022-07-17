@@ -1,7 +1,7 @@
 package com.paragon.client.ui.alt;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.managers.alt.Alt;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiTextField;
 import java.awt.Color;
 import java.io.IOException;
 
-public final class AddAltGUI extends GuiScreen implements TextRenderer {
+public final class AddAltGUI extends GuiScreen implements ITextRenderer {
 
     private GuiTextField emailField;
     private GuiTextField passwordField;

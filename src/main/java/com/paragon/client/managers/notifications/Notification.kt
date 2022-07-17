@@ -1,7 +1,7 @@
 package com.paragon.client.managers.notifications
 
 import com.paragon.api.util.render.RenderUtil
-import com.paragon.api.util.render.TextRenderer
+import com.paragon.api.util.render.ITextRenderer
 import com.paragon.client.systems.module.hud.impl.Notifications
 import com.paragon.client.ui.animation.Animation
 import com.paragon.client.ui.animation.Easing
@@ -9,7 +9,8 @@ import com.paragon.client.ui.animation.Easing
 /**
  * @author SooStrator1136
  */
-class Notification(val message: String, val type: NotificationType) : TextRenderer {
+class Notification(val message: String, val type: NotificationType) :
+    ITextRenderer {
 
     val animation: Animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
     private var started = false

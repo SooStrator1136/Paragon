@@ -2,7 +2,7 @@ package com.paragon.client.ui.panel.panel;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.lwjgl.opengl.GL11.*;
 
 @SuppressWarnings("all")
-public class CategoryPanel extends Panel implements TextRenderer {
+public class CategoryPanel extends Panel implements ITextRenderer {
 
     private final Category category;
 

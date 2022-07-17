@@ -11,7 +11,6 @@ import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +20,7 @@ import java.util.Locale;
  */
 public class CommandManager implements Wrapper {
 
-    private String prefix = "$";
+    private final String prefix = "$";
     private static String lastCommand = "";
 
     private final List<Command> commands;

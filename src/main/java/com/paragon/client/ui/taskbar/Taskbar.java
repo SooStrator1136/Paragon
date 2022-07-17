@@ -2,7 +2,7 @@ package com.paragon.client.ui.taskbar;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.console.ConsoleGUI;
@@ -21,7 +21,7 @@ import java.util.Objects;
  * @author Wolfsurge
  */
 @SideOnly(Side.CLIENT)
-public final class Taskbar implements Wrapper, TextRenderer {
+public final class Taskbar implements Wrapper, ITextRenderer {
 
     private ArrayList<Icon> icons = new ArrayList<>();
 

@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.hud.impl;
 import com.paragon.Paragon;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.api.module.Module;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 import com.paragon.client.systems.module.hud.HUDModule;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)
-public class ArrayListHUD extends HUDModule implements TextRenderer {
+public class ArrayListHUD extends HUDModule implements ITextRenderer {
 
     public static ArrayListHUD INSTANCE;
 

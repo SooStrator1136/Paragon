@@ -2,8 +2,7 @@ package com.paragon.client.ui.taskbar.icons;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.client.gui.GuiScreen;
@@ -11,17 +10,17 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.Color;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
-public final class Icon implements Wrapper, TextRenderer {
+public final class Icon implements Wrapper, ITextRenderer {
 
-    private String name;
-    private int x, y;
-    private Supplier<GuiScreen> guiScreenSupplier;
+    private final String name;
+    private final int x;
+    private int y;
+    private final Supplier<GuiScreen> guiScreenSupplier;
 
-    public Icon(String name, int x, Supplier<GuiScreen> whenClicked) {
+    public Icon(String name, final int x, Supplier<GuiScreen> whenClicked) {
         this.name = name;
         this.x = x;
         this.guiScreenSupplier = whenClicked;

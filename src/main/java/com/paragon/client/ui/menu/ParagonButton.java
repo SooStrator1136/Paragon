@@ -1,7 +1,7 @@
 package com.paragon.client.ui.menu;
 
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.animation.Easing;
 import net.minecraft.client.Minecraft;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 
-public final class ParagonButton extends GuiButton implements TextRenderer {
+public final class ParagonButton extends GuiButton implements ITextRenderer {
 
     private final Animation animation = new Animation(() -> 300.0f, false, () -> Easing.EXPO_IN_OUT);
 

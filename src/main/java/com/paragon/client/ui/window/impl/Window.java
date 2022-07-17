@@ -1,8 +1,8 @@
 package com.paragon.client.ui.window.impl;
 
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 
-public abstract class Window implements TextRenderer {
+public abstract class Window implements ITextRenderer {
 
     private String title;
 

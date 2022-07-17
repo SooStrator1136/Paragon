@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.event.render.gui.RenderTooltipEvent;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.impl.client.Colours;
@@ -19,7 +19,7 @@ import java.awt.*;
 /**
  * @author Wolfsurge
  */
-public class ShulkerViewer extends Module implements TextRenderer {
+public class ShulkerViewer extends Module implements ITextRenderer {
 
     public ShulkerViewer() {
         super("ShulkerViewer", Category.RENDER, "Shows the contents of a shulker box in your inventory without having to open it");

@@ -2,10 +2,10 @@ package com.paragon.client.ui.alt;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.managers.alt.Alt;
 
-public final class AltEntry implements TextRenderer, Wrapper {
+public final class AltEntry implements ITextRenderer, Wrapper {
 
     private final Alt alt;
     private float offset;

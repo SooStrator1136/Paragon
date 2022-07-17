@@ -3,7 +3,7 @@ package com.paragon.client.ui.alt;
 import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.client.managers.alt.Alt;
 import net.minecraft.client.Minecraft;
@@ -17,7 +17,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public final class AltManagerGUI extends GuiScreen implements TextRenderer, Wrapper {
+public final class AltManagerGUI extends GuiScreen implements ITextRenderer, Wrapper {
 
     public static AltEntry selectedAltEntry;
     public static String renderString = TextFormatting.GRAY + "Idle";

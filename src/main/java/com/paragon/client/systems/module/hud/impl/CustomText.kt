@@ -19,12 +19,8 @@ object CustomText : HUDModule("CustomText", "Display custom text of your choice!
         renderText(text.value, x, y, textColour.value.rgb)
     }
 
-    override fun getWidth(): Float {
-        return getStringWidth(text.value)
-    }
+    override fun getWidth() = getStringWidth(text.value)
 
-    override fun getHeight(): Float {
-        return fontHeight
-    }
+    override fun getHeight() = fontHeight
 
 }

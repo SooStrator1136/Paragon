@@ -127,4 +127,5 @@ public class EntityUtil implements Wrapper {
     public static float getEntityHealth(EntityLivingBase entityLivingBase) {
         return entityLivingBase.getHealth() + entityLivingBase.getAbsorptionAmount();
     }
+
 }

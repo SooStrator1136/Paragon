@@ -1,10 +1,10 @@
 package com.paragon.client.ui.window.impl.windows;
 
 import com.paragon.api.util.Wrapper;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.ui.window.impl.Window;
 
-public abstract class Component implements TextRenderer, Wrapper {
+public abstract class Component implements ITextRenderer, Wrapper {
 
     private final Window window;
 

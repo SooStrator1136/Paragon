@@ -2,7 +2,7 @@ package com.paragon.client.ui.menu;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.animation.Easing;
@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL11.glScalef;
 /**
  * @author Wolfsurge
  */
-public final class ParagonMenu extends GuiScreen implements TextRenderer {
+public final class ParagonMenu extends GuiScreen implements ITextRenderer {
 
     // Credits expand animation
     private final Animation creditsAnimation = new Animation(() -> 500f, false, () -> Easing.EXPO_IN_OUT);

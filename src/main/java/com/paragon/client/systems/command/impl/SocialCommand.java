@@ -1,8 +1,7 @@
 package com.paragon.client.systems.command.impl;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.TextRenderer;
-import com.paragon.client.managers.CommandManager;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.managers.social.Player;
 import com.paragon.client.managers.social.Relationship;
 import com.paragon.client.systems.command.Command;
@@ -11,7 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 /**
  * @author Wolfsurge
  */
-public class SocialCommand extends Command implements TextRenderer {
+public class SocialCommand extends Command implements ITextRenderer {
 
     public SocialCommand() {
         super("Social", "social [add/remove/list] [name] [add - relationship]");

@@ -6,9 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
-
-public interface TextRenderer {
+public interface ITextRenderer {
 
     default void renderText(String text, float x, float y, int colour) {
         if (ClientFont.INSTANCE.isEnabled()) {
@@ -16,8 +14,8 @@ public interface TextRenderer {
             return;
         }
 
-        if (text.contains("\n")) {
-            String[] parts = text.split("\n");
+        if (text.contains(System.lineSeparator())) {
+            String[] parts = text.split(System.lineSeparator());
             float newY = 0.0f;
 
             for (String s : parts) {

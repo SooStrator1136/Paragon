@@ -5,7 +5,7 @@ import com.paragon.api.event.render.entity.RenderNametagEvent;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
@@ -38,7 +38,7 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * @author Wolfsurge
  */
-public class Nametags extends Module implements TextRenderer {
+public class Nametags extends Module implements ITextRenderer {
 
     public static Nametags INSTANCE;
 

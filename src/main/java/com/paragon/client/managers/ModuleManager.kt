@@ -114,7 +114,7 @@ class ModuleManager {
             Coordinates(),
             Crystals(),
             CustomText,
-            Direction(),
+            Direction,
             FPS(),
             HUD(),
             HUDEditor(),

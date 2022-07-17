@@ -3,7 +3,7 @@ package com.paragon.client.ui.console;
 import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
@@ -11,13 +11,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class Console implements Wrapper, TextRenderer {
+public class Console implements Wrapper, ITextRenderer {
 
     // Title of window
     private final String title;

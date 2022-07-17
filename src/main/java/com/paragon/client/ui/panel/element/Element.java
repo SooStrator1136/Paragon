@@ -1,7 +1,7 @@
 package com.paragon.client.ui.panel.element;
 
 import com.paragon.api.util.Wrapper;
-import com.paragon.api.util.render.TextRenderer;
+import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.animation.Animation;
 import com.paragon.client.ui.animation.Easing;
@@ -11,7 +11,7 @@ import com.paragon.client.ui.panel.panel.CategoryPanel;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Element implements Wrapper, TextRenderer {
+public abstract class Element implements Wrapper, ITextRenderer {
 
     private float x;
     private float y;
