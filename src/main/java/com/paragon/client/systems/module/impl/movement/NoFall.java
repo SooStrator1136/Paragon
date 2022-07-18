@@ -91,6 +91,9 @@ public class NoFall extends Module {
 
     @Listener
     public void onPacketSent(PacketEvent.PreSend event) {
+        if(mc.player == null || mc.playerController == null) {
+            return;
+        }
         // Ignore if we are flying with an elytra, or we are in creative mode
         if (mc.player.isElytraFlying() && ignoreElytra.getValue() || mc.playerController.getCurrentGameType().equals(GameType.CREATIVE)) {
             return;
