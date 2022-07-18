@@ -55,18 +55,22 @@ class EventFactory : Wrapper {
     @Listener
     fun onPacketReceive(event: PreReceive) {
         if (event.packet is SPacketPlayerListItem) {
-            val packet = event.packet as SPacketPlayerListItem
+            val packet = event.packet
             when (packet.action) {
                 SPacketPlayerListItem.Action.ADD_PLAYER -> packet.entries.forEach(Consumer { entry: AddPlayerData ->
-                    Paragon.INSTANCE.eventBus.post(
-                        PlayerJoinEvent(entry.profile.name)
-                    )
+                    if(entry.profile.name != null) {
+                        Paragon.INSTANCE.eventBus.post(
+                            PlayerJoinEvent(entry.profile.name)
+                        )
+                    }
                 })
 
                 SPacketPlayerListItem.Action.REMOVE_PLAYER -> packet.entries.forEach(Consumer { entry: AddPlayerData ->
-                    Paragon.INSTANCE.eventBus.post(
-                        PlayerLeaveEvent(entry.profile.name)
-                    )
+                    if(entry.profile.name != null) {
+                        Paragon.INSTANCE.eventBus.post(
+                            PlayerLeaveEvent(entry.profile.name)
+                        )
+                    }
                 })
 
                 else -> {}
