@@ -8,12 +8,11 @@ import com.paragon.client.managers.notifications.NotificationManager
 import com.paragon.client.managers.rotation.RotationManager
 import com.paragon.client.ui.console.Console
 import com.paragon.client.ui.taskbar.Taskbar
-import com.paragon.client.ui.panel.PanelGUI
-import com.paragon.client.ui.window.WindowGUI
+import com.paragon.client.ui.configuration.panel.PanelGUI
+import com.paragon.client.ui.configuration.window.WindowGUI
 import me.wolfsurge.cerauno.EventBus
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
@@ -88,7 +87,7 @@ class Paragon {
         panelGUI = PanelGUI()
         logger.info("Panel GUI Initialised")
 
-        windowGUI = WindowGUI()
+
         logger.info("Window GUI Initialised")
 
         console = Console("Paragon Console", 400f, 300f)

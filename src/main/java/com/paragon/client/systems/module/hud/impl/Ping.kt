@@ -17,6 +17,16 @@ object Ping : HUDModule("Ping", "Displays your ping in ms") {
 
     override fun getHeight() = fontHeight
 
-    fun getPing() = if (mc.connection != null) minecraft.connection!!.getPlayerInfo(mc.session.profile.id).responseTime else -1
+    /* private fun getPing() = if (mc.connection != null && mc.connection!!.getPlayerInfo(mc.player.uniqueID) != null) mc.connection!!.getPlayerInfo(mc.player.uniqueID).ping else 0)) {
+        minecraft.connection!!.getPlayerInfo(mc.session.profile.id).responseTime
+    } else -1 */
+
+    private fun getPing(): Int =
+        if (minecraft.connection != null && minecraft.connection!!.getPlayerInfo(minecraft.player.uniqueID) != null) {
+            minecraft.connection!!.getPlayerInfo(minecraft.player.uniqueID).responseTime
+        } else {
+            -1
+        }
+
 
 }

@@ -3,8 +3,8 @@ package com.paragon.client.managers.notifications
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.client.systems.module.hud.impl.Notifications
-import com.paragon.client.ui.animation.Animation
-import com.paragon.client.ui.animation.Easing
+import com.paragon.client.ui.util.animation.Animation
+import com.paragon.client.ui.util.animation.Easing
 
 /**
  * @author SooStrator1136

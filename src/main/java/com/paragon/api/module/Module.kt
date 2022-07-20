@@ -7,7 +7,7 @@ import com.paragon.api.feature.Feature
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.Wrapper
-import com.paragon.client.ui.animation.Animation
+import com.paragon.client.ui.util.animation.Animation
 import net.minecraftforge.common.MinecraftForge
 import org.lwjgl.input.Keyboard
 import java.util.*

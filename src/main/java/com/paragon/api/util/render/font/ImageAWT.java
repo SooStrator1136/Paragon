@@ -213,7 +213,7 @@ public class ImageAWT implements Wrapper {
                 continue;
             }
 
-            width += fontChar.width - 8.0;
+            width += fontChar.width - 8;
         }
 
         return width / 2;

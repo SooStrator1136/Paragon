@@ -6,8 +6,10 @@ import com.paragon.api.module.IgnoredByNotifications
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
-import com.paragon.client.ui.animation.Easing
+import com.paragon.client.ui.util.animation.Easing
+import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
+import com.paragon.client.ui.configuration.window.WindowGUI
 
 /**
  * @author SooStrator1136
@@ -23,12 +25,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     @JvmStatic
     val background = Setting("Background", true)
         .setDescription("Whether or not to draw the background")
-        .setParentSetting(style)
-        .setVisibility { style.value == Style.PANEL }
-
-    @JvmStatic
-    val radius = Setting("Radius", 1f, 1f, 15f, 1f)
-        .setDescription("The radius of the panel's corners")
         .setParentSetting(style)
         .setVisibility { style.value == Style.PANEL }
 
@@ -59,6 +55,11 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
     // Shared settings
     @JvmStatic
+    val radius = Setting("Radius", 1f, 1f, 15f, 1f)
+        .setDescription("The radius of the panel's corners")
+        .setParentSetting(style)
+
+    @JvmStatic
     val darkenBackground = Setting("DarkenBackground", true)
         .setDescription("Darkens the background whilst in the GUI")
 
@@ -75,8 +76,8 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         .setDescription("Render tooltips on the taskbar")
 
     @JvmStatic
-    fun getGUI() = when (style.value) {
-        Style.WINDOW -> Paragon.INSTANCE.windowGUI
+    fun getGUI(): GuiScreen = when (style.value) {
+        Style.WINDOW -> WindowGUI()
         Style.PANEL -> Paragon.INSTANCE.panelGUI
     }
 

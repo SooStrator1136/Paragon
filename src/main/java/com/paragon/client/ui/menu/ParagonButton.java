@@ -2,8 +2,8 @@ package com.paragon.client.ui.menu;
 
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.ITextRenderer;
-import com.paragon.client.ui.animation.Animation;
-import com.paragon.client.ui.animation.Easing;
+import com.paragon.client.ui.util.animation.Animation;
+import com.paragon.client.ui.util.animation.Easing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;

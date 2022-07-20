@@ -35,7 +35,19 @@ public interface ITextRenderer {
                 y -= Paragon.INSTANCE.getFontManager().getFontRenderer().getHeight() / 2f;
             }
 
-            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, (x - Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(text) / 2f), (y - 1) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
+            if (text.contains("\n")) {
+                String[] parts = text.split("\n");
+
+                float newY = 0.0f;
+                for (String s : parts) {
+                    Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(s, x - Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(s) / 2f, (y - 3.5f) + Paragon.INSTANCE.getFontManager().getYIncrease() + newY, colour);
+                    newY += Paragon.INSTANCE.getFontManager().getFontRenderer().getHeight();
+                }
+
+                return;
+            }
+
+            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x - Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(text) / 2f, (y - 1) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
             return;
         }
 

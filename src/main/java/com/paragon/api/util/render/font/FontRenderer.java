@@ -1,7 +1,9 @@
 package com.paragon.api.util.render.font;
 
 import com.paragon.api.util.Wrapper;
+import com.paragon.api.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -105,7 +107,7 @@ public class FontRenderer implements Wrapper {
         if (text.isEmpty())
             return (int) x;
 
-        GlStateManager.translate((double) x - 1.5, (double) y + 0.5, 0);
+        GlStateManager.translate(x, (double) y, 0);
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -189,7 +191,7 @@ public class FontRenderer implements Wrapper {
         GL11.glDisable(GL11.GL_LINE_SMOOTH);
 
         GlStateManager.disableBlend();
-        GlStateManager.translate(-((double) x - 1.5), -((double) y + 0.5), 0.0);
+        GlStateManager.translate(-x, -y, 0.0);
 
         return (int) (x + (float) getStringWidth(text));
     }
