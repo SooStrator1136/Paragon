@@ -53,7 +53,7 @@ public class SoundHighlight extends Module {
         if (event.getPacket() instanceof SPacketSoundEffect) {
             SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
-            String path = format.getValue() ? I18n.format("subtitles." + ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath()) : ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getPath();
+            String path = format.getValue() ? I18n.format("subtitles." + ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getResourcePath()) : ((SPacketSoundEffect) event.getPacket()).getSound().getSoundName().getResourcePath();
 
             // Exclude sounds that don't have translations
             if (!path.contains("subtitles.")) {

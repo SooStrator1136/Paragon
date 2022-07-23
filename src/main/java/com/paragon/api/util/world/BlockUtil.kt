@@ -2,12 +2,10 @@ package com.paragon.api.util.world
 
 import com.paragon.api.util.Wrapper
 import net.minecraft.block.Block
-import net.minecraft.entity.Entity
 import net.minecraft.init.Blocks
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 
 
@@ -31,7 +29,7 @@ object BlockUtil : Wrapper {
                 while (y.toFloat() < posY.toFloat() + radius) {
                     if (((posX - x) * (posX - x) + (posZ - z) * (posZ - z) + (posY - y) * (posY - y)).toDouble() < (radius * radius).toDouble()) {
                         val position = BlockPos(x, y, z)
-                        if (minecraft.world.getBlockState(position).block !== Blocks.AIR || !ignoreAir) {
+                        if (minecraft.world.getBlockState(position).block != Blocks.AIR || !ignoreAir) {
                             sphere.add(position)
                         }
                     }
@@ -60,12 +58,12 @@ object BlockUtil : Wrapper {
      * @return The bounding box of the entity
      */
     @JvmStatic
-    fun getBlockBox(blockPos: BlockPos): AxisAlignedBB = AxisAlignedBB(blockPos.x.toDouble(), blockPos.y.toDouble(), blockPos.z.toDouble(), (blockPos.x + 1).toDouble(), (blockPos.y + 1).toDouble(), (blockPos.z + 1).toDouble()).offset(-Wrapper.mc.renderManager.viewerPosX, -Wrapper.mc.renderManager.viewerPosY, -Wrapper.mc.renderManager.viewerPosZ)
+    fun getBlockBox(blockPos: BlockPos): AxisAlignedBB = AxisAlignedBB(blockPos.x.toDouble(), blockPos.y.toDouble(), blockPos.z.toDouble(), (blockPos.x + 1).toDouble(), (blockPos.y + 1).toDouble(), (blockPos.z + 1).toDouble()).offset(-minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ)
 
     @JvmStatic
     fun canSeePos(pos: BlockPos): Boolean {
         for (facing in EnumFacing.values()) {
-            if (minecraft.world.rayTraceBlocks(Vec3d(Wrapper.mc.player.posX, Wrapper.mc.player.posY + Wrapper.mc.player.getEyeHeight().toDouble(), Wrapper.mc.player.posZ), Vec3d(pos.offset(facing).x + 0.5, (pos.offset(facing).y + 1).toDouble(), pos.offset(facing).z + 0.5), false, true, false) == null) {
+            if (minecraft.world.rayTraceBlocks(Vec3d(minecraft.player.posX, minecraft.player.posY + minecraft.player.getEyeHeight().toDouble(), minecraft.player.posZ), Vec3d(pos.offset(facing).x + 0.5, (pos.offset(facing).y + 1).toDouble(), pos.offset(facing).z + 0.5), false, true, false) == null) {
                 return true
             }
         }

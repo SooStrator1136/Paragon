@@ -34,7 +34,7 @@ object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :(("
         .setDescription("Render the hat on other players")
 
     override fun onRender3D() {
-        minecraft.world.playerEntities.forEach {
+        minecraft.world?.playerEntities?.forEach {
             // We don't want to render the hat
             if (it === minecraft.player && !firstPerson.value && minecraft.gameSettings.thirdPersonView == 0 || !others.value && it !== minecraft.player) {
                 return

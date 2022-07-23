@@ -574,14 +574,14 @@ public class AutoCrystalRewrite extends Module {
         float distance = 0;
 
         Vec3d facingVec = new Vec3d(0.5, 0.5, 0.5);
-        Vec3d raytraceVector = new Vec3d(placement).add(0.5, 0.5, 0.5);
+        Vec3d raytraceVector = new Vec3d(placement).addVector(0.5, 0.5, 0.5);
 
         if (!placeRaytrace.getValue().equals(Raytrace.NONE)) {
             if (placement.getY() > eye) {
                 for (float x = 0; x <= 1; x += placeRaytrace.getValue().getIncrease()) {
                     for (float y = 0; y <= 1; y += placeRaytrace.getValue().getIncrease()) {
                         for (float z = 0; z <= 1; z += placeRaytrace.getValue().getIncrease()) {
-                            Vec3d vector = new Vec3d(placement).add(x, y, z);
+                            Vec3d vector = new Vec3d(placement).addVector(x, y, z);
 
                             RayTraceResult result = mc.world.rayTraceBlocks(mc.player.getPositionEyes(mc.getRenderPartialTicks()), vector, false, true, false);
 
@@ -612,9 +612,7 @@ public class AutoCrystalRewrite extends Module {
                     mc.player.swingArm(crystalHand);
                 }
             }
-        }
-
-        else if (placeMode.getValue().equals(PlaceMode.PACKET)) {
+        } else if (placeMode.getValue().equals(PlaceMode.PACKET)) {
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(placement, facing, crystalHand, (float) facingVec.x, (float) facingVec.y, (float) facingVec.z));
 
             if (placeSwing.getValue()) {
@@ -709,7 +707,7 @@ public class AutoCrystalRewrite extends Module {
         double v = (1.0D - distancedSize) * blockDensity;
         float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * (double) doubleExplosionSize + 1.0D));
 
-        int diff = mc.world.getDifficulty().getId();
+        int diff = mc.world.getDifficulty().getDifficultyId();
 
         return getBlastReduction(entity, damage * (diff == 0 ? 0 : (diff == 2 ? 1 : (diff == 1 ? 0.5f : 1.5f))), new Explosion(mc.world, null, vec.x, vec.y, vec.z, 6F, false, true));
     }

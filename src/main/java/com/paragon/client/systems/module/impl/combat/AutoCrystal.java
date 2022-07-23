@@ -1070,7 +1070,7 @@ public class AutoCrystal extends Module {
             double v = (1.0D - distancedSize) * blockDensity;
             float damage = (float) ((int) ((v * v + v) / 2.0D * 7.0D * (double) doubleExplosionSize + 1.0D));
 
-            int diff = mc.world.getDifficulty().getId();
+            int diff = mc.world.getDifficulty().getDifficultyId();
             finalDamage = getBlastReduction(entity, damage * (diff == 0 ? 0 : (diff == 2 ? 1 : (diff == 1 ? 0.5f : 1.5f))), new Explosion(mc.world, null, vec.x, vec.y, vec.z, 6F, false, true));
         } catch (NullPointerException ignored) {
         }
@@ -1080,6 +1080,7 @@ public class AutoCrystal extends Module {
 
     /**
      * Gets the blast reduction
+     *
      * @param entity The entity to calculate damage for
      * @param damage The original damage
      * @param explosion The explosion
