@@ -28,7 +28,7 @@ class ModuleManager {
             AutoCrystal(),
             AutoCrystalRewrite(),
             BowRelease(),
-            Criticals(),
+            Criticals,
             HoleFill(),
             Offhand,
             Replenish(),
