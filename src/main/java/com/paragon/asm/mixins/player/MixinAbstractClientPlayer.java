@@ -26,6 +26,7 @@ public abstract class MixinAbstractClientPlayer extends EntityPlayer {
     public void getLocationCape(CallbackInfoReturnable<ResourceLocation> cir) {
         if (Paragon.INSTANCE.getCapeManager().isCaped(getName())) {
             cir.setReturnValue(new ResourceLocation(Paragon.modID, Paragon.INSTANCE.getCapeManager().getCape(getName()).getPath()));
+
         }
     }
 

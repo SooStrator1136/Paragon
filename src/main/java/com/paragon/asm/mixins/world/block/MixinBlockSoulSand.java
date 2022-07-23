@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockSoulSand.class)
 public class MixinBlockSoulSand {
 
-    @Inject(method = "onEntityCollision", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "onEntityCollidedWithBlock", at = @At("HEAD"), cancellable = true)
     public void onEntityCollide(World worldIn, BlockPos pos, IBlockState state, Entity entityIn, CallbackInfo ci) {
         try {
             if (entityIn.getEntityId() == Minecraft.getMinecraft().player.getEntityId()) {
