@@ -1,72 +1,64 @@
-package me.wolfsurge.cerauno.listener;
+package me.wolfsurge.cerauno.listener
 
-import scala.collection.immutable.Stream;
-
-import java.lang.invoke.*;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.Observer;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
+import java.lang.invoke.LambdaMetafactory
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Consumer
 
 /**
  * An object which holds the data of a subscribed method
- * @author Wolfsurge
+ * @author Wolfsurge, therealbush
  * @since 05/03/22
  */
-public class SubscribedMethod {
-
-    // Avoids creation of duplicates
-    private static final Map<Method, Consumer<Object>> handlerCache = new ConcurrentHashMap<>();
-
-    // The source of the method
-    private final Object source;
+class SubscribedMethod(val source: Any?, method: Method) {
 
     // Wrapper for invoking the method
-    private final Consumer<Object> handler;
+    private var handler: Consumer<Any>? = null
 
-    @SuppressWarnings("unchecked") // Will never fail
-    public SubscribedMethod(Object source, Method method) {
-        this.source = source;
-        if (handlerCache.containsKey(method)) this.handler = handlerCache.get(method);
-        else try {
+    init {
+        if (handlerCache.containsKey(method)) handler = handlerCache[method] else try {
             // Get lookup instance
-            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            val lookup = MethodHandles.lookup()
+
             // Check method modifiers for static
-            boolean isStatic = Modifier.isStatic(method.getModifiers());
+            val isStatic = Modifier.isStatic(method.modifiers)
+
             // Create methodtype for invoking the methodhandle
-            MethodType targetSignature = MethodType.methodType(Consumer.class);
+            val targetSignature = MethodType.methodType(Consumer::class.java)
+
             // Generate callsite
-            CallSite callSite = LambdaMetafactory.metafactory(
-                    lookup, // The lookup instance to use
-                    "accept", // The name of the method to implement
-                    isStatic ? targetSignature : targetSignature.appendParameterTypes(source.getClass()), // The signature for .invoke()
-                    MethodType.methodType(void.class, Object.class), // The method signature to implement
-                    lookup.unreflect(method), // Method to invoke when called
-                    MethodType.methodType(void.class, method.getParameterTypes()[0]) // Signature that is enforced at runtime
-            );
+            val callSite = LambdaMetafactory.metafactory(
+                lookup,  // The lookup instance to use
+                "accept",  // The name of the method to implement
+                if (isStatic) targetSignature else targetSignature.appendParameterTypes(source?.javaClass),  // The signature for .invoke()
+                MethodType.methodType(Void.TYPE, Any::class.java),  // The method signature to implement
+                lookup.unreflect(method),  // Method to invoke when called
+                MethodType.methodType(Void.TYPE, method.parameterTypes[0]) // Signature that is enforced at runtime
+            )
+
             // Get target to invoke
-            MethodHandle target = callSite.getTarget();
+            val target = callSite.target
+
             // Invoke on the object if not static
-            this.handler = (Consumer<Object>) (isStatic ? target.invoke() : target.invoke(source));
+            handler = (if (isStatic) target.invoke() else target.invoke(source)) as Consumer<Any>
+
             // Cache this dynamic handler
-            handlerCache.put(method, this.handler);
-        } catch (Throwable throwable) {
+            handlerCache[method] = handler
+        } catch (throwable: Throwable) {
             // This shouldn't ever happen
-            throw new Error(throwable);
+            throw Error(throwable)
         }
     }
 
-    /**
-     * Gets the source of the method
-     * @return The source of the method
-     */
-    public Object getSource() {
-        return source;
+    operator fun invoke(event: Any) {
+        handler!!.accept(event)
     }
 
-    public void invoke(Object event) {
-        this.handler.accept(event);
+    companion object {
+        // Avoids creation of duplicates
+        private val handlerCache: MutableMap<Method, Consumer<Any>?> = ConcurrentHashMap()
     }
 }

@@ -1,34 +1,29 @@
-package me.wolfsurge.cerauno;
+package me.wolfsurge.cerauno
 
-import me.wolfsurge.cerauno.listener.Listener;
-import me.wolfsurge.cerauno.listener.SubscribedMethod;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import me.wolfsurge.cerauno.listener.Listener
+import me.wolfsurge.cerauno.listener.SubscribedMethod
+import java.lang.reflect.Method
 
 /**
  * The main EventBus object. All events are posted from here, as well as objects being subscribed
  * @author Wolfsurge
  * @since 05/03/22
  */
-public class EventBus {
-
+class EventBus {
     // A map of all classes and their subscribed methods
-    private final Map<Class<?>, ArrayList<SubscribedMethod>> subscribedMethods = new HashMap<>();
+    private val subscribedMethods: MutableMap<Class<*>, ArrayList<SubscribedMethod>> = HashMap()
 
     /**
      * Register an object
      * @param obj The object to register
      */
-    public void register(Object obj) {
+    fun register(obj: Any) {
         // Iterate through every method in the object's class
-        for (Method method : obj.getClass().getDeclaredMethods()) {
+        for (method in obj.javaClass.declaredMethods) {
             // Check if the method is 'good'
             if (isMethodGood(method)) {
                 // Register the method to the map
-                registerMethod(method, obj);
+                registerMethod(method, obj)
             }
         }
     }
@@ -37,11 +32,11 @@ public class EventBus {
      * Unregister an object
      * @param obj The object to unregister
      */
-    public void unregister(Object obj) {
+    fun unregister(obj: Any) {
         // Iterate through every method in the map
-        for (ArrayList<SubscribedMethod> subscribedMethodList : subscribedMethods.values()) {
+        for (subscribedMethodList in subscribedMethods.values) {
             // Remove the method if the source is the obj parameter
-            subscribedMethodList.removeIf(method1 -> method1.getSource() == obj);
+            subscribedMethodList.removeIf { method1: SubscribedMethod -> method1.source === obj }
         }
     }
 
@@ -49,9 +44,9 @@ public class EventBus {
      * Registers an undefined amount of objects
      * @param objList The list of objects to register
      */
-    public void registerAll(Object... objList) {
-        for (Object obj : objList) {
-            register(obj);
+    fun registerAll(vararg objList: Any) {
+        for (obj in objList) {
+            register(obj)
         }
     }
 
@@ -59,9 +54,9 @@ public class EventBus {
      * Unregisters an undefined amount of objects
      * @param objList The list of objects to unregister
      */
-    public void unregisterAll(Object... objList) {
-        for (Object obj : objList) {
-            unregister(obj);
+    fun unregisterAll(vararg objList: Any) {
+        for (obj in objList) {
+            unregister(obj)
         }
     }
 
@@ -70,34 +65,32 @@ public class EventBus {
      * @param method The method to register
      * @param obj The source
      */
-    public void registerMethod(Method method, Object obj) {
+    private fun registerMethod(method: Method, obj: Any?) {
         // Parameter type (event)
-        Class<?> clazz = method.getParameterTypes()[0];
+        val clazz = method.parameterTypes[0]
 
         // New subscribed method
-        SubscribedMethod subscribedMethod = new SubscribedMethod(obj, method);
+        val subscribedMethod = SubscribedMethod(obj, method)
 
         // Set the method to accessible if it isn't already (private methods)
-        if (!method.isAccessible()) {
-            method.setAccessible(true);
+        if (!method.isAccessible) {
+            method.isAccessible = true
         }
 
         // If the map contains the class, add the method to the class key
         if (subscribedMethods.containsKey(clazz)) {
-            if (!subscribedMethods.get(clazz).contains(subscribedMethod)) {
-                subscribedMethods.get(clazz).add(subscribedMethod);
+            if (!subscribedMethods[clazz]!!.contains(subscribedMethod)) {
+                subscribedMethods[clazz]!!.add(subscribedMethod)
             }
-        }
-        // Else add a new value
-        else {
+        } else {
             // Create new arraylist
-            ArrayList<SubscribedMethod> array = new ArrayList<>();
+            val array = ArrayList<SubscribedMethod>()
 
             // Add subscribed method to arraylist
-            array.add(subscribedMethod);
+            array.add(subscribedMethod)
 
             // Put the arraylist in subscribedMethods
-            subscribedMethods.put(clazz, array);
+            subscribedMethods[clazz] = array
         }
     }
 
@@ -105,15 +98,15 @@ public class EventBus {
      * Posts an object to trigger an event
      * @param obj The object to post
      */
-    public void post(Object obj) {
+    fun post(obj: Any) {
         // Get the class
-        ArrayList<SubscribedMethod> subscribedMethodList = subscribedMethods.get(obj.getClass());
+        val subscribedMethodList = subscribedMethods[obj.javaClass]
 
         // Check that we successfully got the class
         if (subscribedMethodList != null) {
             // Iterate through the subscribed methods
-            for (SubscribedMethod subscribedMethod1 : subscribedMethodList) {
-                subscribedMethod1.invoke(obj);
+            for (subscribedMethod1 in subscribedMethodList) {
+                subscribedMethod1.invoke(obj)
             }
         }
     }
@@ -121,14 +114,18 @@ public class EventBus {
     /**
      * Check if a method is good
      * @param method The method to check
-     * @return Whether it has one parameter (event), and it has the {@link Listener} listener annotation
+     * @return Whether it has one parameter (event), and it has the [Listener] listener annotation
      */
-    public boolean isMethodGood(Method method) {
-        return method.getParameters().length == 1 && method.isAnnotationPresent(Listener.class);
+    private fun isMethodGood(method: Method): Boolean {
+        return method.parameters.size == 1 && method.isAnnotationPresent(Listener::class.java)
     }
 
-    public boolean isRegistered(Object obj) {
-        return subscribedMethods.containsKey(obj.getClass());
+    /**
+     * Check if an object is registered to the bus
+     * @param obj The object to check
+     * @return Whether the object is registered
+     */
+    fun isRegistered(obj: Any): Boolean {
+        return subscribedMethods.containsKey(obj.javaClass)
     }
-
 }
