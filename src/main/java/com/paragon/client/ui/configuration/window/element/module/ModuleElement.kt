@@ -8,6 +8,7 @@ import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.window.element.Element
 import com.paragon.client.ui.configuration.window.element.setting.impl.BooleanElement
+import com.paragon.client.ui.configuration.window.element.setting.impl.EnumElement
 import com.paragon.client.ui.configuration.window.element.setting.impl.SliderElement
 import com.paragon.client.ui.configuration.window.window.Window
 import com.paragon.client.ui.util.Click
@@ -25,12 +26,10 @@ class ModuleElement(val module: Module, window: Window, x: Float, y: Float, widt
 
     init {
         module.getSettings().forEach {
-            if (it.value is Boolean) {
-                subElements.add(BooleanElement(it as Setting<Boolean>, window, x, y, width, height))
-            }
-
-            else if (it.value is Number) {
-                subElements.add(SliderElement(it as Setting<Number>, window, x, y, width, height + 4))
+            when (it.value) {
+                is Boolean -> subElements.add(BooleanElement(it as Setting<Boolean>, window, x, y, width, height))
+                is Enum<*> -> subElements.add(EnumElement(it as Setting<Enum<*>>, window, x, y, width, height))
+                is Number -> subElements.add(SliderElement(it as Setting<Number>, window, x, y, width, height + 4))
             }
         }
     }
@@ -59,7 +58,7 @@ class ModuleElement(val module: Module, window: Window, x: Float, y: Float, widt
 
                 it.draw(mouseX, mouseY)
 
-                y += it.height
+                y += it.getTotalHeight()
             }
         }
     }

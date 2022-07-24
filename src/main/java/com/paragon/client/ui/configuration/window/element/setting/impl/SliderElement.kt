@@ -23,8 +23,6 @@ class SliderElement(setting: Setting<Number>, window: Window, x: Float, y: Float
     var dragging: Boolean = false
 
     override fun draw(mouseX: Int, mouseY: Int) {
-        super.draw(mouseX, mouseY)
-
         var renderWidth = 0f
         val maxWidth = width - 4f
 
@@ -82,6 +80,8 @@ class SliderElement(setting: Setting<Number>, window: Window, x: Float, y: Float
 
         renderText(setting.name, x + 2, y + 5f, -1)
         renderText(setting.value.toString(), x + width - getStringWidth(setting.value.toString()) - 3, y + 5f, Color(185, 185, 190).rgb)
+
+        super.draw(mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, button: Click) {
@@ -90,6 +90,10 @@ class SliderElement(setting: Setting<Number>, window: Window, x: Float, y: Float
         if (isHovered(mouseX, mouseY)) {
             if (button == Click.LEFT) {
                 dragging = true
+            }
+
+            else if (button == Click.RIGHT) {
+                expandAnimation.state = !expandAnimation.state
             }
         }
     }

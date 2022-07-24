@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.window.element.setting.impl
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.window.element.setting.SettingElement
@@ -14,17 +15,13 @@ import java.awt.Color
 /**
  * @author Wolfsurge
  */
-class BooleanElement(setting: Setting<Boolean>, window: Window, x: Float, y: Float, width: Float, height: Float) : SettingElement<Boolean>(setting, window, x, y, width, height) {
-
-    private val enabled: Animation = Animation({ ClickGUI.animationSpeed.value }, setting.value, { ClickGUI.easing.value })
+class EnumElement(setting: Setting<Enum<*>>, window: Window, x: Float, y: Float, width: Float, height: Float) : SettingElement<Enum<*>>(setting, window, x, y, width, height) {
 
     override fun draw(mouseX: Int, mouseY: Int) {
-        enabled.state = setting.value
-
         RenderUtil.drawRect(x, y, width, 16f, Color((75 + (20 * hoverAnimation.getAnimationFactor())).toInt(), (75 + (20 * hoverAnimation.getAnimationFactor())).toInt(), (75 + (20 * hoverAnimation.getAnimationFactor())).toInt()).rgb)
-        RenderUtil.drawRect(x, y, (width * enabled.getAnimationFactor()).toFloat(), 16f, ColourUtil.integrateAlpha(Colours.mainColour.value, (255 - (55 * hoverAnimation.getAnimationFactor())).toFloat()).rgb)
 
         renderText(setting.name, x + 2, y + 5f, -1)
+        renderText(StringUtil.getFormattedText(setting.value), x + width - getStringWidth(StringUtil.getFormattedText(setting.value)) - 3, y + 5f, Color(185, 185, 190).rgb)
 
         super.draw(mouseX, mouseY)
     }
@@ -34,7 +31,7 @@ class BooleanElement(setting: Setting<Boolean>, window: Window, x: Float, y: Flo
 
         if (isHovered(mouseX, mouseY)) {
             if (button == Click.LEFT) {
-                setting.setValue(!setting.value)
+                setting.setValue(setting.nextMode)
             }
 
             else if (button == Click.RIGHT) {
