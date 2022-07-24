@@ -37,6 +37,7 @@ class ModuleManager {
             // Movement
             AntiVoidinq,
             ElytraFlight(),
+            EntitySpeed,
             Flight(),
             InventoryWalk(),
             NoFall(),
