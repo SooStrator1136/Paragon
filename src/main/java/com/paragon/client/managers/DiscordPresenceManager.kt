@@ -11,7 +11,7 @@ import com.paragon.api.util.mc
  */
 class DiscordPresenceManager : Wrapper {
 
-    private val id = "1000734552047759421"
+    private val id = "965612502434082846"
     private val presence = DiscordRichPresence()
     private val rpc = DiscordRPC.INSTANCE
 
@@ -19,7 +19,7 @@ class DiscordPresenceManager : Wrapper {
         val eventHandlers = DiscordEventHandlers()
         rpc.Discord_Initialize(id, eventHandlers, true, null)
 
-        presence.largeImageKey = "paragon_large"
+        presence.largeImageKey = "logo"
         presence.startTimestamp = System.currentTimeMillis() / 1000L
         presence.largeImageText = "Paragon Client @ https://github.com/Wolfsurge/Paragon"
         presence.details = getDetails()
@@ -28,7 +28,7 @@ class DiscordPresenceManager : Wrapper {
     }
 
     fun updateRPC() {
-        presence.largeImageKey = "paragon_large"
+        presence.largeImageKey = "logo"
         presence.state = "Username: " + mc.session.username
         presence.startTimestamp = System.currentTimeMillis() / 1000L
         presence.largeImageText = "Paragon Client @ https://github.com/Wolfsurge/Paragon"
