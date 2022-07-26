@@ -29,6 +29,7 @@ class ModuleManager {
             AutoCrystalRewrite(),
             BowRelease(),
             Criticals,
+            BowBomb(),
             HoleFill(),
             Offhand,
             Replenish(),
@@ -134,6 +135,6 @@ class ModuleManager {
         modules.forEach(Module::reflectSettings)
     }
 
-    fun getModulesThroughPredicate(predicate: Predicate<Module>): List<Module> = modules.stream().filter(predicate).collect(Collectors.toList());
+    fun getModulesThroughPredicate(predicate: Predicate<Module>): List<Module> = modules.stream().filter(predicate).collect(Collectors.toList())
 
 }

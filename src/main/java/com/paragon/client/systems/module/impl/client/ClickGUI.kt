@@ -58,10 +58,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         .setDescription("Pause the game whilst in the GUI")
 
     @JvmStatic
-    val catgirl = Setting("Catgirl", false)
-        .setDescription("kassuk is a weeb")
-
-    @JvmStatic
     val tooltips = Setting("Tooltips", true)
         .setDescription("Render tooltips on the taskbar")
 

@@ -5,16 +5,13 @@ import com.paragon.api.module.Category
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.string.StringUtil
-import com.paragon.client.managers.FontManager
 import com.paragon.client.systems.module.impl.client.ClickGUI
-import com.paragon.client.systems.module.impl.client.ClickGUI.catgirl
 import com.paragon.client.ui.configuration.retrowindows.window.Window
 import com.paragon.client.ui.configuration.retrowindows.window.category.CategoryWindow
 import com.paragon.client.ui.util.Click
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.ResourceLocation
-import net.minecraft.util.StringUtils
 import org.lwjgl.input.Mouse
 import java.awt.Color
 
@@ -56,14 +53,6 @@ class Windows98 : GuiScreen(), ITextRenderer {
         }
 
         windows.reverse()
-
-        if (catgirl.value) {
-            val sr = ScaledResolution(mc)
-
-            mc.textureManager.bindTexture(ResourceLocation("paragon", "textures/ew.png"))
-
-            RenderUtil.drawModalRectWithCustomSizedTexture(0f, (sr.scaledHeight - 145).toFloat(), 0f, 0f, 100f, 167.77777f, 100f, 167.77777f)
-        }
 
         if (tooltipName.isNotEmpty() && tooltipContent.isNotEmpty()) {
             val text = StringUtil.wrap(tooltipContent, 30)
