@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting.element
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingElement
@@ -99,7 +100,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             }
         }
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  renderWidth, height - 4, Colours.mainColour.value.rgb, Colours.mainColour.value.brighter().brighter().rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  renderWidth, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 

@@ -21,9 +21,16 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     val style: Setting<Style> = Setting("Style", Style.ZERODAY)
         .setDescription("The style of the ClickGUI")
 
+    // Windows settings
+    @JvmStatic
+    val gradient = Setting("Gradient", true)
+        .setDescription("Whether the windows should have a gradient")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.WINDOWS_98 }
+
     // ZeroDay settings
     @JvmStatic
-    val gradientBackground = Setting("Gradient", true)
+    val gradientBackground = Setting("GradientBackground", true)
         .setDescription("Whether or not to draw the gradient in the background")
         .setParentSetting(style)
         .setVisibility { style.value == Style.ZERODAY }

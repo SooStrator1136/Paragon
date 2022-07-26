@@ -52,7 +52,7 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
 
         // Background
         RenderUtil.drawRect(x, y, width, (height + scissorHeight + 1 * animation.getAnimationFactor()).toFloat(), Color(148, 148, 148).rgb)
-        RenderUtil.drawHorizontalGradientRect(x + 1, y + 1, width - 2, height - 2, Colours.mainColour.value.rgb, Colours.mainColour.value.brighter().brighter().rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 1, y + 1, width - 2, height - 2, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         // Minimise button
         RenderUtil.drawRect(x + width - 12.5f, y + 3.5f, 10f, 10f, Color(70, 70, 70).rgb)

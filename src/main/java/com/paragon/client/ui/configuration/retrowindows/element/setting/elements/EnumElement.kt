@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting.element
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.string.StringUtil
+import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingElement
@@ -22,7 +23,7 @@ class EnumElement(parent: ModuleElement, setting: Setting<Enum<*>>, x: Float, y:
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  width - 4, height - 4, Colours.mainColour.value.rgb, Colours.mainColour.value.brighter().brighter().rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  width - 4, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 

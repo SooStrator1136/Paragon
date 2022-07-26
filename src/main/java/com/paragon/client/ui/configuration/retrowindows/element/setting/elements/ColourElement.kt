@@ -3,6 +3,8 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting.element
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.client.systems.module.impl.client.ClickGUI
+import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingElement
 import com.paragon.client.ui.util.Click
@@ -60,7 +62,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * expanded.getAnimationFactor()).toFloat(), height - 4, setting.value.rgb, setting.value.brighter().brighter().rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * expanded.getAnimationFactor()).toFloat(), height - 4, setting.value.rgb, if (ClickGUI.gradient.value) setting.value.brighter().brighter().rgb else setting.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 

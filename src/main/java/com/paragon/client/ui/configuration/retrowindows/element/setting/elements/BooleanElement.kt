@@ -27,7 +27,7 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, Colours.mainColour.value.brighter().brighter().rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 
