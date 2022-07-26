@@ -10,12 +10,10 @@ import com.paragon.client.ui.util.animation.Animation;
 import com.paragon.client.ui.util.animation.Easing;
 import com.paragon.client.ui.configuration.panel.panel.Panel;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -108,16 +106,7 @@ public class PanelGUI extends GuiScreen {
         Collections.reverse(panels);
 
         glColor4f(1, 1, 1, 1);
-
         glPopMatrix();
-
-        if (ClickGUI.getCatgirl().getValue()) {
-            ScaledResolution sr = new ScaledResolution(mc);
-
-            mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/ew.png"));
-            RenderUtil.drawModalRectWithCustomSizedTexture(0, sr.getScaledHeight() - 145, 0, 0, 100, 167.777777778f, 100, 167.777777778f);
-        }
-
         glPushMatrix();
         glTranslated(0, 24 - (24 * openAnimation.getAnimationFactor()), 0);
 

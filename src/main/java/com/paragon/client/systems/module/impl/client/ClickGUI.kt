@@ -47,11 +47,11 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         .setVisibility { style.value == Style.PANEL }
 
     // Window settings
-    @JvmStatic
+   /* @JvmStatic
     val scrollClamp = Setting("ScrollClamp", false)
         .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
         .setParentSetting(style)
-        .setVisibility { style.value == Style.WINDOW }
+        .setVisibility { style.value == Style.WINDOW }*/
 
     // Shared settings
     @JvmStatic
@@ -66,10 +66,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     @JvmStatic
     val pause = Setting("Pause Game", false)
         .setDescription("Pause the game whilst in the GUI")
-
-    @JvmStatic
-    val catgirl = Setting("Catgirl", false)
-        .setDescription("kassuk is a weeb")
 
     @JvmStatic
     val tooltips = Setting("Tooltips", true)

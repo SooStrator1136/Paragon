@@ -1,5 +1,6 @@
 package com.paragon.client.ui.configuration.window
 
+import com.paragon.Paragon
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.window.window.Window
 import com.paragon.client.ui.configuration.window.window.windows.ConfigurationWindow
@@ -19,6 +20,8 @@ class WindowGUI : GuiScreen() {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
+        Paragon.INSTANCE.taskbar.drawTaskbar(mouseX, mouseY)
+
 
         windows.forEach {
             it.draw(mouseX, mouseY)
@@ -31,6 +34,8 @@ class WindowGUI : GuiScreen() {
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton)
+        Paragon.INSTANCE.taskbar.mouseClicked(mouseX, mouseY)
+
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
