@@ -29,7 +29,7 @@ Download the client from the latest commit [Here](https://nightly.link/Wolfsurge
 </details>
 
 # Founders
-Wolfsurge <br>
+Surge <br>
 TeleTofu
 
 ## Developers
@@ -42,7 +42,7 @@ Doogie13 <br>
 Sxmurai / Aestheticall
 
 ## Other Credits
-Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Wolfsurge wrote it
+Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Surge wrote it
 
 # Build instructions
 Windows:

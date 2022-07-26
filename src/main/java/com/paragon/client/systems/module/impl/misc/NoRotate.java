@@ -8,7 +8,7 @@ import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class NoRotate extends Module {
 

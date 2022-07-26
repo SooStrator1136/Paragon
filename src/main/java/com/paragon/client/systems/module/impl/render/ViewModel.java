@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumHandSide;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class ViewModel extends Module {
 

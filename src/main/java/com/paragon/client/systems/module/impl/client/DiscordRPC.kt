@@ -6,7 +6,7 @@ import com.paragon.api.module.IgnoredByNotifications
 import com.paragon.api.module.Module
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @IgnoredByNotifications
 object DiscordRPC : Module("DiscordRPC", Category.CLIENT, "Changes your Discord presence to reflect the client's current state") {

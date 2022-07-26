@@ -9,7 +9,7 @@ import me.wolfsurge.cerauno.listener.Listener;
 import java.awt.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 19/06/22
  */
 public class ClearChat extends Module {

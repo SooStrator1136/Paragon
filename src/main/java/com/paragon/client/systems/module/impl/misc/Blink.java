@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @SideOnly(Side.CLIENT)
 public class Blink extends Module {

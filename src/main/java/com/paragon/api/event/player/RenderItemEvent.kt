@@ -4,7 +4,7 @@ import me.wolfsurge.cerauno.event.Event
 import net.minecraft.util.EnumHandSide
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 open class RenderItemEvent(val side: EnumHandSide) : Event() {
 

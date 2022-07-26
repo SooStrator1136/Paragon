@@ -7,7 +7,7 @@ import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 14/05/22
  */
 public class ViewClip extends Module {

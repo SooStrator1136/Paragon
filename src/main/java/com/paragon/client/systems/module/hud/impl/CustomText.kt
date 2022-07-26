@@ -5,7 +5,7 @@ import com.paragon.client.systems.module.hud.HUDModule
 import java.awt.Color
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object CustomText : HUDModule("CustomText", "Display custom text of your choice!") {
 

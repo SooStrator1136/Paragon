@@ -10,7 +10,7 @@ import com.paragon.client.systems.module.hud.HUDModule
 import java.util.function.Consumer
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object HUD : Module("HUD", Category.HUD, "Render the client's HUD on screen"), ITextRenderer {
 

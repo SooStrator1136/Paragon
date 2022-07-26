@@ -9,7 +9,7 @@ import me.wolfsurge.cerauno.listener.Listener;
 import java.awt.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 22/05/22
  */
 public class HitColour extends Module {

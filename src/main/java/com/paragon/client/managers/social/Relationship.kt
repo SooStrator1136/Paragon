@@ -3,7 +3,7 @@ package com.paragon.client.managers.social
 import net.minecraft.util.text.TextFormatting
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 enum class Relationship(val textFormatting: TextFormatting) {
 

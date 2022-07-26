@@ -110,7 +110,7 @@ class ModuleManager {
 
             // HUD
             Armour(),
-            ArrayListHUD(),
+            ArrayListHUD,
             CombatInfo(),
             Coordinates(),
             Crystals(),

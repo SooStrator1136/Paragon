@@ -13,7 +13,7 @@ import net.minecraft.util.math.MathHelper
 import java.awt.Color
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes for you") {
 

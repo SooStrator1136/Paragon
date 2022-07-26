@@ -7,7 +7,7 @@ import com.paragon.api.util.Wrapper
 import com.paragon.api.util.mc
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class DiscordPresenceManager : Wrapper {
 

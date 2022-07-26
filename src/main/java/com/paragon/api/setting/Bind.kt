@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 
 /**
- * @author Wolfsurge, SooStrator1136
+ * @author Surge, SooStrator1136
  */
 class Bind(var buttonCode: Int, var device: Device) {
 

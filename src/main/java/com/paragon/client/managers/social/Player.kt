@@ -1,6 +1,6 @@
 package com.paragon.client.managers.social
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class Player(val name: String, val relationship: Relationship)

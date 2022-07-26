@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import java.awt.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class BreakESP extends Module {
 

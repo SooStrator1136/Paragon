@@ -10,7 +10,7 @@ import net.minecraft.util.Session
 import net.minecraft.util.text.TextFormatting
 
 /**
- * @author Wolfsurge, SooStrator1136
+ * @author Surge, SooStrator1136
  */
 class Alt(val email: String, val password: String) {
 

@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL20.*;
 
 /**
- * @author Wolfsurge, Cosmos
+ * @author Surge, Cosmos
  */
 public class Shader implements Wrapper {
 

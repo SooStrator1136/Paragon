@@ -19,7 +19,7 @@ import java.util.function.Consumer
 import kotlin.math.min
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in the world") {
     private val passive = Setting<Boolean?>("Passives", true)

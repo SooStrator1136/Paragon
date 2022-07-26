@@ -12,7 +12,7 @@ import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.network.play.server.SPacketExplosion;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Velocity extends Module {
 
@@ -80,6 +80,6 @@ public class Velocity extends Module {
 
     @Override
     public String getData() {
-        return " H% " + horizontal.getValue() + ", V% " + vertical.getValue();
+        return "H% " + horizontal.getValue() + ", V% " + vertical.getValue();
     }
 }

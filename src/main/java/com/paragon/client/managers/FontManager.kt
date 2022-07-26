@@ -12,15 +12,16 @@ import java.io.*
 import java.net.URL
 
 /**
- * @author Wolfsurge, SooStrator1136
+ * @author Surge, SooStrator1136
  */
 @SideOnly(Side.CLIENT)
 class FontManager {
 
-    val fontRenderer = FontRenderer(getFont())
+    val fontRenderer = FontRenderer(getFont("font"))
+    val msSansSerif = FontRenderer(getFont("ms_sans_serif"))
     var yIncrease = 0f
 
-    private fun getFont(): Font {
+    private fun getFont(name: String): Font {
         val fontDir = File("paragon/font/")
 
         if (!fontDir.exists()) {
@@ -32,7 +33,7 @@ class FontManager {
             Paragon.INSTANCE.logger.info("Downloading default font...")
 
             runCatching {
-                val fontStream = BufferedInputStream(URL("https://www.dropbox.com/s/wki4fxll36znfu4/font.ttf?dl=1").openStream())
+                val fontStream = BufferedInputStream(URL("https://github.com/Wolfsurge/Paragon/raw/master/resources/font.ttf").openStream())
                 val fileOutputStream = FileOutputStream("paragon/font/font.ttf")
                 val dataBuffer = ByteArray(1024)
                 var bytesRead: Int
@@ -74,10 +75,10 @@ class FontManager {
         var result = Font("default", Font.PLAIN, size.toInt())
 
         runCatching {
-            val fontStream = FileInputStream("paragon/font/font.ttf")
+            val fontStream = FileInputStream("paragon/font/$name.ttf")
             val font = Font.createFont(0, fontStream)
             fontStream.close()
-            result = font.deriveFont(Font.PLAIN, size)
+            result = font.deriveFont(Font.PLAIN, if (name == "ms_sans_serif") 45f else size)
         }
 
         return result

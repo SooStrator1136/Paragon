@@ -7,7 +7,7 @@ import com.paragon.api.util.player.PlayerUtil
 import com.paragon.api.util.string.StringUtil
 
 /**
- * @author Wolfsurge, SooStrator1136
+ * @author Surge, SooStrator1136
  */
 object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
 
@@ -38,7 +38,7 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
         }
     }
 
-    override fun getData() = " " + StringUtil.getFormattedText(mode.value)
+    override fun getData() = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
 

@@ -15,7 +15,7 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * @author Wolfsurge, aesthetical
+ * @author Surge, aesthetical
  */
 public class NoSlow extends Module {
 

@@ -4,7 +4,7 @@ import net.minecraft.util.math.MathHelper
 import java.util.function.Supplier
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 13/07/22
  */
 class Animation(val length: Supplier<Float>, private val initialState: Boolean, val easing: Supplier<Easing>) {

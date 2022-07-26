@@ -50,11 +50,11 @@ public final class AltManagerGUI extends GuiScreen implements ITextRenderer, Wra
         scroll();
 
         RenderUtil.drawRect(0, 150, width, 200, 0x90000000);
-        RenderUtil.startGlScissor(0, 150, width, 200);
+        RenderUtil.pushScissor(0, 150, width, 200);
 
         altEntries.forEach(altEntry -> altEntry.drawAlt(mouseX, mouseY, width));
 
-        RenderUtil.endGlScissor();
+        RenderUtil.popScissor();
 
         renderText("Logged in as " + TextFormatting.GRAY + ((IMinecraft) Minecraft.getMinecraft()).getSession().getUsername(), 5, 30, -1);
         renderCenteredString("Paragon Alt Manager", width / 2f, 75, -1, false);

@@ -4,7 +4,7 @@ import me.wolfsurge.cerauno.event.CancellableEvent;
 import net.minecraft.entity.Entity;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class RenderNametagEvent extends CancellableEvent {
 

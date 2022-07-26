@@ -8,7 +8,7 @@ import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class BuildHeight extends Module {
 

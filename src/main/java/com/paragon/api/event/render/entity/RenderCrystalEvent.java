@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 2/2/22
  */
 public class RenderCrystalEvent extends CancellableEvent {

@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Breadcrumbs extends Module {
 

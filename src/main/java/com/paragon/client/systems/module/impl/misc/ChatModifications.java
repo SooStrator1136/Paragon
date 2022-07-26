@@ -8,7 +8,7 @@ import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class ChatModifications extends Module {
 

@@ -12,7 +12,7 @@ import java.awt.Color
 import java.util.function.Consumer
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes in the world") {
 

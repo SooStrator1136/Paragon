@@ -5,7 +5,7 @@ import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class FakePlayer extends Module {
 

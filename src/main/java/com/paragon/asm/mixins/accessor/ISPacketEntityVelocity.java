@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @Mixin(SPacketEntityVelocity.class)
 public interface ISPacketEntityVelocity {

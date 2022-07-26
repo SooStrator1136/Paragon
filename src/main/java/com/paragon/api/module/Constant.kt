@@ -3,7 +3,7 @@ package com.paragon.api.module
 /**
  * Used to declare constantly enabled modules
  *
- * @author Wolfsurge
+ * @author Surge
  */
 @Target(AnnotationTarget.TYPE)
 annotation class Constant

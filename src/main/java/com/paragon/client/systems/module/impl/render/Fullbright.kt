@@ -8,7 +8,7 @@ import net.minecraft.init.MobEffects
 import net.minecraft.potion.PotionEffect
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 06/07/22
  */
 object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightness beyond vanilla values") {
@@ -52,7 +52,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
     }
 
-    override fun getData() = " " + StringUtil.getFormattedText(mode.value)
+    override fun getData() = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
         /**

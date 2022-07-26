@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class AutoEZ extends Module {
 

@@ -4,7 +4,7 @@ import me.wolfsurge.cerauno.event.CancellableEvent
 import net.minecraft.network.Packet
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 open class PacketEvent(val packet: Packet<*>) : CancellableEvent() {
 

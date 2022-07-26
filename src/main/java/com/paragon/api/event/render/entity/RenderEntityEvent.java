@@ -1,15 +1,11 @@
 package com.paragon.api.event.render.entity;
 
 import me.wolfsurge.cerauno.event.CancellableEvent;
-import me.wolfsurge.cerauno.event.Event;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.Entity;
 
-import java.lang.reflect.Method;
-
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 2/2/22
  */
 public class RenderEntityEvent extends CancellableEvent {

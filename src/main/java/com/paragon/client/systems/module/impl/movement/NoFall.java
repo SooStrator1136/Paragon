@@ -14,7 +14,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.GameType;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class NoFall extends Module {
 
@@ -91,9 +91,10 @@ public class NoFall extends Module {
 
     @Listener
     public void onPacketSent(PacketEvent.PreSend event) {
-        if(nullCheck()) {
+        if (nullCheck()) {
             return;
         }
+
         // Ignore if we are flying with an elytra, or we are in creative mode
         if (mc.player.isElytraFlying() && ignoreElytra.getValue() || mc.playerController.getCurrentGameType().equals(GameType.CREATIVE)) {
             return;

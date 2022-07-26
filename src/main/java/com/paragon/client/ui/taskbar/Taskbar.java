@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @SideOnly(Side.CLIENT)
 public final class Taskbar implements Wrapper, ITextRenderer {

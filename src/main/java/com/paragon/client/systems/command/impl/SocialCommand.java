@@ -8,7 +8,7 @@ import com.paragon.client.systems.command.Command;
 import net.minecraft.util.text.TextFormatting;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class SocialCommand extends Command implements ITextRenderer {
 

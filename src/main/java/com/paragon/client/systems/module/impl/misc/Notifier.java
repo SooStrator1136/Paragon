@@ -13,7 +13,7 @@ import com.paragon.client.systems.module.hud.HUDModule;
 import me.wolfsurge.cerauno.listener.Listener;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Notifier extends Module {
 

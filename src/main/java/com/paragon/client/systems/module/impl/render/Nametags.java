@@ -36,7 +36,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Nametags extends Module implements ITextRenderer {
 

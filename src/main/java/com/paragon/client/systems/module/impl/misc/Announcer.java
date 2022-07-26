@@ -10,7 +10,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Announcer extends Module {
 

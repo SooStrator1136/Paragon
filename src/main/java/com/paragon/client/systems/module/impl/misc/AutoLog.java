@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @SideOnly(Side.CLIENT)
 public class AutoLog extends Module {

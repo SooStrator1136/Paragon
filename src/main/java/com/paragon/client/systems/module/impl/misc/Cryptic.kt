@@ -11,7 +11,7 @@ import java.util.*
 import kotlin.random.Random
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 08/07/22
  */
 object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts messages that can only be seen by other Paragon users") {

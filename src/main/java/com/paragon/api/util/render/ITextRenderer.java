@@ -10,7 +10,7 @@ public interface ITextRenderer {
 
     default void renderText(String text, float x, float y, int colour) {
         if (ClientFont.INSTANCE.isEnabled()) {
-            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x, (y - 3.5f) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
+            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x, y - (3f) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
             return;
         }
 

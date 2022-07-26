@@ -256,7 +256,7 @@ public class RenderUtil implements Wrapper {
      * @param width  Width of scissor
      * @param height Height of scissor
      */
-    public static void startGlScissor(double x, double y, double width, double height) {
+    public static void pushScissor(double x, double y, double width, double height) {
         glPushAttrib(GL_SCISSOR_BIT);
         {
             scissorRect(x, y, width, height);
@@ -267,7 +267,7 @@ public class RenderUtil implements Wrapper {
     /**
      * Disables scissor
      */
-    public static void endGlScissor() {
+    public static void popScissor() {
         glDisable(GL_SCISSOR_TEST);
         glPopAttrib();
     }

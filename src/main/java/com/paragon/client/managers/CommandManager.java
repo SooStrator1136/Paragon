@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class CommandManager implements Wrapper {
 

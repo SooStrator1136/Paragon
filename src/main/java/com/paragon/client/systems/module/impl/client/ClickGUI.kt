@@ -6,58 +6,48 @@ import com.paragon.api.module.IgnoredByNotifications
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
+import com.paragon.client.ui.configuration.retrowindows.Windows98
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
-import com.paragon.client.ui.configuration.window.WindowGUI
 
 /**
- * @author SooStrator1136
+ * @author SooStrator1136, Surge
  */
 @IgnoredByNotifications
 object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Bind(Keyboard.KEY_RSHIFT, Bind.Device.KEYBOARD)) {
 
     @JvmStatic
-    val style: Setting<Style> = Setting("Style", Style.PANEL)
+    val style: Setting<Style> = Setting("Style", Style.ZERODAY)
         .setDescription("The style of the ClickGUI")
 
-    // Panel settings
+    // ZeroDay settings
     @JvmStatic
-    val background = Setting("Background", true)
-        .setDescription("Whether or not to draw the background")
+    val gradientBackground = Setting("Gradient", true)
+        .setDescription("Whether or not to draw the gradient in the background")
         .setParentSetting(style)
-        .setVisibility { style.value == Style.PANEL }
-
-    @JvmStatic
-    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f)
-        .setDescription("How fast animations are")
-        .setParentSetting(style)
-        .setVisibility { style.value == Style.PANEL }
-
-    @JvmStatic
-    val easing = Setting("Easing", Easing.EXPO_IN_OUT)
-        .setDescription("The easing type of the animation")
-        .setParentSetting(style)
-        .setVisibility { style.value == Style.PANEL }
+        .setVisibility { style.value == Style.ZERODAY }
 
     @JvmStatic
     val icon = Setting("Icon", Icon.BACKGROUND)
-        .setDescription("How to draw the background")
+        .setDescription("How to draw the icon")
         .setParentSetting(style)
-        .setVisibility { style.value == Style.PANEL }
+        .setVisibility { style.value == Style.ZERODAY }
 
-    // Window settings
-    @JvmStatic
-    val scrollClamp = Setting("ScrollClamp", false)
-        .setDescription("Clamp scrolling (disable to allow scrolling past the end of the list)")
-        .setParentSetting(style)
-        .setVisibility { style.value == Style.WINDOW }
-
-    // Shared settings
     @JvmStatic
     val radius = Setting("Radius", 1f, 1f, 15f, 1f)
         .setDescription("The radius of the panel's corners")
         .setParentSetting(style)
+        .setVisibility { style.value == Style.ZERODAY }
+
+    // Shared settings
+    @JvmStatic
+    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f)
+        .setDescription("How fast animations are")
+
+    @JvmStatic
+    val easing = Setting("Easing", Easing.EXPO_IN_OUT)
+        .setDescription("The easing type of the animation")
 
     @JvmStatic
     val darkenBackground = Setting("DarkenBackground", true)
@@ -77,8 +67,8 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
     @JvmStatic
     fun getGUI(): GuiScreen = when (style.value) {
-        Style.WINDOW -> WindowGUI()
-        Style.PANEL -> Paragon.INSTANCE.panelGUI
+        Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
+        Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
     }
 
     override fun onEnable() {
@@ -88,14 +78,14 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
     enum class Style {
         /**
-         * Panel GUI
+         * Windows 98 themed GUI
          */
-        PANEL,
+        WINDOWS_98,
 
         /**
-         * Window GUI
+         * AWFUL remake of the ZeroDay b21/22 GUI
          */
-        WINDOW
+        ZERODAY
     }
 
     enum class Icon {

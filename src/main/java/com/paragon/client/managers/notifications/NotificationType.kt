@@ -3,7 +3,7 @@ package com.paragon.client.managers.notifications
 import java.awt.Color
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 enum class NotificationType(val colour: Int) {
 

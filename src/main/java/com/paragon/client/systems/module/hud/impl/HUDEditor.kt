@@ -8,7 +8,7 @@ import com.paragon.client.systems.module.hud.HUDEditorGUI
 import org.lwjgl.input.Keyboard
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @IgnoredByNotifications
 object HUDEditor : Module("HUDEditor", Category.HUD, "Lets you edit the HUD module positions", Bind(Keyboard.KEY_P, Bind.Device.KEYBOARD)) {

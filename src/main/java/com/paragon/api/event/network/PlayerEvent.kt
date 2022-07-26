@@ -1,7 +1,7 @@
 package com.paragon.api.event.network
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 open class PlayerEvent(val name: String) {
 

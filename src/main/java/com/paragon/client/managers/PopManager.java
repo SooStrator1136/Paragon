@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class PopManager implements Wrapper {
 

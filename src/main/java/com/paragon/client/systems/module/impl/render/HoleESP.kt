@@ -18,7 +18,7 @@ import java.util.ArrayList
 import java.util.function.Consumer
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand in when crystalling") {
     // Hole filters and colours

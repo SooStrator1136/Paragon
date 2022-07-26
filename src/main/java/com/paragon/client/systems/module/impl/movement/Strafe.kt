@@ -14,7 +14,7 @@ import net.minecraft.util.math.Vec3d
 import kotlin.math.max
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 15/07/22
  */
 object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement speed") {

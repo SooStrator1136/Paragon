@@ -19,7 +19,7 @@ import java.io.IOException;
 import static org.lwjgl.opengl.GL11.glScalef;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public final class ParagonMenu extends GuiScreen implements ITextRenderer {
 
@@ -74,7 +74,7 @@ public final class ParagonMenu extends GuiScreen implements ITextRenderer {
         }
 
         // Credits
-        RenderUtil.startGlScissor(5, 250, 200 * creditsAnimation.getAnimationFactor(), 300);
+        RenderUtil.pushScissor(5, 250, 200 * creditsAnimation.getAnimationFactor(), 300);
 
         // Rect
         RenderUtil.drawRoundedRect(5, 250, 200 * creditsAnimation.getAnimationFactor(), 60, 5, 5, 5, 5, 0x80000000);
@@ -88,7 +88,7 @@ public final class ParagonMenu extends GuiScreen implements ITextRenderer {
             float scaleFactor = 1 / 0.65f;
 
             float y = 270;
-            for (String str : new String[]{"Created by Wolfsurge & Teletofu", "Shader OpenGL code - linustouchtips", "Font Renderer - Cosmos Client"}) {
+            for (String str : new String[]{"Created by Surge & Teletofu", "Shader OpenGL code - linustouchtips", "Font Renderer - Cosmos Client"}) {
                 renderText(str, 10 * scaleFactor, y * scaleFactor, -1);
                 y += 10;
             }
@@ -97,7 +97,7 @@ public final class ParagonMenu extends GuiScreen implements ITextRenderer {
         }
 
         // End scissor
-        RenderUtil.endGlScissor();
+        RenderUtil.popScissor();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

@@ -20,7 +20,7 @@ open class Module(name: String, val category: Category, description: String) : F
     val bind = Setting("Bind", Bind(Keyboard.KEY_NONE, Bind.Device.KEYBOARD)).setDescription("The keybind of the module")
 
     // Whether the module is constantly enabled or not
-    private val isConstant = javaClass.isAnnotationPresent(Constant::class.java)
+    val isConstant = javaClass.isAnnotationPresent(Constant::class.java)
 
     // Whether the module is ignored by notifications
     val isIgnored = javaClass.isAnnotationPresent(IgnoredByNotifications::class.java)

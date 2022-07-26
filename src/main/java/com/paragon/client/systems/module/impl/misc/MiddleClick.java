@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Mouse;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class MiddleClick extends Module {
 

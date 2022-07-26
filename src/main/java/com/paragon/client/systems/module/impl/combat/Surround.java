@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 08/05/2022
  */
 @SideOnly(Side.CLIENT)

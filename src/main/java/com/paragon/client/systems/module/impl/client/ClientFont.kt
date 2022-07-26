@@ -5,7 +5,7 @@ import com.paragon.api.module.IgnoredByNotifications
 import com.paragon.api.module.Module
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @IgnoredByNotifications
 object ClientFont : Module("Font", Category.CLIENT, "Use the client's custom font")

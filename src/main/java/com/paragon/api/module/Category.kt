@@ -4,7 +4,7 @@ import net.minecraft.init.Items
 import net.minecraft.item.Item
 
 /**
- * @author Wolfsurge, SooStrator1136
+ * @author Surge, SooStrator1136
  */
 enum class Category(val Name: String, val indicator: Item) { //Uppercase "Name" because kotlin is special?
 

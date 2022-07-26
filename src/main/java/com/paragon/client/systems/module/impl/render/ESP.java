@@ -39,7 +39,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
 /**
- * @author Wolfsurge, with shader stuff from Cosmos (first time using shaders / glsl lel)
+ * @author Surge, with shader stuff from Cosmos (first time using shaders / glsl lel)
  */
 @SideOnly(Side.CLIENT)
 public class ESP extends Module {
@@ -270,7 +270,7 @@ public class ESP extends Module {
 
     @Override
     public String getData() {
-        return " " + StringUtil.getFormattedText(mode.getValue());
+        return StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

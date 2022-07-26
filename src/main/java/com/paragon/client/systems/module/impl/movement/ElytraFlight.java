@@ -12,7 +12,7 @@ import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketEntityAction;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class ElytraFlight extends Module {
 
@@ -196,7 +196,7 @@ public class ElytraFlight extends Module {
 
     @Override
     public String getData() {
-        return " " + StringUtil.getFormattedText(mode.getValue());
+        return StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

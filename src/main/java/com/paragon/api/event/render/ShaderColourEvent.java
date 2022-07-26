@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import java.awt.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class ShaderColourEvent extends CancellableEvent {
 

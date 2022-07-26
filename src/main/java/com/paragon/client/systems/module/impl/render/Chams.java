@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL11.*;
  * Rubik's crystals based off of rebane2001's and olliem5's Rubiks crystals
  *
  * otherwise
- * @author Wolfsurge
+ * @author Surge
  */
 public class Chams extends Module {
 

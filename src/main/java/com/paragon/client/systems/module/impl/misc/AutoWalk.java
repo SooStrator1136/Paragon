@@ -7,7 +7,7 @@ import com.paragon.api.setting.Setting;
 import net.minecraft.client.settings.KeyBinding;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 14/05/22
  */
 public class AutoWalk extends Module {

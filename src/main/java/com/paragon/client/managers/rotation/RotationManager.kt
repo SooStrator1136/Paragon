@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class RotationManager : Wrapper {
     private val rotationsQueue = CopyOnWriteArrayList<Rotation>()

@@ -14,7 +14,7 @@ import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import java.util.Random;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class FastUse extends Module {
 
