@@ -6,6 +6,7 @@ import com.paragon.api.module.IgnoredByNotifications
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
+import com.paragon.client.ui.configuration.GuiImplementation
 import com.paragon.client.ui.configuration.retrowindows.Windows98
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.client.gui.GuiScreen
@@ -68,14 +69,21 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     val tooltips = Setting("Tooltips", true)
         .setDescription("Render tooltips on the taskbar")
 
+    val blur = Setting("Blur", true)
+        .setDescription("Blur the backgrounds of windows")
+
+    val intensity = Setting("Intensity", 10f, 1f, 20f, 1f)
+        .setDescription("The intensity of the blur")
+        .setParentSetting(blur)
+
     @JvmStatic
-    fun getGUI(): GuiScreen = when (style.value) {
+    fun getGUI(): GuiImplementation = when (style.value) {
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
     }
 
     override fun onEnable() {
-        minecraft.displayGuiScreen(getGUI())
+        minecraft.displayGuiScreen(Paragon.INSTANCE.configurationGUI)
         toggle()
     }
 

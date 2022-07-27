@@ -16,10 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Entity.class)
 public abstract class MixinEntity {
 
-    @Shadow
+    @Shadow(aliases = "field_70138_W")
     public float stepHeight;
 
-    @Shadow private AxisAlignedBB boundingBox;
+    @Shadow
+    private AxisAlignedBB boundingBox;
 
     @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target="Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
     public void onEntityCollision(Entity entity, double x, double y, double z) {

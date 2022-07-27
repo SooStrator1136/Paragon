@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.module.Category;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
+import com.paragon.client.ui.configuration.GuiImplementation;
 import com.paragon.client.ui.configuration.zeroday.panel.CategoryPanel;
 import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.util.animation.Animation;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class ZerodayGUI extends GuiScreen {
+public class ZerodayGUI extends GuiImplementation {
 
     private final List<Panel> panels = new ArrayList<>();
 
@@ -45,9 +46,8 @@ public class ZerodayGUI extends GuiScreen {
         openAnimation.setState(true);
     }
 
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+    public void drawScreen(int mouseX, int mouseY, int mouseDelta) {
+        openAnimation.setState(true);
 
         if (ClickGUI.getDarkenBackground().getValue()) {
             drawDefaultBackground();
@@ -69,10 +69,10 @@ public class ZerodayGUI extends GuiScreen {
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
 
-            bufferbuilder.pos(width, 0, 0).color(topRight[0] / 360, topRight[1] / 360, topRight[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
+            bufferbuilder.pos(getWidth(), 0, 0).color(topRight[0] / 360, topRight[1] / 360, topRight[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
             bufferbuilder.pos(0, 0, 0).color(topLeft[0] / 360, topLeft[1] / 360, topLeft[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
-            bufferbuilder.pos(0, height, 0).color(bottomLeft[0] / 360, bottomLeft[1] / 360, bottomLeft[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
-            bufferbuilder.pos(width, height, 0).color(bottomRight[0] / 360, bottomRight[1] / 360, bottomRight[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
+            bufferbuilder.pos(0, getHeight(), 0).color(bottomLeft[0] / 360, bottomLeft[1] / 360, bottomLeft[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
+            bufferbuilder.pos(getWidth(), getHeight(), 0).color(bottomRight[0] / 360, bottomRight[1] / 360, bottomRight[2] / 360, (float) (0.5f * openAnimation.getAnimationFactor())).endVertex();
 
             tessellator.draw();
             GlStateManager.shadeModel(7424);
@@ -87,7 +87,7 @@ public class ZerodayGUI extends GuiScreen {
 
         // pop out
         glScaled(openAnimation.getAnimationFactor(), openAnimation.getAnimationFactor(), 1);
-        glTranslated((width / 2f) * (1 - openAnimation.getAnimationFactor()), (height / 2f) * (1 - openAnimation.getAnimationFactor()), 0);
+        glTranslated((getWidth() / 2f) * (1 - openAnimation.getAnimationFactor()), (getHeight() / 2f) * (1 - openAnimation.getAnimationFactor()), 0);
 
         Collections.reverse(panels);
 
@@ -111,28 +111,24 @@ public class ZerodayGUI extends GuiScreen {
         glTranslated(0, 24 - (24 * openAnimation.getAnimationFactor()), 0);
 
         Paragon.INSTANCE.getTaskbar().setTooltip(tooltip[0]);
-        Paragon.INSTANCE.getTaskbar().drawTaskbar(mouseX, mouseY);
+        Paragon.INSTANCE.getTaskbar().draw(mouseX, mouseY);
 
         glPopMatrix();
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         Collections.reverse(panels);
 
         panels.forEach(panel -> panel.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton)));
 
         Collections.reverse(panels);
 
-        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY);
+        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY, Click.getClick(mouseButton));
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-
+    public void mouseReleased(int mouseX, int mouseY, int state) {
         Collections.reverse(panels);
 
         panels.forEach(panel -> panel.mouseReleased(mouseX, mouseY, Click.getClick(state)));
@@ -141,9 +137,7 @@ public class ZerodayGUI extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-
+    public void keyTyped(char typedChar, int keyCode) {
         Collections.reverse(panels);
 
         panels.forEach(panel -> panel.keyTyped(keyCode, typedChar));

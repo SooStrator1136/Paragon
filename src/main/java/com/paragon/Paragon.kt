@@ -1,11 +1,13 @@
 package com.paragon
 
 import com.paragon.api.event.EventFactory
+import com.paragon.api.util.render.BlurUtil
 import com.paragon.client.managers.*
 import com.paragon.client.managers.social.SocialManager
 import com.paragon.client.managers.alt.AltManager
 import com.paragon.client.managers.notifications.NotificationManager
 import com.paragon.client.managers.rotation.RotationManager
+import com.paragon.client.ui.configuration.ConfigurationGUI
 import com.paragon.client.ui.configuration.retrowindows.Windows98
 import com.paragon.client.ui.console.Console
 import com.paragon.client.ui.taskbar.Taskbar
@@ -93,7 +95,7 @@ class Paragon {
 
         // GUIs
 
-        taskbar = Taskbar()
+        taskbar = Taskbar
         logger.info("Taskbar Initialised")
 
         windows98GUI = Windows98()
@@ -104,6 +106,11 @@ class Paragon {
 
         console = Console("Paragon Console", 400f, 300f)
         logger.info("Console Initialised")
+
+        configurationGUI = ConfigurationGUI()
+        logger.info("Configuration GUI Initialised")
+
+        logger.info("Blur shader Initialised")
 
         logger.info("Paragon $modVersion Initialised Successfully")
     }
@@ -168,6 +175,9 @@ class Paragon {
         private set
 
     lateinit var zerodayGUI: ZerodayGUI
+        private set
+
+    lateinit var configurationGUI: ConfigurationGUI
         private set
 
     lateinit var console: Console

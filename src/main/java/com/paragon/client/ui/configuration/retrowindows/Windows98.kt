@@ -6,6 +6,7 @@ import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
+import com.paragon.client.ui.configuration.GuiImplementation
 import com.paragon.client.ui.configuration.retrowindows.window.Window
 import com.paragon.client.ui.configuration.retrowindows.window.category.CategoryWindow
 import com.paragon.client.ui.util.Click
@@ -18,7 +19,7 @@ import java.awt.Color
 /**
  * @author Surge
  */
-class Windows98 : GuiScreen(), ITextRenderer {
+class Windows98 : GuiImplementation(), ITextRenderer {
 
     val windows = ArrayList<Window>()
 
@@ -32,11 +33,7 @@ class Windows98 : GuiScreen(), ITextRenderer {
         }
     }
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
-
-        val mouseDelta = Mouse.getDWheel()
-
+    override fun drawScreen(mouseX: Int, mouseY: Int, mouseDelta: Int) {
         var tooltipName = ""
         var tooltipContent = ""
 
@@ -65,23 +62,21 @@ class Windows98 : GuiScreen(), ITextRenderer {
             renderText(tooltipName, mouseX + 9f, mouseY + 12f, -1)
             renderText(text, mouseX + 9f, mouseY + 12f + fontHeight, -1)
         }
+
+        Paragon.INSTANCE.taskbar.draw(mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        super.mouseClicked(mouseX, mouseY, mouseButton)
-
         windows.forEach { it.mouseClicked(mouseX.toFloat(), mouseY.toFloat(), Click.getClick(mouseButton)) }
+
+        Paragon.INSTANCE.taskbar.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        super.mouseReleased(mouseX, mouseY, state)
-
         windows.forEach { it.mouseReleased(mouseX.toFloat(), mouseY.toFloat(), Click.getClick(state)) }
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
-
         windows.forEach { it.keyTyped(typedChar, keyCode) }
     }
 

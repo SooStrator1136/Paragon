@@ -47,7 +47,7 @@ public interface ITextRenderer {
                 return;
             }
 
-            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x - Paragon.INSTANCE.getFontManager().getFontRenderer().getStringWidth(text) / 2f, (y - 1) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
+            Paragon.INSTANCE.getFontManager().getFontRenderer().drawStringWithShadow(text, x - (getStringWidth(text) / 2f), (y - 3f) + Paragon.INSTANCE.getFontManager().getYIncrease(), colour);
             return;
         }
 
