@@ -68,13 +68,9 @@ class BindElement(parent: ModuleElement, setting: Setting<Bind>, x: Float, y: Fl
         if (y in parent.parent.y + parent.parent.height..parent.parent.y + parent.parent.height + parent.parent.scissorHeight) {
             if (click == Click.LEFT && isHovered(mouseX, mouseY)) {
                 listening.state = !listening.state
-            }
-
-            else if (click == Click.RIGHT && isHovered(mouseX, mouseY)) {
+            } else if (click == Click.RIGHT && isHovered(mouseX, mouseY)) {
                 expanded.state = !expanded.state
-            }
-
-            else if (listening.state) {
+            } else if (listening.state) {
                 setting.setValue(Bind(click.button, Bind.Device.MOUSE))
                 listening.state = false
             }

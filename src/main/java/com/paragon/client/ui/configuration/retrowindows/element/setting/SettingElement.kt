@@ -22,25 +22,15 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
         setting.subsettings.forEach {
             if (it.value is Boolean) {
                 subsettings.add(BooleanElement(parent, it as Setting<Boolean>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Enum<*>) {
+            } else if (it.value is Enum<*>) {
                 subsettings.add(EnumElement(parent, it as Setting<Enum<*>>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Number) {
+            } else if (it.value is Number) {
                 subsettings.add(SliderElement(parent, it as Setting<Number>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Bind) {
+            } else if (it.value is Bind) {
                 subsettings.add(BindElement(parent, it as Setting<Bind>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is String) {
+            } else if (it.value is String) {
                 subsettings.add(StringElement(parent, it as Setting<String>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Color) {
+            } else if (it.value is Color) {
                 subsettings.add(ColourElement(parent, it as Setting<Color>, x + 2, y, width - 4, height))
             }
         }

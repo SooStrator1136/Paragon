@@ -10,6 +10,7 @@ import java.util.function.Consumer
 
 /**
  * An object which holds the data of a subscribed method
+ *
  * @author Surge, therealbush
  * @since 05/03/22
  */

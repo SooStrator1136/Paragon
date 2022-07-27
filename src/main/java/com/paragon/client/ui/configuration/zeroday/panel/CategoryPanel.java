@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,7 +32,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
 
     private float leftHue;
 
-    private final Animation animation = new Animation(() -> ClickGUI.getAnimationSpeed().getValue(), true, () -> ClickGUI.getEasing().getValue());
+    private final Animation animation = new Animation(ClickGUI.getAnimationSpeed()::getValue, true, ClickGUI.getEasing()::getValue);
     private boolean open = true;
 
     private float scrollFactor = 0;

@@ -61,9 +61,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
                     setting.setValue(newValue)
                 }
             }
-        }
-
-        else if (setting.value is Double) {
+        } else if (setting.value is Double) {
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 2))).toDouble()
 
@@ -141,9 +139,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
         if (isHovered(mouseX, mouseY) && y in parent.parent.y + parent.parent.height..parent.parent.y + parent.parent.height + parent.parent.scissorHeight) {
             if (click == Click.LEFT) {
                 dragging = true
-            }
-
-            else if (click == Click.RIGHT) {
+            } else if (click == Click.RIGHT) {
                 expanded.state = !expanded.state
             }
         }

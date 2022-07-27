@@ -7,10 +7,9 @@ import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 
 /**
- * @author SooStrator1136
+ * @author Surge
  */
-class Notification(val message: String, val type: NotificationType) :
-    ITextRenderer {
+class Notification(val message: String, val type: NotificationType) : ITextRenderer {
 
     val animation: Animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
     private var started = false

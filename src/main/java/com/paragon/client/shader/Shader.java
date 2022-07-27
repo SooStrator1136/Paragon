@@ -1,5 +1,6 @@
 package com.paragon.client.shader;
 
+import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
@@ -33,7 +34,7 @@ public class Shader implements Wrapper {
                 vertex = createShader(IOUtils.toString(vertStream, Charset.defaultCharset()), GL_VERTEX_SHADER);
                 IOUtils.closeQuietly(vertStream);
 
-                System.out.println(path + " Vertex shader loaded");
+                Paragon.INSTANCE.getLogger().info("{} - Vertex shader loaded", path);
             }
 
             InputStream fragStream = getClass().getResourceAsStream(path);
@@ -42,7 +43,7 @@ public class Shader implements Wrapper {
                 fragment = createShader(IOUtils.toString(fragStream, Charset.defaultCharset()), GL_FRAGMENT_SHADER);
                 IOUtils.closeQuietly(fragStream);
 
-                System.out.println(path + " Fragment shader loaded");
+                Paragon.INSTANCE.getLogger().info("{} - Fragment shader loaded", path);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +59,7 @@ public class Shader implements Wrapper {
                 ARBShaderObjects.glLinkProgramARB(program);
                 ARBShaderObjects.glValidateProgramARB(program);
 
-                System.out.println(path + " Shader program loaded");
+                Paragon.INSTANCE.getLogger().info("{} - Shader program loaded", path);
             }
         }
     }

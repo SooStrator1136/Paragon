@@ -28,28 +28,18 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
     val settings = ArrayList<SettingElement<*>>()
 
     init {
-        module.getSettings().forEach {
+        module.settings.forEach {
             if (it.value is Boolean) {
                 settings.add(BooleanElement(this, it as Setting<Boolean>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Enum<*>) {
+            } else if (it.value is Enum<*>) {
                 settings.add(EnumElement(this, it as Setting<Enum<*>>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Number) {
+            } else if (it.value is Number) {
                 settings.add(SliderElement(this, it as Setting<Number>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Bind) {
+            } else if (it.value is Bind) {
                 settings.add(BindElement(this, it as Setting<Bind>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is String) {
+            } else if (it.value is String) {
                 settings.add(StringElement(this, it as Setting<String>, x + 2, y, width - 4, height))
-            }
-
-            else if (it.value is Color) {
+            } else if (it.value is Color) {
                 settings.add(ColourElement(this, it as Setting<Color>, x + 2, y, width - 4, height))
             }
         }
@@ -106,9 +96,7 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
         if (isHovered(mouseX, mouseY) && y in parent.y + parent.height..parent.y + parent.height + parent.scissorHeight) {
             if (click == Click.LEFT) {
                 module.toggle()
-            }
-
-            else if (click == Click.RIGHT) {
+            } else if (click == Click.RIGHT) {
                 expanded.state = !expanded.state
             }
         }

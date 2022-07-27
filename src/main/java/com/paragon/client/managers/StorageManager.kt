@@ -55,7 +55,7 @@ class StorageManager {
                     jsonObject.put("y", module.y)
                 }
 
-                for (setting in module.getSettings()) {
+                for (setting in module.settings) {
                     if (setting.value is Color) {
                         val color = setting.value as Color
                         jsonObject.put(
@@ -180,7 +180,7 @@ class StorageManager {
                     }
                 }
 
-                module.getSettings().forEach {
+                module.settings.forEach {
                     loadSetting(it, false)
                     it.subsettings.forEach { subSetting ->
                         loadSetting(subSetting, true)

@@ -5,17 +5,15 @@ import net.minecraftforge.common.MinecraftForge
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * @author SooStrator1136
+ * @author Surge
  */
 class NotificationManager : Wrapper {
 
-    private val notifications: MutableList<Notification> = CopyOnWriteArrayList()
+    val notifications: MutableList<Notification> = CopyOnWriteArrayList()
 
     init {
         MinecraftForge.EVENT_BUS.register(this)
     }
-
-    fun getNotifications() = notifications
 
     fun addNotification(notification: Notification) {
         notifications.add(notification)

@@ -68,9 +68,7 @@ class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y
         if (isHovered(mouseX, mouseY) && y in parent.parent.y + parent.parent.height..parent.parent.y + parent.parent.height + parent.parent.scissorHeight) {
             if (click == Click.LEFT) {
                 listening.state = !listening.state
-            }
-
-            else if (click == Click.RIGHT) {
+            } else if (click == Click.RIGHT) {
                 expanded.state = !expanded.state
             }
         }
@@ -84,13 +82,9 @@ class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y
                 if (setting.value.isNotEmpty()) {
                     setting.setValue(setting.value.substring(0, setting.value.length - 1))
                 }
-            }
-
-            else if (keyCode == Keyboard.KEY_RETURN) {
+            } else if (keyCode == Keyboard.KEY_RETURN) {
                 listening.state = false
-            }
-
-            else if (ChatAllowedCharacters.isAllowedCharacter(character)) {
+            } else if (ChatAllowedCharacters.isAllowedCharacter(character)) {
                 setting.setValue(setting.value + character)
             }
         }

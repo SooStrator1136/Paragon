@@ -55,9 +55,7 @@ public abstract class Element implements Wrapper, ITextRenderer {
 
                 offset += subElement.getTotalHeight();
             }
-        }
-
-        else {
+        } else {
             for (Element subElement : getSubElements()) {
                 subElement.getHover().setState(false);
             }

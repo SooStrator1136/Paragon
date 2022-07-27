@@ -63,9 +63,7 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
         if (isHovered(mouseX, mouseY) && y in parent.parent.y + parent.parent.height..parent.parent.y + parent.parent.height + parent.parent.scissorHeight) {
             if (click == Click.LEFT) {
                 setting.setValue(!setting.value)
-            }
-
-            else if (click == Click.RIGHT) {
+            } else if (click == Click.RIGHT) {
                 expanded.state = !expanded.state
             }
         }

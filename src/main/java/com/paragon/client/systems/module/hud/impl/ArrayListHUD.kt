@@ -1,3 +1,5 @@
+@file:Suppress("IncorrectFormatting")
+
 package com.paragon.client.systems.module.hud.impl
 
 import com.paragon.Paragon
@@ -14,10 +16,7 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.text.TextFormatting.*
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import java.util.*
-import java.util.function.Function
 import kotlin.collections.ArrayList
-
 
 @SideOnly(Side.CLIENT)
 object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on screen"), ITextRenderer {
@@ -31,11 +30,9 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
     val easing = Setting("Easing", Easing.EXPO_IN_OUT)
         .setDescription("The easing type of the animation")
 
-    private val background = Setting("Background", false)
+    private val background = Setting("Background", Background.Normal)
         .setDescription("Render a background behind the text")
 
-    // Creating a new list, so we can sort these, but not the module manager list
-    private var enabledModules: ArrayList<Module> = ArrayList()
     private var corner = Corner.TOP_LEFT
 
     override fun render() {
@@ -67,7 +64,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             }
         }
 
-        val scissorWidth: Double = getStringWidth(enabledModules[0].name + (if (enabledModules[0].getData() == "") "" else "$GRAY[$WHITE ${enabledModules[0].getData()}$GRAY]")).toDouble()
+        val scissorWidth = getStringWidth(enabledModules[0].name + (if (enabledModules[0].getData() == "") "" else "$GRAY[$WHITE ${enabledModules[0].getData()}$GRAY]")).toDouble()
 
         when (corner) {
             Corner.TOP_LEFT -> {
@@ -79,16 +76,17 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
 
                     val origin = x - getStringWidth(moduleData)
 
-                    if (background.value) {
+                    if (background.value == Background.Normal) {
                         RenderUtil.drawRect((origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                    } else if (background.value == Background.Win98) {
+                        RenderUtil.drawHorizontalGradientRect((origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData) + 1F, 14f, -12171706, -7039852)
+                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
                     }
 
                     renderText(moduleData, (origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset += 13f * module.animation.getAnimationFactor().toFloat()
                 }
-
-                RenderUtil.popScissor()
             }
 
             Corner.TOP_RIGHT -> {
@@ -101,16 +99,17 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
 
                     val origin = x + width
 
-                    if (background.value) {
+                    if (background.value == Background.Normal) {
                         RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                    } else if (background.value == Background.Win98) {
+                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
+                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
                     }
 
                     renderText(moduleData, (origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset += 13f * module.animation.getAnimationFactor().toFloat()
                 }
-
-                RenderUtil.popScissor()
             }
 
             Corner.BOTTOM_LEFT -> {
@@ -123,16 +122,17 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
 
                     val origin = x - getStringWidth(moduleData)
 
-                    if (background.value) {
+                    if (background.value == Background.Normal) {
                         RenderUtil.drawRect((origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, 0x70000000)
+                    } else if (background.value == Background.Win98) {
+                        RenderUtil.drawHorizontalGradientRect((origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset, width + 1F, 14f, -12171706, -7039852)
+                        RenderUtil.drawRect((origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, -7039852)
                     }
 
                     renderText(moduleData, (origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset -= 13f * module.animation.getAnimationFactor().toFloat()
                 }
-
-                RenderUtil.popScissor()
             }
 
             Corner.BOTTOM_RIGHT -> {
@@ -145,44 +145,42 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
 
                     val origin = x + width
 
-                    if (background.value) {
+                    if (background.value == Background.Normal) {
                         RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                    } else if (background.value == Background.Win98) {
+                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
+                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
                     }
 
                     renderText(moduleData, (origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset -= 13f * module.animation.getAnimationFactor().toFloat()
                 }
-
-                RenderUtil.popScissor()
             }
         }
+        RenderUtil.popScissor()
     }
 
-    override fun getWidth(): Float {
-        return 56f
-    }
+    override fun getWidth() = 56f
 
-    override fun getHeight(): Float {
-        return 56f
-    }
+    override fun getHeight() = 56f
 
-    enum class ArrayListColour(private val colour: Function<Int, Int>) {
+    enum class ArrayListColour(private val colour: (Int) -> Int) {
         /**
          * The colour is slightly different for each module in the array list
          */
-        RAINBOW_WAVE(Function { addition: Int? ->
+        RAINBOW_WAVE({ addition: Int ->
             ColourUtil.getRainbow(
                 Colours.mainColour.rainbowSpeed,
                 Colours.mainColour.rainbowSaturation / 100f,
-                addition!!
+                addition
             )
         }),
 
         /**
          * Permanent static colour
          */
-        SYNC(Function { addition: Int? -> Colours.mainColour.value.rgb });
+        SYNC({ Colours.mainColour.value.rgb });
 
         /**
          * Gets the colour
@@ -190,12 +188,16 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
          * @param addition The addition to the colour
          * @return The colour
          */
-        fun getColour(addition: Int): Int {
-            return colour.apply(addition)
-        }
+        fun getColour(addition: Int) = colour.invoke(addition)
+
     }
 
     enum class Corner {
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
     }
+
+    enum class Background {
+        NONE, Normal, Win98
+    }
+
 }

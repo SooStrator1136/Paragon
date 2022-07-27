@@ -64,9 +64,7 @@ class EnumElement(parent: ModuleElement, setting: Setting<Enum<*>>, x: Float, y:
         if (isHovered(mouseX, mouseY) && y in parent.parent.y + parent.parent.height..parent.parent.y + parent.parent.height + parent.parent.scissorHeight) {
             if (click == Click.LEFT) {
                 setting.setValue(setting.nextMode)
-            }
-
-            else if (click == Click.RIGHT) {
+            } else if (click == Click.RIGHT) {
                 expanded.state = !expanded.state
             }
         }

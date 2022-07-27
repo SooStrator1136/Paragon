@@ -22,4 +22,5 @@ public class FluidShader extends Shader {
         glUniform1i(getUniform("texture"), 0);
         glUniform1f(getUniform("time"), (float) getTime());
     }
+
 }
