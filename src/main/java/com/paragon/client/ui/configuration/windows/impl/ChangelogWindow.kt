@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets
  */
 class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbableHeight: Float) : Window(x, y, width, height, grabbableHeight) {
 
-    val changelog: ArrayList<String> = arrayListOf()
+    private val changelog: ArrayList<String> = arrayListOf()
 
     init {
         val inputStream = javaClass.getResourceAsStream("/assets/paragon/changelog.txt")

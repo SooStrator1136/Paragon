@@ -23,14 +23,14 @@ class EnumElement(parent: ModuleElement, setting: Setting<Enum<*>>, x: Float, y:
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  width - 4, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, width - 4, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 
         val scaleFactor = 1 / 0.8f
         renderText(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
 
-        val valueX: Float = (x + width - getStringWidth(StringUtil.getFormattedText(setting.value)) * 0.8f - 5) * scaleFactor
+        val valueX = (x + width - getStringWidth(StringUtil.getFormattedText(setting.value)) * 0.8f - 5) * scaleFactor
 
         renderText(StringUtil.getFormattedText(setting.value), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb)
 
@@ -39,13 +39,12 @@ class EnumElement(parent: ModuleElement, setting: Setting<Enum<*>>, x: Float, y:
         if (expanded.getAnimationFactor() > 0) {
             var yOffset = 0f
 
-            val scissorY: Double = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubsettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
-
-            var scissorHeight: Double = MathHelper.clamp(getSubsettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
+            val scissorY = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubSettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
+            val scissorHeight = MathHelper.clamp(getSubSettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
 
             RenderUtil.pushScissor(x.toDouble(), scissorY, width.toDouble(), scissorHeight)
 
-            subsettings.forEach {
+            subSettings.forEach {
                 it.x = x + 2
                 it.y = y + height + yOffset
 

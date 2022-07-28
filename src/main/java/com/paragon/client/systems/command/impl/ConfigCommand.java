@@ -31,9 +31,7 @@ public class ConfigCommand extends Command {
 
                 if (file.exists()) {
                     file.delete();
-                }
-
-                else {
+                } else {
                     Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Config " + args[1] + " does not exist", NotificationType.ERROR));
                 }
             }

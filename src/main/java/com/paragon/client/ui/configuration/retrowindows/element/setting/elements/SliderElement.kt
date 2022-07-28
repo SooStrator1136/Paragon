@@ -12,14 +12,16 @@ import net.minecraft.util.math.MathHelper
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11.glScalef
 import java.awt.Color
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
 
 /**
  * @author Surge
  */
 class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y: Float, width: Float, height: Float) : SettingElement<Number>(parent, setting, x, y, width, height) {
 
-    var renderWidth = 0f
+    private var renderWidth = 0f
     var dragging = false
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
@@ -34,8 +36,8 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 2)))
 
-            val min = setting.min!!.toFloat()
-            val max = setting.max!!.toFloat()
+            val min = setting.min?.toFloat() ?: 0F
+            val max = setting.max?.toFloat() ?: 0F
 
             val rWidth = (maxWidth * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -53,7 +55,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
 
             if (dragging) {
                 if (diff == 0f) {
-                    setting.setValue(setting.min!!)
+                    setting.setValue(setting.min ?: 0)
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / maxWidth * (max - min) + min).toDouble(), 2).toFloat()
                     val precision = 1 / setting.incrementation!!.toFloat()
@@ -65,8 +67,8 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 2))).toDouble()
 
-            val min = setting.min!!.toDouble()
-            val max = setting.max!!.toDouble()
+            val min = setting.min?.toDouble() ?: 0.0
+            val max = setting.max?.toDouble() ?: 0.0
 
             val rWidth = (maxWidth * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -86,7 +88,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
 
             if (dragging) {
                 if (diff == 0.0) {
-                    setting.setValue(setting.min!!)
+                    setting.setValue(setting.min ?: 0)
                 } else {
                     var newValue = MathsUtil.roundDouble(diff / maxWidth * (max - min) + min, 2)
                     val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
@@ -98,7 +100,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             }
         }
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  renderWidth, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, renderWidth, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 
@@ -114,13 +116,13 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
         if (expanded.getAnimationFactor() > 0) {
             var yOffset = 0f
 
-            val scissorY: Double = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubsettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
+            val scissorY: Double = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubSettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
 
-            val scissorHeight: Double = MathHelper.clamp(getSubsettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
+            val scissorHeight: Double = MathHelper.clamp(getSubSettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
 
             RenderUtil.pushScissor(x.toDouble(), scissorY, width.toDouble(), scissorHeight)
 
-            subsettings.forEach {
+            subSettings.forEach {
                 it.x = x + 2
                 it.y = y + height + yOffset
 

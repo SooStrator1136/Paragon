@@ -4,11 +4,11 @@ import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HUDEditorGUI extends GuiScreen {
 
@@ -35,11 +35,18 @@ public class HUDEditorGUI extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        Collections.reverse(Paragon.INSTANCE.getModuleManager().getModules());
+        ArrayUtils.reverse(Paragon.INSTANCE.getModuleManager().getModules());
 
+        final AtomicBoolean stopLoop = new AtomicBoolean(false);
         Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
+            if (stopLoop.get()) {
+                return;
+            }
             if (hudModule.isEnabled() && !draggingComponent) {
-                ((HUDModule) hudModule).mouseClicked(mouseX, mouseY, mouseButton);
+                if (((HUDModule) hudModule).mouseClicked(mouseX, mouseY, mouseButton)) {
+                    stopLoop.set(true);
+                    return;
+                }
 
                 if (((HUDModule) hudModule).isDragging()) {
                     draggingComponent = true;
@@ -47,7 +54,7 @@ public class HUDEditorGUI extends GuiScreen {
             }
         });
 
-        Collections.reverse(Paragon.INSTANCE.getModuleManager().getModules());
+        ArrayUtils.reverse(Paragon.INSTANCE.getModuleManager().getModules());
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }

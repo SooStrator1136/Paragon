@@ -4,7 +4,6 @@ import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
-import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.windows.impl.ChangelogWindow
 import com.paragon.client.ui.configuration.windows.impl.ConfigWindow
 import com.paragon.client.ui.console.ConsoleGUI
@@ -19,50 +18,50 @@ import java.awt.Color
  * @author Surge
  * @since 26/07/2022
  */
-class StartMenu(var x: Float, var y: Float, var width: Float, var height: Float) : Wrapper, ITextRenderer {
+object StartMenu : Wrapper, ITextRenderer {
 
-    val expandAnimation: Animation = Animation({ 300f }, false, { Easing.EXPO_IN_OUT })
-    val elements: ArrayList<StartElement> = ArrayList()
+    var x = 5f
+    var y = 5f
+    var width = 60f
+    var height = 20f
 
-    init {
-        elements.addAll(
-            arrayListOf(
-                StartElement("GUI", {
-                    if (minecraft.currentScreen != Paragon.INSTANCE.configurationGUI) {
-                        minecraft.displayGuiScreen(Paragon.INSTANCE.configurationGUI)
-                        expandAnimation.state = false
-                    }
-                }, x + 3, y + 3, 144f, 16f),
+    private val expandAnimation = Animation({ 300f }, false, { Easing.EXPO_IN_OUT })
+    val elements = arrayOf(
+        StartElement("GUI", {
+            if (minecraft.currentScreen != Paragon.INSTANCE.configurationGUI) {
+                minecraft.displayGuiScreen(Paragon.INSTANCE.configurationGUI)
+                expandAnimation.state = false
+            }
+        }, x + 3, y + 3, 144f, 16f),
 
-                StartElement("Console", {
-                    if (minecraft.currentScreen !is ConsoleGUI) {
-                        minecraft.displayGuiScreen(ConsoleGUI())
-                        expandAnimation.state = false
-                    }
-                }, x + 3, y + 19, 144f, 16f),
+        StartElement("Console", {
+            if (minecraft.currentScreen !is ConsoleGUI) {
+                Paragon.INSTANCE.configurationGUI.windowsList
+                minecraft.displayGuiScreen(ConsoleGUI())
+                expandAnimation.state = false
+            }
+        }, x + 3, y + 19, 144f, 16f),
 
-                StartElement("Changelog", {
-                    if (Paragon.INSTANCE.configurationGUI.windowsList.any { it is ChangelogWindow }) {
-                        Paragon.INSTANCE.configurationGUI.windowsList.filterIsInstance<ChangelogWindow>().forEach { it.openAnimation.state = false }
-                    } else {
-                        Paragon.INSTANCE.configurationGUI.windowsList.add(ChangelogWindow(200f, 200f, 300f, 250f, 16f))
-                    }
+        StartElement("Changelog", {
+            if (Paragon.INSTANCE.configurationGUI.windowsList.any { it is ChangelogWindow }) {
+                Paragon.INSTANCE.configurationGUI.windowsList.filterIsInstance<ChangelogWindow>().forEach { it.openAnimation.state = false }
+            } else {
+                Paragon.INSTANCE.configurationGUI.windowsList.add(ChangelogWindow(200f, 200f, 300f, 250f, 16f))
+            }
 
-                    expandAnimation.state = false
-                }, x + 3, y + 35f, 144f, 16f),
+            expandAnimation.state = false
+        }, x + 3, y + 35f, 144f, 16f),
 
-                StartElement("Configs", {
-                    if (Paragon.INSTANCE.configurationGUI.windowsList.any { it is ConfigWindow }) {
-                        Paragon.INSTANCE.configurationGUI.windowsList.filterIsInstance<ConfigWindow>().forEach { it.openAnimation.state = false }
-                    } else {
-                        Paragon.INSTANCE.configurationGUI.windowsList.add(ConfigWindow(200f, 200f, 200f, 150f, 16f))
-                    }
+        StartElement("Configs", {
+            if (Paragon.INSTANCE.configurationGUI.windowsList.any { it is ConfigWindow }) {
+                Paragon.INSTANCE.configurationGUI.windowsList.filterIsInstance<ConfigWindow>().forEach { it.openAnimation.state = false }
+            } else {
+                Paragon.INSTANCE.configurationGUI.windowsList.add(ConfigWindow(200f, 200f, 200f, 150f, 16f))
+            }
 
-                    expandAnimation.state = false
-                }, x + 3, y + 35f, 144f, 16f)
-            )
-        )
-    }
+            expandAnimation.state = false
+        }, x + 3, y + 35f, 144f, 16f)
+    )
 
     fun draw(mouseX: Int, mouseY: Int) {
         val scaledResolution = ScaledResolution(minecraft)
@@ -106,8 +105,6 @@ class StartMenu(var x: Float, var y: Float, var width: Float, var height: Float)
         }
     }
 
-    fun isHovered(mouseX: Int, mouseY: Int): Boolean {
-        return mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
-    }
+    fun isHovered(mouseX: Int, mouseY: Int) = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
 
 }

@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -15,6 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
  * @author Surge
  * @since 27/07/22
  */
+@SideOnly(Side.CLIENT)
 public class BlurUtil implements Wrapper {
 
     private static int lastScale = -1;

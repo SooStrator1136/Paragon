@@ -18,7 +18,7 @@ import java.awt.Color
 class CategoryWindow(category: Category, x: Float, y: Float, width: Float, height: Float) : Window(x, y, width, height) {
 
     private val moduleElements = ArrayList<ModuleElement>()
-    val animation: Animation = Animation( { ClickGUI.animationSpeed.value }, true, { ClickGUI.easing.value })
+    val animation = Animation(ClickGUI.animationSpeed::value, true, ClickGUI.easing::value)
     var scissorHeight = 0f
 
     var tooltipName = ""
@@ -30,7 +30,7 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
     init {
         title = category.Name
 
-        Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category } .forEach { module ->
+        Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category }.forEach { module ->
             moduleElements.add(ModuleElement(this, module, x, y + height, width - 1, height))
         }
     }
@@ -72,9 +72,7 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
                     moduleElements.forEach {
                         it.y -= height
                     }
-                }
-
-                else if (mouseDelta < 0 && moduleElements[0].y < y + height) {
+                } else if (mouseDelta < 0 && moduleElements[0].y < y + height) {
                     moduleElements.forEach {
                         it.y += height
                     }

@@ -10,10 +10,6 @@ import com.paragon.client.ui.configuration.GuiImplementation
 import com.paragon.client.ui.configuration.retrowindows.window.Window
 import com.paragon.client.ui.configuration.retrowindows.window.category.CategoryWindow
 import com.paragon.client.ui.util.Click
-import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.util.ResourceLocation
-import org.lwjgl.input.Mouse
 import java.awt.Color
 
 /**
@@ -21,7 +17,7 @@ import java.awt.Color
  */
 class Windows98 : GuiImplementation(), ITextRenderer {
 
-    val windows = ArrayList<Window>()
+    private val windows = ArrayList<Window>()
 
     init {
         var x = 20f
@@ -72,8 +68,8 @@ class Windows98 : GuiImplementation(), ITextRenderer {
         Paragon.INSTANCE.taskbar.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))
     }
 
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        windows.forEach { it.mouseReleased(mouseX.toFloat(), mouseY.toFloat(), Click.getClick(state)) }
+    override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {
+        windows.forEach { it.mouseReleased(mouseX.toFloat(), mouseY.toFloat(), Click.getClick(mouseButton)) }
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
@@ -84,6 +80,6 @@ class Windows98 : GuiImplementation(), ITextRenderer {
         Paragon.INSTANCE.storageManager.saveModules("current")
     }
 
-    override fun doesGuiPauseGame(): Boolean = ClickGUI.pause.value
+    override fun doesGuiPauseGame() = ClickGUI.pause.value
 
 }

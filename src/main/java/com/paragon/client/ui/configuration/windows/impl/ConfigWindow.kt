@@ -11,7 +11,6 @@ import com.paragon.client.ui.util.Click
 import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.util.ChatAllowedCharacters
-import net.minecraft.util.text.TextFormatting
 import org.apache.commons.io.FileUtils
 import org.lwjgl.input.Keyboard
 import java.awt.Color
@@ -24,9 +23,9 @@ import java.io.File
  */
 class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHeight: Float) : Window(x, y, width, height, grabbableHeight) {
 
-    val configsList: ArrayList<ConfigElement> = arrayListOf()
+    private val configsList: ArrayList<ConfigElement> = arrayListOf()
 
-    val saveButton: ConfigButton = ConfigButton("Save", {
+    private val saveButton = ConfigButton("Save", {
         val name = configNameElement.input
 
         if (name.isNotEmpty()) {
@@ -39,9 +38,9 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
     }, x, y, width, 16f)
 
-    val configNameElement: ConfigTextField = ConfigTextField(x, y + 16f, width, 16f)
+    private val configNameElement = ConfigTextField(x, y + 16f, width, 16f)
 
-    var scroll = 0f
+    private var scroll = 0f
 
     init {
         val configDirectory = File("paragon${File.separator}configs")
@@ -198,7 +197,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         var listening = false
         var flash = false
 
-        val flashAnimation: Animation = Animation( {250f}, false, {Easing.LINEAR})
+        private val flashAnimation = Animation({ 250f }, false, { Easing.LINEAR })
 
         fun draw(mouseX: Int, mouseY: Int) {
             flashAnimation.state = flash
@@ -229,13 +228,9 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
                     if (input.isNotEmpty()) {
                         input = input.substring(0, input.length - 1)
                     }
-                }
-
-                else if (keyCode == Keyboard.KEY_RETURN) {
+                } else if (keyCode == Keyboard.KEY_RETURN) {
                     listening = false
-                }
-
-                else if (ChatAllowedCharacters.isAllowedCharacter(character)) {
+                } else if (ChatAllowedCharacters.isAllowedCharacter(character)) {
                     input += character
                 }
             }

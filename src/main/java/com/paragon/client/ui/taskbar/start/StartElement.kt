@@ -8,7 +8,7 @@ import java.awt.Color
  * @author Surge
  * @since 27/07/2022
  */
-class StartElement(val name: String, val invoke: Runnable, var x: Float, var y: Float, var width: Float, var height: Float) : ITextRenderer {
+class StartElement(val name: String, private val onAction: () -> Unit, var x: Float, var y: Float, var width: Float, var height: Float) : ITextRenderer {
 
     fun draw(mouseX: Int, mouseY: Int) {
         val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
@@ -20,7 +20,7 @@ class StartElement(val name: String, val invoke: Runnable, var x: Float, var y: 
     }
 
     fun clicked() {
-        invoke.run()
+        onAction.invoke()
     }
 
 }

@@ -13,8 +13,8 @@ import net.minecraft.util.math.Vec2f
  */
 abstract class Window(var x: Float, var y: Float, var width: Float, var height: Float, var grabbableHeight: Float) : ITextRenderer {
 
-    var lastPosition: Vec2f = Vec2f(0f, 0f)
-    var dragging = false
+    private var lastPosition = Vec2f(0f, 0f)
+    private var dragging = false
 
     val openAnimation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
 

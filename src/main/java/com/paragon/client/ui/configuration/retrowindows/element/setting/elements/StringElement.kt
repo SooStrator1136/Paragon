@@ -19,7 +19,7 @@ import java.awt.Color
  */
 class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y: Float, width: Float, height: Float) : SettingElement<String>(parent, setting, x, y, width, height) {
 
-    val listening: Animation = Animation( { ClickGUI.animationSpeed.value }, false, { ClickGUI.easing.value })
+    private val listening = Animation(ClickGUI.animationSpeed::value, false, ClickGUI.easing::value)
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
@@ -43,13 +43,13 @@ class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y
         if (expanded.getAnimationFactor() > 0) {
             var yOffset = 0f
 
-            val scissorY: Double = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubsettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
+            val scissorY: Double = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubSettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
 
-            val scissorHeight: Double = MathHelper.clamp(getSubsettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
+            val scissorHeight: Double = MathHelper.clamp(getSubSettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
 
             RenderUtil.pushScissor(x.toDouble(), scissorY, width.toDouble(), scissorHeight)
 
-            subsettings.forEach {
+            subSettings.forEach {
                 it.x = x + 2
                 it.y = y + height + yOffset
 

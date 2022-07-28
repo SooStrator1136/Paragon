@@ -17,7 +17,7 @@ import java.awt.Color
  */
 class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float, y: Float, width: Float, height: Float) : SettingElement<Boolean>(parent, setting, x, y, width, height) {
 
-    val enabled: Animation = Animation( { ClickGUI.animationSpeed.value }, setting.value, { ClickGUI.easing.value })
+    val enabled = Animation(ClickGUI.animationSpeed::value, setting.value, ClickGUI.easing::value)
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
@@ -27,7 +27,7 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 
@@ -44,7 +44,7 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
 
             RenderUtil.pushScissor(x.toDouble(), scissorY.toDouble(), width.toDouble(), scissorHeight.toDouble())
 
-            subsettings.forEach {
+            subSettings.forEach {
                 it.x = x + 2
                 it.y = y + height + yOffset
 

@@ -21,26 +21,21 @@ import java.awt.Color
  */
 class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y: Float, width: Float, height: Float) : RawElement(x, y, width, height) {
 
-    private val expanded: Animation = Animation( { ClickGUI.animationSpeed.value }, false, { ClickGUI.easing.value })
-    val enabled: Animation = Animation( { ClickGUI.animationSpeed.value }, module.isEnabled, { ClickGUI.easing.value })
-    val hover: Animation = Animation( { 100f }, false, { ClickGUI.easing.value })
+    private val expanded = Animation(ClickGUI.animationSpeed::value, false, ClickGUI.easing::value)
+    val enabled = Animation(ClickGUI.animationSpeed::value, module.isEnabled, ClickGUI.easing::value)
+    private val hover = Animation({ 100f }, false, ClickGUI.easing::value)
 
     val settings = ArrayList<SettingElement<*>>()
 
     init {
         module.settings.forEach {
-            if (it.value is Boolean) {
-                settings.add(BooleanElement(this, it as Setting<Boolean>, x + 2, y, width - 4, height))
-            } else if (it.value is Enum<*>) {
-                settings.add(EnumElement(this, it as Setting<Enum<*>>, x + 2, y, width - 4, height))
-            } else if (it.value is Number) {
-                settings.add(SliderElement(this, it as Setting<Number>, x + 2, y, width - 4, height))
-            } else if (it.value is Bind) {
-                settings.add(BindElement(this, it as Setting<Bind>, x + 2, y, width - 4, height))
-            } else if (it.value is String) {
-                settings.add(StringElement(this, it as Setting<String>, x + 2, y, width - 4, height))
-            } else if (it.value is Color) {
-                settings.add(ColourElement(this, it as Setting<Color>, x + 2, y, width - 4, height))
+            when (it.value) {
+                is Boolean -> settings.add(BooleanElement(this, it as Setting<Boolean>, x + 2, y, width - 4, height))
+                is Enum<*> -> settings.add(EnumElement(this, it as Setting<Enum<*>>, x + 2, y, width - 4, height))
+                is Number -> settings.add(SliderElement(this, it as Setting<Number>, x + 2, y, width - 4, height))
+                is Bind -> settings.add(BindElement(this, it as Setting<Bind>, x + 2, y, width - 4, height))
+                is String -> settings.add(StringElement(this, it as Setting<String>, x + 2, y, width - 4, height))
+                is Color -> settings.add(ColourElement(this, it as Setting<Color>, x + 2, y, width - 4, height))
             }
         }
     }
@@ -57,7 +52,7 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
         RenderUtil.drawRect(x + 3, y + 3, width - 4, getTotalHeight() - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, getTotalHeight() - 4, Color(120 - (10 * hover.getAnimationFactor()).toInt(), 120 - (10 * hover.getAnimationFactor()).toInt(), 120 - (10 * hover.getAnimationFactor()).toInt()).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
 
         glScalef(0.9f, 0.9f, 0.9f)
 
@@ -147,8 +142,6 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
         return height
     }
 
-    fun getTotalHeight(): Float {
-        return (height + (getSettingHeight() * expanded.getAnimationFactor())).toFloat()
-    }
+    fun getTotalHeight() = (height + (getSettingHeight() * expanded.getAnimationFactor())).toFloat()
 
 }

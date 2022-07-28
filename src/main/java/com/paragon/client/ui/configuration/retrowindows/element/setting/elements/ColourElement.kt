@@ -4,7 +4,6 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
-import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingElement
 import com.paragon.client.ui.util.Click
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.util.math.MathHelper
+import org.lwjgl.opengl.GL11.GL_SMOOTH
 import org.lwjgl.opengl.GL11.glScalef
 import java.awt.Color
 import kotlin.math.max
@@ -42,7 +42,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         rainbowSaturationSetting.setValue(setting.rainbowSaturation)
         syncSetting.setValue(setting.isSync)
 
-        subsettings.addAll(
+        subSettings.addAll(
             listOf(
                 SliderElement(parent, hueSetting, x + 2, y, width - 4, height),
                 SliderElement(parent, alphaSetting, x + 2, y, width - 4, height),
@@ -62,7 +62,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2,  ((width - 4) * expanded.getAnimationFactor()).toFloat(), height - 4, setting.value.rgb, if (ClickGUI.gradient.value) setting.value.brighter().brighter().rgb else setting.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, ((width - 4) * expanded.getAnimationFactor()).toFloat(), height - 4, setting.value.rgb, if (ClickGUI.gradient.value) setting.value.brighter().brighter().rgb else setting.value.rgb)
 
         glScalef(0.8f, 0.8f, 0.8f)
 
@@ -109,7 +109,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
                 finalColour = Color(Color.HSBtoRGB(hueSetting.value.toFloat() / 360, saturation / 100, brightness / 100))
             }
 
-            subsettings.forEach {
+            subSettings.forEach {
                 if (it is SliderElement && it.dragging) {
                     val hsb = Color.RGBtoHSB(finalColour.red, finalColour.green, finalColour.blue, null)
                     println(hsb[1])
@@ -130,7 +130,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             RenderUtil.drawRect(pickerX - 1.5f, pickerY - 1.5f, 3f, 3f, -1)
             RenderUtil.drawRect(pickerX - 1, pickerY - 1, 2f, 2f, finalColour.rgb)
 
-            subsettings.forEach {
+            subSettings.forEach {
                 it.x = x + 2
                 it.y = y + height + yOffset
 
@@ -156,13 +156,13 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         GlStateManager.enableBlend()
         GlStateManager.disableAlpha()
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
-        GlStateManager.shadeModel(7425)
+        GlStateManager.shadeModel(GL_SMOOTH)
 
         // Get tessellator and buffer builder
         val tessellator = Tessellator.getInstance()
         val bufferbuilder = tessellator.buffer
 
-        // Add positions
+        // Add vertexes
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
         bufferbuilder.pos((x + dimension).toDouble(), y.toDouble(), 0.0).color(colour.red, colour.green, colour.blue, colour.alpha).endVertex()
         bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(255, 255, 255, 255).endVertex()
@@ -187,7 +187,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         if (click == Click.LEFT && expanded.state) {
             if (mouseX in x + 4..x + 80 && mouseY in y + height + 2..y + height + 78) {
                 pickingColour = true
-                println("Picking colour")
+                //println("Picking colour")
             }
         }
 
@@ -204,13 +204,14 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         pickingColour = false
     }
 
-    override fun getSubsettingHeight(): Float {
+    override fun getSubSettingHeight(): Float {
         var height = 80f
 
-        subsettings.forEach {
+        subSettings.forEach {
             height += it.getTotalHeight()
         }
 
         return height
     }
+
 }

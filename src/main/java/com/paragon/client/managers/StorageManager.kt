@@ -56,39 +56,47 @@ class StorageManager {
                 }
 
                 for (setting in module.settings) {
-                    if (setting.value is Color) {
-                        val color = setting.value as Color
-                        jsonObject.put(
-                            setting.name,
-                            color.red.toString() + ":" + color.green + ":" + color.blue + ":" + setting.alpha + ":" + setting.isRainbow + ":" + setting.rainbowSpeed + ":" + setting.rainbowSaturation + ":" + setting.isSync
-                        )
-                    } else if (setting.value is Bind) {
-                        val bind = setting.value as Bind
-                        jsonObject.put(
-                            setting.name,
-                            bind.buttonCode.toString() + ":" + bind.device
-                        )
-                    } else {
-                        jsonObject.put(setting.name, setting.value)
+                    when (setting.value) {
+                        is Color -> {
+                            val color = setting.value as Color
+                            jsonObject.put(
+                                setting.name,
+                                color.red.toString() + ":" + color.green + ":" + color.blue + ":" + setting.alpha + ":" + setting.isRainbow + ":" + setting.rainbowSpeed + ":" + setting.rainbowSaturation + ":" + setting.isSync
+                            )
+                        }
+
+                        is Bind -> {
+                            val bind = setting.value as Bind
+                            jsonObject.put(
+                                setting.name,
+                                bind.buttonCode.toString() + ":" + bind.device
+                            )
+                        }
+
+                        else -> jsonObject.put(setting.name, setting.value)
                     }
 
                     if (setting.subsettings.isNotEmpty()) {
                         for (subSetting in setting.subsettings) {
                             val subSettingName = subSetting.parentSetting?.name + " " + subSetting.name
-                            if (subSetting.value is Color) {
-                                val color = subSetting.value as Color
-                                jsonObject.put(
-                                    subSettingName,
-                                    color.red.toString() + ":" + color.green + ":" + color.blue + ":" + subSetting.alpha + ":" + subSetting.isRainbow + ":" + subSetting.rainbowSpeed + ":" + subSetting.rainbowSaturation + ":" + subSetting.isSync
-                                )
-                            } else if (subSetting.value is Bind) {
-                                val bind = subSetting.value as Bind
-                                jsonObject.put(
-                                    subSettingName,
-                                    bind.buttonCode.toString() + ":" + bind.device
-                                )
-                            } else {
-                                jsonObject.put(subSettingName, subSetting.value)
+                            when (subSetting.value) {
+                                is Color -> {
+                                    val color = subSetting.value as Color
+                                    jsonObject.put(
+                                        subSettingName,
+                                        color.red.toString() + ":" + color.green + ":" + color.blue + ":" + subSetting.alpha + ":" + subSetting.isRainbow + ":" + subSetting.rainbowSpeed + ":" + subSetting.rainbowSaturation + ":" + subSetting.isSync
+                                    )
+                                }
+
+                                is Bind -> {
+                                    val bind = subSetting.value as Bind
+                                    jsonObject.put(
+                                        subSettingName,
+                                        bind.buttonCode.toString() + ":" + bind.device
+                                    )
+                                }
+
+                                else -> jsonObject.put(subSettingName, subSetting.value)
                             }
                         }
                     }
@@ -128,54 +136,57 @@ class StorageManager {
                     runCatching {
                         val settingName = if (isSub) setting.parentSetting?.name + " " + setting.name else setting.name
 
-                        if (setting.value is Boolean) {
-                            (setting as Setting<Boolean?>).setValue(moduleJSON.getBoolean(settingName))
-                        } else if (setting.value is Bind) {
-                            val bind = setting.value as Bind
-                            val parts = moduleJSON.getString(settingName).split(":".toRegex()).toTypedArray()
+                        when (setting.value) {
+                            is Boolean -> (setting as Setting<Boolean?>).setValue(moduleJSON.getBoolean(settingName))
+                            is Bind -> {
+                                val bind = setting.value as Bind
+                                val parts = moduleJSON.getString(settingName).split(":".toRegex()).toTypedArray()
 
-                            bind.buttonCode = parts[0].toInt()
-                            bind.device = java.lang.Enum.valueOf(
-                                Device::class.java,
-                                parts[1]
-                            )
-                        } else if (setting.value is Float) {
-                            (setting as Setting<Float?>).setValue(moduleJSON.getFloat(settingName))
-                        } else if (setting.value is Double) {
-                            (setting as Setting<Double?>).setValue(moduleJSON.getDouble(settingName))
-                        } else if (setting.value is Enum<*>) {
-                            val enum = setting.value as Enum<*>
-                            val value = java.lang.Enum.valueOf(
-                                enum::class.java,
-                                moduleJSON.getString(settingName)
-                            )
-
-                            run breakLoop@{
-                                enum::class.java.enumConstants.forEachIndexed { index, enumValue ->
-                                    if (enumValue.name == value.name) {
-                                        setting.index = index
-                                        return@breakLoop
-                                    }
-                                }
+                                bind.buttonCode = parts[0].toInt()
+                                bind.device = java.lang.Enum.valueOf(
+                                    Device::class.java,
+                                    parts[1]
+                                )
                             }
 
-                            (setting as Setting<Enum<*>>).setValue(value)
-                        } else if (setting.value is Color) {
-                            val values = moduleJSON.getString(settingName).split(":".toRegex()).toTypedArray()
+                            is Float -> (setting as Setting<Float?>).setValue(moduleJSON.getFloat(settingName))
+                            is Double -> (setting as Setting<Double?>).setValue(moduleJSON.getDouble(settingName))
+                            is Enum<*> -> {
+                                val enum = setting.value as Enum<*>
+                                val value = java.lang.Enum.valueOf(
+                                    enum::class.java,
+                                    moduleJSON.getString(settingName)
+                                )
 
-                            val color = Color(
-                                values[0].toInt() / 255f,
-                                values[1].toInt() / 255f,
-                                values[2].toInt() / 255f,
-                                values[3].toFloat() / 255f
-                            )
+                                run breakLoop@{
+                                    enum::class.java.enumConstants.forEachIndexed { index, enumValue ->
+                                        if (enumValue.name == value.name) {
+                                            setting.index = index
+                                            return@breakLoop
+                                        }
+                                    }
+                                }
 
-                            setting.alpha = values[3].toFloat()
-                            setting.isRainbow = java.lang.Boolean.parseBoolean(values[4])
-                            setting.rainbowSpeed = values[5].toFloat()
-                            setting.rainbowSaturation = values[6].toFloat()
-                            setting.isSync = java.lang.Boolean.parseBoolean(values[7])
-                            (setting as Setting<Color?>).setValue(color)
+                                (setting as Setting<Enum<*>>).setValue(value)
+                            }
+
+                            is Color -> {
+                                val values = moduleJSON.getString(settingName).split(":".toRegex()).toTypedArray()
+
+                                val color = Color(
+                                    values[0].toInt() / 255f,
+                                    values[1].toInt() / 255f,
+                                    values[2].toInt() / 255f,
+                                    values[3].toFloat() / 255f
+                                )
+
+                                setting.alpha = values[3].toFloat()
+                                setting.isRainbow = java.lang.Boolean.parseBoolean(values[4])
+                                setting.rainbowSpeed = values[5].toFloat()
+                                setting.rainbowSaturation = values[6].toFloat()
+                                setting.isSync = java.lang.Boolean.parseBoolean(values[7])
+                                (setting as Setting<Color?>).setValue(color)
+                            }
                         }
                     }
                 }

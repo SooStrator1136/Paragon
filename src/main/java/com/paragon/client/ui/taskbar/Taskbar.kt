@@ -13,22 +13,20 @@ import java.awt.Color
  */
 object Taskbar : Wrapper {
 
-    var tooltip: String = ""
-
-    private val startMenu = StartMenu(5f, 5f, 60f, 20f)
+    var tooltip = ""
 
     fun draw(mouseX: Int, mouseY: Int) {
         val scaledResolution = ScaledResolution(minecraft)
 
         RenderUtil.drawRect(0f, scaledResolution.scaledHeight - 26f, scaledResolution.scaledWidth.toFloat(), 26f, Color(148, 148, 148).rgb)
 
-        startMenu.x = 2f
-        startMenu.y = scaledResolution.scaledHeight - 23f
-        startMenu.draw(mouseX, mouseY)
+        StartMenu.x = 2f
+        StartMenu.y = scaledResolution.scaledHeight - 23f
+        StartMenu.draw(mouseX, mouseY)
     }
 
     fun mouseClicked(mouseX: Int, mouseY: Int, click: Click) {
-        startMenu.mouseClicked(mouseX, mouseY, click)
+        StartMenu.mouseClicked(mouseX, mouseY, click)
     }
 
 }

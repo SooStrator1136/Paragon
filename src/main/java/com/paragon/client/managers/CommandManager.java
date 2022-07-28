@@ -35,7 +35,7 @@ public class CommandManager implements Wrapper {
                 new HelpCommand(),
                 OpenFolderCommand.INSTANCE,
                 new SocialCommand(),
-                new SyntaxCommand()
+                SyntaxCommand.INSTANCE
         );
 
         Paragon.INSTANCE.getLogger().info("Loaded Command Manager");

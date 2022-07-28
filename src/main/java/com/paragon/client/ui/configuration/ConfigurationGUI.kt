@@ -12,7 +12,7 @@ import org.lwjgl.input.Mouse
  */
 class ConfigurationGUI : GuiScreen() {
 
-    var currentGUI: GuiImplementation? = null
+    private var currentGUI: GuiImplementation? = null
     val windowsList: MutableList<Window> = mutableListOf()
     val removeBuffer: MutableList<Window> = mutableListOf()
 
@@ -25,7 +25,7 @@ class ConfigurationGUI : GuiScreen() {
 
         if (currentGUI != ClickGUI.getGUI()) {
             currentGUI = ClickGUI.getGUI()
-            currentGUI!!.initGui()
+            currentGUI?.initGui()
         }
 
         val mouseDelta = Mouse.getDWheel()
@@ -34,9 +34,7 @@ class ConfigurationGUI : GuiScreen() {
             windowsList.removeIf(removeBuffer::contains)
         }
 
-        if (currentGUI != null) {
-            currentGUI!!.drawScreen(mouseX, mouseY, mouseDelta)
-        }
+        currentGUI?.drawScreen(mouseX, mouseY, mouseDelta)
 
         windowsList.forEach { it.draw(mouseX, mouseY, mouseDelta) }
     }
@@ -45,7 +43,7 @@ class ConfigurationGUI : GuiScreen() {
         super.mouseClicked(mouseX, mouseY, mouseButton)
 
         windowsList.reverse()
-        
+
         windowsList.forEach {
             if (it.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))) {
                 return
@@ -54,9 +52,7 @@ class ConfigurationGUI : GuiScreen() {
 
         windowsList.reverse()
 
-        if (currentGUI != null) {
-            currentGUI!!.mouseClicked(mouseX, mouseY, mouseButton)
-        }
+        currentGUI?.mouseClicked(mouseX, mouseY, mouseButton)
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
@@ -64,17 +60,13 @@ class ConfigurationGUI : GuiScreen() {
 
         windowsList.forEach { it.mouseReleased(mouseX, mouseY, Click.getClick(state)) }
 
-        if (currentGUI != null) {
-            currentGUI!!.mouseReleased(mouseX, mouseY, state)
-        }
+        currentGUI?.mouseReleased(mouseX, mouseY, state)
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         super.keyTyped(typedChar, keyCode)
 
-        if (currentGUI != null) {
-            currentGUI!!.keyTyped(typedChar, keyCode)
-        }
+        currentGUI?.keyTyped(typedChar, keyCode)
 
         windowsList.forEach { it.keyTyped(typedChar, keyCode) }
     }
@@ -82,13 +74,9 @@ class ConfigurationGUI : GuiScreen() {
     override fun onGuiClosed() {
         super.onGuiClosed()
 
-        if (currentGUI != null) {
-            currentGUI!!.onGuiClosed()
-        }
+        currentGUI?.onGuiClosed()
     }
 
-    override fun doesGuiPauseGame(): Boolean {
-        return ClickGUI.pause.value
-    }
+    override fun doesGuiPauseGame() = ClickGUI.pause.value
 
 }

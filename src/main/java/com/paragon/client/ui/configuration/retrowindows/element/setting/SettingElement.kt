@@ -15,23 +15,18 @@ import java.awt.Color
  */
 abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting<T>, x: Float, y: Float, width: Float, height: Float) : RawElement(x, y, width, height) {
 
-    val expanded: Animation = Animation( { ClickGUI.animationSpeed.value }, false, { ClickGUI.easing.value })
-    val subsettings = ArrayList<SettingElement<*>>()
+    val expanded = Animation(ClickGUI.animationSpeed::value, false, ClickGUI.easing::value)
+    val subSettings = ArrayList<SettingElement<*>>()
 
     init {
         setting.subsettings.forEach {
-            if (it.value is Boolean) {
-                subsettings.add(BooleanElement(parent, it as Setting<Boolean>, x + 2, y, width - 4, height))
-            } else if (it.value is Enum<*>) {
-                subsettings.add(EnumElement(parent, it as Setting<Enum<*>>, x + 2, y, width - 4, height))
-            } else if (it.value is Number) {
-                subsettings.add(SliderElement(parent, it as Setting<Number>, x + 2, y, width - 4, height))
-            } else if (it.value is Bind) {
-                subsettings.add(BindElement(parent, it as Setting<Bind>, x + 2, y, width - 4, height))
-            } else if (it.value is String) {
-                subsettings.add(StringElement(parent, it as Setting<String>, x + 2, y, width - 4, height))
-            } else if (it.value is Color) {
-                subsettings.add(ColourElement(parent, it as Setting<Color>, x + 2, y, width - 4, height))
+            when (it.value) {
+                is Boolean -> subSettings.add(BooleanElement(parent, it as Setting<Boolean>, x + 2, y, width - 4, height))
+                is Enum<*> -> subSettings.add(EnumElement(parent, it as Setting<Enum<*>>, x + 2, y, width - 4, height))
+                is Number -> subSettings.add(SliderElement(parent, it as Setting<Number>, x + 2, y, width - 4, height))
+                is Bind -> subSettings.add(BindElement(parent, it as Setting<Bind>, x + 2, y, width - 4, height))
+                is String -> subSettings.add(StringElement(parent, it as Setting<String>, x + 2, y, width - 4, height))
+                is Color -> subSettings.add(ColourElement(parent, it as Setting<Color>, x + 2, y, width - 4, height))
             }
         }
     }
@@ -47,7 +42,7 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
         super.mouseClicked(mouseX, mouseY, click)
 
         if (expanded.state) {
-            subsettings.forEach {
+            subSettings.forEach {
                 if (it.setting.isVisible()) {
                     it.mouseClicked(mouseX, mouseY, click)
                 }
@@ -59,7 +54,7 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
         super.mouseReleased(mouseX, mouseY, click)
 
         if (expanded.state) {
-            subsettings.forEach {
+            subSettings.forEach {
                 if (it.setting.isVisible()) {
                     it.mouseReleased(mouseX, mouseY, click)
                 }
@@ -71,7 +66,7 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
         super.keyTyped(character, keyCode)
 
         if (expanded.state) {
-            subsettings.forEach {
+            subSettings.forEach {
                 if (it.setting.isVisible()) {
                     it.keyTyped(character, keyCode)
                 }
@@ -79,10 +74,10 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
         }
     }
 
-    open fun getSubsettingHeight(): Float {
+    open fun getSubSettingHeight(): Float {
         var height = 0f
 
-        subsettings.forEach {
+        subSettings.forEach {
             if (it.setting.isVisible()) {
                 height += it.getTotalHeight()
             }
@@ -91,8 +86,6 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
         return height
     }
 
-    fun getTotalHeight(): Float {
-        return (height + (getSubsettingHeight() * expanded.getAnimationFactor())).toFloat()
-    }
+    fun getTotalHeight() = (height + (getSubSettingHeight() * expanded.getAnimationFactor())).toFloat()
 
 }

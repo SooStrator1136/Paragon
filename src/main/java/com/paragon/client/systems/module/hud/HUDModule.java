@@ -1,9 +1,9 @@
 package com.paragon.client.systems.module.hud;
 
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.ITextRenderer;
-import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.util.render.ITextRenderer;
+import com.paragon.api.util.render.RenderUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,7 +56,7 @@ public abstract class HUDModule extends Module implements ITextRenderer {
         }
     }
 
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (isHovered(getX(), getY(), getWidth(), getHeight(), mouseX, mouseY)) {
             if (mouseButton == 0) {
                 this.lastX = mouseX - getX();
@@ -66,9 +66,11 @@ public abstract class HUDModule extends Module implements ITextRenderer {
             } else if (mouseButton == 1) {
                 if (this.isEnabled()) {
                     toggle();
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
