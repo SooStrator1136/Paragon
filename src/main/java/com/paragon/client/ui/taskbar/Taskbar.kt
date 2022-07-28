@@ -9,7 +9,6 @@ import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import java.awt.Color
-import kotlin.math.exp
 
 /**
  * @author Surge
@@ -44,7 +43,9 @@ object Taskbar : Wrapper {
     }
 
     fun mouseClicked(mouseX: Int, mouseY: Int, click: Click) {
-        StartMenu.mouseClicked(mouseX, mouseY, click)
+        if (!StartMenu.mouseClicked(mouseX, mouseY, click)) {
+            StartMenu.expandAnimation.state = false
+        }
     }
 
 }

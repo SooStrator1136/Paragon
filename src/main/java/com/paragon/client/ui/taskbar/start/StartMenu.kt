@@ -2,6 +2,7 @@ package com.paragon.client.ui.taskbar.start
 
 import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
+import com.paragon.api.util.Wrapper.mc
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.client.systems.module.impl.client.Colours
@@ -100,18 +101,26 @@ object StartMenu : Wrapper, ITextRenderer {
         RenderUtil.drawModalRectWithCustomSizedTexture(x + 1, y + 1, 0f, 0f, 18f, 18f, 18f, 18f)
     }
 
-    fun mouseClicked(mouseX: Int, mouseY: Int, click: Click) {
+    fun mouseClicked(mouseX: Int, mouseY: Int, click: Click): Boolean {
+        var callback = false
         if (isHovered(mouseX, mouseY)) {
             expandAnimation.state = !expandAnimation.state
+            callback = true
         }
 
         if (expandAnimation.getAnimationFactor() == 1.0) {
             elements.forEach {
                 if (mouseX.toFloat() in it.x..it.x + it.width && mouseY.toFloat() in it.y..it.y + it.height) {
+                    callback = true
                     it.clicked()
                 }
             }
         }
+        val startY = ScaledResolution(mc).scaledHeight - (226 * expandAnimation.getAnimationFactor())
+        if (mouseX in 0..150 && mouseY >= startY && mouseY <= startY + 200) {
+            callback = true
+        }
+        return callback
     }
 
     fun isHovered(mouseX: Int, mouseY: Int) = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
