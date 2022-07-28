@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Entity.class)
 public abstract class MixinEntity {
 
-    @Shadow(aliases = "field_70138_W")
     public float stepHeight;
 
     @Shadow
