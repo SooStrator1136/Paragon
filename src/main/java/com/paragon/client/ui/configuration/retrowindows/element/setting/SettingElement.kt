@@ -32,7 +32,7 @@ abstract class SettingElement<T>(val parent: ModuleElement, val setting: Setting
     }
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
-        if (isHovered(mouseX, mouseY)) {
+        if (isHovered(mouseX, mouseY) && y > parent.parent.y + parent.parent.height) {
             parent.parent.tooltipName = setting.name
             parent.parent.tooltipContent = setting.description
         }

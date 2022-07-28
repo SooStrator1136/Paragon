@@ -44,7 +44,7 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
         hover.state = isHovered(mouseX, mouseY)
         enabled.state = module.isEnabled
 
-        if (hover.state) {
+        if (hover.state && y > parent.y + parent.height && y < parent.y + parent.height + parent.scissorHeight) {
             parent.tooltipName = module.name
             parent.tooltipContent = module.description
         }

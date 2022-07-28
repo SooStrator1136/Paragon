@@ -60,16 +60,6 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             RenderUtil.drawBorder(x, y, width - 2, height - 2, 1f, Colours.mainColour.value.rgb)
         }
 
-        /* val enabledModules: ArrayList<Module> = ArrayList()
-
-        for (module in Paragon.INSTANCE.moduleManager.modules.sortedBy { getStringWidth(it.name + if (it.getData() == "") it.getData() else "") }.reversed()) {
-            if (module.animation.getAnimationFactor() > 0 && module.isVisible()) {
-                enabledModules.add(module)
-            }
-        }
-
-        val scissorWidth = getStringWidth(enabledModules[0].name + (if (enabledModules[0].getData() == "") "" else "$GRAY[$WHITE ${enabledModules[0].getData()}$GRAY]")).toDouble() */
-
         modules = HashMap()
         
         for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.isVisible() && it.animation.getAnimationFactor() > 0.0 }) {

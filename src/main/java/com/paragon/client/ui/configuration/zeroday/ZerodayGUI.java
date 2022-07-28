@@ -49,10 +49,6 @@ public class ZerodayGUI extends GuiImplementation {
     public void drawScreen(int mouseX, int mouseY, int mouseDelta) {
         openAnimation.setState(true);
 
-        if (ClickGUI.getDarkenBackground().getValue()) {
-            drawDefaultBackground();
-        }
-
         if (ClickGUI.getGradientBackground().getValue()) {
             float[] topLeft = {182, 66, 245};
             float[] topRight = {236, 66, 245};

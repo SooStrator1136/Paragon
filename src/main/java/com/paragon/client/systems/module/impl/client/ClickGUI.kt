@@ -76,7 +76,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         .setDescription("The intensity of the blur")
         .setParentSetting(blur)
 
-    @JvmStatic
+
     fun getGUI(): GuiImplementation = when (style.value) {
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI

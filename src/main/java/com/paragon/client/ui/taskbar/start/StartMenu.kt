@@ -4,6 +4,7 @@ import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.windows.impl.ChangelogWindow
 import com.paragon.client.ui.configuration.windows.impl.ConfigWindow
 import com.paragon.client.ui.console.ConsoleGUI
@@ -12,6 +13,7 @@ import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.ResourceLocation
+import net.minecraft.util.math.MathHelper
 import java.awt.Color
 
 /**
@@ -25,7 +27,8 @@ object StartMenu : Wrapper, ITextRenderer {
     var width = 60f
     var height = 20f
 
-    private val expandAnimation = Animation({ 300f }, false, { Easing.EXPO_IN_OUT })
+    val expandAnimation = Animation({ 200f }, false, { Easing.LINEAR })
+
     val elements = arrayOf(
         StartElement("GUI", {
             if (minecraft.currentScreen != Paragon.INSTANCE.configurationGUI) {
@@ -66,8 +69,10 @@ object StartMenu : Wrapper, ITextRenderer {
     fun draw(mouseX: Int, mouseY: Int) {
         val scaledResolution = ScaledResolution(minecraft)
 
+        var startY = scaledResolution.scaledHeight - (226 * expandAnimation.getAnimationFactor())
+
         if (expandAnimation.getAnimationFactor() > 0) {
-            var startY = scaledResolution.scaledHeight - (226 * expandAnimation.getAnimationFactor())
+            RenderUtil.pushScissor(0.0, scaledResolution.scaledHeight - 226.0, 152.0, 201.0)
 
             RenderUtil.drawRect(0f, startY.toFloat(), 150f, 200f, Color(148, 148, 148).rgb)
 
@@ -81,7 +86,11 @@ object StartMenu : Wrapper, ITextRenderer {
 
                 startY += it.height + 2
             }
+
+            RenderUtil.popScissor()
         }
+
+        RenderUtil.drawRect(0f, scaledResolution.scaledHeight - MathHelper.clamp(228f * expandAnimation.getAnimationFactor().toFloat(), (26f * Paragon.INSTANCE.taskbar.expandAnimation.getAnimationFactor().toFloat()) + 2, 228f), 150f, 2f, Colours.mainColour.value.rgb)
 
         RenderUtil.drawRect(x + 1, y + 1, width, height, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x, y, width, height, Color(120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0)).rgb)

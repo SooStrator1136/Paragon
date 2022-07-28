@@ -1,6 +1,7 @@
 package com.paragon.client.ui.configuration
 
 import com.paragon.client.systems.module.impl.client.ClickGUI
+import com.paragon.client.systems.module.impl.client.ClickGUI.darkenBackground
 import com.paragon.client.ui.configuration.windows.Window
 import com.paragon.client.ui.util.Click
 import net.minecraft.client.gui.GuiScreen
@@ -34,6 +35,12 @@ class ConfigurationGUI : GuiScreen() {
             windowsList.removeIf(removeBuffer::contains)
         }
 
+        if (darkenBackground.value) {
+            drawDefaultBackground()
+        }
+
+        currentGUI?.width = width.toFloat()
+        currentGUI?.height = height.toFloat()
         currentGUI?.drawScreen(mouseX, mouseY, mouseDelta)
 
         windowsList.forEach { it.draw(mouseX, mouseY, mouseDelta) }
