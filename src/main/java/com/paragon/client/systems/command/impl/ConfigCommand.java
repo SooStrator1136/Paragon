@@ -5,6 +5,8 @@ import com.paragon.client.managers.notifications.Notification;
 import com.paragon.client.managers.notifications.NotificationType;
 import com.paragon.client.systems.command.Command;
 
+import java.io.File;
+
 public class ConfigCommand extends Command {
 
     public ConfigCommand() {
@@ -22,6 +24,18 @@ public class ConfigCommand extends Command {
             if (args[0].equalsIgnoreCase("load")) {
                 Paragon.INSTANCE.getStorageManager().loadModules(args[1]);
                 Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Loading config " + args[1], NotificationType.INFO));
+            }
+
+            if (args[0].equalsIgnoreCase("delete")) {
+                File file = new File("paragon" + File.separator + "configs" + File.separator + args[1]);
+
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                else {
+                    Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Config " + args[1] + " does not exist", NotificationType.ERROR));
+                }
             }
         } else {
             Paragon.INSTANCE.getNotificationManager().addNotification(new Notification("Syntax: " + getSyntax(), NotificationType.ERROR));

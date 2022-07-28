@@ -6,6 +6,7 @@ import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.windows.impl.ChangelogWindow
+import com.paragon.client.ui.configuration.windows.impl.ConfigWindow
 import com.paragon.client.ui.console.ConsoleGUI
 import com.paragon.client.ui.util.Click
 import com.paragon.client.ui.util.animation.Animation
@@ -45,6 +46,16 @@ class StartMenu(var x: Float, var y: Float, var width: Float, var height: Float)
                         Paragon.INSTANCE.configurationGUI.windowsList.filterIsInstance<ChangelogWindow>().forEach { it.openAnimation.state = false }
                     } else {
                         Paragon.INSTANCE.configurationGUI.windowsList.add(ChangelogWindow(200f, 200f, 300f, 250f, 16f))
+                    }
+
+                    expandAnimation.state = false
+                }, x + 3, y + 35f, 144f, 16f),
+
+                StartElement("Configs", {
+                    if (Paragon.INSTANCE.configurationGUI.windowsList.any { it is ConfigWindow }) {
+                        Paragon.INSTANCE.configurationGUI.windowsList.filterIsInstance<ConfigWindow>().forEach { it.openAnimation.state = false }
+                    } else {
+                        Paragon.INSTANCE.configurationGUI.windowsList.add(ConfigWindow(200f, 200f, 200f, 150f, 16f))
                     }
 
                     expandAnimation.state = false

@@ -1,3 +1,5 @@
+Added Configs window
+Added Changelog window
 Remade taskbar
 Added Windows98 GUI
 Renamed Panel GUI to Zeroday GUI

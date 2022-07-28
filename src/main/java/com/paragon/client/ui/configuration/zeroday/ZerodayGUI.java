@@ -81,8 +81,6 @@ public class ZerodayGUI extends GuiImplementation {
             GlStateManager.popMatrix();
         }
 
-        int dWheel = Mouse.getDWheel();
-
         glPushMatrix();
 
         // pop out
@@ -94,7 +92,7 @@ public class ZerodayGUI extends GuiImplementation {
         // grr lambdas
         String[] tooltip = {""};
         panels.forEach(panel -> {
-            panel.render(mouseX, mouseY, dWheel);
+            panel.render(mouseX, mouseY, mouseDelta);
 
             if (panel instanceof CategoryPanel && tooltip[0].isEmpty()) {
                 if (((CategoryPanel) panel).getTooltip() != "") {

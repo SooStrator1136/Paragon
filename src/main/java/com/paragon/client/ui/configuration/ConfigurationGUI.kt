@@ -44,11 +44,15 @@ class ConfigurationGUI : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
 
+        windowsList.reverse()
+        
         windowsList.forEach {
             if (it.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))) {
                 return
             }
         }
+
+        windowsList.reverse()
 
         if (currentGUI != null) {
             currentGUI!!.mouseClicked(mouseX, mouseY, mouseButton)
