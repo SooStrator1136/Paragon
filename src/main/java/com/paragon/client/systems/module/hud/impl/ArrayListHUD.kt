@@ -16,6 +16,7 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.text.TextFormatting.*
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import java.util.SortedMap
 import kotlin.collections.ArrayList
 
 @SideOnly(Side.CLIENT)
@@ -34,6 +35,9 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
         .setDescription("Render a background behind the text")
 
     private var corner = Corner.TOP_LEFT
+
+    // Value = width
+    private var modules: Map<Module, Float> = HashMap()
 
     override fun render() {
         val scaledResolution = ScaledResolution(mc)
@@ -56,7 +60,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             RenderUtil.drawBorder(x, y, width - 2, height - 2, 1f, Colours.mainColour.value.rgb)
         }
 
-        val enabledModules: ArrayList<Module> = ArrayList()
+        /* val enabledModules: ArrayList<Module> = ArrayList()
 
         for (module in Paragon.INSTANCE.moduleManager.modules.sortedBy { getStringWidth(it.name + if (it.getData() == "") it.getData() else "") }.reversed()) {
             if (module.animation.getAnimationFactor() > 0 && module.isVisible()) {
@@ -64,97 +68,107 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             }
         }
 
-        val scissorWidth = getStringWidth(enabledModules[0].name + (if (enabledModules[0].getData() == "") "" else "$GRAY[$WHITE ${enabledModules[0].getData()}$GRAY]")).toDouble()
+        val scissorWidth = getStringWidth(enabledModules[0].name + (if (enabledModules[0].getData() == "") "" else "$GRAY[$WHITE ${enabledModules[0].getData()}$GRAY]")).toDouble() */
 
+        modules = HashMap()
+        
+        for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.isVisible() && it.animation.getAnimationFactor() > 0.0 }) {
+            (modules as HashMap<Module, Float>)[module] = getStringWidth(module.name + (if (module.getData() == "") "" else "$GRAY[$WHITE ${module.getData()}$GRAY]"))
+        }
+
+        modules = modules.toSortedMap(compareBy<Module?> { modules[it] }.reversed())
+
+        val scissorWidth: Double = modules.firstNotNullOf { it.value }.toDouble()
+        
         when (corner) {
             Corner.TOP_LEFT -> {
-                RenderUtil.pushScissor(x.toDouble(), y.toDouble(), scissorWidth, enabledModules.size * 13.0)
+                RenderUtil.pushScissor(x.toDouble(), y.toDouble(), scissorWidth, modules.size * 13.0)
                 var yOffset = y
 
-                for (module in enabledModules) {
-                    val moduleData = module.name + (if (module.getData() == "") "" else "$GRAY[$WHITE${module.getData()}$GRAY]")
+                for (value in modules) {
+                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else "$GRAY[$WHITE${value.key.getData()}$GRAY]")
 
                     val origin = x - getStringWidth(moduleData)
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData) + 1F, 14f, -12171706, -7039852)
-                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData) + 1F, 14f, -12171706, -7039852)
+                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin + getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    renderText(moduleData, (origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
-                    yOffset += 13f * module.animation.getAnimationFactor().toFloat()
+                    yOffset += 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
             }
 
             Corner.TOP_RIGHT -> {
-                RenderUtil.pushScissor(((x + width) - scissorWidth), y.toDouble(), scissorWidth, enabledModules.size * 13.0)
+                RenderUtil.pushScissor(((x + width) - scissorWidth), y.toDouble(), scissorWidth, modules.size * 13.0)
 
                 var yOffset = y
 
-                for (module in enabledModules) {
-                    val moduleData = module.name + (if (module.getData() == "") "" else " $GRAY[$WHITE${module.getData()}$GRAY]")
+                for (value in modules) {
+                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
 
                     val origin = x + width
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
+                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    renderText(moduleData, (origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
-                    yOffset += 13f * module.animation.getAnimationFactor().toFloat()
+                    yOffset += 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
             }
 
             Corner.BOTTOM_LEFT -> {
-                RenderUtil.pushScissor(x.toDouble(), (y + height) - enabledModules.size * 13.0, scissorWidth,enabledModules.size * 13.0)
+                RenderUtil.pushScissor(x.toDouble(), (y + height) - modules.size * 13.0, scissorWidth,modules.size * 13.0)
                 var yOffset = y + height - 13f
 
-                for (module in enabledModules) {
-                    val moduleData = module.name + (if (module.getData() == "") "" else " $GRAY[$WHITE${module.getData()}$GRAY]")
+                for (value in modules) {
+                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
                     val width = getStringWidth(moduleData) + 4
 
                     val origin = x - getStringWidth(moduleData)
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, 0x70000000)
+                        RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset, width + 1F, 14f, -12171706, -7039852)
-                        RenderUtil.drawRect((origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width + 1F, 14f, -12171706, -7039852)
+                        RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin + width * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    renderText(moduleData, (origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
-                    yOffset -= 13f * module.animation.getAnimationFactor().toFloat()
+                    yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
             }
 
             Corner.BOTTOM_RIGHT -> {
-                RenderUtil.pushScissor(((x + width) - scissorWidth), (y + height) - enabledModules.size * 13.0, scissorWidth,enabledModules.size * 13.0)
+                RenderUtil.pushScissor(((x + width) - scissorWidth), (y + height) - modules.size * 13.0, scissorWidth,modules.size * 13.0)
 
                 var yOffset = y + height - 13f
 
-                for (module in enabledModules) {
-                    val moduleData = module.name + (if (module.getData() == "") "" else " $GRAY[$WHITE${module.getData()}$GRAY]")
+                for (value in modules) {
+                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
 
                     val origin = x + width
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
+                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin - getStringWidth(moduleData) * module.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    renderText(moduleData, (origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
-                    yOffset -= 13f * module.animation.getAnimationFactor().toFloat()
+                    yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
             }
         }

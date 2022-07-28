@@ -135,8 +135,10 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
             return true
         }
 
-        configsList.forEach {
-            it.clicked(mouseX, mouseY, click)
+        if (mouseY.toFloat() in y + grabbableHeight..y + (height - 19f)) {
+            configsList.forEach {
+                it.clicked(mouseX, mouseY, click)
+            }
         }
 
         saveButton.clicked(mouseX, mouseY, click)
