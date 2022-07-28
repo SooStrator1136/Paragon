@@ -7,9 +7,8 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.client.ui.configuration.GuiImplementation
-import com.paragon.client.ui.configuration.retrowindows.Windows98
+import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.util.animation.Easing
-import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 
 /**
@@ -80,6 +79,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     fun getGUI(): GuiImplementation = when (style.value) {
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
+        Style.DISCORD -> GuiDiscord
     }
 
     override fun onEnable() {
@@ -96,7 +96,12 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         /**
          * AWFUL remake of the ZeroDay b21/22 GUI
          */
-        ZERODAY
+        ZERODAY,
+
+        /**
+         * Discord like gui
+         */
+        DISCORD
     }
 
     enum class Icon {

@@ -8,8 +8,8 @@ import net.minecraft.client.Minecraft
  */
 abstract class GuiImplementation {
 
-    var width: Float = 0f
-    var height: Float = 0f
+    var width = 0f
+    var height = 0f
 
     open fun initGui() {}
 
