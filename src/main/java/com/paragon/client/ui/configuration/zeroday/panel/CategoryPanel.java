@@ -120,7 +120,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
         moduleHeight = height;
 
         if (dWheel != 0 && isHovered(getX(), getY() + barHeight, getWidth(), moduleHeight, mouseX, mouseY)) {
-            scrollFactor = dWheel > 0 ? 2 : -2;
+            scrollFactor = dWheel > 0 ? -2 : 2;
         }
 
         else {

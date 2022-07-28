@@ -118,7 +118,7 @@ class Paragon {
     companion object {
         const val modName = "Paragon"
         const val modID = "paragon"
-        const val modVersion = "1.0.0-DEV"
+        const val modVersion = "1.0.0 Pre 4"
 
         @JvmField
         @Mod.Instance

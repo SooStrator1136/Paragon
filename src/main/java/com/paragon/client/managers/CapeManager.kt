@@ -40,7 +40,7 @@ class CapeManager {
         /**
          * Cape for based ppl (contributors etc.)
          */
-        BASED("textures/cape/based.png");
+        BASED("textures/cape/based.png")
     }
 
 }
