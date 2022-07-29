@@ -7,9 +7,9 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.client.ui.configuration.GuiImplementation
-import com.paragon.client.ui.configuration.retrowindows.Windows98
+import com.paragon.client.ui.configuration.discord.GuiDiscord
+import com.paragon.client.ui.configuration.old.OldPanelGUI
 import com.paragon.client.ui.util.animation.Easing
-import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Keyboard
 
 /**
@@ -69,6 +69,24 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     val tooltips = Setting("Tooltips", true)
         .setDescription("Render tooltips on the taskbar")
 
+    @JvmStatic
+    val scrollSpeed: Setting<Float> = Setting("ScrollSpeed", 10f, 5f, 30f, 1f)
+        .setDescription("How fast to scroll")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.OLD }
+
+    @JvmStatic
+    val panelHeaderSeparator = Setting("HeaderSeparator", true)
+        .setDescription("Draw a separator between the header and the module buttons")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.OLD }
+
+    @JvmStatic
+    val cornerRadius = Setting("CornerRadius", 1f, 1f, 7f, 1f)
+        .setDescription("The radius of the corners")
+        .setParentSetting(style)
+        .setVisibility { style.value == Style.OLD }
+
     val blur = Setting("Blur", true)
         .setDescription("Blur the backgrounds of windows")
 
@@ -80,6 +98,8 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     fun getGUI(): GuiImplementation = when (style.value) {
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
+        Style.DISCORD -> GuiDiscord
+        Style.OLD -> OldPanelGUI.INSTANCE
     }
 
     override fun onEnable() {
@@ -96,7 +116,17 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         /**
          * AWFUL remake of the ZeroDay b21/22 GUI
          */
-        ZERODAY
+        ZERODAY,
+
+        /**
+         * Old Paragon gui
+         */
+        OLD,
+
+        /**
+         * Discord like gui
+         */
+        DISCORD
     }
 
     enum class Icon {

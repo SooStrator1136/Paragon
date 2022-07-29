@@ -40,7 +40,8 @@ Master7720 (kinda)
 
 ## Other Contributors
 Doogie13 <br>
-Sxmurai / Aestheticall
+Sxmurai / Aesthetical <br>
+EBSmash
 
 ## Other Credits
 Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Surge wrote it
