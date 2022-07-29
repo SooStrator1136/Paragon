@@ -25,7 +25,8 @@ class CommandManager : Wrapper {
         OpenFolderCommand,
         SocialCommand,
         SyntaxCommand,
-        SizeCommand
+        SizeCommand,
+        NearestStronghold
     )
 
     val commonPrefixes = listOf("/", ".", "*", ";", ",") as MutableList<String>
