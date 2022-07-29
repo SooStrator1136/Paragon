@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketBuffer
 
-
 /**
  * @author EBS
  */
@@ -18,31 +17,29 @@ object SizeCommand : Command("Size", "size") {
 
     override fun whenCalled(args: Array<String>, fromConsole: Boolean) {
         val stack = Minecraft.getMinecraft().player.heldItemMainhand
-        if(Notifications.INSTANCE.isEnabled) {
+        if (Notifications.INSTANCE.isEnabled) {
             Paragon.INSTANCE.notificationManager.addNotification(
                 Notification(
-                    if (stack.isEmpty) "You are not holding any item" else "Item weights " + Integer.toString(
-                        getItemSize(stack)
-                    ) + " bytes", NotificationType.INFO
+                    if (stack.isEmpty) "You are not holding any item"
+                    else "Item weights " + getItemSize(stack).toString() + " bytes", NotificationType.INFO
                 )
             )
-        }
-        else {
+        } else {
             Paragon.INSTANCE.commandManager.sendClientMessage(
-                if (stack.isEmpty) "You are not holding any item" else "Item weights " + Integer.toString(
-                    getItemSize(stack)
-                ) + " bytes"
-            ,false
+                if (stack.isEmpty) "You are not holding any item"
+                else "Item weights " + getItemSize(stack).toString() + " bytes", false
             )
-            }
         }
-    fun getItemSize(stack: ItemStack?): Int {
+    }
+
+    private fun getItemSize(stack: ItemStack): Int {
         val buff = PacketBuffer(Unpooled.buffer())
         buff.writeItemStack(stack)
         val size = buff.writerIndex()
         buff.release()
         return size
     }
+
 }
 
 
