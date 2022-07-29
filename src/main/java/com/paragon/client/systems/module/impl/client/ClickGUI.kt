@@ -19,7 +19,7 @@ import org.lwjgl.input.Keyboard
 object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Bind(Keyboard.KEY_RSHIFT, Bind.Device.KEYBOARD)) {
 
     @JvmStatic
-    val style: Setting<Style> = Setting("Style", Style.ZERODAY)
+    val style: Setting<Style> = Setting("Style", Style.WINDOWS_98)
         .setDescription("The style of the ClickGUI")
 
     // Windows settings

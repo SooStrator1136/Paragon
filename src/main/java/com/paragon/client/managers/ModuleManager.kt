@@ -103,7 +103,7 @@ class ModuleManager {
             TeleTofu(),
             TimerModule(),
             XCarry(),
-            DonkeyAlert(),
+            DonkeyAlert,
 
             // Client
             ClientFont,
