@@ -13,6 +13,11 @@ import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityLlama;
 import net.minecraft.entity.passive.EntityMule;
 
+/**
+ * @author EBS
+ */
+
+
 public class DonkeyAlert extends Module {
     public static Setting<Boolean> donkeyAlert = new Setting<>("Donkeys", true)
             .setDescription("Alert for donkeys");
