@@ -1,26 +1,27 @@
 package com.paragon.client.ui.configuration.zeroday.panel;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.ITextRenderer;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
+import com.paragon.api.util.render.ITextRenderer;
+import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.client.ui.configuration.zeroday.element.setting.*;
-import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
+import com.paragon.client.ui.configuration.zeroday.element.setting.*;
+import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.util.animation.Animation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTranslated;
 
 public class CategoryPanel extends Panel implements ITextRenderer {
 
@@ -86,13 +87,13 @@ public class CategoryPanel extends Panel implements ITextRenderer {
             }
 
             // Eye of ender is offset weirdly...
-            if (category.equals(Category.RENDER)) {
+            if (this.category == Category.RENDER) {
                 glTranslated(-0.5, -0.5, 0);
             }
 
-            RenderUtil.renderItemStack(new ItemStack(category.getIndicator()), getX() + 3.5f, getY() + 3.5f, false);
+            RenderUtil.renderItemStack(new ItemStack(this.category.getIndicator()), getX() + 3.5f, getY() + 3.5f, false);
 
-            if (category.equals(Category.RENDER)) {
+            if (this.category == Category.RENDER) {
                 glTranslated(0.5, 0.5, 0);
             }
 
@@ -108,8 +109,8 @@ public class CategoryPanel extends Panel implements ITextRenderer {
             glScalef(scaleFactor, scaleFactor, scaleFactor);
         }
 
-        Element lastModuleElement = elements.get(elements.size() - 1);
-        Element lastElement = lastModuleElement.getAnimation().getAnimationFactor() > 0 ? lastModuleElement.getSubElements().get(lastModuleElement.getSubElements().size() - 1) : lastModuleElement;
+        final Element lastModuleElement = elements.get(elements.size() - 1);
+        final Element lastElement = lastModuleElement.getAnimation().getAnimationFactor() > 0 ? lastModuleElement.getSubElements().get(lastModuleElement.getSubElements().size() - 1) : lastModuleElement;
 
         float height = 0;
 
@@ -121,9 +122,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
 
         if (dWheel != 0 && isHovered(getX(), getY() + barHeight, getWidth(), moduleHeight, mouseX, mouseY)) {
             scrollFactor = dWheel > 0 ? -2 : 2;
-        }
-
-        else {
+        } else {
             if (scrollFactor != 0) {
                 scrollFactor *= 0.9f;
 
@@ -138,9 +137,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
         if (scrollFactor != 0) {
             if (lastElement.getY() + lastElement.getTotalHeight() > getY() + barHeight + scissorHeight) {
                 elements.forEach(element -> element.setY(element.getY() + scrollFactor));
-            }
-
-            else {
+            } else {
                 scrollFactor = 0;
                 for (Element element : elements) {
                     element.setY(element.getY() + 1);

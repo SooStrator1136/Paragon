@@ -32,15 +32,20 @@ object GuiDiscord : GuiImplementation(), Wrapper {
     val CHANNEL_HOVERED_COLOR = Color(60, 63, 69)
 
     private val renderables = arrayOf(
+        SettingsBar,
         ModuleBar,
-        CategoryBar,
-        SettingsBar
+        CategoryBar
     )
 
     override fun initGui() {}
 
     override fun drawScreen(mouseX: Int, mouseY: Int, mouseDelta: Int) {
-        BASE_RECT.setBounds(((minecraft.currentScreen ?: return).width / 2) - 200, ((minecraft.currentScreen ?: return).height / 2) - 150, 400, 300)
+        BASE_RECT.setBounds(
+            ((minecraft.currentScreen ?: return).width / 2) - 200,
+            ((minecraft.currentScreen ?: return).height / 2) - 150,
+            400,
+            300
+        )
         D_WHEEL = mouseDelta
 
         for (renderable in renderables) {
@@ -63,7 +68,10 @@ object GuiDiscord : GuiImplementation(), Wrapper {
     }
 
     override fun onGuiClosed() {
+        ModuleBar.focusedModule = null
+        ModuleBar.shownModules.clear()
         ModuleBar.lastCopyTime = 0L
+        SettingsBar.shownSettings.clear()
     }
 
     override fun doesGuiPauseGame() = ClickGUI.pause.value

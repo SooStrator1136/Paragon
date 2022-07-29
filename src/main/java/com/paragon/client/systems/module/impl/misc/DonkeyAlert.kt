@@ -83,6 +83,11 @@ object DonkeyAlert : Module("Donkey Alert", Category.MISC, "Allows you to find d
         }
     }
 
+    override fun onDisable() {
+        addedEntities.clear()
+        founds.clear()
+    }
+
     private fun notify(animalType: String, e: Entity) {
         val str = "Found $animalType! X: ${e.posX.toInt()} Z: ${e.posZ.toInt()}"
         if (alertMode.value == AlertType.NOTIFICATION) {

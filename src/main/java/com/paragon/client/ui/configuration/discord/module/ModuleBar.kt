@@ -1,13 +1,12 @@
 package com.paragon.client.ui.configuration.discord.module
 
-import com.paragon.api.setting.Setting
+import com.paragon.api.module.Module
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.category.CategoryBar
 import com.paragon.client.ui.configuration.discord.settings.SettingsBar
-import com.paragon.client.ui.configuration.discord.settings.impl.DiscordBoolean
 import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 import org.lwjgl.opengl.GL11.*
@@ -20,6 +19,8 @@ import java.awt.datatransfer.StringSelection
  * @author SooStrator1136
  */
 object ModuleBar : IRenderable, ITextRenderer {
+
+    var focusedModule: Module? = null
 
     private var actualHeight = 0
     var scrollOffset = 0
@@ -51,8 +52,8 @@ object ModuleBar : IRenderable, ITextRenderer {
         //Render the actual modules
         run {
             //Scroll logic
-            val newScrollOffset = scrollOffset + GuiDiscord.D_WHEEL / 5
-            if (GuiDiscord.D_WHEEL != 0 && rect.contains(mouseX, mouseY)) {
+            if (GuiDiscord.D_WHEEL != 0 && shownModules.isNotEmpty() && rect.contains(mouseX, mouseY)) {
+                val newScrollOffset = (scrollOffset + GuiDiscord.D_WHEEL / 7.5).toInt()
                 if (GuiDiscord.D_WHEEL < 0) {
                     scrollOffset = newScrollOffset
                 } else if (scrollOffset < 0) {
@@ -166,12 +167,9 @@ object ModuleBar : IRenderable, ITextRenderer {
         } else if (rect.contains(mouseX, mouseY)) {
             for (module in shownModules) {
                 if (module.rect.contains(mouseX, mouseY)) {
+                    focusedModule = module.module
                     SettingsBar.shownSettings.clear()
-                    module.module.settings.forEach {
-                        when (it.value) {
-                            is Boolean -> SettingsBar.shownSettings.add(DiscordBoolean(it as Setting<Boolean>))
-                        }
-                    }
+                    SettingsBar.scrollOffset = 0
                     break
                 }
             }

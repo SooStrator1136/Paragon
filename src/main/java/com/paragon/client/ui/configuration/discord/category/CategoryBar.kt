@@ -69,6 +69,7 @@ object CategoryBar : IRenderable {
                 if (ModuleBar.shownModules.isNotEmpty() && ModuleBar.shownModules[0].module.category == category.category) {
                     return
                 }
+                ModuleBar.focusedModule = null
                 ModuleBar.shownModules.clear()
                 ModuleBar.scrollOffset = 0
                 Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category.category }.forEach {
