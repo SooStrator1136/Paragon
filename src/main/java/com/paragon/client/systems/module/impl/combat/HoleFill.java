@@ -1,17 +1,17 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
-import com.paragon.api.module.Category;
-import com.paragon.api.module.Module;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
-import com.paragon.api.setting.Setting;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.util.EnumFacing;
@@ -23,57 +23,54 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
-public class HoleFill extends Module {
+public final class HoleFill extends Module {
 
-    public static Setting<Float> range = new Setting<>("Range", 5.0f, 0.0f, 6.0f, 0.1f)
+    private static final Setting<Float> range = new Setting<>("Range", 5.0f, 0.0f, 6.0f, 0.1f)
             .setDescription("The maximum range to fill a hole");
 
-    public static Setting<Boolean> obsidianBedrock = new Setting<>("Obsidian Bedrock", true)
+    private static final Setting<Boolean> obsidianBedrock = new Setting<>("Obsidian Bedrock", true)
             .setDescription("Only fill holes that are surrounded by obsidian or bedrock");
 
-    public static Setting<Float> blocksPerTick = new Setting<>("Blocks Per Tick", 1.0f, 1.0f, 10.0f, 1f)
+    private static final Setting<Float> blocksPerTick = new Setting<>("Blocks Per Tick", 1.0f, 1.0f, 10.0f, 1.0f)
             .setDescription("The amount of blocks to fill per tick");
 
-    public static Setting<Float> pauseTicks = new Setting<>("Pause Ticks", 2.0f, 0.0f, 10.0f, 1f)
+    private static final Setting<Float> pauseTicks = new Setting<>("Pause Ticks", 2.0f, 0.0f, 10.0f, 1.0f)
             .setDescription("The amount of ticks to wait before filling the next holes");
 
     // Rotate settings
-    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
+    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
             .setDescription("How to rotate the player");
 
-    public static Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+    private static final Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
             .setDescription("Rotate the player back to their original rotation")
             .setParentSetting(rotate);
 
     // Render settings
-    public static Setting<Boolean> render = new Setting<>("Render", true)
+    public static final Setting<Boolean> render = new Setting<>("Render", true)
             .setDescription("Render the placement");
 
-    public static Setting<Render> renderMode = new Setting<>("Mode", Render.BOTH)
+    private static final Setting<Render> renderMode = new Setting<>("Mode", Render.BOTH)
             .setDescription("How to render placement")
             .setParentSetting(render);
 
-    public static Setting<Float> renderOutlineWidth = new Setting<>("Outline Width", 0.5f, 0.1f, 2f, 0.1f)
+    private static final Setting<Float> renderOutlineWidth = new Setting<>("Outline Width", 0.5f, 0.1f, 2f, 0.1f)
             .setDescription("The width of the lines")
             .setParentSetting(render);
 
-    public static Setting<Color> renderColour = new Setting<>("Fill Colour", new Color(185, 19, 255, 130))
-            .setDescription( "The colour of the fill")
+    private static final Setting<Color> renderColour = new Setting<>("Fill Colour", new Color(185, 19, 255, 130))
+            .setDescription("The colour of the fill")
             .setParentSetting(render);
 
-    public static Setting<Color> renderOutlineColour = new Setting<>("Outline Colour", new Color(185, 19, 255))
+    private static final Setting<Color> renderOutlineColour = new Setting<>("Outline Colour", new Color(185, 19, 255))
             .setParentSetting(render);
 
-    private final Map<BlockPos, EnumFacing> positions = new HashMap<>();
-    private final Map<BlockPos, Integer> attemptedPositions = new HashMap<>();
+    private final Map<BlockPos, EnumFacing> positions = new HashMap<>(5);
+    private final Map<BlockPos, Integer> attemptedPositions = new HashMap<>(5);
 
     private int ticks = 0;
 
@@ -83,7 +80,7 @@ public class HoleFill extends Module {
 
     @Override
     public void onTick() {
-        if (nullCheck()) {
+        if (this.nullCheck()) {
             return;
         }
 
@@ -194,4 +191,5 @@ public class HoleFill extends Module {
          */
         BOTH
     }
+
 }

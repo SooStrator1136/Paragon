@@ -10,7 +10,7 @@ import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.server.SPacketAnimation;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class NoSwing extends Module {
 

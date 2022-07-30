@@ -11,7 +11,7 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.SoundCategory;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 14/05/22
  */
 public class NoGlobalSounds extends Module {

@@ -9,7 +9,7 @@ import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketUseEntity
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object Criticals : Module("Criticals", Category.COMBAT, "Makes all your hits critical hits") {
 

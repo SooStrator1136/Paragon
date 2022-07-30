@@ -4,6 +4,6 @@ import com.paragon.api.module.Module
 import me.wolfsurge.cerauno.event.Event
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class ModuleToggleEvent(val module: Module) : Event()

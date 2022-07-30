@@ -214,7 +214,7 @@ public class StorageESP extends Module {
 
     @Override
     public String getData() {
-        return " " + StringUtil.getFormattedText(mode.getValue());
+        return StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

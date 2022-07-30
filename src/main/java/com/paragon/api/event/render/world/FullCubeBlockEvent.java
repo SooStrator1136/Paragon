@@ -4,7 +4,7 @@ import me.wolfsurge.cerauno.event.CancellableEvent;
 import net.minecraft.block.Block;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class FullCubeBlockEvent extends CancellableEvent {
 

@@ -1,20 +1,25 @@
 package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.ColourUtil;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.api.setting.Setting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class Watermark extends HUDModule {
 
     public static Watermark INSTANCE;
 
-    public static Setting<Display> display = new Setting<>("Display", Display.TEXT)
+    private static Setting<Display> display = new Setting<>("Display", Display.TEXT)
             .setDescription("The type of watermark to display");
+
+    private static Setting<Double> scaleFac = new Setting<>("Size", 1.0, 0.1, 2.0, 0.05)
+            .setDescription("The scale of the image watermark")
+            .setVisibility(() -> display.getValue().equals(Display.IMAGE));
 
     public Watermark() {
         super("Watermark", "Renders the client's name on screen");
@@ -32,10 +37,15 @@ public class Watermark extends HUDModule {
             case IMAGE:
                 mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/paragon.png"));
 
+                glPushMatrix();
                 float width = 880 / 4f;
                 float height = 331 / 4f;
+                glTranslatef(getX(), getY(), 0F);
+                glScaled(scaleFac.getValue(), scaleFac.getValue(), 1.0);
+                glTranslatef(-getX(), -getY(), 0F);
 
                 RenderUtil.drawModalRectWithCustomSizedTexture(getX(), getY(), 0, 0, width, height, width, height);
+                glPopMatrix();
                 break;
         }
     }

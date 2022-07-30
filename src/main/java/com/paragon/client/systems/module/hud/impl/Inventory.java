@@ -6,7 +6,7 @@ import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.item.ItemStack;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Inventory extends HUDModule {
 

@@ -33,4 +33,5 @@ public class LiquidShader extends Shader {
         glUniform1f(getUniform("time"), (float) getTime());
         glUniform4f(getUniform("colour"), colour.getRed() / 255F, colour.getGreen() / 255F, colour.getBlue() / 255F, colour.getAlpha() / 255F);
     }
+
 }

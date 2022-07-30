@@ -54,4 +54,5 @@ public class OutlineShader extends Shader {
         glUniform1i(getUniform("fill"), fill);
         glUniform1i(getUniform("outline"), outline);
     }
+
 }

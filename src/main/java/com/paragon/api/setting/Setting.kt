@@ -3,7 +3,6 @@ package com.paragon.api.setting
 import com.paragon.api.util.render.ColourUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import java.awt.Color
-import java.util.*
 import java.util.function.Supplier
 
 class Setting<T> {
@@ -145,9 +144,7 @@ class Setting<T> {
      *
      * @return the visibility of the setting.
      */
-    fun isVisible(): Boolean {
-        return isVisible.get()
-    }
+    fun isVisible() = isVisible.get()
 
     /**
      * Sets the visibility of the setting.
@@ -168,12 +165,12 @@ class Setting<T> {
      */
     val nextMode: T
         get() {
-            val enumeration: Enum<*> = value as Enum<*>
-            val values: Array<String> =
-                enumeration.javaClass.enumConstants.map { obj: Enum<*> -> obj.name }.toTypedArray()
+            val enumeration = value as Enum<*>
+            val values = enumeration.javaClass.enumConstants.map { it.name }.toTypedArray()
 
             index = if (index + 1 > values.size - 1) 0 else index + 1
 
             return java.lang.Enum.valueOf(enumeration::class.java, values[index]) as T
         }
+
 }

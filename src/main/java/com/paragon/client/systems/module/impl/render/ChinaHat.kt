@@ -15,7 +15,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * @author Wolfsurge, SooStrator1136
+ * @author Surge, SooStrator1136
  */
 object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :((") {
 

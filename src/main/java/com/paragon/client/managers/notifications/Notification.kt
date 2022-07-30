@@ -7,10 +7,9 @@ import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 
 /**
- * @author SooStrator1136
+ * @author Surge
  */
-class Notification(val message: String, val type: NotificationType) :
-    ITextRenderer {
+class Notification(val message: String, val type: NotificationType) : ITextRenderer {
 
     val animation: Animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
     private var started = false
@@ -26,11 +25,11 @@ class Notification(val message: String, val type: NotificationType) :
         val width = getStringWidth(message) + 10
         val x = Notifications.INSTANCE.x
 
-        RenderUtil.startGlScissor(Notifications.INSTANCE.x + (150 - 150) * animation.getAnimationFactor(), y.toDouble(), 300 * animation.getAnimationFactor(), 45.0)
+        RenderUtil.pushScissor(Notifications.INSTANCE.x + (150 - 150) * animation.getAnimationFactor(), y.toDouble(), 300 * animation.getAnimationFactor(), 45.0)
         RenderUtil.drawRect(x + 150 - width / 2f, y, width, 30f, -0x70000000)
         renderCenteredString(message, x + 150, y + 15f, -1, true)
         RenderUtil.drawRect(x + 150 - width / 2f, y, width, 1f, type.colour)
-        RenderUtil.endGlScissor()
+        RenderUtil.popScissor()
 
         if (animation.getAnimationFactor() == 1.0 && !reachedFirst) {
             reachedFirst = true

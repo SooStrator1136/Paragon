@@ -5,7 +5,7 @@ import com.paragon.client.systems.module.impl.client.Colours
 import net.minecraft.util.text.TextFormatting
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object Ping : HUDModule("Ping", "Displays your ping in ms") {
 

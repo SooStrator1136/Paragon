@@ -14,7 +14,7 @@ import net.minecraft.util.math.RayTraceResult;
 import java.awt.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class BlockHighlight extends Module {
 

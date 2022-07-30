@@ -4,7 +4,7 @@ import me.wolfsurge.cerauno.event.CancellableEvent;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class RenderBlockModelEvent extends CancellableEvent {
 

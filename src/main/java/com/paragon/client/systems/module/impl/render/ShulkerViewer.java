@@ -17,7 +17,7 @@ import net.minecraft.util.NonNullList;
 import java.awt.*;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class ShulkerViewer extends Module implements ITextRenderer {
 

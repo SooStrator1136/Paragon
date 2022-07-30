@@ -11,17 +11,18 @@ import com.paragon.client.systems.module.impl.misc.*
 import com.paragon.client.systems.module.impl.movement.*
 import com.paragon.client.systems.module.impl.render.*
 import net.minecraftforge.common.MinecraftForge
+import java.util.*
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
 class ModuleManager {
 
-    val modules: List<Module>
+    val modules: Array<Module>
 
     init {
         MinecraftForge.EVENT_BUS.register(this)
 
-        modules = listOf(
+        modules = arrayOf(
 
             // Combat
             Aura(),
@@ -102,6 +103,7 @@ class ModuleManager {
             TeleTofu(),
             TimerModule(),
             XCarry(),
+            DonkeyAlert,
 
             // Client
             ClientFont,
@@ -111,7 +113,7 @@ class ModuleManager {
 
             // HUD
             Armour(),
-            ArrayListHUD(),
+            ArrayListHUD,
             CombatInfo(),
             Coordinates(),
             Crystals(),
@@ -135,6 +137,6 @@ class ModuleManager {
         modules.forEach(Module::reflectSettings)
     }
 
-    fun getModulesThroughPredicate(predicate: Predicate<Module>): List<Module> = modules.stream().filter(predicate).collect(Collectors.toList())
+    fun getModulesThroughPredicate(predicate: Predicate<Module>): List<Module> = Arrays.stream(modules).filter(predicate).collect(Collectors.toList())
 
 }

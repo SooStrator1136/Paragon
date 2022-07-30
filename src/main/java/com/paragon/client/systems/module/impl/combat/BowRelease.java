@@ -9,7 +9,7 @@ import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class BowRelease extends Module {
 

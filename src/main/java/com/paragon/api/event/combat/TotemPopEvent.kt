@@ -4,6 +4,6 @@ import me.wolfsurge.cerauno.event.Event
 import net.minecraft.entity.player.EntityPlayer
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class TotemPopEvent(val player: EntityPlayer) : Event()

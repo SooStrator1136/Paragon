@@ -1,0 +1,20 @@
+Added Configs window
+Added Changelog window
+Remade taskbar
+Added Windows98 GUI
+Renamed Panel GUI to Zeroday GUI
+Removed Window GUI
+Added BowBomb
+Changed default font to Verdana
+Updated Discord RPC
+Added EntitySpeed
+Added CustomText HUD Module
+Added AutoCrystalRewrite to Combat Info
+Added VoidinqESP (VoidESP)
+Added AntiVoidinq (AntiVoid)
+Added more colouring options to Tracers
+Improved Watermark
+Added Offhand KeySwap
+Added Strafe
+Added a Forge Version Check
+Added a better cape system

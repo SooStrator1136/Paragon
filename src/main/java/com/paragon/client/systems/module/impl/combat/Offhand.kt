@@ -24,7 +24,7 @@ import org.lwjgl.input.Mouse
 import kotlin.math.floor
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your offhand") {
 

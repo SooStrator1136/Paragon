@@ -3,7 +3,7 @@ package com.paragon.client.ui.util.animation
 import kotlin.math.pow
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @Suppress("unused")
 enum class Easing(private val easeFunction: (Double) -> Double) {

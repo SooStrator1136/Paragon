@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Wolfsurge, Doogie13, aesthetical
+ * @author Surge, Doogie13, aesthetical
  * Uses Cosmos's step event, originally from auto which Aestheticall implemented into Cosmos with auto's permission
  */
 public class Step extends Module {
@@ -126,7 +126,7 @@ public class Step extends Module {
 
     @Override
     public String getData() {
-        return " " + StringUtil.getFormattedText(mode.getValue());
+        return StringUtil.getFormattedText(mode.getValue());
     }
 
     public enum Mode {

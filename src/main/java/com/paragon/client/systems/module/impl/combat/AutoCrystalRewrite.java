@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 @SideOnly(Side.CLIENT)
 public class AutoCrystalRewrite extends Module {

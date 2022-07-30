@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 02/05/2022
  */
 public class SoundHighlight extends Module {

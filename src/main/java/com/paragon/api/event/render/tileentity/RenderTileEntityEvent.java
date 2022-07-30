@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class RenderTileEntityEvent extends Event {
 

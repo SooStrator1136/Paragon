@@ -16,14 +16,20 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 class RotationManager : Wrapper {
+
     private val rotationsQueue = CopyOnWriteArrayList<Rotation>()
     private var packetYaw = -1f
     private var packetPitch = -1f
 
-    private var serverRotation: Vec2f = Vec2f(-1f, -1f)
+    private var serverRotation = Vec2f(-1f, -1f)
+
+    init {
+        MinecraftForge.EVENT_BUS.register(this)
+        Paragon.INSTANCE.eventBus.register(this)
+    }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     fun onTick(event: TickEvent.ClientTickEvent) {
@@ -38,9 +44,9 @@ class RotationManager : Wrapper {
                 return
             }
 
-            rotationsQueue.removeIf { rotation -> rotation.rotate == Rotate.NONE }
+            rotationsQueue.removeIf { it.rotate == Rotate.NONE }
 
-            rotationsQueue.sortBy { rotation -> rotation.priority.priority }
+            rotationsQueue.sortBy { it.priority.priority }
 
             val rotation = rotationsQueue[0]
 
@@ -98,8 +104,4 @@ class RotationManager : Wrapper {
         return calculatedAngle
     }
 
-    init {
-        MinecraftForge.EVENT_BUS.register(this)
-        Paragon.INSTANCE.eventBus.register(this)
-    }
 }

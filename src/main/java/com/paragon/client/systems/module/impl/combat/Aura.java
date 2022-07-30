@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Basic Aura module.
  *
- * @author Wolfsurge
+ * @author Surge
  */
 @SideOnly(Side.CLIENT)
 public class Aura extends Module {
@@ -177,7 +177,7 @@ public class Aura extends Module {
 
     @Override
     public String getData() {
-        return " " + (target == null ? "No target" : target.getName());
+        return target == null ? "No target" : target.getName();
     }
 
     public enum Sort {

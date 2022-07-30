@@ -6,7 +6,7 @@ import java.lang.reflect.Method
 
 /**
  * The main EventBus object. All events are posted from here, as well as objects being subscribed
- * @author Wolfsurge
+ * @author Surge
  * @since 05/03/22
  */
 class EventBus {

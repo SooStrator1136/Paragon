@@ -7,7 +7,7 @@ import java.io.File
 
 object OpenFolderCommand : Command("OpenFolder", "openfolder") {
 
-    override fun whenCalled(args: Array<out String>?, fromConsole: Boolean) {
+    override fun whenCalled(args: Array<String>, fromConsole: Boolean) {
         Desktop.getDesktop().open(File("paragon"))
         Paragon.INSTANCE.commandManager.sendClientMessage("Opened Paragon folder", false)
     }

@@ -47,4 +47,5 @@ public class DiagonalShader extends Shader {
         glUniform1f(getUniform("size"), lineWidth);
         glUniform1f(getUniform("spacing"), spacing);
     }
+
 }

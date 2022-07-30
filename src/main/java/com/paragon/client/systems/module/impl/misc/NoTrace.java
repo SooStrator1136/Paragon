@@ -10,7 +10,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemPickaxe;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 07/04/22
  */
 public class NoTrace extends Module {

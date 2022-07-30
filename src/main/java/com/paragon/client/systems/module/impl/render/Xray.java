@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Xray extends Module {
 

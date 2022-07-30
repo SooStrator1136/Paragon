@@ -47,4 +47,5 @@ public class DiamondsShader extends Shader {
         glUniform1f(getUniform("size"), size);
         glUniform1f(getUniform("spacing"), spacing);
     }
+
 }

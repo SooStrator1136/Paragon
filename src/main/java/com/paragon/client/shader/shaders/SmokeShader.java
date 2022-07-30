@@ -33,4 +33,5 @@ public class SmokeShader extends Shader {
         glUniform1f(getUniform("time"), (float) getTime());
         glUniform4f(getUniform("col"), colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue() / 255f, colour.getAlpha() / 255f);
     }
+
 }

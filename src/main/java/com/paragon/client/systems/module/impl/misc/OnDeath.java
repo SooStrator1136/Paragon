@@ -11,7 +11,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class OnDeath extends Module {
 

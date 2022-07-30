@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.util.text.TextFormatting
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 object FPS : HUDModule("FPS", "Renders your FPS on screen") {
 

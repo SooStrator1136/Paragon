@@ -10,7 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.function.Function;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Speed extends HUDModule {
 

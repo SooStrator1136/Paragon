@@ -26,7 +26,7 @@ open class Module(name: String, val category: Category, description: String) : F
     val isIgnored = javaClass.isAnnotationPresent(IgnoredByNotifications::class.java)
 
     // Module Settings
-    private val settings: MutableList<Setting<*>> = ArrayList()
+    val settings: MutableList<Setting<*>> = ArrayList()
 
     // Arraylist animation
     var animation = Animation({ ArrayListHUD.animationSpeed.value }, false) { ArrayListHUD.easing.value }
@@ -34,6 +34,16 @@ open class Module(name: String, val category: Category, description: String) : F
     // Whether the module is enabled
     var isEnabled = false
         private set
+
+    init {
+        if (isConstant) {
+            isEnabled = true
+
+            // Register events
+            MinecraftForge.EVENT_BUS.register(this)
+            Paragon.INSTANCE.eventBus.register(this)
+        }
+    }
 
     constructor(name: String, category: Category, description: String, bind: Bind) : this(name, category, description) {
         this.bind.setValue(bind)
@@ -105,7 +115,7 @@ open class Module(name: String, val category: Category, description: String) : F
      *
      * @return The module's visibility
      */
-    fun isVisible(): Boolean = visible.value
+    fun isVisible() = visible.value
 
     /**
      * Sets the module's visibility
@@ -114,23 +124,6 @@ open class Module(name: String, val category: Category, description: String) : F
      */
     fun setVisible(visible: Boolean) {
         this.visible.setValue(visible)
-    }
-
-    /**
-     * Gets a list of the module's settings
-     *
-     * @return The module's settings
-     */
-    fun getSettings() = settings
-
-    init {
-        if (isConstant) {
-            isEnabled = true
-
-            // Register events
-            MinecraftForge.EVENT_BUS.register(this)
-            Paragon.INSTANCE.eventBus.register(this)
-        }
     }
 
 }

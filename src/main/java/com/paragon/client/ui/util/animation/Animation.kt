@@ -4,7 +4,7 @@ import net.minecraft.util.math.MathHelper
 import java.util.function.Supplier
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 13/07/22
  */
 class Animation(val length: Supplier<Float>, private val initialState: Boolean, val easing: Supplier<Easing>) {
@@ -15,7 +15,7 @@ class Animation(val length: Supplier<Float>, private val initialState: Boolean, 
     // Current state of the animation
     // True = Expanding / Expanded
     // False = Contracting / Collapsed
-    var state: Boolean = initialState
+    var state = initialState
         set(value) {
             lastMillis = if (!value) {
                 System.currentTimeMillis() - ((1 - getLinearFactor()) * length.get().toLong()).toLong()
@@ -53,7 +53,7 @@ class Animation(val length: Supplier<Float>, private val initialState: Boolean, 
     /**
      * For internal use only!
      */
-    private fun getLinearFactor(): Double = if (!state) MathHelper.clamp(
+    private fun getLinearFactor() = if (!state) MathHelper.clamp(
         1 - (System.currentTimeMillis() - lastMillis.toDouble()) / length.get().toDouble(),
         0.0,
         1.0

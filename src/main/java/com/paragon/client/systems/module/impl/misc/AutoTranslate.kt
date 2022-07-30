@@ -2,13 +2,13 @@ package com.paragon.client.systems.module.impl.misc
 
 import com.mojang.realmsclient.gui.ChatFormatting.GRAY
 import com.paragon.Paragon
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.system.mainThread
 import com.paragon.client.managers.notifications.Notification
 import com.paragon.client.managers.notifications.NotificationType
-import com.paragon.api.module.Category
-import com.paragon.api.module.Module
-import com.paragon.api.setting.Setting
 import me.bush.translator.Language
 import me.bush.translator.Translation
 import me.bush.translator.Translator
@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
  * @since 7/6/22
  */
 object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically translates incoming/outgoing messages") {
+
     private val incoming = Setting("Incoming", true)
         .setDescription("Automatically translate incoming messages")
 

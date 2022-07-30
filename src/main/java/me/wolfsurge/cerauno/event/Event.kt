@@ -3,6 +3,6 @@ package me.wolfsurge.cerauno.event
 /**
  * A basic event
  *
- * @author Wolfsurge
+ * @author Surge
  */
 open class Event

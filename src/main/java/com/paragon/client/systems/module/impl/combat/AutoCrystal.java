@@ -48,7 +48,7 @@ import java.util.List;
 
 /**
  * somewhat bad autocrystal. I have looked at some other client's ACs whilst writing this, but it isn't really skidded.
- * @author Wolfsurge
+ * @author Surge
  */
 @SideOnly(Side.CLIENT)
 public class AutoCrystal extends Module {

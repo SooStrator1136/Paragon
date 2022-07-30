@@ -5,7 +5,7 @@ import com.paragon.api.module.Module;
 import com.paragon.api.setting.Setting;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class RotationLock extends Module {
 

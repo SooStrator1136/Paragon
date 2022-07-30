@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -178,6 +179,64 @@ public class RenderUtil implements Wrapper {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    public static void drawRoundedOutline(double x, double y, double width, double height, double tLeft, double tRight, double bLeft, double bRight, float lineWidth, int colour) {
+        glPushAttrib(0);
+        glScaled(0.5D, 0.5D, 0.5D);
+        x *= 2.0D;
+        y *= 2.0D;
+        width *= 2.0D;
+        height *= 2.0D;
+
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(true);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        glLineWidth(lineWidth);
+
+        glBegin(GL_LINE_STRIP);
+
+        ColourUtil.setColour(colour);
+        int i;
+
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + tLeft + Math.sin(i * Math.PI / 180.0D) * tLeft * -1.0D, y + tLeft + Math.cos(i * Math.PI / 180.0D) * tLeft * -1.0D);
+        }
+
+        for (i = 90; i <= 180; i += 3) {
+            glVertex2d(x + bLeft + Math.sin(i * Math.PI / 180.0D) * bLeft * -1.0D, y + height - bLeft + Math.cos(i * Math.PI / 180.0D) * bLeft * -1.0D);
+        }
+
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + width - bRight + Math.sin(i * Math.PI / 180.0D) * bRight, y + height - bRight + Math.cos(i * Math.PI / 180.0D) * bRight);
+        }
+
+        for (i = 90; i <= 180; i += 3) {
+            glVertex2d(x + width - tRight + Math.sin(i * Math.PI / 180.0D) * tRight, y + tRight + Math.cos(i * Math.PI / 180.0D) * tRight);
+        }
+
+        for (i = 0; i <= 90; i += 3) {
+            glVertex2d(x + tLeft + Math.sin(i * Math.PI / 180.0D) * tLeft * -1.0D, y + tLeft + Math.cos(i * Math.PI / 180.0D) * tLeft * -1.0D);
+        }
+
+        glEnd();
+
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+
+        glScaled(2.0D, 2.0D, 2.0D);
+        glPopAttrib();
+        glLineWidth(1);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
     public static void drawHorizontalRoundedRect(double x, double y, double width, double height, double tLeft, double tRight, double bLeft, double bRight, int left, int right) {
         glPushAttrib(0);
         glScaled(0.5D, 0.5D, 0.5D);
@@ -256,7 +315,10 @@ public class RenderUtil implements Wrapper {
      * @param width  Width of scissor
      * @param height Height of scissor
      */
-    public static void startGlScissor(double x, double y, double width, double height) {
+    public static void pushScissor(double x, double y, double width, double height) {
+        width = MathHelper.clamp(width, 0, width);
+        height = MathHelper.clamp(height, 0, height);
+
         glPushAttrib(GL_SCISSOR_BIT);
         {
             scissorRect(x, y, width, height);
@@ -267,7 +329,7 @@ public class RenderUtil implements Wrapper {
     /**
      * Disables scissor
      */
-    public static void endGlScissor() {
+    public static void popScissor() {
         glDisable(GL_SCISSOR_TEST);
         glPopAttrib();
     }
@@ -536,6 +598,7 @@ public class RenderUtil implements Wrapper {
     }
 
     public static void drawModalRectWithCustomSizedTexture(float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float f = 1.0F / textureWidth;
         float f1 = 1.0F / textureHeight;
         Tessellator tessellator = Tessellator.getInstance();

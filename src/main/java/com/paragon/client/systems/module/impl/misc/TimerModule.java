@@ -7,7 +7,7 @@ import com.paragon.api.module.Category;
 import com.paragon.api.setting.Setting;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class TimerModule extends Module {
 

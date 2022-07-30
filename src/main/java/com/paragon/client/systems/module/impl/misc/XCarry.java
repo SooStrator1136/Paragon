@@ -8,7 +8,7 @@ import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class XCarry extends Module {
 

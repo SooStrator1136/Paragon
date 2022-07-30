@@ -10,7 +10,7 @@ import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.network.play.client.CPacketEntityAction;
 
 /**
- * @author Wolfsurge
+ * @author Surge
  */
 public class Replenish extends Module {
 

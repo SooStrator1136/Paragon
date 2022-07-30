@@ -1,7 +1,7 @@
 package com.paragon.client.managers.rotation
 
 /**
- * @author Wolfsurge
+ * @author Surge
  * @since 23/03/22
  */
 enum class Rotate {
