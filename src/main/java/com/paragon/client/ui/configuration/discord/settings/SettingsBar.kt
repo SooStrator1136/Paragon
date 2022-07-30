@@ -1,14 +1,14 @@
 package com.paragon.client.ui.configuration.discord.settings
 
+import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyIndexed
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.category.CategoryBar
 import com.paragon.client.ui.configuration.discord.module.ModuleBar
-import com.paragon.client.ui.configuration.discord.settings.impl.DiscordBoolean
-import com.paragon.client.ui.configuration.discord.settings.impl.DiscordEnum
-import com.paragon.client.ui.configuration.discord.settings.impl.DiscordString
+import com.paragon.client.ui.configuration.discord.settings.impl.*
 import org.lwjgl.util.Rectangle
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -104,14 +104,27 @@ object SettingsBar : IRenderable {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun addSetting(setting: Setting<*>) {
         if (!setting.isVisible() || shownSettings.any { it.dSetting == setting }) {
             return
         }
-        when (setting.value) {
-            is Boolean -> shownSettings.add(DiscordBoolean(setting as Setting<Boolean>))
-            is Enum<*> -> shownSettings.add(DiscordEnum(setting as Setting<Enum<*>>))
-            is String -> shownSettings.add(DiscordString(setting as Setting<String>))
+        val toAdd = when (setting.value) {
+            is Boolean -> DiscordBoolean(setting as Setting<Boolean>)
+            is Enum<*> -> DiscordEnum(setting as Setting<Enum<*>>)
+            is String -> DiscordString(setting as Setting<String>)
+            is Bind -> DiscordBind(setting as Setting<Bind>)
+            is Number -> DiscordNumber(setting as Setting<Number>)
+            else -> null //Should be unreachable when all setting types are implemented
+        } ?: return
+
+        if (setting.parentSetting != null) {
+            shownSettings.add(
+                shownSettings.anyIndexed { it.dSetting == setting.parentSetting } + 1,
+                toAdd
+            ) //Add right after index of parentSetting
+        } else {
+            shownSettings.add(toAdd)
         }
     }
 

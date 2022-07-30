@@ -1,5 +1,6 @@
 package com.paragon.client.ui.configuration.discord
 
+import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.GuiImplementation
@@ -37,8 +38,6 @@ object GuiDiscord : GuiImplementation(), Wrapper {
         CategoryBar
     )
 
-    override fun initGui() {}
-
     override fun drawScreen(mouseX: Int, mouseY: Int, mouseDelta: Int) {
         BASE_RECT.setBounds(
             ((minecraft.currentScreen ?: return).width / 2) - 200,
@@ -72,6 +71,7 @@ object GuiDiscord : GuiImplementation(), Wrapper {
         ModuleBar.shownModules.clear()
         ModuleBar.lastCopyTime = 0L
         SettingsBar.shownSettings.clear()
+        Paragon.INSTANCE.configurationGUI.closeOnEscape = true
     }
 
     override fun doesGuiPauseGame() = ClickGUI.pause.value

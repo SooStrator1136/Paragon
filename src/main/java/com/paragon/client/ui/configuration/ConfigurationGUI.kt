@@ -13,6 +13,8 @@ import org.lwjgl.input.Mouse
  */
 class ConfigurationGUI : GuiScreen() {
 
+    var closeOnEscape = true
+
     private var currentGUI: GuiImplementation? = null
     val windowsList: MutableList<Window> = mutableListOf()
     val removeBuffer: MutableList<Window> = mutableListOf()
@@ -71,7 +73,9 @@ class ConfigurationGUI : GuiScreen() {
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
+        if (closeOnEscape) {
+            super.keyTyped(typedChar, keyCode)
+        }
 
         currentGUI?.keyTyped(typedChar, keyCode)
 

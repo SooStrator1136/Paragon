@@ -2,7 +2,10 @@ package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
 import com.paragon.api.setting.Bind;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.InventoryUtil;
@@ -13,9 +16,6 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.ICPacketUseEntity;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
-import com.paragon.api.module.Category;
-import com.paragon.api.module.Module;
-import com.paragon.api.setting.Setting;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
@@ -45,8 +45,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -346,9 +348,7 @@ public class AutoCrystalRewrite extends Module {
 
                 if (pos.getX() == placementPosition.getX() && pos.getY() == placementPosition.getY() && pos.getZ() == placementPosition.getZ()) {
                     renderPositions.put(pos, MathHelper.clamp(factor + 0.025f, 0f, 1f));
-                }
-
-                else {
+                } else {
                     renderPositions.put(pos, factor - 0.025f);
                 }
             });

@@ -17,7 +17,7 @@ import java.util.*
 abstract class DiscordSetting(val dSetting: Setting<*>) : IRenderable, ITextRenderer {
 
     val bounds = Rectangle()
-    val msgStyleHeight = fontHeight
+    val msgStyleHeight = fontHeight + 1F
 
     override fun render(mouseX: Int, mouseY: Int) {
         if (bounds.contains(mouseX, mouseY)) {
