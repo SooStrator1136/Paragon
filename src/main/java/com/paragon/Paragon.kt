@@ -43,7 +43,6 @@ class Paragon {
             return
         }
 
-        fontManager = FontManager()
         eventParser = EventFactory()
     }
 
@@ -134,9 +133,6 @@ class Paragon {
     val presenceManager = DiscordPresenceManager()
 
     // Managers
-    lateinit var fontManager: FontManager
-        private set
-
     lateinit var storageManager: StorageManager
         private set
 

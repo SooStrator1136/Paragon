@@ -3,8 +3,9 @@ package com.paragon.client.ui.configuration.old.impl;
 import com.paragon.Paragon;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.Colours;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 /**
  * @author Wolfsurge
  */
-public class Panel implements ITextRenderer {
+public class Panel {
 
     private final float width;
     private final float barHeight;
@@ -69,7 +70,7 @@ public class Panel implements ITextRenderer {
 
         // Header
         RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getCornerRadius().getValue(), ClickGUI.getCornerRadius().getValue(), 1, 1, isMouseOverHeader(mouseX, mouseY) ? new Color(28, 28, 28).getRGB() : new Color(23, 23, 23).darker().getRGB());
-        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 2 : 0.5f), -1, true);
+        FontUtil.renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 2 : 0.5f), -1, true);
 
         refreshOffsets();
 

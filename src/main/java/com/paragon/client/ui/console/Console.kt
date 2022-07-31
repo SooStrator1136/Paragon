@@ -2,8 +2,9 @@ package com.paragon.client.ui.console
 
 import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import net.minecraft.client.gui.GuiTextField
 import net.minecraft.client.gui.ScaledResolution
@@ -15,7 +16,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @SideOnly(Side.CLIENT)
-class Console(val title: String, val width: Float, val height: Float) : Wrapper, ITextRenderer {
+class Console(val title: String, val width: Float, val height: Float) : Wrapper {
 
     // List of lines
     private val lines: MutableList<String> = ArrayList(5)
@@ -41,44 +42,13 @@ class Console(val title: String, val width: Float, val height: Float) : Wrapper,
     fun draw(mouseX: Int, mouseY: Int) {
         val scaledResolution = ScaledResolution(minecraft)
 
-        /* // Background
-        RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f), getWidth(), getHeight(), 0x90000000);
-
-        RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f), getWidth(), 14, new Color(23, 23, 23).getRGB());
-
-        // Title
-        renderText(getTitle(), ((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f)) + 3, ((scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f)) + 3, -1);
-
-        // Border
-        RenderUtil.drawBorder((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f), getWidth(), getHeight(), 1, Colours.mainColour.getValue().getRGB());
-
-        // Separator
-        RenderUtil.drawRect((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 13, getWidth(), 1, Colours.mainColour.getValue().getRGB());
-
-        // Scissor
-        RenderUtil.pushScissor((scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f), (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + 14.5, getWidth(), getHeight() - 26.5f);
-
-        float lineY = (scaledResolution.getScaledHeight() / 2f) - (getHeight() / 2f) + getHeight() - 26;
-
-        Collections.reverse(lines);
-
-        for (String string : lines) {
-            renderText(string, (scaledResolution.getScaledWidth() / 2f) - (getWidth() / 2f) + 2, lineY, -1);
-            lineY -= 11;
-        }
-
-        Collections.reverse(lines);
-
-        // End scissor
-        RenderUtil.popScissor(); */
-
         val x = (scaledResolution.scaledWidth / 2.0) - (width / 2.0)
         val y = (scaledResolution.scaledHeight / 2.0) - (height / 2.0)
 
         RenderUtil.drawRoundedRect(x, y, width.toDouble(), height.toDouble(), 5.0, 5.0, 5.0, 5.0, Color(20, 20, 25).rgb)
         RenderUtil.drawRoundedOutline(x, y, width.toDouble(), height.toDouble(), 5.0, 5.0, 5.0, 5.0, 2f, Colours.mainColour.value.rgb)
 
-        renderText(title, (x + 5f).toFloat(), (y + 5f).toFloat(), -1)
+        FontUtil.drawStringWithShadow(title, (x + 5f).toFloat(), (y + 5f).toFloat(), -1)
 
         lines.reverse();
 
@@ -91,8 +61,9 @@ class Console(val title: String, val width: Float, val height: Float) : Wrapper,
         );
 
         var lineY = (scaledResolution.scaledHeight / 2f) - (height / 2f) + height - 26;
+
         for (string in lines) {
-            renderText(string, (scaledResolution.scaledWidth / 2f) - (width / 2f) + 5, lineY, -1);
+            FontUtil.drawStringWithShadow(string, (scaledResolution.scaledWidth / 2f) - (width / 2f) + 5, lineY, -1);
             lineY -= 11;
         }
 

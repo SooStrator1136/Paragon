@@ -1,7 +1,7 @@
 package com.paragon.client.ui.configuration.zeroday.element;
 
 import com.paragon.api.util.Wrapper;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.configuration.zeroday.panel.CategoryPanel;
 import com.paragon.client.ui.util.animation.Animation;
@@ -11,7 +11,7 @@ import com.paragon.client.ui.util.Click;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Element implements Wrapper, ITextRenderer {
+public abstract class Element implements Wrapper {
 
     private float x;
     private float y;

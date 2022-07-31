@@ -6,6 +6,7 @@ import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.configuration.old.OldPanelGUI;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
@@ -92,7 +93,9 @@ public class ColourComponent extends SettingComponent<Color> {
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
         float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+
+        FontUtil.drawStringWithShadow(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+
         GL11.glScalef(scaleFactor, scaleFactor, scaleFactor);
         GL11.glScalef(0.5f, 0.5f, 0.5f);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - 6.5f) * 2, (getModuleButton().getOffset() + getOffset() + 3.5f) * 2, -1);

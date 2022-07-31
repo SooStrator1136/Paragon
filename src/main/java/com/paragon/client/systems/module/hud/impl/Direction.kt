@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.hud.impl
 
 import com.paragon.api.util.player.PlayerUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
@@ -12,7 +13,7 @@ import net.minecraft.util.text.TextFormatting
 object Direction : HUDModule("Direction", "Displays what direction you are facing") {
 
     override fun render() {
-        renderText(
+        FontUtil.drawStringWithShadow(
             "Direction " + TextFormatting.WHITE + StringUtil.getFormattedText(PlayerUtil.getDirection()) + " [" + PlayerUtil.getAxis(PlayerUtil.getDirection()) + "]",
             x,
             y,
@@ -20,8 +21,8 @@ object Direction : HUDModule("Direction", "Displays what direction you are facin
         )
     }
 
-    override fun getWidth() = getStringWidth("Direction " + StringUtil.getFormattedText(PlayerUtil.getDirection()) + " [" + PlayerUtil.getAxis(PlayerUtil.getDirection()) + "]")
+    override fun getWidth() = FontUtil.getStringWidth("Direction " + StringUtil.getFormattedText(PlayerUtil.getDirection()) + " [" + PlayerUtil.getAxis(PlayerUtil.getDirection()) + "]")
 
-    override fun getHeight() = fontHeight
+    override fun getHeight() = FontUtil.getHeight()
 
 }

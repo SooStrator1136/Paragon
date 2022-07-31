@@ -1,8 +1,9 @@
 package com.paragon.client.ui.configuration.discord.category
 
 import com.paragon.api.module.Category
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
@@ -15,7 +16,7 @@ import java.awt.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
+class DiscordCategory(val category: Category) : IRenderable {
 
     val rect = Rectangle()
 
@@ -59,22 +60,22 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
             RenderUtil.pushScissor(
                 rect.x + rect.width - 2.0,
                 rect.y.toDouble(),
-                (getStringWidth(category.Name) + 6) * nameAnimation.getAnimationFactor(),
+                (FontUtil.getStringWidth(category.Name) + 6) * nameAnimation.getAnimationFactor(),
                 rect.height.toDouble()
             )
 
             RenderUtil.drawRoundedRect(
                 (rect.x + rect.width).toDouble() - 2.0,
-                (rect.centerY - (fontHeight / 2)),
-                getStringWidth(category.Name).toDouble() + 6,
-                fontHeight.toDouble(),
+                (rect.centerY - (FontUtil.getHeight() / 2)),
+                FontUtil.getStringWidth(category.Name).toDouble() + 6,
+                FontUtil.getHeight().toDouble(),
                 5.0,
                 5.0,
                 5.0,
                 5.0,
                 GuiDiscord.CATEGORY_TEXT_BACKGROUND.rgb
             )
-            renderText(
+            FontUtil.drawStringWithShadow(
                 category.Name,
                 (rect.x + rect.width).toFloat(),
                 (rect.centerY - 4).toFloat(),

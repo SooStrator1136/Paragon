@@ -1,82 +1,75 @@
-package com.paragon.api.util.render;
+package com.paragon.api.util.render
 
-import com.paragon.api.util.Wrapper;
-import com.paragon.asm.mixins.accessor.IShaderGroup;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import static org.lwjgl.opengl.GL11.*;
+import com.paragon.api.util.Wrapper
+import com.paragon.asm.mixins.accessor.IShaderGroup
+import net.minecraft.client.gui.ScaledResolution
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.OpenGlHelper
+import net.minecraft.client.shader.Framebuffer
+import net.minecraft.client.shader.ShaderGroup
+import net.minecraft.util.ResourceLocation
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
 
 /**
  * @author Surge
  * @since 27/07/22
  */
 @SideOnly(Side.CLIENT)
-public class BlurUtil implements Wrapper {
+object BlurUtil : Wrapper {
+    private var lastScale = -1
+    private var lastScaleWidth = -1
+    private var lastScaleHeight = -1
+    private var framebuffer: Framebuffer? = null
+    private var blurShader: ShaderGroup? = null
 
-    private static int lastScale = -1;
-    private static int lastScaleWidth = -1;
-    private static int lastScaleHeight = -1;
-
-    private static Framebuffer framebuffer = null;
-    private static ShaderGroup blurShader = null;
-
-    private static void checkScale(int scaleFactor, int widthFactor, int heightFactor) {
+    private fun checkScale(scaleFactor: Int, widthFactor: Int, heightFactor: Int) {
         if (lastScale != scaleFactor || lastScaleWidth != widthFactor || lastScaleHeight != heightFactor || framebuffer == null || blurShader == null) {
             try {
-                blurShader = new ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), new ResourceLocation("shaders/post/blur.json"));
-                blurShader.createBindFramebuffers(mc.displayWidth, mc.displayHeight);
-                framebuffer = ((IShaderGroup) blurShader).getMainFramebuffer();
-            } catch (Exception exception) {
-                exception.printStackTrace();
+                blurShader = ShaderGroup(minecraft.textureManager, minecraft.resourceManager, minecraft.framebuffer, ResourceLocation("shaders/post/blur.json"))
+                blurShader!!.createBindFramebuffers(minecraft.displayWidth, minecraft.displayHeight)
+                framebuffer = (blurShader as IShaderGroup?)!!.mainFramebuffer
+            } catch (exception: Exception) {
+                exception.printStackTrace()
             }
         }
 
-        lastScale = scaleFactor;
-        lastScaleWidth = widthFactor;
-        lastScaleHeight = heightFactor;
+        lastScale = scaleFactor
+        lastScaleWidth = widthFactor
+        lastScaleHeight = heightFactor
     }
 
-    private static void updateUniforms(int intensity) {
-        ((IShaderGroup) blurShader).getListShaders().get(0).getShaderManager().getShaderUniform("Radius").set(intensity);
-        ((IShaderGroup) blurShader).getListShaders().get(1).getShaderManager().getShaderUniform("Radius").set(intensity);
-        ((IShaderGroup) blurShader).getListShaders().get(0).getShaderManager().getShaderUniform("BlurDir").set(2, 1);
-        ((IShaderGroup) blurShader).getListShaders().get(1).getShaderManager().getShaderUniform("BlurDir").set(1, 1);
+    private fun updateUniforms(intensity: Int) {
+        (blurShader as IShaderGroup?)!!.listShaders[0].shaderManager.getShaderUniform("Radius")!!.set(intensity.toFloat())
+        (blurShader as IShaderGroup?)!!.listShaders[1].shaderManager.getShaderUniform("Radius")!!.set(intensity.toFloat())
+        (blurShader as IShaderGroup?)!!.listShaders[0].shaderManager.getShaderUniform("BlurDir")!![2f] = 1f
+        (blurShader as IShaderGroup?)!!.listShaders[1].shaderManager.getShaderUniform("BlurDir")!![1f] = 1f
     }
 
-    public static void blur(int x, int y, int width, int height, int intensity) {
-        ScaledResolution resolution = new ScaledResolution(mc);
-
-        int currentScale = resolution.getScaleFactor();
-
-        checkScale(currentScale, resolution.getScaledWidth(), resolution.getScaledHeight());
+    fun blur(x: Int, y: Int, width: Int, height: Int, intensity: Int) {
+        val resolution = ScaledResolution(minecraft)
+        val currentScale = resolution.scaleFactor
+        checkScale(currentScale, resolution.scaledWidth, resolution.scaledHeight)
 
         if (OpenGlHelper.isFramebufferEnabled()) {
-            RenderUtil.pushScissor(x, y + 1, width, height - 1);
+            RenderUtil.pushScissor(x.toDouble(), (y + 1).toDouble(), width.toDouble(), (height - 1).toDouble())
+            updateUniforms(intensity)
 
-            updateUniforms(intensity);
+            framebuffer!!.bindFramebuffer(true)
+            blurShader!!.render(minecraft.renderPartialTicks)
 
-            framebuffer.bindFramebuffer(true);
-            blurShader.render(mc.getRenderPartialTicks());
-            mc.getFramebuffer().bindFramebuffer(true);
+            minecraft.framebuffer.bindFramebuffer(true)
 
-            RenderUtil.popScissor();
+            RenderUtil.popScissor()
 
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
+            GlStateManager.enableBlend()
+            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE)
 
-            framebuffer.framebufferRenderExt(mc.displayWidth, mc.displayHeight, false);
-
-            GlStateManager.disableBlend();
-
-            glScalef(currentScale, currentScale, 0);
+            framebuffer!!.framebufferRenderExt(minecraft.displayWidth, minecraft.displayHeight, false)
+            GlStateManager.disableBlend()
+            glScalef(currentScale.toFloat(), currentScale.toFloat(), 0f)
         }
     }
-
 }

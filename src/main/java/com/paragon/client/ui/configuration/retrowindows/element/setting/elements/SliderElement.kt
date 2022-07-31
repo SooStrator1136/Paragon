@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting.element
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
@@ -105,11 +106,11 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
         glScalef(0.8f, 0.8f, 0.8f)
 
         val scaleFactor = 1 / 0.8f
-        renderText(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
+        FontUtil.drawStringWithShadow(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
 
-        val valueX: Float = (x + width - getStringWidth(setting.value.toString()) * 0.8f - 5) * scaleFactor
+        val valueX: Float = (x + width - FontUtil.getStringWidth(setting.value.toString()) * 0.8f - 5) * scaleFactor
 
-        renderText(setting.value.toString(), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb)
+        FontUtil.drawStringWithShadow(setting.value.toString(), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb)
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
 

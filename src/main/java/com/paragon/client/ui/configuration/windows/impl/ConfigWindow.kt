@@ -2,8 +2,9 @@ package com.paragon.client.ui.configuration.windows.impl
 
 import com.paragon.Paragon
 import com.paragon.api.util.render.BlurUtil
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.windows.Window
@@ -63,12 +64,12 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
         RenderUtil.drawRect(x, y, width * openAnimation.getAnimationFactor().toFloat(), grabbableHeight, Colours.mainColour.value.rgb)
 
-        renderText("Configs", x + 3, y + 4, -1)
+        FontUtil.drawStringWithShadow("Configs", x + 3, y + 4, -1)
 
         RenderUtil.drawBorder(x + 0.5f, y + 0.5f, ((width - 1) * openAnimation.getAnimationFactor()).toFloat(), ((height - 1) * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value.rgb)
 
         RenderUtil.drawRect(x + width - 16f, y, 16f, grabbableHeight, 0x90000000.toInt())
-        Paragon.INSTANCE.fontManager.fontRenderer.drawStringWithShadow("X", (x + width - 9f) - (Paragon.INSTANCE.fontManager.fontRenderer.getStringWidth("X") / 2f), y + 1.5f, -1)
+        FontUtil.defaultFont.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.defaultFont.getStringWidth("X") / 2f), y + 1.5f, -1)
 
         saveButton.x = x + (width / 2f) + 2
         saveButton.y = y + height - 19f
@@ -130,7 +131,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, click: Click): Boolean {
-        if (mouseX.toFloat() in x + width - getStringWidth("X") - 5..x + width && mouseY.toFloat() in y..y + grabbableHeight) {
+        if (mouseX.toFloat() in x + width - FontUtil.getStringWidth("X") - 5..x + width && mouseY.toFloat() in y..y + grabbableHeight) {
             openAnimation.state = false
             return true
         }
@@ -160,17 +161,17 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         configNameElement.keyTyped(character, keyCode)
     }
 
-    class ConfigElement(val name: String, var x: Float, var y: Float, var width: Float, var height: Float) : ITextRenderer {
+    class ConfigElement(val name: String, var x: Float, var y: Float, var width: Float, var height: Float) {
         var remove = false
 
         fun draw(mouseX: Int, mouseY: Int) {
             val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
 
             RenderUtil.drawRect(x, y, width, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            renderText(name, x + 3, y + 4, -1)
+            FontUtil.drawStringWithShadow(name, x + 3, y + 4, -1)
 
             RenderUtil.drawRect(x + width - 16f, y, 16f, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            Paragon.INSTANCE.fontManager.fontRenderer.drawStringWithShadow("D", x + width - 12.5f, y + 1.5f, if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED.rgb else -1)
+            FontUtil.defaultFont.drawStringWithShadow("D", x + width - 12.5f, y + 1.5f, if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED.rgb else -1)
         }
 
         fun clicked(mouseX: Int, mouseY: Int, click: Click): Boolean {
@@ -193,7 +194,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         }
     }
 
-    class ConfigTextField(var x: Float, var y: Float, var width: Float, var height: Float) : ITextRenderer {
+    class ConfigTextField(var x: Float, var y: Float, var width: Float, var height: Float) {
 
         var input = ""
         var listening = false
@@ -215,7 +216,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
             RenderUtil.drawRect(x, y, width, height, Color(255, 0, 0, (255 * flashAnimation.getAnimationFactor()).toInt()).rgb)
 
-            renderText(input + if (listening) "_" else "", x + 3, y + 4, -1)
+            FontUtil.drawStringWithShadow(input + if (listening) "_" else "", x + 3, y + 4, -1)
         }
 
         fun clicked(mouseX: Int, mouseY: Int) {
@@ -240,7 +241,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
     }
 
-    class ConfigButton(val name: String, val invoke: Runnable, var x: Float, var y: Float, var width: Float, var height: Float) : ITextRenderer {
+    class ConfigButton(val name: String, val invoke: Runnable, var x: Float, var y: Float, var width: Float, var height: Float) {
 
         fun draw(mouseX: Int, mouseY: Int) {
             val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
@@ -248,7 +249,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
             RenderUtil.drawRect(x, y, width, height, if (hovered) 0x60000000 else 0x90000000.toInt())
             RenderUtil.drawBorder(x, y, width, height, 0.5f, Color.BLACK.rgb)
 
-            renderText(name, x + 3, y + 4, -1)
+            FontUtil.drawStringWithShadow(name, x + 3, y + 4, -1)
         }
 
         fun clicked(mouseX: Int, mouseY: Int, click: Click): Boolean {

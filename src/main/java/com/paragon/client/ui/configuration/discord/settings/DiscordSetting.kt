@@ -1,8 +1,9 @@
 package com.paragon.client.ui.configuration.discord.settings
 
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
@@ -14,10 +15,10 @@ import java.util.*
 /**
  * @author SooStrator1136
  */
-abstract class DiscordSetting(val dSetting: Setting<*>) : IRenderable, ITextRenderer {
+abstract class DiscordSetting(val dSetting: Setting<*>) : IRenderable {
 
     val bounds = Rectangle()
-    val msgStyleHeight = fontHeight + 1F
+    val msgStyleHeight = FontUtil.getHeight() + 1F
 
     override fun render(mouseX: Int, mouseY: Int) {
         if (bounds.contains(mouseX, mouseY)) {
@@ -30,18 +31,18 @@ abstract class DiscordSetting(val dSetting: Setting<*>) : IRenderable, ITextRend
             )
         }
 
-        renderText(dSetting.name, bounds.x.toFloat(), bounds.y.toFloat(), Colours.mainColour.value.rgb)
+        FontUtil.drawStringWithShadow(dSetting.name, bounds.x.toFloat(), bounds.y.toFloat(), Colours.mainColour.value.rgb)
 
         //Render time in 12h format
         run {
-            val dateX = bounds.x + getStringWidth(dSetting.name) + 2F
-            val dateY = bounds.y + (fontHeight / 2F)
+            val dateX = bounds.x + FontUtil.getStringWidth(dSetting.name) + 2F
+            val dateY = bounds.y + (FontUtil.getHeight() / 2F)
             glPushMatrix()
             glTranslatef(dateX, dateY, 0F)
-            val scaleFac = (fontHeight / 2.0) / fontHeight
+            val scaleFac = (FontUtil.getHeight() / 2.0) / FontUtil.getHeight()
             glScaled(scaleFac, scaleFac, 1.0)
             glTranslatef(-dateX, -dateY, 0F)
-            renderText(
+            FontUtil.drawStringWithShadow(
                 SimpleDateFormat("hh:mm a").format(Date(System.currentTimeMillis())),
                 dateX,
                 dateY,

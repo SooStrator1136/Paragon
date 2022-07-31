@@ -1,22 +1,20 @@
-package com.paragon.api.util.render;
+package com.paragon.api.util.render
 
-import java.awt.*;
+import org.lwjgl.opengl.GL11
+import java.awt.Color
 
-import static org.lwjgl.opengl.GL11.glColor4f;
-
-public class ColourUtil {
-
+object ColourUtil {
     /**
      * Creates a rainbow wave
      *
-     * @param time       How long for each wave
+     * @param time How long for each wave
      * @param saturation The saturation of the colour
-     * @param addition   How much hue to add to the wave
+     * @param addition How much hue to add to the wave
      * @return A rainbow in the RGB format
      */
-    public static int getRainbow(float time, float saturation, int addition) {
-        float hue = ((System.currentTimeMillis() + addition) % (int) (time * 1000) / (time * 1000));
-        return Color.HSBtoRGB(hue, saturation, 1);
+    fun getRainbow(time: Float, saturation: Float, addition: Int): Int {
+        val hue = (System.currentTimeMillis() + addition) % (time * 1000).toInt() / (time * 1000)
+        return Color.HSBtoRGB(hue, saturation, 1f)
     }
 
     /**
@@ -24,12 +22,13 @@ public class ColourUtil {
      *
      * @param colourHex The integer of the hex value
      */
-    public static void setColour(int colourHex) {
-        float alpha = (colourHex >> 24 & 0xFF) / 255.0F;
-        float red = (colourHex >> 16 & 0xFF) / 255.0F;
-        float green = (colourHex >> 8 & 0xFF) / 255.0F;
-        float blue = (colourHex & 0xFF) / 255.0F;
-        glColor4f(red, green, blue, alpha);
+    @JvmStatic
+    fun setColour(colourHex: Int) {
+        val alpha = (colourHex shr 24 and 0xFF) / 255.0f
+        val red = (colourHex shr 16 and 0xFF) / 255.0f
+        val green = (colourHex shr 8 and 0xFF) / 255.0f
+        val blue = (colourHex and 0xFF) / 255.0f
+        GL11.glColor4f(red, green, blue, alpha)
     }
 
     /**
@@ -39,12 +38,11 @@ public class ColourUtil {
      * @param alpha  The new alpha
      * @return The new colour
      */
-    public static Color integrateAlpha(Color colour, float alpha) {
-        final float red = colour.getRed() / 255f;
-        final float green = colour.getGreen() / 255f;
-        final float blue = colour.getBlue() / 255f;
-
-        return new Color(red, green, blue, alpha / 255f);
+    @JvmStatic
+    fun integrateAlpha(colour: Color, alpha: Float): Color {
+        val red = colour.red / 255f
+        val green = colour.green / 255f
+        val blue = colour.blue / 255f
+        return Color(red, green, blue, alpha / 255f)
     }
-
 }

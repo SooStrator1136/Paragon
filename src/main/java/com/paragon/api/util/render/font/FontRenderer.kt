@@ -1,288 +1,235 @@
-package com.paragon.api.util.render.font;
+package com.paragon.api.util.render.font
 
-import com.paragon.api.util.Wrapper;
-import com.paragon.api.util.render.RenderUtil;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
-
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ChatAllowedCharacters;
-import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Random;
+import com.paragon.api.util.Wrapper
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.util.ChatAllowedCharacters
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
+import java.awt.Color
+import java.awt.Font
+import java.util.*
 
 /**
- * @author Cosmos
+ * @author Cosmos, Surge
  */
 @SideOnly(Side.CLIENT)
-public class FontRenderer implements Wrapper {
+class FontRenderer(font: Font) : Wrapper {
+    private val fontHeight: Int
+    private val defaultFont: ImageAWT
 
-    public final int FONT_HEIGHT;
-    private final ImageAWT defaultFont;
-
-    public FontRenderer(Font font) {
-        defaultFont = new ImageAWT(font);
-        FONT_HEIGHT = (int) getHeight();
+    init {
+        defaultFont = ImageAWT(font)
+        fontHeight = height.toInt()
     }
 
-    public static int getColorIndex(char type) {
-        switch (type) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                return type - 48;
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f':
-                return type - 97 + 10;
-            case 'k':
-            case 'l':
-            case 'm':
-            case 'n':
-            case 'o':
-                return type - 107 + 16;
-            case 'r':
-                return 21;
-        }
-        return -1;
+    val height: Float
+        get() = defaultFont.height / 2f
+
+    val size: Int
+        get() = defaultFont.font.size
+
+    fun drawStringWithShadow(text: String, x: Float, y: Float, color: Int): Int {
+        return drawString(text, x, y, color, true)
     }
 
-    public float getHeight() {
-        return defaultFont.getHeight() / 2f;
-    }
-
-    public int getSize() {
-        return defaultFont.getFont().getSize();
-    }
-
-    @ParametersAreNonnullByDefault
-    public int drawStringWithShadow(String text, float x, float y, int color) {
-        return drawString(text, x, y, color, true);
-    }
-
-    public int drawString(String text, float x, float y, int color, boolean dropShadow) {
+    fun drawString(text: String, x: Float, y: Float, color: Int, dropShadow: Boolean): Int {
         if (text.contains("\n")) {
-            String[] parts = text.split("\n");
-            float newY = 0.0f;
+            val parts = text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            var newY = 0.0f
 
-            for (String s : parts) {
+            for (s in parts) {
                 if (dropShadow) {
-                    drawText(s, x + 0.6f, y + newY + 0.6f, new Color(0, 0, 0, 150).getRGB(), true);
+                    drawText(s, x + 0.6f, y + newY + 0.6f, Color(0, 0, 0, 150).rgb, true)
                 }
 
-                drawText(s, x, y + newY, color, dropShadow);
-                newY += getHeight();
+                drawText(s, x, y + newY, color, dropShadow)
+                newY += height
             }
 
-            return 0;
+            return 0
         }
 
         if (dropShadow) {
-            drawText(text, x + 0.6f, y + 0.6f, new Color(0, 0, 0, 150).getRGB(), true);
+            drawText(text, x + 0.6f, y + 0.6f, Color(0, 0, 0, 150).rgb, true)
         }
 
-        return drawText(text, x, y, color, false);
+        return drawText(text, x, y, color, false)
     }
 
-    private int drawText(String text, float x, float y, int color, boolean ignoreColor) {
-        if (text == null)
-            return 0;
+    private fun drawText(text: String?, x: Float, y: Float, color: Int, ignoreColor: Boolean): Int {
+        if (text == null) {
+            return 0
+        }
 
-        if (text.isEmpty())
-            return (int) x;
+        if (text.isEmpty()) {
+            return x.toInt()
+        }
 
-        GlStateManager.translate(x, (double) y, 0);
-        GlStateManager.enableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.enableTexture2D();
+        GlStateManager.translate(x.toDouble(), y.toDouble(), 0.0)
+        GlStateManager.enableAlpha()
+        GlStateManager.enableBlend()
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+        GlStateManager.enableTexture2D()
+        glEnable(GL_LINE_SMOOTH)
 
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        var currentColor = color
+        if (currentColor and -0x4000000 == 0) {
+            currentColor = currentColor or -0x1000000
+        }
 
-        int currentColor = color;
+        val alpha = currentColor shr 24 and 0xFF
 
-        if ((currentColor & 0xFC000000) == 0)
-            currentColor |= 0xFF000000;
-
-        int alpha = currentColor >> 24 & 0xFF;
         if (text.contains("§")) {
-            String[] parts = text.split("§");
-            ImageAWT currentFont = defaultFont;
-            double width = 0.0;
-            boolean randomCase = false;
+            val parts = text.split("§".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val currentFont = defaultFont
+            var width = 0.0
+            var randomCase = false
 
-            for (int index = 0; index < parts.length; ++index) {
-                String part = parts[index];
+            for (index in parts.indices) {
+                val part = parts[index]
 
-                if (part.isEmpty())
-                    continue;
-
-                if (index == 0) {
-                    currentFont.drawString(part, width, 0.0, currentColor);
-                    width += currentFont.getStringWidth(part);
-                    continue;
+                if (part.isEmpty()) {
+                    continue
                 }
 
-                String words = part.substring(1);
-                char type = part.charAt(0);
-                int colorIndex = "0123456789abcdefklmnor".indexOf(type);
-                switch (colorIndex) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                        if (!ignoreColor)
-                            currentColor = ColorUtils.hexColors[colorIndex] | alpha << 24;
+                if (index == 0) {
+                    currentFont.drawString(part, width, 0.0, currentColor)
+                    width += currentFont.getStringWidth(part).toDouble()
+                    continue
+                }
 
-                        randomCase = false;
-                        break;
-                    case 16: {
-                        randomCase = true;
-                        break;
+                val words = part.substring(1)
+                val type = part[0]
+
+                when (val colorIndex = "0123456789abcdefklmnor".indexOf(type)) {
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 -> {
+                        if (!ignoreColor) currentColor = ColorUtils.hexColors[colorIndex] or (alpha shl 24)
+                        randomCase = false
                     }
-                    case 18:
-                        break;
-                    case 21:
-                        currentColor = color;
-                        if ((currentColor & 0xFC000000) == 0)
-                            currentColor |= 0xFF000000;
 
-                        randomCase = false;
+                    16 -> {
+                        randomCase = true
+                    }
+
+                    18 -> {}
+
+                    21 -> {
+                        currentColor = color
+
+                        if (currentColor and -0x4000000 == 0) {
+                            currentColor = currentColor or -0x1000000
+                        }
+
+                        randomCase = false
+                    }
                 }
 
-                if (randomCase)
-                    currentFont.drawString(ColorUtils.randomMagicText(words), width, 0.0, currentColor);
-                else
-                    currentFont.drawString(words, width, 0.0, currentColor);
+                if (randomCase) {
+                    currentFont.drawString(ColorUtils.randomMagicText(words), width, 0.0, currentColor)
+                } else {
+                    currentFont.drawString(words, width, 0.0, currentColor)
+                }
 
-                width += currentFont.getStringWidth(words);
+                width += currentFont.getStringWidth(words).toDouble()
             }
-        } else
-            defaultFont.drawString(text, 0.0, 0.0, currentColor);
+        } else {
+            defaultFont.drawString(text, 0.0, 0.0, currentColor)
+        }
 
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        glDisable(GL_LINE_SMOOTH)
+        GlStateManager.disableBlend()
+        GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
 
-        GlStateManager.disableBlend();
-        GlStateManager.translate(-x, -y, 0.0);
-
-        return (int) (x + (float) getStringWidth(text));
+        return (x + getStringWidth(text).toFloat()).toInt()
     }
 
-    public int getColorCode(char charCode) {
-        return ColorUtils.hexColors[FontRenderer.getColorIndex(charCode)];
-    }
-
-    public int getStringWidth(String text) {
+    fun getStringWidth(text: String): Int {
         if (text.contains("§")) {
-            String[] parts = text.split("§");
-            ImageAWT currentFont = defaultFont;
-            int width = 0;
+            val parts = text.split("§".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val currentFont = defaultFont
+            var width = 0
 
-            for (int index = 0; index < parts.length; ++index) {
-                String part = parts[index];
+            for (index in parts.indices) {
+                val part = parts[index]
 
-                if (part.isEmpty())
-                    continue;
+                if (part.isEmpty()) {
+                    continue
+                }
 
                 if (index == 0) {
-                    width += currentFont.getStringWidth(part);
-                    continue;
+                    width += currentFont.getStringWidth(part)
+                    continue
                 }
 
-                String words = part.substring(1);
-
-                width += currentFont.getStringWidth(words);
+                val words = part.substring(1)
+                width += currentFont.getStringWidth(words)
             }
 
-            return width / 2;
+            return width / 2
         }
 
-        return defaultFont.getStringWidth(text) / 2;
+        return defaultFont.getStringWidth(text) / 2
     }
 
-    public int getCharWidth(char character) {
-        return getStringWidth(String.valueOf(character));
-    }
+    private object ColorUtils {
+        private var random: Random? = null
 
-    @ParametersAreNonnullByDefault
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+        private const val magicAllowedCharacters = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■"
 
-    }
+        var hexColors = IntArray(16)
 
-    @ParametersAreNonnullByDefault
-    protected void bindTexture(ResourceLocation location) {
+        init {
+            hexColors[0] = 0
+            hexColors[1] = 170
+            hexColors[2] = 43520
+            hexColors[3] = 43690
+            hexColors[4] = 0xAA0000
+            hexColors[5] = 0xAA00AA
+            hexColors[6] = 0xFFAA00
+            hexColors[7] = 0xAAAAAA
+            hexColors[8] = 0x555555
+            hexColors[9] = 0x5555FF
+            hexColors[10] = 0x55FF55
+            hexColors[11] = 0x55FFFF
+            hexColors[12] = 0xFF5555
+            hexColors[13] = 0xFF55FF
+            hexColors[14] = 0xFFFF55
+            hexColors[15] = 0xFFFFFF
 
-    }
-
-    private static class ColorUtils {
-        private static final Random random;
-        private static final String magicAllowedCharacters = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■";
-        public static int[] hexColors = new int[16];
-
-        static {
-            ColorUtils.hexColors[0] = 0;
-            ColorUtils.hexColors[1] = 170;
-            ColorUtils.hexColors[2] = 43520;
-            ColorUtils.hexColors[3] = 43690;
-            ColorUtils.hexColors[4] = 0xAA0000;
-            ColorUtils.hexColors[5] = 0xAA00AA;
-            ColorUtils.hexColors[6] = 0xFFAA00;
-            ColorUtils.hexColors[7] = 0xAAAAAA;
-            ColorUtils.hexColors[8] = 0x555555;
-            ColorUtils.hexColors[9] = 0x5555FF;
-            ColorUtils.hexColors[10] = 0x55FF55;
-            ColorUtils.hexColors[11] = 0x55FFFF;
-            ColorUtils.hexColors[12] = 0xFF5555;
-            ColorUtils.hexColors[13] = 0xFF55FF;
-            ColorUtils.hexColors[14] = 0xFFFF55;
-            ColorUtils.hexColors[15] = 0xFFFFFF;
-            random = new Random();
+            random = Random()
         }
 
-        private ColorUtils() {
+        fun randomMagicText(text: String): String {
+            val stringBuilder = StringBuilder()
 
-        }
+            for (ch in text.toCharArray()) {
+                if (!ChatAllowedCharacters.isAllowedCharacter(ch)) {
+                    continue
+                }
 
-        public static String randomMagicText(String text) {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (char ch : text.toCharArray()) {
-
-                if (!ChatAllowedCharacters.isAllowedCharacter(ch))
-                    continue;
-
-                int index = random.nextInt(magicAllowedCharacters.length());
-                stringBuilder.append(magicAllowedCharacters.charAt(index));
+                val index = random!!.nextInt(magicAllowedCharacters.length)
+                stringBuilder.append(magicAllowedCharacters[index])
             }
 
-            return stringBuilder.toString();
+            return stringBuilder.toString()
+        }
+    }
+
+    companion object {
+        fun getColorIndex(type: Char): Int {
+            when (type) {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> return type.code - 48
+
+                'a', 'b', 'c', 'd', 'e', 'f' -> return type.code - 97 + 10
+
+                'k', 'l', 'm', 'n', 'o' -> return type.code - 107 + 16
+
+                'r' -> return 21
+            }
+
+            return -1
         }
     }
 }

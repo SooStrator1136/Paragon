@@ -6,8 +6,8 @@ import com.paragon.Paragon
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil
-import com.paragon.api.util.render.ITextRenderer
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDEditorGUI
 import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
@@ -16,11 +16,9 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.text.TextFormatting.*
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import java.util.SortedMap
-import kotlin.collections.ArrayList
 
 @SideOnly(Side.CLIENT)
-object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on screen"), ITextRenderer {
+object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on screen") {
 
     val animationSpeed = Setting("Animation", 200f, 0f, 1000f, 10f)
         .setDescription("The speed of the animation")
@@ -40,7 +38,8 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
     private var modules: Map<Module, Float> = HashMap()
 
     override fun render() {
-        val scaledResolution = ScaledResolution(mc)
+        val scaledResolution = ScaledResolution(minecraft)
+
         if (x + width / 2 < scaledResolution.scaledWidth / 2f) {
             corner = if (y + height / 2 > scaledResolution.scaledHeight / 2f) {
                 Corner.BOTTOM_LEFT
@@ -55,7 +54,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             }
         }
 
-        if (mc.currentScreen is HUDEditorGUI) {
+        if (minecraft.currentScreen is HUDEditorGUI) {
             RenderUtil.drawRect(x, y, width - 2, height - 2, -0x70000000)
             RenderUtil.drawBorder(x, y, width - 2, height - 2, 1f, Colours.mainColour.value.rgb)
         }
@@ -63,7 +62,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
         modules = HashMap()
         
         for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.isVisible() && it.animation.getAnimationFactor() > 0.0 }) {
-            (modules as HashMap<Module, Float>)[module] = getStringWidth(module.name + (if (module.getData() == "") "" else "$GRAY[$WHITE ${module.getData()}$GRAY]"))
+            (modules as HashMap<Module, Float>)[module] = FontUtil.getStringWidth(module.name + (if (module.getData() == "") "" else "$GRAY[$WHITE ${module.getData()}$GRAY]"))
         }
 
         modules = modules.toSortedMap(compareBy<Module?> { modules[it] }.reversed())
@@ -78,16 +77,16 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
                 for (value in modules) {
                     val moduleData = value.key.name + (if (value.key.getData() == "") "" else "$GRAY[$WHITE${value.key.getData()}$GRAY]")
 
-                    val origin = x - getStringWidth(moduleData)
+                    val origin = x - FontUtil.getStringWidth(moduleData)
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                        RenderUtil.drawRect((origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData) + 1F, 14f, -12171706, -7039852)
-                        RenderUtil.drawRect((origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData) + 1F, 14f, -12171706, -7039852)
+                        RenderUtil.drawRect((origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    FontUtil.drawStringWithShadow(moduleData, (origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset += 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
@@ -104,13 +103,13 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
                     val origin = x + width
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, FontUtil.getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
+                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    FontUtil.drawStringWithShadow(moduleData, (origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset += 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
@@ -122,9 +121,9 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
 
                 for (value in modules) {
                     val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
-                    val width = getStringWidth(moduleData) + 4
+                    val width = FontUtil.getStringWidth(moduleData) + 4
 
-                    val origin = x - getStringWidth(moduleData)
+                    val origin = x - FontUtil.getStringWidth(moduleData)
 
                     if (background.value == Background.Normal) {
                         RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, 0x70000000)
@@ -133,7 +132,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
                         RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    FontUtil.drawStringWithShadow(moduleData, (origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
@@ -150,13 +149,13 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
                     val origin = x + width
 
                     if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, 0x70000000)
+                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, 0x70000000)
                     } else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
-                        RenderUtil.drawRect((origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, getStringWidth(moduleData), 13f, -7039852)
+                        RenderUtil.drawHorizontalGradientRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, FontUtil.getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
+                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin - getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    FontUtil.drawStringWithShadow(moduleData, (origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
                 }

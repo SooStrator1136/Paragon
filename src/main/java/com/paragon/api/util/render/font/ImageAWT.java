@@ -12,6 +12,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static net.minecraft.client.renderer.GlStateManager.*;
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * @author Cosmos
  */
@@ -51,7 +54,6 @@ public class ImageAWT implements Wrapper {
         long currentTime = System.currentTimeMillis();
         cachedStrings.entrySet().stream().filter(entry -> currentTime - (entry.getValue()).getLastUsage() > 30000L).forEach(entry -> {
             GL11.glDeleteLists((entry.getValue()).getDisplayList(), 1);
-            (entry.getValue()).setDeleted(true);
             cachedStrings.remove(entry.getKey());
         });
     }
@@ -61,22 +63,29 @@ public class ImageAWT implements Wrapper {
     }
 
     public void drawString(String text, double x, double y, int color) {
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(0.25, 0.25, 0.25);
-        GL11.glTranslated(x * 2.0, y * 2.0 - 2.0, 0.0);
-        GlStateManager.bindTexture(textureID);
+        pushMatrix();
+        scale(0.25, 0.25, 0.25);
+
+        glTranslated(x * 2.0, y * 2.0 - 2.0, 0.0);
+
+        bindTexture(textureID);
+
         float red = (float) (color >> 16 & 0xFF) / 255.0f;
         float green = (float) (color >> 8 & 0xFF) / 255.0f;
         float blue = (float) (color & 0xFF) / 255.0f;
         float alpha = (float) (color >> 24 & 0xFF) / 255.0f;
-        GlStateManager.color(red, green, blue, alpha);
+
+        color(red, green, blue, alpha);
+
         double currX = 0.0;
         FontCache cached = cachedStrings.get(text);
 
         if (cached != null) {
-            GL11.glCallList(cached.getDisplayList());
+            glCallList(cached.getDisplayList());
+
             cached.setLastUsage(System.currentTimeMillis());
-            GlStateManager.popMatrix();
+
+            popMatrix();
             return;
         }
 
@@ -87,18 +96,22 @@ public class ImageAWT implements Wrapper {
             CharLocation fontChar;
             if (Character.getNumericValue(ch) >= charLocations.length) {
                 GL11.glEnd();
-                GlStateManager.scale(4.0, 4.0, 4.0);
+                scale(4.0, 4.0, 4.0);
                 mc.fontRenderer.drawString(String.valueOf(ch), (float) currX * 0.25f + 1.0f, 2.0f, color, false);
+
                 currX += (double) mc.fontRenderer.getStringWidth(String.valueOf(ch)) * 4.0;
-                GlStateManager.scale(0.25, 0.25, 0.25);
-                GlStateManager.bindTexture(textureID);
-                GlStateManager.color(red, green, blue, alpha);
+
+                scale(0.25, 0.25, 0.25);
+                bindTexture(textureID);
+                color(red, green, blue, alpha);
+
                 GL11.glBegin(7);
                 continue;
             }
 
-            if (charLocations.length <= ch || (fontChar = charLocations[ch]) == null)
+            if (charLocations.length <= ch || (fontChar = charLocations[ch]) == null) {
                 continue;
+            }
 
             drawChar(fontChar, (float) currX, 0.0f);
             currX += (double) fontChar.width - 8.0;
@@ -118,14 +131,15 @@ public class ImageAWT implements Wrapper {
         float renderY = srcY / (float) textureHeight;
         float renderWidth = width / (float) textureWidth;
         float renderHeight = height / (float) textureHeight;
+
         GL11.glTexCoord2f(renderX, renderY);
-        GL11.glVertex2f(x, y);
+        glVertex2f(x, y);
         GL11.glTexCoord2f(renderX, renderY + renderHeight);
-        GL11.glVertex2f(x, y + height);
+        glVertex2f(x, y + height);
         GL11.glTexCoord2f(renderX + renderWidth, renderY + renderHeight);
-        GL11.glVertex2f(x + width, y + height);
+        glVertex2f(x + width, y + height);
         GL11.glTexCoord2f(renderX + renderWidth, renderY);
-        GL11.glVertex2f(x + width, y);
+        glVertex2f(x + width, y);
     }
 
     private void renderBitmap(int startChar, int stopChar) {
@@ -138,23 +152,28 @@ public class ImageAWT implements Wrapper {
             BufferedImage fontImage = drawCharToImage((char) targetChar);
             CharLocation fontChar = new CharLocation(charX, charY, fontImage.getWidth(), fontImage.getHeight());
 
-            if (fontChar.height > fontHeight)
+            if (fontChar.height > fontHeight) {
                 fontHeight = fontChar.height;
+            }
 
-            if (fontChar.height > rowHeight)
+            if (fontChar.height > rowHeight) {
                 rowHeight = fontChar.height;
+            }
 
-            if (charLocations.length <= targetChar)
+            if (charLocations.length <= targetChar) {
                 continue;
+            }
 
             charLocations[targetChar] = fontChar;
             fontImages[targetChar] = fontImage;
 
-            if ((charX += fontChar.width) <= 2048)
+            if ((charX += fontChar.width) <= 2048) {
                 continue;
+            }
 
-            if (charX > textureWidth)
+            if (charX > textureWidth) {
                 textureWidth = charX;
+            }
 
             charX = 0;
             charY += rowHeight;
@@ -170,8 +189,9 @@ public class ImageAWT implements Wrapper {
         graphics2D.setColor(Color.WHITE);
 
         for (int targetChar = startChar; targetChar < stopChar; ++targetChar) {
-            if (fontImages[targetChar] == null || charLocations[targetChar] == null)
+            if (fontImages[targetChar] == null || charLocations[targetChar] == null) {
                 continue;
+            }
 
             graphics2D.drawImage(fontImages[targetChar], charLocations[targetChar].x, charLocations[targetChar].y, null);
         }
@@ -187,11 +207,13 @@ public class ImageAWT implements Wrapper {
         FontMetrics fontMetrics = graphics2D.getFontMetrics();
         int charWidth = fontMetrics.charWidth(ch) + 8;
 
-        if (charWidth <= 8)
+        if (charWidth <= 8) {
             charWidth = 7;
+        }
 
-        if ((charHeight = fontMetrics.getHeight() + 3) <= 0)
+        if ((charHeight = fontMetrics.getHeight() + 3) <= 0) {
             charHeight = font.getSize();
+        }
 
         BufferedImage fontImage = new BufferedImage(charWidth, charHeight, 2);
         Graphics2D graphics = (Graphics2D) fontImage.getGraphics();
@@ -224,10 +246,7 @@ public class ImageAWT implements Wrapper {
     }
 
     private static class CharLocation {
-        private final int x;
-        private final int y;
-        private final int width;
-        private final int height;
+        private final int x, y, width, height;
 
         CharLocation(int x, int y, int width, int height) {
             this.x = x;

@@ -4,6 +4,7 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.RawElement
@@ -57,7 +58,7 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
         glScalef(0.9f, 0.9f, 0.9f)
 
         val scaleFactor = 1 / 0.9f
-        renderText(module.name, (x + 5) * scaleFactor, (y + 4.5f) * scaleFactor, -1)
+        FontUtil.drawStringWithShadow(module.name, (x + 5) * scaleFactor, (y + 4.5f) * scaleFactor, -1)
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
 

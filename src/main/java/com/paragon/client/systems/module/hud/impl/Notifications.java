@@ -2,6 +2,7 @@ package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.managers.notifications.Notification;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 import com.paragon.client.systems.module.hud.HUDModule;
@@ -33,7 +34,7 @@ public class Notifications extends HUDModule {
     public void render() {
         if (mc.currentScreen instanceof HUDEditorGUI) {
             RenderUtil.drawRect(getX(), getY(), getWidth(), getHeight(), new Color(23, 23, 23, 200).getRGB());
-            renderText("[Notifications]" , getX() + 5, getY() + 5, -1);
+            FontUtil.drawStringWithShadow("[Notifications]", getX() + 5, getY() + 5, - 1);
         } else {
             if (renderType.getValue().equals(RenderType.DISPLAY)) {
                 float y = Notifications.INSTANCE.getY();

@@ -4,6 +4,7 @@ import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.setting.Bind;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.ui.util.animation.Animation;
 import com.paragon.client.ui.util.animation.Easing;
 import com.paragon.client.ui.util.Click;
@@ -121,13 +122,13 @@ public final class SliderElement extends Element {
 
             float x = getX() + (getLayer() * 2) + 5;
             float totalWidth = getWidth() - (getLayer() * 2);
-            float maxTextWidth = totalWidth - getStringWidth(setting.getValue().toString()) - 5;
+            float maxTextWidth = totalWidth - FontUtil.getStringWidth(setting.getValue().toString()) - 5;
 
-            float visibleX = getStringWidth(setting.getName()) - maxTextWidth;
+            float visibleX = FontUtil.getStringWidth(setting.getName()) - maxTextWidth;
 
             scrollAnimation.setState(isHovered(mouseX, mouseY));
 
-            if (getStringWidth(setting.getName()) > maxTextWidth) {
+            if (FontUtil.getStringWidth(setting.getName()) > maxTextWidth) {
                 x -= (visibleX + 9) * scrollAnimation.getAnimationFactor();
             }
 
@@ -137,13 +138,13 @@ public final class SliderElement extends Element {
 
             float scissorHeight = getHeight();
 
-            RenderUtil.pushScissor(getX() + (getLayer() * 2), scissorY, totalWidth - (getStringWidth(setting.getValue().toString()) + 9), scissorHeight);
+            RenderUtil.pushScissor(getX() + (getLayer() * 2), scissorY, totalWidth - (FontUtil.getStringWidth(setting.getValue().toString()) + 9), scissorHeight);
 
-            renderText(setting.getName(), x, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            FontUtil.drawStringWithShadow(setting.getName(), x, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
             RenderUtil.popScissor();
 
-            renderText(setting.getValue().toString(), getX() + getWidth() - (getLayer() * 2) - getStringWidth(setting.getValue().toString()) - 3, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            FontUtil.drawStringWithShadow(setting.getValue().toString(), getX() + getWidth() - (getLayer() * 2) - FontUtil.getStringWidth(setting.getValue().toString()) - 3, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
             super.render(mouseX, mouseY, dWheel);
         }

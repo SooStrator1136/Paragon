@@ -1,7 +1,7 @@
 package com.paragon.client.ui.configuration.windows
 
 import com.paragon.Paragon
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.client.ui.util.Click
 import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
@@ -11,7 +11,7 @@ import net.minecraft.util.math.Vec2f
  * @author Surge
  * @since 27/07/2022
  */
-abstract class Window(var x: Float, var y: Float, var width: Float, var height: Float, var grabbableHeight: Float) : ITextRenderer {
+abstract class Window(var x: Float, var y: Float, var width: Float, var height: Float, var grabbableHeight: Float) {
 
     private var lastPosition = Vec2f(0f, 0f)
     private var dragging = false

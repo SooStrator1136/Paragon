@@ -3,7 +3,8 @@ package com.paragon.client.ui.alt;
 import com.paragon.Paragon;
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.ITextRenderer;
+
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.client.managers.alt.Alt;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public final class AltManagerGUI extends GuiScreen implements ITextRenderer, Wrapper {
+public final class AltManagerGUI extends GuiScreen implements Wrapper {
 
     public static AltEntry selectedAltEntry;
     public static String renderString = TextFormatting.GRAY + "Idle";
@@ -56,9 +57,9 @@ public final class AltManagerGUI extends GuiScreen implements ITextRenderer, Wra
 
         RenderUtil.popScissor();
 
-        renderText("Logged in as " + TextFormatting.GRAY + ((IMinecraft) Minecraft.getMinecraft()).getSession().getUsername(), 5, 30, -1);
-        renderCenteredString("Paragon Alt Manager", width / 2f, 75, -1, false);
-        renderCenteredString(renderString, width / 2f, 100, -1, false);
+        FontUtil.drawStringWithShadow("Logged in as " + TextFormatting.GRAY + ((IMinecraft) Minecraft.getMinecraft()).getSession().getUsername(), 5, 30, - 1);
+        FontUtil.renderCenteredString("Paragon Alt Manager", width / 2f, 75, -1, false);
+        FontUtil.renderCenteredString(renderString, width / 2f, 100, -1, false);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

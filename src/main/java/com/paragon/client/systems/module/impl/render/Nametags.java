@@ -5,7 +5,8 @@ import com.paragon.api.event.render.entity.RenderNametagEvent;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.EntityFakePlayer;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.ITextRenderer;
+
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.asm.mixins.accessor.IRenderManager;
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
@@ -38,7 +39,7 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * @author Surge
  */
-public class Nametags extends Module implements ITextRenderer {
+public class Nametags extends Module {
 
     public static Nametags INSTANCE;
 
@@ -58,9 +59,6 @@ public class Nametags extends Module implements ITextRenderer {
     public static Setting<Boolean> armourDurability = new Setting<>("Durability", true)
             .setDescription("Render the player's armour durability")
             .setParentSetting(armour);
-
-    public static Setting<Boolean> potions = new Setting<>("Potions", true)
-            .setDescription("Shows the player's potion effects");
 
     // Scaling
     public static Setting<Float> scaleFactor = new Setting<>("Scale", 0.2f, 0.1f, 1f, 0.1f)
@@ -140,36 +138,22 @@ public class Nametags extends Module implements ITextRenderer {
                 stringBuilder.append(" ").append(TextFormatting.GOLD).append("-").append((player instanceof EntityFakePlayer) ? 0 : Paragon.INSTANCE.getPopManager().getPops(player));
             }
 
-            float potionWidth = 0;
-            List<String> potionStrings = new ArrayList<>();
-
-            player.getActivePotionEffects().stream().sorted(Comparator.comparing(PotionEffect::getDuration)).forEach(potion -> {
-                        if (potions.getValue()) {
-                            Potion potionType = Potion.getPotionFromResourceLocation(potion.getPotion().getRegistryName().toString());
-                            if (potionType != null) {
-                                potionStrings.add(potionType.getName().replace("potion.", "") + " " + potion.getDuration() + "s");
-                            }
-                        }
-                    });
-
-            potionStrings.sort(Comparator.comparingDouble(this::getStringWidth));
-
             // Get nametag width
-            float width = getStringWidth(stringBuilder.toString()) + potionWidth + 4;
+            float width = FontUtil.getStringWidth(stringBuilder.toString());
 
             // Center nametag
             glTranslated(-width / 2, -20, 0);
 
             // Draw background
-            RenderUtil.drawRect(0, 0, width, getFontHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), 0x90000000);
+            RenderUtil.drawRect(0, 0, width, FontUtil.getHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), 0x90000000);
 
             // Draw border
             if (outline.getValue()) {
-                RenderUtil.drawBorder(0, 0, width, getFontHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), outlineWidth.getValue(), outlineColour.getValue().getRGB());
+                RenderUtil.drawBorder(0, 0, width, FontUtil.getHeight() + (ClientFont.INSTANCE.isEnabled() ? 0 : 2), outlineWidth.getValue(), outlineColour.getValue().getRGB());
             }
 
             // Render string
-            renderText(stringBuilder.toString(), 2, 2, -1);
+            FontUtil.drawStringWithShadow(stringBuilder.toString(), 2, 2, -1);
 
             // Render armour
             if (armour.getValue()) {
@@ -256,7 +240,7 @@ public class Nametags extends Module implements ITextRenderer {
                             }
                         }
 
-                        float yOffset = -(itemInfo.size() * getFontHeight()) + 15;
+                        float yOffset = -(itemInfo.size() * FontUtil.getHeight()) + 15;
                         for (String info : itemInfo) {
                             int colour = -1;
 
@@ -267,8 +251,8 @@ public class Nametags extends Module implements ITextRenderer {
                                 colour = new Color(red, green, 0, 1).getRGB();
                             }
 
-                            renderText(info, armourX * 2 + 4, y + yOffset, colour);
-                            yOffset += getFontHeight();
+                            FontUtil.drawStringWithShadow(info, armourX * 2 + 4, y + yOffset, colour);
+                            yOffset += FontUtil.getHeight();
                         }
 
                         // Re enable depth
@@ -280,17 +264,6 @@ public class Nametags extends Module implements ITextRenderer {
                         armourX += 18;
                     }
                 }
-            }
-
-            float y = 0;
-
-            // GL11.glScalef(0.75f, 0.75f, 0.75f);
-            // float scaleFactor = 1 / 0.75f;
-
-            for (String effectString : potionStrings) {
-                renderText(effectString, (getStringWidth(stringBuilder.toString()) + 6), y, -1);
-
-                y += getFontHeight();
             }
 
             // End render
