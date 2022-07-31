@@ -30,7 +30,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
         RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
 
-        val maxWidth: Float = width - 4
+        val maxWidth = width - 4
 
         if (setting.value is Float) {
             // Set values

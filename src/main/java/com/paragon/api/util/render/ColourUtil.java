@@ -1,10 +1,7 @@
 package com.paragon.api.util.render;
 
-import org.lwjgl.opengl.GL11;
-
 import java.awt.*;
 
-import static org.lwjgl.opengl.GL11.glBitmap;
 import static org.lwjgl.opengl.GL11.glColor4f;
 
 public class ColourUtil {
@@ -32,7 +29,7 @@ public class ColourUtil {
         float red = (colourHex >> 16 & 0xFF) / 255.0F;
         float green = (colourHex >> 8 & 0xFF) / 255.0F;
         float blue = (colourHex & 0xFF) / 255.0F;
-        GL11.glColor4f(red, green, blue, alpha);
+        glColor4f(red, green, blue, alpha);
     }
 
     /**
@@ -43,9 +40,9 @@ public class ColourUtil {
      * @return The new colour
      */
     public static Color integrateAlpha(Color colour, float alpha) {
-        float red = colour.getRed() / 255f;
-        float green = colour.getGreen() / 255f;
-        float blue = colour.getBlue() / 255f;
+        final float red = colour.getRed() / 255f;
+        final float green = colour.getGreen() / 255f;
+        final float blue = colour.getBlue() / 255f;
 
         return new Color(red, green, blue, alpha / 255f);
     }

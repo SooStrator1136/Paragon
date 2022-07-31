@@ -1,5 +1,6 @@
 package com.paragon.client.ui.configuration.retrowindows.element.setting.elements
 
+import com.paragon.Paragon
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
@@ -60,6 +61,8 @@ class BindElement(parent: ModuleElement, setting: Setting<Bind>, x: Float, y: Fl
 
             RenderUtil.popScissor()
         }
+
+        Paragon.INSTANCE.configurationGUI.closeOnEscape = !listening.state
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, click: Click) {
@@ -86,15 +89,15 @@ class BindElement(parent: ModuleElement, setting: Setting<Bind>, x: Float, y: Fl
                 Keyboard.KEY_RETURN -> listening.state = false
 
                 Keyboard.KEY_DELETE, Keyboard.KEY_BACK -> {
-                    listening.state = false
-
                     setting.setValue(Bind(0, Bind.Device.KEYBOARD))
+
+                    listening.state = false
                 }
 
                 else -> {
-                    listening.state = false
-
                     setting.setValue(Bind(keyCode, Bind.Device.KEYBOARD))
+
+                    listening.state = false
                 }
             }
         }

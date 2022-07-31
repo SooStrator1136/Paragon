@@ -4,6 +4,7 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ITextRenderer
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
+import com.paragon.client.ui.util.Click
 import org.lwjgl.util.Rectangle
 
 /**
@@ -36,7 +37,7 @@ class DiscordBoolean(val setting: Setting<Boolean>) : DiscordSetting(setting), I
     }
 
     override fun onClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (button != 0) {
+        if (button != Click.LEFT.button) {
             return
         }
         if (stateRect.contains(mouseX, mouseY)) {

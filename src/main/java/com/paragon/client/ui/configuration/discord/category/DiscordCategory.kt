@@ -26,6 +26,8 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
         val diff = rect.width / 10
         rect.setBounds(rect.x + diff, rect.y + diff, rect.width - (diff * 2), rect.height - (diff * 2))
 
+        val isHovered = rect.contains(mouseX, mouseY)
+
         //Render the basic icon with its background
         run {
             @Suppress("IncorrectFormatting")
@@ -38,7 +40,7 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
                 15.0,
                 15.0,
                 15.0,
-                if (rect.contains(mouseX, mouseY)) GuiDiscord.CHANNEL_BAR_BACKGROUND.brighter().rgb else GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
+                if (isHovered) GuiDiscord.CHANNEL_BAR_BACKGROUND.brighter().rgb else GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
             )
 
             glPushMatrix()
@@ -52,7 +54,7 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
 
         //Render the name tooltip
         run {
-            nameAnimation.state = rect.contains(mouseX, mouseY)
+            nameAnimation.state = isHovered
 
             RenderUtil.pushScissor(
                 rect.x + rect.width - 2.0,

@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.discord.settings.impl
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.Timer
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
+import com.paragon.client.ui.util.Click
 import net.minecraft.util.ChatAllowedCharacters
 import org.lwjgl.input.Keyboard
 
@@ -45,7 +46,7 @@ class DiscordString(val setting: Setting<String>) : DiscordSetting(setting) {
     }
 
     override fun onClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (!typing) {
+        if (!typing && bounds.contains(mouseX, mouseY) && button == Click.LEFT.button) {
             typing = true
         }
     }

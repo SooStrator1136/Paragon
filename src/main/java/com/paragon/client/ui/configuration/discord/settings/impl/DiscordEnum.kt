@@ -5,6 +5,7 @@ import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClientFont
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
+import com.paragon.client.ui.util.Click
 import org.lwjgl.util.Rectangle
 
 /**
@@ -62,19 +63,18 @@ class DiscordEnum(val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
     }
 
     override fun onClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (button != 0) {
+        if (button != Click.LEFT.button) {
             return
         }
-        run lBreak@{
-            optionRects.forEachIndexed { i, rect ->
-                if (rect == null) {
-                    return@forEachIndexed
-                }
 
-                if (rect.contains(mouseX, mouseY)) {
-                    setting.setValue(options[i])
-                    return@lBreak
-                }
+        optionRects.forEachIndexed { i, rect ->
+            if (rect == null) {
+                return@forEachIndexed
+            }
+
+            if (rect.contains(mouseX, mouseY)) {
+                setting.setValue(options[i])
+                return
             }
         }
     }
