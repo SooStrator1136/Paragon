@@ -72,7 +72,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
         
         when (corner) {
             Corner.TOP_LEFT -> {
-                RenderUtil.pushScissor(x.toDouble(), y.toDouble(), scissorWidth, modules.size * 13.0)
+                RenderUtil.pushScissor(x.toDouble() + 1, y.toDouble(), scissorWidth, modules.size * 13.0)
                 var yOffset = y
 
                 for (value in modules) {
@@ -94,7 +94,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             }
 
             Corner.TOP_RIGHT -> {
-                RenderUtil.pushScissor(((x + width) - scissorWidth), y.toDouble(), scissorWidth, modules.size * 13.0)
+                RenderUtil.pushScissor(((x + width) - scissorWidth), y.toDouble(), scissorWidth + 1, modules.size * 13.0)
 
                 var yOffset = y
 
@@ -117,7 +117,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
             }
 
             Corner.BOTTOM_LEFT -> {
-                RenderUtil.pushScissor(x.toDouble(), (y + height) - modules.size * 13.0, scissorWidth,modules.size * 13.0)
+                RenderUtil.pushScissor(x.toDouble() + 1, (y + height) - modules.size * 13.0, scissorWidth,modules.size * 13.0)
                 var yOffset = y + height - 13f
 
                 for (value in modules) {
@@ -133,14 +133,14 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
                         RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, -7039852)
                     }
 
-                    renderText(moduleData, (origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    renderText(moduleData, (origin + getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
 
                     yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
                 }
             }
 
             Corner.BOTTOM_RIGHT -> {
-                RenderUtil.pushScissor(((x + width) - scissorWidth), (y + height) - modules.size * 13.0, scissorWidth,modules.size * 13.0)
+                RenderUtil.pushScissor(((x + width) - scissorWidth), (y + height) - modules.size * 13.0, scissorWidth + 1,modules.size * 13.0)
 
                 var yOffset = y + height - 13f
 
@@ -162,6 +162,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
                 }
             }
         }
+
         RenderUtil.popScissor()
     }
 

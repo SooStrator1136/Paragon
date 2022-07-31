@@ -69,7 +69,7 @@ public class Panel implements ITextRenderer {
 
         // Header
         RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getCornerRadius().getValue(), ClickGUI.getCornerRadius().getValue(), 1, 1, isMouseOverHeader(mouseX, mouseY) ? new Color(28, 28, 28).getRGB() : new Color(23, 23, 23).darker().getRGB());
-        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 0 : 0.5f), -1, true);
+        renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 2 : 0.5f), -1, true);
 
         refreshOffsets();
 

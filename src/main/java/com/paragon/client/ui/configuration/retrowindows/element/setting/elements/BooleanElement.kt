@@ -45,12 +45,14 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
             RenderUtil.pushScissor(x.toDouble(), scissorY.toDouble(), width.toDouble(), scissorHeight.toDouble())
 
             subSettings.forEach {
-                it.x = x + 2
-                it.y = y + height + yOffset
+                if (it.setting.isVisible()) {
+                    it.x = x + 2
+                    it.y = y + height + yOffset
 
-                it.draw(mouseX, mouseY, mouseDelta)
+                    it.draw(mouseX, mouseY, mouseDelta)
 
-                yOffset += it.getTotalHeight()
+                    yOffset += it.getTotalHeight()
+                }
             }
 
             RenderUtil.popScissor()

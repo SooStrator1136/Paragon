@@ -58,14 +58,10 @@ class Windows98 : GuiImplementation(), ITextRenderer {
             renderText(tooltipName, mouseX + 9f, mouseY + 12f, -1)
             renderText(text, mouseX + 9f, mouseY + 12f + fontHeight, -1)
         }
-
-        Paragon.INSTANCE.taskbar.draw(mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         windows.forEach { it.mouseClicked(mouseX.toFloat(), mouseY.toFloat(), Click.getClick(mouseButton)) }
-
-        Paragon.INSTANCE.taskbar.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {

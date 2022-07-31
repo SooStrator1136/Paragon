@@ -88,6 +88,7 @@ class ModuleManager {
             ChatModifications(),
             Cryptic,
             CustomWorld(),
+            DonkeyAlert,
             ExtraTab(),
             FakePlayer(),
             FastUse(),
@@ -103,7 +104,6 @@ class ModuleManager {
             TeleTofu(),
             TimerModule(),
             XCarry(),
-            DonkeyAlert,
 
             // Client
             ClientFont,

@@ -113,11 +113,9 @@ public class Aura extends Module {
                 // Get our old slot
                 int oldSlot = mc.player.inventory.currentItem;
 
-                // Check we want to attack
                 switch (when.getValue()) {
                     case SILENT_SWITCH:
                     case SWITCH:
-                        // If we aren't holding a sword, switch to it
                         if (!InventoryUtil.isHoldingSword()) {
                             int swordSlot = InventoryUtil.getItemSlot(Items.DIAMOND_SWORD);
 
@@ -129,7 +127,6 @@ public class Aura extends Module {
                         }
 
                     case HOLDING:
-                        // Return if we aren't holding a sword
                         if (!InventoryUtil.isHoldingSword()) {
                             return;
                         }
@@ -175,9 +172,37 @@ public class Aura extends Module {
         }
     }
 
+    public boolean isReady() {
+        if (nullCheck()) {
+            return false;
+        }
+
+        switch (when.getValue()) {
+            case SILENT_SWITCH:
+            case SWITCH:
+                if (!InventoryUtil.isHoldingSword()) {
+                    int swordSlot = InventoryUtil.getItemSlot(Items.DIAMOND_SWORD);
+
+                    return swordSlot > -1;
+                }
+
+            case HOLDING:
+                if (InventoryUtil.isHoldingSword()) {
+                    return true;
+                }
+        }
+
+        return false;
+    }
+
     @Override
     public String getData() {
         return target == null ? "No target" : target.getName();
+    }
+
+    @Override
+    public boolean isActive() {
+        return super.isActive() && target != null && isReady();
     }
 
     public enum Sort {

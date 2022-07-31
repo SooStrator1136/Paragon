@@ -142,6 +142,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             RenderUtil.popScissor()
         }
 
+        setting.alpha = alphaSetting.value.toFloat()
         setting.isSync = syncSetting.value
         setting.isRainbow = rainbowSetting.value
         setting.rainbowSpeed = rainbowSpeedSetting.value.toFloat()

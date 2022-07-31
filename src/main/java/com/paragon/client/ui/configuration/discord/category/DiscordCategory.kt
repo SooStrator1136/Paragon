@@ -20,7 +20,7 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
     val rect = Rectangle()
 
     private val indicator = ItemStack(category.indicator)
-    private val nameAnimation = Animation({ 500F }, false, ClickGUI.easing::value)
+    private val nameAnimation = Animation({ 200F }, false, ClickGUI.easing::value)
 
     override fun render(mouseX: Int, mouseY: Int) {
         val diff = rect.width / 10
@@ -59,15 +59,15 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
             RenderUtil.pushScissor(
                 rect.x + rect.width - 2.0,
                 rect.y.toDouble(),
-                (getStringWidth(category.Name) + 5) * nameAnimation.getAnimationFactor(),
+                (getStringWidth(category.Name) + 6) * nameAnimation.getAnimationFactor(),
                 rect.height.toDouble()
             )
 
             RenderUtil.drawRoundedRect(
                 (rect.x + rect.width).toDouble() - 2.0,
-                (rect.centerY - (fontHeight / 2) - 2),
-                getStringWidth(category.Name).toDouble() + 4,
-                fontHeight.toDouble() + 4,
+                (rect.centerY - (fontHeight / 2)),
+                getStringWidth(category.Name).toDouble() + 6,
+                fontHeight.toDouble(),
                 5.0,
                 5.0,
                 5.0,
@@ -77,7 +77,7 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
             renderText(
                 category.Name,
                 (rect.x + rect.width).toFloat(),
-                (rect.centerY - (fontHeight / 2)).toFloat(),
+                (rect.centerY - 4).toFloat(),
                 Color.WHITE.rgb
             )
 

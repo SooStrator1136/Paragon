@@ -209,9 +209,9 @@ class HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand in
         val holeColour: Color
             get() {
                 return when (holeType) {
-                    HoleType.OBSIDIAN -> obsidianColour.value
-                    HoleType.MIXED -> mixedColour.value
-                    HoleType.BEDROCK -> bedrockColour.value
+                    HoleType.OBSIDIAN -> ColourUtil.integrateAlpha(obsidianColour.value, obsidianColour.alpha)
+                    HoleType.MIXED -> ColourUtil.integrateAlpha(mixedColour.value, mixedColour.alpha)
+                    HoleType.BEDROCK -> ColourUtil.integrateAlpha(bedrockColour.value, bedrockColour.alpha)
                 }
             }
 

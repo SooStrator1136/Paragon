@@ -40,7 +40,10 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
 
     override fun onEnable() {
         state = State.SLOW
-        speed = PlayerUtil.getBaseMoveSpeed()
+
+        if (!nullCheck()) {
+            speed = PlayerUtil.getBaseMoveSpeed()
+        }
     }
 
     override fun onDisable() {
@@ -49,6 +52,10 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
 
     @Listener
     fun onMove(event: PlayerMoveEvent) {
+        if (mc.player.ticksExisted < 1) {
+            speed = PlayerUtil.getBaseMoveSpeed()
+        }
+
         // Don't apply speed if we're in a liquid or on a ladder
         if (!applySpeed()) {
             return

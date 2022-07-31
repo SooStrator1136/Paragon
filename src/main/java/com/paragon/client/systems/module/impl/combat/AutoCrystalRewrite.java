@@ -30,6 +30,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.network.play.server.SPacketSoundEffect;
@@ -62,6 +63,9 @@ public class AutoCrystalRewrite extends Module {
 
     public static Setting<Order> order = new Setting<>("Order", Order.PLACE_EXPLODE)
             .setDescription("The order in which to complete actions");
+
+    public static Setting<Timing> timing = new Setting<>("Timing", Timing.SEQUENTIAL)
+            .setDescription("When to perform actions");
 
     // TARGETING
 
@@ -189,6 +193,10 @@ public class AutoCrystalRewrite extends Module {
             .setDescription("Pause when mending")
             .setParentSetting(pause);
 
+    public static Setting<Double> pauseTicks = new Setting<>("Ticks", 0D, 0D, 5D, 1D)
+            .setDescription("The number of ticks to pause between performing actions")
+            .setParentSetting(pause);
+
 
     // OVERRIDE
 
@@ -267,6 +275,10 @@ public class AutoCrystalRewrite extends Module {
 
     private final Map<BlockPos, Float> renderPositions = new ConcurrentHashMap<>();
 
+    private State state = null;
+
+    private int passedTicks = 0;
+
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", Category.COMBAT, "Automatically places and explodes ender crystals");
 
@@ -275,6 +287,7 @@ public class AutoCrystalRewrite extends Module {
 
     @Override
     public void onDisable() {
+        state = null;
         renderPositions.clear();
 
         if (originalSlot != -1 && swapBack.getValue()) {
@@ -287,6 +300,15 @@ public class AutoCrystalRewrite extends Module {
     public void onTick(TickEvent.ClientTickEvent event) {
         if (nullCheck() || pause.getValue() && (eating.getValue() && PlayerUtil.isPlayerEating() || drinking.getValue() && PlayerUtil.isPlayerDrinking() || lowHealth.getValue() && EntityUtil.getEntityHealth(mc.player) <= healthAmount.getValue() || mending.getValue() && mc.player.isHandActive() && mc.player.getActiveItemStack().getItem().equals(Items.EXPERIENCE_BOTTLE))) {
             return;
+        }
+
+        if (pause.getValue()) {
+            if (passedTicks < pauseTicks.getValue()) {
+                passedTicks++;
+                return;
+            } else {
+                passedTicks = 0;
+            }
         }
 
         order.getValue().run();
@@ -315,7 +337,7 @@ public class AutoCrystalRewrite extends Module {
                 // Draw the highlight
                 switch (renderMode.getValue()) {
                     case FILL:
-                        RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getAlpha() * factor));
+                        RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getValue().getAlpha() * factor));
                         break;
 
                     case OUTLINE:
@@ -323,6 +345,7 @@ public class AutoCrystalRewrite extends Module {
                         break;
 
                     case BOTH:
+                        System.out.println(renderColour.getAlpha());
                         RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getAlpha() * factor));
                         RenderUtil.drawBoundingBox(highlightBB, renderOutlineWidth.getValue(), renderOutlineColour.getValue());
                         break;
@@ -415,7 +438,7 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void explodeCrystals() {
-        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue())) {
+        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue()) || timing.getValue().equals(Timing.SEQUENTIAL) && state.equals(State.PLACING)) {
             return;
         }
 
@@ -460,7 +483,7 @@ public class AutoCrystalRewrite extends Module {
         Vec2f playerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
         Vec2f rotation = RotationUtil.getRotationToVec3d(new Vec3d(crystal.posX, crystal.posY + 0.5, crystal.posZ));
 
-        Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+        rotate(rotation);
 
         switch (explodeMode.getValue()) {
             case VANILLA:
@@ -475,7 +498,7 @@ public class AutoCrystalRewrite extends Module {
         mc.player.resetCooldown();
 
         if (rotateBack.getValue()) {
-            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+            rotate(playerRotation);
         }
 
         if (sync.getValue().equals(Sync.ATTACK)) {
@@ -486,7 +509,7 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void placeCrystals() {
-        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2)) {
+        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2) || timing.getValue().equals(Timing.SEQUENTIAL) && state.equals(State.EXPLODING)) {
             return;
         }
 
@@ -604,7 +627,7 @@ public class AutoCrystalRewrite extends Module {
         Vec2f playerRotation = new Vec2f(mc.player.rotationYaw, mc.player.rotationPitch);
         Vec2f rotation = RotationUtil.getRotationToVec3d(raytraceVector);
 
-        Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(rotation.x, rotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+        rotate(rotation);
 
         if (placeMode.getValue().equals(PlaceMode.VANILLA)) {
             if (mc.playerController.processRightClickBlock(mc.player, mc.world, placement, facing, facingVec, crystalHand).equals(EnumActionResult.SUCCESS)) {
@@ -621,7 +644,7 @@ public class AutoCrystalRewrite extends Module {
         }
 
         if (rotateBack.getValue()) {
-            Paragon.INSTANCE.getRotationManager().addRotation(new Rotation(playerRotation.x, playerRotation.y, rotate.getValue(), RotationPriority.HIGHEST));
+            rotate(playerRotation);
         }
 
         if (placePerform.getValue().equals(Perform.SILENT_SWITCH) && !alreadyHolding) {
@@ -812,6 +835,17 @@ public class AutoCrystalRewrite extends Module {
         return false;
     }
 
+    public void rotate(Vec2f rotation) {
+        if (!rotate.getValue().equals(Rotate.NONE)) {
+            mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rotation.x, rotation.y, mc.player.onGround));
+
+            if (rotate.getValue().equals(Rotate.LEGIT)) {
+                mc.player.rotationYaw = rotation.x;
+                mc.player.rotationPitch = rotation.y;
+            }
+        }
+    }
+
     @Override
     public String getData() {
         return placementDamage == 0 ? "" : " " + placementDamage;
@@ -822,16 +856,28 @@ public class AutoCrystalRewrite extends Module {
          * Explodes ender crystals then places them
          */
         EXPLODE_PLACE(() -> {
+            if (AutoCrystalRewrite.INSTANCE.state == null) {
+                AutoCrystalRewrite.INSTANCE.state = State.EXPLODING;
+            }
+
             INSTANCE.explodeCrystals();
             INSTANCE.placeCrystals();
+
+            AutoCrystalRewrite.INSTANCE.state = AutoCrystalRewrite.INSTANCE.state == State.EXPLODING ? State.PLACING : State.EXPLODING;
         }),
 
         /**
          * Places ender crystals then explodes them
          */
         PLACE_EXPLODE(() -> {
+            if (AutoCrystalRewrite.INSTANCE.state == null) {
+                AutoCrystalRewrite.INSTANCE.state = State.PLACING;
+            }
+
             INSTANCE.placeCrystals();
             INSTANCE.explodeCrystals();
+
+            AutoCrystalRewrite.INSTANCE.state = AutoCrystalRewrite.INSTANCE.state == State.EXPLODING ? State.PLACING : State.EXPLODING;
         });
 
         private final Runnable function;
@@ -860,6 +906,18 @@ public class AutoCrystalRewrite extends Module {
          * Sorts targets by amount of damage we can do to them
          */
         DAMAGE
+    }
+
+    public enum Timing {
+        /**
+         * Perform actions on the same tick
+         */
+        LINEAR,
+
+        /**
+         * Spread actions across two ticks
+         */
+        SEQUENTIAL
     }
 
     public enum Perform {
@@ -989,6 +1047,18 @@ public class AutoCrystalRewrite extends Module {
          * No text
          */
         NONE
+    }
+
+    public enum State {
+        /**
+         * Placing crystals
+         */
+        PLACING,
+
+        /**
+         * Exploding crystals
+         */
+        EXPLODING
     }
 
 }
