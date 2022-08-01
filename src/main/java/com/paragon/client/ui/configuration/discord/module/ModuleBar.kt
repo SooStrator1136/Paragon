@@ -2,11 +2,11 @@ package com.paragon.client.ui.configuration.discord.module
 
 import com.paragon.api.module.Module
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.RenderUtil.scaleTo
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.api.util.render.font.FontUtil.getStringWidth
 import com.paragon.api.util.render.font.FontUtil.renderCenteredString
-import com.paragon.api.util.scaleTo
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.category.CategoryBar
@@ -161,9 +161,8 @@ object ModuleBar : IRenderable {
         mc.textureManager.bindTexture(mc.player.locationSkin)
         val scaleFac = size / 32.0
         scaleTo(x.toFloat(), y.toFloat(), 0F, scaleFac, scaleFac, 1.0) {
-            GlStateManager.enableDepth()
+            GlStateManager.color(1F, 1F, 1F, 1F)
             (mc.currentScreen ?: return@scaleTo).drawTexturedModalRect(x + 5, y + 5, 32, 32, 32, 32)
-            GlStateManager.disableDepth()
         }
     }
 

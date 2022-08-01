@@ -10,7 +10,7 @@ import kotlin.Unit;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import static com.paragon.api.util.MiscKt.scaleTo;
+import static com.paragon.api.util.render.RenderUtil.scaleTo;
 
 public final class Watermark extends HUDModule {
 

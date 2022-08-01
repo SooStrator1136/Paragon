@@ -78,9 +78,7 @@ public class PlayerUtil implements Wrapper {
         if (forwardInput != 0.0f) {
             if (strafeInput > 0.0f) {
                 playerYaw += ((forwardInput > 0.0f) ? -45 : 45);
-            }
-
-            else if (strafeInput < 0.0f) {
+            } else if (strafeInput < 0.0f) {
                 playerYaw += ((forwardInput > 0.0f) ? 45 : -45);
             }
 
@@ -88,9 +86,7 @@ public class PlayerUtil implements Wrapper {
 
             if (forwardInput > 0.0f) {
                 forwardInput = 1.0f;
-            }
-
-            else if (forwardInput < 0.0f) {
+            } else if (forwardInput < 0.0f) {
                 forwardInput = -1.0f;
             }
         }

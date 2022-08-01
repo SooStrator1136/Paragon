@@ -2,7 +2,6 @@ package com.paragon.client.ui.configuration.simple
 
 import com.paragon.api.module.Category
 import com.paragon.client.ui.configuration.GuiImplementation
-import com.paragon.client.ui.configuration.shared.Panel
 import com.paragon.client.ui.configuration.simple.panel.CategoryPanel
 import com.paragon.client.ui.util.Click
 
@@ -12,7 +11,7 @@ import com.paragon.client.ui.util.Click
  */
 object SimpleGUI : GuiImplementation() {
 
-    val panels: ArrayList<CategoryPanel> = ArrayList()
+    private val panels: ArrayList<CategoryPanel> = ArrayList()
 
     init {
         var x = 20f

@@ -3,12 +3,12 @@ package com.paragon.api.util.render.font
 import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
 import com.paragon.client.systems.module.impl.client.ClientFont
-import org.apache.commons.io.Charsets
 import org.apache.commons.io.FileUtils
 import org.json.JSONObject
 import java.awt.Font
 import java.io.*
 import java.net.URL
+import java.nio.charset.StandardCharsets
 import kotlin.math.max
 
 /**
@@ -20,7 +20,7 @@ object FontUtil : Wrapper {
     @JvmStatic
     val defaultFont = FontRenderer(getFont("font"))
 
-    private var yIncrease = 0f
+    private var yIncrease = 0F
 
     @JvmStatic
     fun drawStringWithShadow(text: String, x: Float, y: Float, colour: Int) {
@@ -109,9 +109,7 @@ object FontUtil : Wrapper {
     }
 
     @JvmStatic
-    fun getHeight(): Float {
-        return if (ClientFont.isEnabled) defaultFont.height else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
-    }
+    fun getHeight() = if (ClientFont.isEnabled) defaultFont.height else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
 
     private fun getFont(name: String): Font {
         val fontDir = File("paragon/font/")
@@ -160,7 +158,7 @@ object FontUtil : Wrapper {
 
         try {
             val jsonObject = JSONObject(
-                FileUtils.readFileToString(File("paragon/font/font_config.json"), Charsets.UTF_8)
+                FileUtils.readFileToString(File("paragon/font/font_config.json"), StandardCharsets.UTF_8)
             )
             size = jsonObject.getInt("size").toFloat()
             yIncrease = jsonObject.getFloat("y_offset")

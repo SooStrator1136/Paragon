@@ -1,40 +1,40 @@
 package com.paragon.api.util.string;
 
-public class StringUtil {
+import java.util.Locale;
 
-    public static String getFormattedText(Enum<?> enumIn) {
-        String text = enumIn.name();
-        StringBuilder formatted = new StringBuilder();
+public final class StringUtil {
+
+    public static String getFormattedText(final Enum<?> enumIn) {
+        final String text = enumIn.name();
+        final StringBuilder formatted = new StringBuilder(text.length());
 
         boolean isFirst = true;
-        for (char c : text.toCharArray()) {
+        for (final char c : text.toCharArray()) {
             if (c == '_') {
                 isFirst = true;
                 continue;
             }
 
             if (isFirst) {
-                formatted.append(String.valueOf(c).toUpperCase());
+                formatted.append(String.valueOf(c).toUpperCase(Locale.ROOT));
                 isFirst = false;
             } else {
-                formatted.append(String.valueOf(c).toLowerCase());
+                formatted.append(String.valueOf(c).toLowerCase(Locale.ROOT));
             }
         }
 
         return formatted.toString();
     }
 
-    public static String wrap(String s, int length) {
-        StringBuilder result = new StringBuilder();
+    public static String wrap(final String str, final int length) {
+        final StringBuilder result = new StringBuilder(str.length());
         int lastDelimPos = 0;
 
-        for (String token : s.split(" ", -1)) {
+        for (final String token : str.split(" ", -1)) {
             if (result.length() - lastDelimPos + token.length() > length) {
                 result.append(System.lineSeparator()).append(token);
                 lastDelimPos = result.length() + 1;
-            }
-
-            else {
+            } else {
                 result.append((result.length() == 0) ? "" : " ").append(token);
             }
         }

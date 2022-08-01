@@ -5,17 +5,17 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ChatAllowedCharacters
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Font
-import java.util.*
+import kotlin.random.Random
 
 /**
  * @author Cosmos, Surge
  */
 @SideOnly(Side.CLIENT)
 class FontRenderer(font: Font) : Wrapper {
+
     private val fontHeight: Int
     private val defaultFont: ImageAWT
 
@@ -25,7 +25,7 @@ class FontRenderer(font: Font) : Wrapper {
     }
 
     val height: Float
-        get() = defaultFont.height / 2f
+        get() = defaultFont.height / 2F
 
     val size: Int
         get() = defaultFont.font.size
@@ -109,12 +109,8 @@ class FontRenderer(font: Font) : Wrapper {
                         randomCase = false
                     }
 
-                    16 -> {
-                        randomCase = true
-                    }
-
+                    16 -> randomCase = true
                     18 -> {}
-
                     21 -> {
                         currentColor = color
 
@@ -174,7 +170,6 @@ class FontRenderer(font: Font) : Wrapper {
     }
 
     private object ColorUtils {
-        private var random: Random? = null
 
         private const val magicAllowedCharacters = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■"
 
@@ -197,8 +192,6 @@ class FontRenderer(font: Font) : Wrapper {
             hexColors[13] = 0xFF55FF
             hexColors[14] = 0xFFFF55
             hexColors[15] = 0xFFFFFF
-
-            random = Random()
         }
 
         fun randomMagicText(text: String): String {
@@ -209,7 +202,7 @@ class FontRenderer(font: Font) : Wrapper {
                     continue
                 }
 
-                val index = random!!.nextInt(magicAllowedCharacters.length)
+                val index = Random.nextInt(magicAllowedCharacters.length)
                 stringBuilder.append(magicAllowedCharacters[index])
             }
 
@@ -218,18 +211,17 @@ class FontRenderer(font: Font) : Wrapper {
     }
 
     companion object {
+
         fun getColorIndex(type: Char): Int {
-            when (type) {
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> return type.code - 48
-
-                'a', 'b', 'c', 'd', 'e', 'f' -> return type.code - 97 + 10
-
-                'k', 'l', 'm', 'n', 'o' -> return type.code - 107 + 16
-
-                'r' -> return 21
+            return when (type) {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> type.code - 48
+                'a', 'b', 'c', 'd', 'e', 'f' -> type.code - 97 + 10 //Why the math?
+                'k', 'l', 'm', 'n', 'o' -> type.code - 107 + 16
+                'r' -> 21
+                else -> -1
             }
-
-            return -1
         }
+
     }
+
 }

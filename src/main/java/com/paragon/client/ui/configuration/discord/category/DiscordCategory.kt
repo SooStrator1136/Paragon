@@ -2,10 +2,10 @@ package com.paragon.client.ui.configuration.discord.category
 
 import com.paragon.api.module.Category
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.RenderUtil.scaleTo
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.api.util.render.font.FontUtil.getStringWidth
-import com.paragon.api.util.scaleTo
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable

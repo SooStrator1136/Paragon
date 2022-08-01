@@ -1,23 +1,23 @@
 package com.paragon.api.util.entity;
 
 import com.paragon.api.util.Wrapper;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.monster.*;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.monster.EntityPigZombie;
+import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 
-public class EntityUtil implements Wrapper {
+public final class EntityUtil implements Wrapper {
 
     /**
      * Gets the interpolated position of a given entity
@@ -25,7 +25,7 @@ public class EntityUtil implements Wrapper {
      * @param entityIn The given entity
      * @return The interpolated position
      */
-    public static Vec3d getInterpolatedPosition(Entity entityIn) {
+    public static Vec3d getInterpolatedPosition(final Entity entityIn) {
         return new Vec3d(entityIn.lastTickPosX, entityIn.lastTickPosY, entityIn.lastTickPosZ).add(getInterpolatedAmount(entityIn, mc.getRenderPartialTicks()));
     }
 
@@ -36,7 +36,7 @@ public class EntityUtil implements Wrapper {
      * @param partialTicks The render partial ticks
      * @return The interpolated amount
      */
-    public static Vec3d getInterpolatedAmount(Entity entity, float partialTicks) {
+    public static Vec3d getInterpolatedAmount(final Entity entity, final float partialTicks) {
         return new Vec3d((entity.posX - entity.lastTickPosX) * partialTicks, (entity.posY - entity.lastTickPosY) * partialTicks, (entity.posZ - entity.lastTickPosZ) * partialTicks);
     }
 
@@ -46,8 +46,8 @@ public class EntityUtil implements Wrapper {
      * @param entity The entity
      * @return The colour of the health
      */
-    public static TextFormatting getTextColourFromEntityHealth(EntityLivingBase entity) {
-        float health = getEntityHealth(entity);
+    public static TextFormatting getTextColourFromEntityHealth(final EntityLivingBase entity) {
+        final float health = getEntityHealth(entity);
 
         if (health > 20) {
             return TextFormatting.YELLOW;
@@ -70,7 +70,7 @@ public class EntityUtil implements Wrapper {
      * @param entity The entity
      * @return The bounding box of the entity
      */
-    public static AxisAlignedBB getEntityBox(Entity entity) {
+    public static AxisAlignedBB getEntityBox(final Entity entity) {
         return new AxisAlignedBB(
                 entity.getEntityBoundingBox().minX - entity.posX + (entity.posX - mc.getRenderManager().viewerPosX),
                 entity.getEntityBoundingBox().minY - entity.posY + (entity.posY - mc.getRenderManager().viewerPosY),
@@ -88,11 +88,11 @@ public class EntityUtil implements Wrapper {
      * @param maximumRange The maximum range they are allowed in
      * @return If the player is too far away from us
      */
-    public static boolean isTooFarAwayFromSelf(Entity entity, float maximumRange) {
+    public static boolean isTooFarAwayFromSelf(final Entity entity, final float maximumRange) {
         return !(entity.getDistance(mc.player) <= maximumRange);
     }
 
-    public static boolean isEntityAllowed(Entity entity, boolean players, boolean mobs, boolean passives) {
+    public static boolean isEntityAllowed(final Entity entity, final boolean players, final boolean mobs, final boolean passives) {
         if (entity instanceof EntityPlayer && players && entity != mc.player) {
             return true;
         }
@@ -101,30 +101,26 @@ public class EntityUtil implements Wrapper {
             return true;
         }
 
-        if (isPassive(entity) && passives) {
-            return true;
-        }
-
-        return false;
+        return isPassive(entity) && passives;
     }
 
-    public static boolean isMonster(Entity entity) {
+    public static boolean isMonster(final Entity entity) {
         return entity.isCreatureType(EnumCreatureType.MONSTER, false) && !(entity instanceof EntityPigZombie || entity instanceof EntityWolf || entity instanceof EntityEnderman) || entity instanceof EntitySpider;
     }
 
-    public static boolean isPassive(Entity entity) {
+    public static boolean isPassive(final Entity entity) {
         if (entity instanceof EntityWolf) {
             return !((EntityWolf) entity).isAngry();
         }
 
         if (entity instanceof EntityIronGolem) {
-            return ((EntityIronGolem) entity).getRevengeTarget() == null;
+            return ((EntityLivingBase) entity).getRevengeTarget() == null;
         }
 
         return entity instanceof EntityAgeable || entity instanceof EntityAmbientCreature || entity instanceof EntitySquid;
     }
 
-    public static float getEntityHealth(EntityLivingBase entityLivingBase) {
+    public static float getEntityHealth(final EntityLivingBase entityLivingBase) {
         return entityLivingBase.getHealth() + entityLivingBase.getAbsorptionAmount();
     }
 

@@ -27,29 +27,12 @@ class ModuleElement(val module: Module, val panel: Panel, x: Float, y: Float, wi
     init {
         module.settings.forEach {
             when (it.value) {
-                is Boolean -> {
-                    settings.add(BooleanElement(it as Setting<Boolean>, x + 2, y, width - 4, height))
-                }
-
-                is Enum<*> -> {
-                    settings.add(EnumElement(it as Setting<Enum<*>>, x + 2, y, width - 4, height))
-                }
-
-                is Number -> {
-                    settings.add(SliderElement(it as Setting<Number>, x + 2, y, width - 4, height))
-                }
-
-                is Color -> {
-                    settings.add(ColourElement(it as Setting<Color>, x + 2, y, width - 4, height))
-                }
-
-                is Bind -> {
-                    settings.add(BindElement(it as Setting<Bind>, x + 2, y, width - 4, height))
-                }
-
-                is String -> {
-                    settings.add(StringElement(it as Setting<String>, x + 2, y, width - 4, height))
-                }
+                is Boolean -> settings.add(BooleanElement(it as Setting<Boolean>, x + 2, y, width - 4, height))
+                is Enum<*> -> settings.add(EnumElement(it as Setting<Enum<*>>, x + 2, y, width - 4, height))
+                is Number -> settings.add(SliderElement(it as Setting<Number>, x + 2, y, width - 4, height))
+                is Color -> settings.add(ColourElement(it as Setting<Color>, x + 2, y, width - 4, height))
+                is Bind -> settings.add(BindElement(it as Setting<Bind>, x + 2, y, width - 4, height))
+                is String -> settings.add(StringElement(it as Setting<String>, x + 2, y, width - 4, height))
             }
         }
     }

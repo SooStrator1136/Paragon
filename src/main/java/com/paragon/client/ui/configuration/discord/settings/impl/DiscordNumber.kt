@@ -39,7 +39,6 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
 
     init {
         bounds.height = (msgStyleHeight + (FontUtil.getHeight() * 7)).toInt() + 2
-        println("Called")
     }
 
     override fun render(mouseX: Int, mouseY: Int) {

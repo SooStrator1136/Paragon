@@ -4,9 +4,7 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
-import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.simple.element.setting.SettingElement
-import com.paragon.client.ui.util.Click
 import org.lwjgl.opengl.GL11.glScalef
 import java.awt.Color
 
@@ -51,11 +49,17 @@ class ColourElement(setting: Setting<Color>, x: Float, y: Float, width: Float, h
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         val hovered = isHovered(mouseX, mouseY)
 
-        setting.setValue(ColourUtil.integrateAlpha(Color(Color.HSBtoRGB(
-            hueSetting.value.toFloat() / 360f,
-            saturationSetting.value.toFloat() / 100f,
-            brightnessSetting.value.toFloat() / 100f
-        )), alphaSetting.value.toFloat()))
+        setting.setValue(
+            ColourUtil.integrateAlpha(
+                Color(
+                    Color.HSBtoRGB(
+                        hueSetting.value.toFloat() / 360f,
+                        saturationSetting.value.toFloat() / 100f,
+                        brightnessSetting.value.toFloat() / 100f
+                    )
+                ), alphaSetting.value.toFloat()
+            )
+        )
 
         setting.alpha = alphaSetting.value.toFloat()
         setting.isRainbow = rainbowSetting.value

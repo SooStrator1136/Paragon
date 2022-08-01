@@ -1,7 +1,6 @@
 package com.paragon.api.util
 
 import net.minecraft.client.Minecraft
-import org.lwjgl.opengl.GL11
 
 inline val mc: Minecraft get() = Minecraft.getMinecraft()
 
@@ -15,34 +14,6 @@ inline fun <E> Collection<E>.anyIndexed(predicate: (E) -> Boolean): Int {
         }
     }
     return -1
-}
-
-/**
- * In java usage will look like this:
- * ```
- * public void exampleScaleTo(float x, float y, float z, double scaleFacX, double scaleFacY, double scaleFacZ) {
- *    scaleTo(x, y, z, scaleFacX, scaleFacY, scaleFacZ, unit -> {
- *       methodThatWillBeScaled();
- *       return Unit.INSTANCE;
- *    });
- * }
- * ```
- */
-inline fun scaleTo(
-    x: Float,
-    y: Float,
-    z: Float,
-    scaleFacX: Double,
-    scaleFacY: Double,
-    scaleFacZ: Double,
-    block: (Unit) -> Unit
-) {
-    GL11.glPushMatrix()
-    GL11.glTranslatef(x, y, z)
-    GL11.glScaled(scaleFacX, scaleFacY, scaleFacZ)
-    GL11.glTranslatef(-x, -y, -z)
-    block.invoke(Unit)
-    GL11.glPopMatrix()
 }
 
 /**
