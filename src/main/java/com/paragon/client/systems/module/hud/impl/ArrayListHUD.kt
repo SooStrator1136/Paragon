@@ -13,7 +13,8 @@ import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.util.text.TextFormatting.*
+import net.minecraft.util.text.TextFormatting.GRAY
+import net.minecraft.util.text.TextFormatting.WHITE
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
@@ -165,10 +166,10 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
         RenderUtil.popScissor()
     }
 
-    override fun getWidth() = 56f
+    override var width = 56F
+    override var height = 56F
 
-    override fun getHeight() = 56f
-
+    @Suppress("unused")
     enum class ArrayListColour(private val colour: (Int) -> Int) {
         /**
          * The colour is slightly different for each module in the array list
@@ -200,6 +201,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
     }
 
+    @Suppress("unused")
     enum class Background {
         NONE, Normal, Win98
     }

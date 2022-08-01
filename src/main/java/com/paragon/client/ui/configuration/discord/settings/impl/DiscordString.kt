@@ -17,7 +17,7 @@ class DiscordString(val setting: Setting<String>) : DiscordSetting(setting) {
     private var typing = false
 
     init {
-        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt() + 2
     }
 
     override fun render(mouseX: Int, mouseY: Int) {

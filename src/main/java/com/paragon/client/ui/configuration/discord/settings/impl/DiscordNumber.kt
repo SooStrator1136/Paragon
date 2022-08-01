@@ -1,117 +1,192 @@
+@file:Suppress("ReplaceNotNullAssertionWithElvisReturn")
+
 package com.paragon.client.ui.configuration.discord.settings.impl
 
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.calculations.MathsUtil.getPercent
+import com.paragon.api.util.calculations.MathsUtil.getPercentOf
+import com.paragon.api.util.calculations.MathsUtil.roundDouble
+import com.paragon.api.util.calculations.MathsUtil.roundToIncrementation
+import com.paragon.api.util.minus
+import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
-import com.paragon.client.systems.module.impl.client.Colours
+import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
+import com.paragon.api.util.render.font.FontUtil.getStringWidth
+import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.client.ui.util.Click
+import org.lwjgl.input.Mouse
 import org.lwjgl.util.Rectangle
+import java.math.BigDecimal
+import kotlin.math.max
+import kotlin.random.Random
 
 /**
  * @author SooStrator1136
  */
 class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
 
-    private val minusRect = Rectangle()
-    private val valueRect = Rectangle()
-    private val plusRect = Rectangle()
-
     var dragging = false
 
+    private val sliderBounds = Rectangle()
+
+    private val size = Random.nextInt(100, 999).toString() + "." + Random.nextInt(10, 99) + " KB"
+
+    private val maxProgressInfoWidth = max(
+        getStringWidth("${setting.min}/${setting.max}"),
+        getStringWidth("${setting.max}/${setting.max}")
+    )
+
     init {
-        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
+        bounds.height = (msgStyleHeight + (FontUtil.getHeight() * 7)).toInt() + 2
+        println("Called")
     }
 
     override fun render(mouseX: Int, mouseY: Int) {
         super.render(mouseX, mouseY)
 
-        val y = bounds.y + msgStyleHeight
+        val mediaRect = Rectangle(
+            bounds.x,
+            (bounds.y + msgStyleHeight).toInt(),
+            (bounds.width * 0.75).toInt(),
+            (FontUtil.getHeight() * 7).toInt()
+        )
+        val lowerMediaRect = Rectangle(
+            bounds.x + 5,
+            (mediaRect.y + (FontUtil.getHeight() * 4)).toInt(),
+            mediaRect.width - 10,
+            (FontUtil.getHeight() * 2).toInt()
+        )
 
-        //Basic bounds
+        //Render basic media background
         run {
-            minusRect.setBounds(
-                bounds.x,
-                y.toInt(),
-                FontUtil.getStringWidth("<").toInt(),
-                FontUtil.getHeight().toInt()
+            RenderUtil.drawRoundedRect(
+                mediaRect.x.toDouble(),
+                mediaRect.y.toDouble(),
+                mediaRect.width.toDouble(),
+                mediaRect.height.toDouble(),
+                2.5,
+                2.5,
+                2.5,
+                2.5,
+                GuiDiscord.MEDIA_BACKGROUND.rgb
             )
-            valueRect.setBounds(
-                minusRect.x + minusRect.width + 2,
-                y.toInt(),
-                FontUtil.getStringWidth(setting.value.toString()).toInt(),
-                FontUtil.getHeight().toInt()
+            RenderUtil.drawRoundedOutline(
+                mediaRect.x.toDouble(),
+                mediaRect.y.toDouble(),
+                mediaRect.width.toDouble(),
+                mediaRect.height.toDouble(),
+                2.5,
+                2.5,
+                2.5,
+                2.5,
+                2F,
+                GuiDiscord.MEDIA_BACKGROUND_BORDER.rgb
             )
-            plusRect.setBounds(
-                valueRect.x + valueRect.width + 2,
-                y.toInt(),
-                FontUtil.getStringWidth(">").toInt(),
-                FontUtil.getHeight().toInt()
+
+            drawStringWithShadow(
+                "${setting.name}.mp3",
+                mediaRect.x + 5F,
+                mediaRect.y + FontUtil.getHeight(),
+                GuiDiscord.MEDIA_TITLE.rgb
+            )
+            drawStringWithShadow(
+                size,
+                mediaRect.x + 5F,
+                mediaRect.y + (FontUtil.getHeight() * 2F),
+                GuiDiscord.MEDIA_SIZE.rgb
             )
         }
 
-        //Render < value >
+        //Render basic slider background
         run {
-            FontUtil.drawStringWithShadow(
-                "<",
-                minusRect.x.toFloat(),
-                minusRect.y.toFloat(),
-                if (minusRect.contains(mouseX, mouseY)) Colours.mainColour.value.rgb else -1
+            RenderUtil.drawRoundedRect(
+                lowerMediaRect.x.toDouble(),
+                lowerMediaRect.y.toDouble(),
+                lowerMediaRect.width.toDouble(),
+                lowerMediaRect.height.toDouble(),
+                2.5,
+                2.5,
+                2.5,
+                2.5,
+                GuiDiscord.MEDIA_PROGRESS_BACKGROUND.rgb
             )
 
-            FontUtil.drawStringWithShadow(
-                setting.value.toString(),
-                valueRect.x.toFloat(),
-                valueRect.y.toFloat(),
+            drawStringWithShadow(
+                "${setting.value}/${setting.max}",
+                lowerMediaRect.x + 5F,
+                lowerMediaRect.y + (FontUtil.getHeight() / 2F),
                 -1
             )
 
-            FontUtil.drawStringWithShadow(
-                ">",
-                plusRect.x.toFloat(),
-                plusRect.y.toFloat(),
-                if (plusRect.contains(mouseX, mouseY)) Colours.mainColour.value.rgb else -1
+            sliderBounds.setBounds(
+                (lowerMediaRect.x + maxProgressInfoWidth + 10).toInt(),
+                (lowerMediaRect.y + (FontUtil.getHeight() / 2)).toInt(),
+                ((lowerMediaRect.width - maxProgressInfoWidth) - 15).toInt() + 1,
+                FontUtil.getHeight().toInt()
             )
+
+            RenderUtil.drawRoundedRect(
+                sliderBounds.x.toDouble(),
+                sliderBounds.y.toDouble(),
+                sliderBounds.width - 1.0,
+                sliderBounds.height.toDouble(),
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                GuiDiscord.MEDIA_PROGRESSBAR_BACKGROUND.rgb
+            )
+        }
+
+        //Render the progress/value
+        run {
+            RenderUtil.drawRoundedRect(
+                sliderBounds.x.toDouble(),
+                sliderBounds.y.toDouble(),
+                getPercentOf(
+                    getPercent(
+                        (setting.value - setting.min!!).toDouble(),
+                        (setting.max!! - setting.min!!).toDouble()
+                    ), sliderBounds.width - 1.0
+                ),
+                sliderBounds.height.toDouble(),
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                GuiDiscord.MEDIA_PROGRESS.rgb
+            )
+        }
+
+        //Set new value if left mouse button is pressed
+        if (Mouse.isButtonDown(Click.LEFT.button) && sliderBounds.contains(mouseX, mouseY)) {
+            setting.setValue(getNewValue(mouseX))
         }
     }
 
     override fun onClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (!bounds.contains(mouseX, mouseY) || button != Click.LEFT.button) {
+        if (!sliderBounds.contains(mouseX, mouseY) || button != Click.LEFT.button) {
             return
         }
 
-        if (minusRect.contains(mouseX, mouseY)) {
-            val newVal = setting.value - setting.incrementation!!
-            setting.setValue(if (newVal > setting.min!!) newVal else setting.min!!)
-        } else if (plusRect.contains(mouseX, mouseY)) {
-            val newVal = setting.value + setting.incrementation!!
-            setting.setValue(if (newVal < setting.max!!) newVal else setting.max!!)
-        }
+        setting.setValue(getNewValue(mouseX))
     }
+
+    private fun getNewValue(mouseX: Int) = roundToIncrementation(
+        setting.incrementation!!.toDouble(),
+        roundDouble(
+            getPercentOf(
+                getPercent(
+                    (mouseX - sliderBounds.x).toDouble(),
+                    sliderBounds.width - 1.0
+                ),
+                (setting.max!! - setting.min!!).toDouble(),
+            ),
+            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+        )
+    )
 
     override fun onKey(keyCode: Int) {}
 
-}
-
-private operator fun Number.compareTo(compareTo: Number): Int {
-    return when (this) {
-        is Float -> this.toFloat().compareTo(compareTo.toFloat())
-        is Double -> this.toDouble().compareTo(compareTo.toDouble())
-        else -> 0 //Shouldn't be reached since setting are supposed to me float or double
-    }
-}
-
-private operator fun Number.minus(toSubtract: Number): Number {
-    return when (this) {
-        is Float -> this.toFloat().minus(toSubtract.toFloat())
-        is Double -> this.toDouble().minus(toSubtract.toFloat())
-        else -> 0 //Shouldn't be reached since setting are supposed to me float or double
-    }
-}
-
-private operator fun Number.plus(toAdd: Number): Number {
-    return when (this) {
-        is Float -> this.toFloat().plus(toAdd.toFloat())
-        is Double -> this.toDouble().plus(toAdd.toFloat())
-        else -> 0 //Shouldn't be reached since setting are supposed to me float or double
-    }
 }

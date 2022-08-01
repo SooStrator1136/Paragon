@@ -14,7 +14,7 @@ import java.awt.Color
 /**
  * @author Surge
  */
-class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, buttonText: String?) : GuiButton(buttonId, x, y, widthIn, heightIn, buttonText) {
+class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, buttonText: String) : GuiButton(buttonId, x, y, widthIn, heightIn, buttonText) {
 
     private val animation = Animation({ 300.0f }, false) { Easing.EXPO_IN_OUT }
 

@@ -1,3 +1,5 @@
+@file:Suppress("SuspiciousVarProperty")
+
 package com.paragon.client.systems.module.hud.impl
 
 import com.paragon.api.util.render.font.FontUtil
@@ -15,9 +17,11 @@ object FPS : HUDModule("FPS", "Renders your FPS on screen") {
         FontUtil.drawStringWithShadow(getText(), x, y, Colours.mainColour.value.rgb)
     }
 
-    override fun getWidth() = FontUtil.getStringWidth(getText())
+    override var width = FontUtil.getStringWidth(getText())
+        get() = FontUtil.getStringWidth(getText())
 
-    override fun getHeight() = FontUtil.getHeight()
+    override var height = FontUtil.getHeight()
+        get() = FontUtil.getHeight()
 
     private fun getText() = "FPS " + TextFormatting.WHITE + Minecraft.getDebugFPS()
 

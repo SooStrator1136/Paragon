@@ -22,6 +22,8 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Toolkit
+import kotlin.math.cos
+import kotlin.math.sin
 
 @SideOnly(Side.CLIENT)
 object RenderUtil : Wrapper {
@@ -225,8 +227,7 @@ object RenderUtil : Wrapper {
         glLineWidth(lineWidth)
         glBegin(GL_LINE_STRIP)
         setColour(colour)
-        var i: Int
-        i = 0
+        var i = 0
         while (i <= 90) {
             glVertex2d(
                 x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0,
@@ -261,8 +262,8 @@ object RenderUtil : Wrapper {
         i = 0
         while (i <= 90) {
             glVertex2d(
-                x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0,
-                y + tLeft + Math.cos(i * Math.PI / 180.0) * tLeft * -1.0
+                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0,
+                y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
             )
             i += 3
         }

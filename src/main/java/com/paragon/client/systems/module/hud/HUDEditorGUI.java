@@ -10,7 +10,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class HUDEditorGUI extends GuiScreen {
+public final class HUDEditorGUI extends GuiScreen {
 
     private boolean draggingComponent;
 
@@ -37,7 +37,7 @@ public class HUDEditorGUI extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         ArrayUtils.reverse(Paragon.INSTANCE.getModuleManager().getModules());
 
-        final AtomicBoolean stopLoop = new AtomicBoolean(false);
+        final AtomicBoolean stopLoop = new AtomicBoolean(false); //Replace with a simple return@run when making this kt
         Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module instanceof HUDModule).forEach(hudModule -> {
             if (stopLoop.get()) {
                 return;

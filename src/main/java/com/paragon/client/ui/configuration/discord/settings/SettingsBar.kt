@@ -10,6 +10,7 @@ import com.paragon.client.ui.configuration.discord.category.CategoryBar
 import com.paragon.client.ui.configuration.discord.module.ModuleBar
 import com.paragon.client.ui.configuration.discord.settings.impl.*
 import org.lwjgl.util.Rectangle
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -18,6 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 object SettingsBar : IRenderable {
 
     var scrollOffset = 0
+    private var maxScrollOffset = 0
 
     private const val settingOffset = 10
 
@@ -34,9 +36,17 @@ object SettingsBar : IRenderable {
                 GuiDiscord.BASE_RECT.height
             )
 
-            if (rect.contains(mouseX, mouseY)) {
+            if (rect.contains(mouseX, mouseY) && shownSettings.isNotEmpty()) {
+                val lastRect = shownSettings[shownSettings.size - 1].bounds
+                maxScrollOffset = Optional.of(
+                    ((((lastRect.y + lastRect.height) - shownSettings[0].bounds.y) - rect.height) * -1) - 25
+                ).map { if (it > 0) 0 else it }.get()
                 val newOffset = scrollOffset + (GuiDiscord.D_WHEEL / 7)
-                scrollOffset = if (newOffset > 0) 0 else newOffset
+                if (GuiDiscord.D_WHEEL < 0) {
+                    scrollOffset = if (newOffset < maxScrollOffset) maxScrollOffset else newOffset
+                } else if (scrollOffset < 0) {
+                    scrollOffset = if (newOffset > 0) 0 else newOffset
+                }
             }
 
             ModuleBar.focusedModule?.settings?.forEach {
@@ -52,8 +62,6 @@ object SettingsBar : IRenderable {
             rect.height.toFloat(),
             GuiDiscord.CHAT_BACKGROUND.rgb
         )
-
-        //TODO add scrollbar to the right
 
         //Render settings
         run {

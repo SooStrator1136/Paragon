@@ -31,7 +31,12 @@ abstract class DiscordSetting(val dSetting: Setting<*>) : IRenderable {
             )
         }
 
-        FontUtil.drawStringWithShadow(dSetting.name, bounds.x.toFloat(), bounds.y.toFloat(), Colours.mainColour.value.rgb)
+        FontUtil.drawStringWithShadow(
+            dSetting.name,
+            bounds.x.toFloat(),
+            bounds.y.toFloat(),
+            Colours.mainColour.value.rgb
+        )
 
         //Render time in 12h format
         run {
