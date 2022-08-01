@@ -22,6 +22,10 @@ abstract class Window(var x: Float, var y: Float, var width: Float, var height: 
         openAnimation.state = true
     }
 
+    open fun scroll(mouseX: Int, mouseY: Int, mouseDelta: Int): Boolean {
+        return false
+    }
+
     open fun draw(mouseX: Int, mouseY: Int, mouseDelta: Int) {
         if (dragging) {
             x = mouseX - lastPosition.x

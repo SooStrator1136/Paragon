@@ -3,7 +3,7 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.client.systems.module.impl.client.ClickGUI
-import com.paragon.client.ui.configuration.retrowindows.element.RawElement
+import com.paragon.client.ui.configuration.shared.RawElement
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.elements.*
 import com.paragon.client.ui.util.Click

@@ -1,4 +1,4 @@
-package com.paragon.client.ui.configuration.retrowindows.element
+package com.paragon.client.ui.configuration.shared
 
 
 import com.paragon.client.ui.util.Click

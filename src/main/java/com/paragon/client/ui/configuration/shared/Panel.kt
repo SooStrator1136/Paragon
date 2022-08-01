@@ -1,13 +1,12 @@
-package com.paragon.client.ui.configuration.retrowindows.window
+package com.paragon.client.ui.configuration.shared
 
-import com.paragon.client.ui.configuration.retrowindows.element.RawElement
 import com.paragon.client.ui.util.Click
 import net.minecraft.util.math.Vec2f
 
 /**
  * @author Surge
  */
-abstract class Window(x: Float, y: Float, width: Float, height: Float) : RawElement(x, y, width, height) {
+abstract class Panel(x: Float, y: Float, width: Float, height: Float) : RawElement(x, y, width, height) {
 
     lateinit var title: String
     private var dragging = false

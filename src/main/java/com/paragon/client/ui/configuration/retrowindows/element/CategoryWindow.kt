@@ -1,4 +1,4 @@
-package com.paragon.client.ui.configuration.retrowindows.window.category
+package com.paragon.client.ui.configuration.retrowindows.element
 
 import com.paragon.Paragon
 import com.paragon.api.module.Category
@@ -7,7 +7,7 @@ import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
-import com.paragon.client.ui.configuration.retrowindows.window.Window
+import com.paragon.client.ui.configuration.shared.Panel
 import com.paragon.client.ui.util.Click
 import com.paragon.client.ui.util.animation.Animation
 import net.minecraft.util.math.MathHelper
@@ -16,7 +16,7 @@ import java.awt.Color
 /**
  * @author Surge
  */
-class CategoryWindow(category: Category, x: Float, y: Float, width: Float, height: Float) : Window(x, y, width, height) {
+class CategoryWindow(category: Category, x: Float, y: Float, width: Float, height: Float) : Panel(x, y, width, height) {
 
     private val moduleElements = ArrayList<ModuleElement>()
     val animation = Animation(ClickGUI.animationSpeed::value, true, ClickGUI.easing::value)
