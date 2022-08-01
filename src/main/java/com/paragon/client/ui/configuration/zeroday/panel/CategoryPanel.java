@@ -3,8 +3,9 @@ package com.paragon.client.ui.configuration.zeroday.panel;
 import com.paragon.Paragon;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTranslated;
 
-public class CategoryPanel extends Panel implements ITextRenderer {
+public class CategoryPanel extends Panel {
 
     private final Category category;
 
@@ -77,7 +78,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
         leftHue = MathHelper.clamp(leftHue, 0, 360);
         rightHue = MathHelper.clamp(rightHue, 0, 360);
 
-        RenderUtil.drawHorizontalRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getRadius().getValue(), ClickGUI.getRadius().getValue(), 1, 1, Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
+        RenderUtil.drawHorizontalGradientRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getRadius().getValue(), ClickGUI.getRadius().getValue(), 1, 1, Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
 
         float titleOffset = 5;
 
@@ -104,7 +105,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
         {
             float scaleFactor = 1 / 1.25f;
 
-            renderText(category.getName(), (getX() + titleOffset) * scaleFactor, (getY() + barHeight * scaleFactor / 2 - 2f) * scaleFactor, 0xFFFFFFFF);
+            FontUtil.drawStringWithShadow(category.getName(), (getX() + titleOffset) * scaleFactor, (getY() + barHeight * scaleFactor / 2 - 2f) * scaleFactor, 0xFFFFFFFF);
 
             glScalef(scaleFactor, scaleFactor, scaleFactor);
         }
@@ -180,7 +181,7 @@ public class CategoryPanel extends Panel implements ITextRenderer {
             offset += element.getTotalHeight();
         }
 
-        RenderUtil.drawHorizontalRoundedRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, 1, 1, MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
+        RenderUtil.drawHorizontalGradientRoundedRect(getX(), getY() + barHeight + scissorHeight, getWidth(), 2, 1, 1, MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), MathHelper.clamp(ClickGUI.getRadius().getValue(), 1, 2), Color.HSBtoRGB(getLeftHue() / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))), Color.HSBtoRGB(rightHue / 360, 1f, (float) (0.75f + (0.25f * getHover().getAnimationFactor()))));
 
         RenderUtil.pushScissor(getX(), (getY() * Paragon.INSTANCE.getZerodayGUI().getAnimation().getAnimationFactor()) + (barHeight * Paragon.INSTANCE.getZerodayGUI().getAnimation().getAnimationFactor()), getWidth(), scissorHeight);
 

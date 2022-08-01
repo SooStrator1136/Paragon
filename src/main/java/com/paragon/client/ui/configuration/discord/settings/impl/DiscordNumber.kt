@@ -1,6 +1,7 @@
 package com.paragon.client.ui.configuration.discord.settings.impl
 
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.client.ui.util.Click
@@ -18,7 +19,7 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
     var dragging = false
 
     init {
-        bounds.height = (fontHeight + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
     }
 
     override fun render(mouseX: Int, mouseY: Int) {
@@ -31,40 +32,40 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
             minusRect.setBounds(
                 bounds.x,
                 y.toInt(),
-                getStringWidth("<").toInt(),
-                fontHeight.toInt()
+                FontUtil.getStringWidth("<").toInt(),
+                FontUtil.getHeight().toInt()
             )
             valueRect.setBounds(
                 minusRect.x + minusRect.width + 2,
                 y.toInt(),
-                getStringWidth(setting.value.toString()).toInt(),
-                fontHeight.toInt()
+                FontUtil.getStringWidth(setting.value.toString()).toInt(),
+                FontUtil.getHeight().toInt()
             )
             plusRect.setBounds(
                 valueRect.x + valueRect.width + 2,
                 y.toInt(),
-                getStringWidth(">").toInt(),
-                fontHeight.toInt()
+                FontUtil.getStringWidth(">").toInt(),
+                FontUtil.getHeight().toInt()
             )
         }
 
         //Render < value >
         run {
-            renderText(
+            FontUtil.drawStringWithShadow(
                 "<",
                 minusRect.x.toFloat(),
                 minusRect.y.toFloat(),
                 if (minusRect.contains(mouseX, mouseY)) Colours.mainColour.value.rgb else -1
             )
 
-            renderText(
+            FontUtil.drawStringWithShadow(
                 setting.value.toString(),
                 valueRect.x.toFloat(),
                 valueRect.y.toFloat(),
                 -1
             )
 
-            renderText(
+            FontUtil.drawStringWithShadow(
                 ">",
                 plusRect.x.toFloat(),
                 plusRect.y.toFloat(),

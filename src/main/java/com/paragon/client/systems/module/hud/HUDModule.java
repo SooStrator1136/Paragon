@@ -2,7 +2,7 @@ package com.paragon.client.systems.module.hud;
 
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.util.render.RenderUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public abstract class HUDModule extends Module implements ITextRenderer {
+public abstract class HUDModule extends Module {
 
     private float x = 50, y = 50;
     private float width = 50, height = 50;

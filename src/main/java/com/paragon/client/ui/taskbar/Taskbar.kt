@@ -1,8 +1,9 @@
 package com.paragon.client.ui.taskbar
 
 import com.paragon.api.util.Wrapper
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.taskbar.start.StartMenu
 import com.paragon.client.ui.util.Click
@@ -15,7 +16,7 @@ import java.awt.Color
  * @author Surge
  * @since 26/07/2022
  */
-object Taskbar : Wrapper, ITextRenderer {
+object Taskbar : Wrapper {
 
     var tooltip = ""
 
@@ -43,8 +44,8 @@ object Taskbar : Wrapper, ITextRenderer {
         RenderUtil.drawRect(150f, scaledResolution.scaledHeight - (26f * expandAnimation.getAnimationFactor().toFloat()) - 2, scaledResolution.scaledWidth.toFloat() - 150f, 2f, Colours.mainColour.value.rgb)
 
         if (tooltip != "") {
-            RenderUtil.drawRect((scaledResolution.scaledWidth - getStringWidth(tooltip) - 4) + ((getStringWidth(tooltip) + 4) * expandAnimation.getAnimationFactor()).toFloat(), scaledResolution.scaledHeight - 16f, getStringWidth(tooltip) + 4, 13f, 0x90000000.toInt())
-            renderText(tooltip, scaledResolution.scaledWidth - getStringWidth(tooltip) - 2, scaledResolution.scaledHeight - 14f, Color.WHITE.rgb)
+            RenderUtil.drawRect((scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 4) + ((FontUtil.getStringWidth(tooltip) + 4) * expandAnimation.getAnimationFactor()).toFloat(), scaledResolution.scaledHeight - 16f, FontUtil.getStringWidth(tooltip) + 4, 13f, 0x90000000.toInt())
+            FontUtil.drawStringWithShadow(tooltip, scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 2, scaledResolution.scaledHeight - 14f, Color.WHITE.rgb)
         }
     }
 

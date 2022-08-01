@@ -1,7 +1,8 @@
 package com.paragon.client.ui.menu
 
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
 import net.minecraft.client.Minecraft
@@ -13,8 +14,7 @@ import java.awt.Color
 /**
  * @author Surge
  */
-class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, buttonText: String?) :
-    GuiButton(buttonId, x, y, widthIn, heightIn, buttonText), ITextRenderer {
+class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, buttonText: String?) : GuiButton(buttonId, x, y, widthIn, heightIn, buttonText) {
 
     private val animation = Animation({ 300.0f }, false) { Easing.EXPO_IN_OUT }
 
@@ -51,7 +51,8 @@ class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, 
             )
 
             mouseDragged(mc, mouseX, mouseY)
-            renderCenteredString(
+
+            FontUtil.renderCenteredString(
                 displayString, x + width / 2f,
                 y + (height - 1) / 2f, 0xFFFFFF, true
             )

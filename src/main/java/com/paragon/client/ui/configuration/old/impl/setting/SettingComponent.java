@@ -2,7 +2,7 @@ package com.paragon.client.ui.configuration.old.impl.setting;
 
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.impl.client.Colours;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * @author Wolfsurge
  */
-public class SettingComponent<T> implements ITextRenderer {
+public class SettingComponent<T> {
 
     private final ModuleButton moduleButton;
     private final Setting<T> setting;

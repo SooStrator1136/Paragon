@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
 import org.lwjgl.opengl.GL11;
@@ -25,7 +26,7 @@ public class BooleanComponent extends SettingComponent<Boolean> {
         GL11.glPushMatrix();
         GL11.glScalef(0.65f, 0.65f, 0.65f);
         float scaleFactor = 1 / 0.65f;
-        renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, getSetting().getValue() ? Colours.mainColour.getValue().getRGB() : -1);
+        FontUtil.drawStringWithShadow(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, getSetting().getValue() ? Colours.mainColour.getValue().getRGB() : -1);
         GL11.glPopMatrix();
 
         super.renderSetting(mouseX, mouseY);

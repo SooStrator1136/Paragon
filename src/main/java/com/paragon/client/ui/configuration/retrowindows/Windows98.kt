@@ -2,8 +2,9 @@ package com.paragon.client.ui.configuration.retrowindows
 
 import com.paragon.Paragon
 import com.paragon.api.module.Category
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.GuiImplementation
@@ -15,7 +16,7 @@ import java.awt.Color
 /**
  * @author Surge
  */
-class Windows98 : GuiImplementation(), ITextRenderer {
+class Windows98 : GuiImplementation() {
 
     private val windows = ArrayList<Window>()
 
@@ -49,23 +50,19 @@ class Windows98 : GuiImplementation(), ITextRenderer {
 
         if (tooltipName.isNotEmpty() && tooltipContent.isNotEmpty()) {
             val text = StringUtil.wrap(tooltipContent, 30)
-            val width = getStringWidth(text) + 6f
-            val height = 18f + (text.split(System.lineSeparator()).size * fontHeight)
+            val width = FontUtil.getStringWidth(text) + 6f
+            val height = 18f + (text.split(System.lineSeparator()).size * FontUtil.getHeight())
 
             RenderUtil.drawRect(mouseX + 8f, mouseY + 8f, width, height, Color(70, 70, 70).rgb)
             RenderUtil.drawRect(mouseX + 7f, mouseY + 7f, width, height, Color(148, 148, 148).rgb)
 
-            renderText(tooltipName, mouseX + 9f, mouseY + 12f, -1)
-            renderText(text, mouseX + 9f, mouseY + 12f + fontHeight, -1)
+            FontUtil.drawStringWithShadow(tooltipName, mouseX + 9f, mouseY + 12f, -1)
+            FontUtil.drawStringWithShadow(text, mouseX + 9f, mouseY + 12f + FontUtil.getHeight(), -1)
         }
-
-        Paragon.INSTANCE.taskbar.draw(mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         windows.forEach { it.mouseClicked(mouseX.toFloat(), mouseY.toFloat(), Click.getClick(mouseButton)) }
-
-        Paragon.INSTANCE.taskbar.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {

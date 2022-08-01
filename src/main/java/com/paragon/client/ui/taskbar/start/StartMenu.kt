@@ -3,8 +3,9 @@ package com.paragon.client.ui.taskbar.start
 import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
 import com.paragon.api.util.Wrapper.mc
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.windows.impl.ChangelogWindow
 import com.paragon.client.ui.configuration.windows.impl.ConfigWindow
@@ -21,7 +22,7 @@ import java.awt.Color
  * @author Surge
  * @since 26/07/2022
  */
-object StartMenu : Wrapper, ITextRenderer {
+object StartMenu : Wrapper {
 
     var x = 5f
     var y = 5f
@@ -95,7 +96,7 @@ object StartMenu : Wrapper, ITextRenderer {
 
         RenderUtil.drawRect(x + 1, y + 1, width, height, Color(100, 100, 100).rgb)
         RenderUtil.drawRect(x, y, width, height, Color(120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0)).rgb)
-        renderText("Start", x + 22, y + 6, -1)
+        FontUtil.drawStringWithShadow("Start", x + 22, y + 6, -1)
 
         minecraft.textureManager.bindTexture(ResourceLocation("paragon", "textures/logo.png"))
         RenderUtil.drawModalRectWithCustomSizedTexture(x + 1, y + 1, 0f, 0f, 18f, 18f, 18f, 18f)

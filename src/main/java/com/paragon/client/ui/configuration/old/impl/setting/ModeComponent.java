@@ -4,6 +4,7 @@ import com.paragon.Paragon;
 import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.api.util.string.StringUtil;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
 import net.minecraft.util.text.TextFormatting;
@@ -27,10 +28,10 @@ public class ModeComponent extends SettingComponent<Enum<?>> {
 
         {
             float scaleFactor = 1 / 0.65f;
-            renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+            FontUtil.drawStringWithShadow(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
 
-            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(mode) * 0.65f) - 5) * scaleFactor;
-            renderText(formatCode(TextFormatting.GRAY) + " " + mode, side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (FontUtil.getStringWidth(mode) * 0.65f) - 5) * scaleFactor;
+            FontUtil.drawStringWithShadow(TextFormatting.GRAY + " " + mode, side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
         }
 
         GL11.glPopMatrix();

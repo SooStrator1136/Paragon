@@ -105,7 +105,6 @@ public class ZerodayGUI extends GuiImplementation {
         glTranslated(0, 24 - (24 * openAnimation.getAnimationFactor()), 0);
 
         Paragon.INSTANCE.getTaskbar().setTooltip(tooltip[0]);
-        Paragon.INSTANCE.getTaskbar().draw(mouseX, mouseY);
 
         glPopMatrix();
     }
@@ -117,8 +116,6 @@ public class ZerodayGUI extends GuiImplementation {
         panels.forEach(panel -> panel.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton)));
 
         Collections.reverse(panels);
-
-        Paragon.INSTANCE.getTaskbar().mouseClicked(mouseX, mouseY, Click.getClick(mouseButton));
     }
 
     @Override

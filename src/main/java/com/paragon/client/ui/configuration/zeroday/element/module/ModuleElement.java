@@ -4,6 +4,7 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.setting.*;
@@ -55,10 +56,10 @@ public final class ModuleElement extends Element {
 
         Color textColour = new Color(factor, factor, factor);
 
-        renderText(module.getName(), getX() + 5, getY() + getHeight() / 2 - 3.5f, textColour.getRGB());
+        FontUtil.drawStringWithShadow(module.getName(), getX() + 5, getY() + getHeight() / 2 - 3.5f, textColour.getRGB());
 
         if (getSubElements().size() > 2) {
-            renderText("...", getX() + getWidth() - getStringWidth("...") - 5, getY() + 2f, -1);
+            FontUtil.drawStringWithShadow("...", getX() + getWidth() - FontUtil.getStringWidth("...") - 5, getY() + 2f, -1);
         }
 
         super.render(mouseX, mouseY, dWheel);

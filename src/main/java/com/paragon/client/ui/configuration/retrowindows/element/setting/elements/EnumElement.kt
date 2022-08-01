@@ -2,6 +2,7 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting.element
 
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
@@ -28,11 +29,11 @@ class EnumElement(parent: ModuleElement, setting: Setting<Enum<*>>, x: Float, y:
         glScalef(0.8f, 0.8f, 0.8f)
 
         val scaleFactor = 1 / 0.8f
-        renderText(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
+        FontUtil.drawStringWithShadow(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
 
-        val valueX = (x + width - getStringWidth(StringUtil.getFormattedText(setting.value)) * 0.8f - 5) * scaleFactor
+        val valueX = (x + width - FontUtil.getStringWidth(StringUtil.getFormattedText(setting.value)) * 0.8f - 5) * scaleFactor
 
-        renderText(StringUtil.getFormattedText(setting.value), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb)
+        FontUtil.drawStringWithShadow(StringUtil.getFormattedText(setting.value), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb)
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
 

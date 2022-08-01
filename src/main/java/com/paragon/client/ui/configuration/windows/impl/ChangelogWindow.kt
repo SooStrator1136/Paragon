@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.windows.impl
 import com.paragon.Paragon
 import com.paragon.api.util.render.BlurUtil
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.windows.Window
@@ -35,26 +36,26 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
         }
 
         RenderUtil.drawRect(x, y, width * openAnimation.getAnimationFactor().toFloat(), grabbableHeight, Colours.mainColour.value.rgb)
-        renderText("Changelog", x + 3, y + 4, -1)
+        FontUtil.drawStringWithShadow("Changelog", x + 3, y + 4, -1)
 
         RenderUtil.drawBorder(x + 0.5f, y + 0.5f, ((width - 1) * openAnimation.getAnimationFactor()).toFloat(), ((height - 1) * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value.rgb)
 
         RenderUtil.drawRect(x + width - 16f, y, 16f, grabbableHeight, 0x90000000.toInt())
-        Paragon.INSTANCE.fontManager.fontRenderer.drawStringWithShadow("X", (x + width - 9f) - (Paragon.INSTANCE.fontManager.fontRenderer.getStringWidth("X") / 2f), y + 1.5f, -1)
+        FontUtil.defaultFont.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.defaultFont.getStringWidth("X") / 2f), y + 1.5f, -1)
 
         var offset = grabbableHeight + 5f
 
         changelog.forEach {
-            renderText(it, x + 5, y + offset, -1)
+            FontUtil.drawStringWithShadow(it, x + 5, y + offset, -1)
 
-            offset += fontHeight
+            offset += FontUtil.getHeight()
         }
 
         RenderUtil.popScissor()
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, click: Click): Boolean {
-        if (mouseX.toFloat() in x + width - getStringWidth("X") - 5..x + width && mouseY.toFloat() in y..y + grabbableHeight) {
+        if (mouseX.toFloat() in x + width - FontUtil.getStringWidth("X") - 5..x + width && mouseY.toFloat() in y..y + grabbableHeight) {
             openAnimation.state = false
             return true
         }

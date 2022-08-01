@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.hud.impl;
 import com.paragon.Paragon;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +32,7 @@ public class Watermark extends HUDModule {
     public void render() {
         switch (display.getValue()) {
             case TEXT:
-                renderText("Paragon " + TextFormatting.GRAY + Paragon.modVersion, getX(), getY(), Colours.mainColour.getValue().getRGB());
+                FontUtil.drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, getX(), getY(), Colours.mainColour.getValue().getRGB());
                 break;
 
             case IMAGE:

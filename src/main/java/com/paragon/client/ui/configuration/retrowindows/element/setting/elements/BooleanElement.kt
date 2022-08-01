@@ -2,6 +2,7 @@ package com.paragon.client.ui.configuration.retrowindows.element.setting.element
 
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
@@ -32,7 +33,7 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
         glScalef(0.8f, 0.8f, 0.8f)
 
         val scaleFactor = 1 / 0.8f
-        renderText(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
+        FontUtil.drawStringWithShadow(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
 
@@ -45,12 +46,14 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
             RenderUtil.pushScissor(x.toDouble(), scissorY.toDouble(), width.toDouble(), scissorHeight.toDouble())
 
             subSettings.forEach {
-                it.x = x + 2
-                it.y = y + height + yOffset
+                if (it.setting.isVisible()) {
+                    it.x = x + 2
+                    it.y = y + height + yOffset
 
-                it.draw(mouseX, mouseY, mouseDelta)
+                    it.draw(mouseX, mouseY, mouseDelta)
 
-                yOffset += it.getTotalHeight()
+                    yOffset += it.getTotalHeight()
+                }
             }
 
             RenderUtil.popScissor()

@@ -1,8 +1,9 @@
 package com.paragon.client.ui.configuration.discord.module
 
 import com.paragon.api.module.Module
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.category.CategoryBar
@@ -18,7 +19,7 @@ import java.awt.datatransfer.StringSelection
 /**
  * @author SooStrator1136
  */
-object ModuleBar : IRenderable, ITextRenderer {
+object ModuleBar : IRenderable {
 
     var focusedModule: Module? = null
 
@@ -101,7 +102,7 @@ object ModuleBar : IRenderable, ITextRenderer {
             )
             renderHead(userRect.x + 3, userRect.y + 2, 20)
 
-            if (getStringWidth(mc.player.name) > userRect.width - 30.0) {
+            if (FontUtil.getStringWidth(mc.player.name) > userRect.width - 30.0) {
                 nameAnimation.state = userRect.contains(mouseX, mouseY)
             }
 
@@ -111,10 +112,10 @@ object ModuleBar : IRenderable, ITextRenderer {
                 userRect.width - 30.0,
                 userRect.height.toDouble()
             )
-            renderText(
+            FontUtil.drawStringWithShadow(
                 mc.player.name,
-                (((userRect.x + 30F) - ((getStringWidth(mc.player.name) - (userRect.width - 30F)) * nameAnimation.getAnimationFactor())).toFloat()),
-                (userRect.y + (userRect.height / 2F)) - (fontHeight / 2),
+                (((userRect.x + 30F) - ((FontUtil.getStringWidth(mc.player.name) - (userRect.width - 30F)) * nameAnimation.getAnimationFactor())).toFloat()),
+                (userRect.y + (userRect.height / 2F)) - (FontUtil.getHeight() / 2),
                 Color.WHITE.rgb
             )
             RenderUtil.popScissor()
@@ -122,17 +123,18 @@ object ModuleBar : IRenderable, ITextRenderer {
             //Render the "copied" thing after the name was copied
             if (lastCopyTime != 0L) {
                 RenderUtil.drawRoundedRect(
-                    (userRect.x + ((userRect.width - getStringWidth("Copied!")) / 2.0)) - 2.0,
-                    (userRect.y - (fontHeight / 2.0)) - 1.5,
-                    getStringWidth("Copied!") + 4.0,
-                    fontHeight + 3.0,
+                    (userRect.x + ((userRect.width - FontUtil.getStringWidth("Copied!")) / 2.0)) - 2.0,
+                    (userRect.y - (FontUtil.getHeight() / 2.0)) - 1.5,
+                    FontUtil.getStringWidth("Copied!") + 4.0,
+                    FontUtil.getHeight() + 3.0,
                     5.0,
                     5.0,
                     5.0,
                     5.0,
                     GuiDiscord.USER_COPIED_COLOR.rgb
                 )
-                renderCenteredString(
+
+                FontUtil.renderCenteredString(
                     "Copied!",
                     (userRect.x + (userRect.width / 2)).toFloat(),
                     userRect.y.toFloat(),

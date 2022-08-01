@@ -1,6 +1,7 @@
 package com.paragon.client.systems.module.hud.impl
 
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDModule
 import java.awt.Color
 
@@ -16,11 +17,11 @@ object CustomText : HUDModule("CustomText", "Display custom text of your choice!
         .setDescription("The colour of the text")
 
     override fun render() {
-        renderText(text.value, x, y, textColour.value.rgb)
+        FontUtil.drawStringWithShadow(text.value, x, y, textColour.value.rgb)
     }
 
-    override fun getWidth() = getStringWidth(text.value)
+    override fun getWidth() = FontUtil.getStringWidth(text.value)
 
-    override fun getHeight() = fontHeight
+    override fun getHeight() = FontUtil.getHeight()
 
 }

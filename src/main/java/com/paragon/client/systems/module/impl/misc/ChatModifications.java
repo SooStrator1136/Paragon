@@ -28,7 +28,7 @@ public class ChatModifications extends Module {
 
     @SubscribeEvent
     public void onChat(ClientChatEvent event) {
-        if (Paragon.INSTANCE.getCommandManager().startsWithPrefix(event.getMessage())) {
+        if (event.getMessage().startsWith("/") || Paragon.INSTANCE.getCommandManager().startsWithPrefix(event.getMessage())) {
             return;
         }
 

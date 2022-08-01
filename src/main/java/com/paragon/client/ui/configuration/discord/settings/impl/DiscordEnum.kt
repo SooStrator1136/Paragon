@@ -1,6 +1,7 @@
 package com.paragon.client.ui.configuration.discord.settings.impl
 
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClientFont
 import com.paragon.client.systems.module.impl.client.Colours
@@ -25,25 +26,25 @@ class DiscordEnum(val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
     override fun render(mouseX: Int, mouseY: Int) {
         super.render(mouseX, mouseY)
 
-        var currY = bounds.y + fontHeight + 1F
+        var currY = bounds.y + FontUtil.getHeight() + 1F
         var currX = bounds.x
         optionRects.forEachIndexed { i, rect ->
             (rect ?: return@forEachIndexed).setBounds(
                 currX,
                 currY.toInt(),
-                getStringWidth(getFormattedName(options[i])).toInt(),
-                fontHeight.toInt()
+                FontUtil.getStringWidth(getFormattedName(options[i])).toInt(),
+                FontUtil.getHeight().toInt()
             )
             if (rect.x + rect.width > bounds.x + bounds.width) {
                 currX = bounds.x
-                currY += fontHeight + 1F
+                currY += FontUtil.getHeight() + 1F
                 rect.x = bounds.x
                 rect.y = currY.toInt()
             }
 
-            currX += (rect.width + getStringWidth(", ")).toInt()
+            currX += (rect.width + FontUtil.getStringWidth(", ")).toInt()
 
-            renderText(
+            FontUtil.drawStringWithShadow(
                 getFormattedName(options[i]) + if (i != options.size - 1) "," else "",
                 rect.x.toFloat(),
                 rect.y.toFloat(),
