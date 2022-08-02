@@ -60,6 +60,7 @@ class ModuleManager {
             ClearChat(),
             ESP(),
             Fullbright,
+            HandChams,
             HitColour(),
             HoleESP(),
             MobOwner(),
