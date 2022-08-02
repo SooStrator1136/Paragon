@@ -79,9 +79,7 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
 
                 // Reset timer
                 timer.reset()
-            }
-
-            else {
+            } else {
                 // Set timer speed to the air speed
                 setTimerSpeed(airSpeed.value)
 

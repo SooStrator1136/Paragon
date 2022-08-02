@@ -4,6 +4,7 @@ import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import com.paragon.client.managers.notifications.Notification
 import com.paragon.client.managers.notifications.NotificationType
@@ -40,7 +41,7 @@ object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find do
     private val timer = Timer()
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 

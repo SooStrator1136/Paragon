@@ -42,6 +42,6 @@ operator fun Number.plus(toAdd: Number): Number {
         is Int -> this.toInt().plus(toAdd.toInt())
         is Short -> this.toShort().plus(toAdd.toShort())
         is Byte -> this.toByte().plus(toAdd.toByte())
-        else -> 0 //Shouldn't be reached since setting are supposed to me float or double
+        else -> 0 //Shouldn't be reached
     }
 }

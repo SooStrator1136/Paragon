@@ -17,7 +17,7 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
         .setVisibility { mode.value === Mode.OMNI }
 
     override fun onDisable() {
-        // Stop us sprinting when we disable
+        // Stop sprinting when we disable
         minecraft.player?.isSprinting = false
     }
 
@@ -33,12 +33,13 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
                     // Make us sprint
                     player.isSprinting = true
                 }
+
                 Mode.LEGIT -> player.isSprinting = player.movementInput.moveForward > 0 // Make us sprint if we are pressing forward
             }
         }
     }
 
-    override fun getData() = StringUtil.getFormattedText(mode.value)
+    override fun getData(): String = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
 
@@ -51,7 +52,6 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
          * Always sprint
          */
         OMNI
-
     }
 
 }

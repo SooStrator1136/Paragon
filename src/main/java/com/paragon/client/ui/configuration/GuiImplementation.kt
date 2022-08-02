@@ -23,6 +23,7 @@ abstract class GuiImplementation {
     open fun onGuiClosed() {
         Paragon.INSTANCE.storageManager.saveModules("current")
     }
+
     open fun doesGuiPauseGame(): Boolean = ClickGUI.pause.value
 
     fun drawDefaultBackground() {

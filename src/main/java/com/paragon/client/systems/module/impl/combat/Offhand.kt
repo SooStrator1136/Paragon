@@ -6,6 +6,7 @@ import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Bind.Device
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.Wrapper.mc
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.player.InventoryUtil
@@ -92,7 +93,7 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private val swapTimer = Timer()
 
     override fun onTick() {
-        if (nullCheck() || minecraft.player.isDead || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
+        if (minecraft.anyNull || minecraft.player.isDead || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
             return
         }
 

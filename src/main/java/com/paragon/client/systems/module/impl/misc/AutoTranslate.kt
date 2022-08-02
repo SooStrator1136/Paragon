@@ -102,4 +102,5 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
             toggle()
         }
     }
+
 }

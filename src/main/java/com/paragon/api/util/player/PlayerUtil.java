@@ -8,7 +8,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
-public class PlayerUtil implements Wrapper {
+public final class PlayerUtil implements Wrapper {
 
     public static void stopMotion(float fallSpeed) {
         mc.player.setVelocity(0, fallSpeed, 0);

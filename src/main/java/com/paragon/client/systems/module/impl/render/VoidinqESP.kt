@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.world.BlockUtil
@@ -51,7 +52,7 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
     private val holes: ArrayList<BlockPos> = ArrayList()
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
