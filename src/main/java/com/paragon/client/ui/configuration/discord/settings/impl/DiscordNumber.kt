@@ -158,7 +158,6 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
             )
         }
 
-        //Set new value if left mouse button is pressed
         if (Mouse.isButtonDown(Click.LEFT.button) && sliderBounds.contains(mouseX, mouseY)) {
             setting.setValue(getNewValue(mouseX))
         }
@@ -172,18 +171,18 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
         setting.setValue(getNewValue(mouseX))
     }
 
-    private fun getNewValue(mouseX: Int) = roundToIncrementation(
-        setting.incrementation!!.toDouble(),
-        roundDouble(
+    private fun getNewValue(mouseX: Int) = roundDouble(
+        roundToIncrementation(
+            setting.incrementation!!.toDouble(),
             getPercentOf(
                 getPercent(
                     (mouseX - sliderBounds.x).toDouble(),
                     sliderBounds.width - 1.0
                 ),
                 (setting.max!! - setting.min!!).toDouble(),
-            ),
-            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
-        )
+            )
+        ),
+        BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
     )
 
     override fun onKey(keyCode: Int) {}

@@ -1,6 +1,5 @@
 package com.paragon.client.systems.module.impl.combat;
 
-import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
@@ -17,8 +16,6 @@ import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.ICPacketUseEntity;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.managers.rotation.Rotate;
-import com.paragon.client.managers.rotation.Rotation;
-import com.paragon.client.managers.rotation.RotationPriority;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -275,7 +272,7 @@ public class AutoCrystalRewrite extends Module {
 
     private final Map<BlockPos, Float> renderPositions = new ConcurrentHashMap<>();
 
-    private State state = null;
+    private State elongatedMuskrat = null;
 
     private int passedTicks = 0;
 
@@ -287,7 +284,7 @@ public class AutoCrystalRewrite extends Module {
 
     @Override
     public void onDisable() {
-        state = null;
+        elongatedMuskrat = null;
         renderPositions.clear();
 
         if (originalSlot != -1 && swapBack.getValue()) {
@@ -438,7 +435,7 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void explodeCrystals() {
-        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue()) || timing.getValue().equals(Timing.SEQUENTIAL) && state.equals(State.PLACING)) {
+        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue()) || timing.getValue().equals(Timing.SEQUENTIAL) && elongatedMuskrat.equals(State.PLACING)) {
             return;
         }
 
@@ -509,7 +506,7 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void placeCrystals() {
-        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2) || timing.getValue().equals(Timing.SEQUENTIAL) && state.equals(State.EXPLODING)) {
+        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2) || timing.getValue().equals(Timing.SEQUENTIAL) && elongatedMuskrat.equals(State.EXPLODING)) {
             return;
         }
 
@@ -856,28 +853,28 @@ public class AutoCrystalRewrite extends Module {
          * Explodes ender crystals then places them
          */
         EXPLODE_PLACE(() -> {
-            if (AutoCrystalRewrite.INSTANCE.state == null) {
-                AutoCrystalRewrite.INSTANCE.state = State.EXPLODING;
+            if (AutoCrystalRewrite.INSTANCE.elongatedMuskrat == null) {
+                AutoCrystalRewrite.INSTANCE.elongatedMuskrat = State.EXPLODING;
             }
 
             INSTANCE.explodeCrystals();
             INSTANCE.placeCrystals();
 
-            AutoCrystalRewrite.INSTANCE.state = AutoCrystalRewrite.INSTANCE.state == State.EXPLODING ? State.PLACING : State.EXPLODING;
+            AutoCrystalRewrite.INSTANCE.elongatedMuskrat = AutoCrystalRewrite.INSTANCE.elongatedMuskrat == State.EXPLODING ? State.PLACING : State.EXPLODING;
         }),
 
         /**
          * Places ender crystals then explodes them
          */
         PLACE_EXPLODE(() -> {
-            if (AutoCrystalRewrite.INSTANCE.state == null) {
-                AutoCrystalRewrite.INSTANCE.state = State.PLACING;
+            if (AutoCrystalRewrite.INSTANCE.elongatedMuskrat == null) {
+                AutoCrystalRewrite.INSTANCE.elongatedMuskrat = State.PLACING;
             }
 
             INSTANCE.placeCrystals();
             INSTANCE.explodeCrystals();
 
-            AutoCrystalRewrite.INSTANCE.state = AutoCrystalRewrite.INSTANCE.state == State.EXPLODING ? State.PLACING : State.EXPLODING;
+            AutoCrystalRewrite.INSTANCE.elongatedMuskrat = AutoCrystalRewrite.INSTANCE.elongatedMuskrat == State.EXPLODING ? State.PLACING : State.EXPLODING;
         });
 
         private final Runnable function;

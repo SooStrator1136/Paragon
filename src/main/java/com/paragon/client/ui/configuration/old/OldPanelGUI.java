@@ -2,7 +2,6 @@ package com.paragon.client.ui.configuration.old;
 
 import com.paragon.Paragon;
 import com.paragon.api.module.Category;
-
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
@@ -18,7 +17,7 @@ import java.util.Objects;
 /**
  * @author Wolfsurge
  */
-public class OldPanelGUI extends GuiImplementation {
+public final class OldPanelGUI extends GuiImplementation {
 
     public static OldPanelGUI INSTANCE = new OldPanelGUI();
 
@@ -27,7 +26,7 @@ public class OldPanelGUI extends GuiImplementation {
     // List of panels
     private final ArrayList<Panel> panels = new ArrayList<>();
 
-    public OldPanelGUI() {
+    private OldPanelGUI() {
         // X position of panel
         float x = (RenderUtil.getScreenWidth() / 2) - ((Category.values().length * 100) / 2f);
 

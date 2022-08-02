@@ -13,6 +13,7 @@ import net.minecraft.util.math.MathHelper
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11.glScalef
 import java.awt.Color
+import java.math.BigDecimal
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -60,8 +61,13 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / maxWidth * (max - min) + min).toDouble(), 2).toFloat()
                     val precision = 1 / setting.incrementation!!.toFloat()
-                    newValue = round(max(min, min(max, newValue)) * precision) / precision
-                    setting.setValue(newValue)
+                    newValue = (round(max(min, min(max, newValue)) * precision) / precision)
+                    setting.setValue(
+                        MathsUtil.roundDouble(
+                            newValue.toDouble(),
+                            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+                        ).toFloat()
+                    )
                 }
             }
         } else if (setting.value is Double) {
@@ -96,7 +102,9 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
 
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
 
-                    setting.setValue(newValue)
+                    setting.setValue(
+                        MathsUtil.roundDouble(newValue, BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale())
+                    )
                 }
             }
         }

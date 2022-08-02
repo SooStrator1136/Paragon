@@ -1,9 +1,10 @@
 package com.paragon.client.systems.module.impl.render
 
-import com.paragon.api.util.string.StringUtil
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
+import com.paragon.api.util.string.StringUtil
 import net.minecraft.init.MobEffects
 import net.minecraft.potion.PotionEffect
 
@@ -28,13 +29,13 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         minecraft.gameSettings.gammaSetting = this.originalGamma
 
         // Remove night vision
-        if (!nullCheck()) {
+        if (!minecraft.anyNull) {
             minecraft.player.removePotionEffect(MobEffects.NIGHT_VISION)
         }
     }
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -52,7 +53,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
     }
 
-    override fun getData() = StringUtil.getFormattedText(mode.value)
+    override fun getData(): String = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
         /**

@@ -44,9 +44,8 @@ object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes
                     minecraft.player.setVelocity(0.0, 0.0624, 0.0)
                     renderPosition = BlockPos(minecraft.player.posX, 0.0, minecraft.player.posZ)
                 }
-                Mode.LAGBACK -> {
-                    minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY + 100, minecraft.player.posZ, minecraft.player.onGround))
-                }
+
+                Mode.LAGBACK -> minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY + 100, minecraft.player.posZ, minecraft.player.onGround))
             }
         } else {
             renderPosition = null
