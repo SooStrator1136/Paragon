@@ -7,11 +7,11 @@ import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.item.ItemChorusFruit;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketConfirmTeleport;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.Collection;
  */
 public final class ChorusControl extends Module {
 
-    private final Setting<Boolean> cPacketPlayer = new Setting<>("cPacketPlayer", true);
+    private final Setting<Boolean> cPacketPlayer = new Setting<>("CPacketPlayer", true);
     private final Setting<Boolean> packetPlayerPosLook = new Setting<>("SPacketPlayerPosLook", true);
 
     private final Collection<CPacketPlayer> packets = new ArrayList<>(10);
@@ -36,21 +36,31 @@ public final class ChorusControl extends Module {
         super("ChorusControl", Category.MISC, "Cancels packets to let you not teleport");
     }
 
+    @Override
+    public void onDisable() {
+        if (mc.getConnection() != null) {
+            this.packets.forEach(mc.getConnection()::sendPacket);
+            this.teleportPackets.forEach(mc.getConnection()::sendPacket);
+        }
+
+        this.packets.clear();
+        this.teleportPackets.clear();
+        this.ate = false;
+    }
+
+    @Override
+    public void onRender3D() {
+        if (this.renderPos == null) {
+            return;
+        }
+
+        RenderUtil.drawNametagText("Player Chorus", this.renderPos, -1);
+    }
+
     @Listener
-    public void onPacketReceive(final PacketEvent.PreReceive event) {
+    public void onPacketReceive(PacketEvent.PreReceive event) {
         if (event.getPacket() instanceof CPacketPlayerTryUseItem) {
-            ItemStack heldStack = null;
-
-            switch (((CPacketPlayerTryUseItem) event.getPacket()).getHand()) {
-                case OFF_HAND:
-                    heldStack = mc.player.getHeldItemOffhand();
-                    break;
-                case MAIN_HAND:
-                    heldStack = mc.player.getHeldItemMainhand();
-                    break;
-            }
-
-            if (heldStack != null && heldStack.getItem() instanceof ItemChorusFruit) {
+            if ((((CPacketPlayerTryUseItem) event.getPacket()).getHand() == EnumHand.OFF_HAND ? mc.player.getHeldItemOffhand() : mc.player.getHeldItemMainhand()).getItem() instanceof ItemChorusFruit) {
                 this.ate = true;
             }
         }
@@ -69,27 +79,6 @@ public final class ChorusControl extends Module {
                 event.cancel();
             }
         }
-    }
-
-    @Override
-    public void onRender3D() {
-        if (this.renderPos == null) {
-            return;
-        }
-
-        RenderUtil.drawNametagText("Player Chorus", this.renderPos, -1);
-    }
-
-    @Override
-    public void onDisable() {
-        if (mc.getConnection() != null) {
-            this.packets.forEach(mc.getConnection()::sendPacket);
-            this.teleportPackets.forEach(mc.getConnection()::sendPacket);
-        }
-
-        this.packets.clear();
-        this.teleportPackets.clear();
-        this.ate = false;
     }
 
 }
