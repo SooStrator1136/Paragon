@@ -1,194 +1,183 @@
-package com.paragon.client.systems.module.impl.render;
+package com.paragon.client.systems.module.impl.render
 
-import com.paragon.api.util.entity.EntityUtil;
-import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.asm.mixins.accessor.IMinecraft;
-import com.paragon.asm.mixins.accessor.IRenderManager;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import net.minecraft.item.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.api.util.entity.EntityUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
+import com.paragon.api.util.render.ColourUtil.setColour
+import com.paragon.api.util.render.RenderUtil.drawBoundingBox
+import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.asm.mixins.accessor.IMinecraft
+import com.paragon.asm.mixins.accessor.IRenderManager
+import net.minecraft.item.*
+import net.minecraft.util.math.AxisAlignedBB
+import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec3d
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
+import java.awt.Color
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
-import java.awt.*;
+object Trajectories : Module("Trajectories", Category.RENDER, "Shows where projectiles will land") {
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glLineWidth;
+    private val line = Setting<Boolean?>("Line", true)
+        .setDescription("Render a line to the projectile's destination")
 
-public class Trajectories extends Module {
+    private val lineColour = Setting("LineColour", Color(185, 17, 255))
+        .setDescription("The colour of the line")
+        .setParentSetting(line)
 
-    public static Trajectories INSTANCE;
+    private val lineWidth = Setting("LineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
+        .setDescription("The width of the line")
+        .setParentSetting(line)
 
-    public static Setting<Boolean> line = new Setting<>("Line", true)
-            .setDescription("Render a line to the projectile's destination");
+    private val box = Setting<Boolean?>("Box", true)
+        .setDescription("Render a box at the projectile's destination")
 
-    public static Setting<Color> lineColour = new Setting<>("LineColour", new Color(185, 17, 255))
-            .setDescription("The colour of the line")
-            .setParentSetting(line);
+    private val fill = Setting("Fill", true)
+        .setDescription("Fill the box at the end of the line")
+        .setParentSetting(box)
 
-    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
-            .setDescription("The width of the line")
-            .setParentSetting(line);
+    private val outline = Setting("Outline", true)
+        .setDescription("Outline the box at the end of the line")
+        .setParentSetting(box)
 
-    public static Setting<Boolean> box = new Setting<>("Box", true)
-            .setDescription("Render a box at the projectile's destination");
+    private val outlineWidth = Setting("OutlineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
+        .setDescription("The width of the outline")
+        .setParentSetting(box)
+        .setVisibility(outline::value)
 
-    public static Setting<Boolean> fill = new Setting<>("Fill", true)
-            .setDescription("Fill the box at the end of the line")
-            .setParentSetting(box);
+    private val boxColour = Setting("BoxColour", Color(185, 17, 255, 130))
+        .setDescription("The colour of the box at the end of the line")
+        .setParentSetting(box)
+        .setVisibility { fill.value || outline.value }
 
-    public static Setting<Boolean> outline = new Setting<>("Outline", true)
-            .setDescription("Outline the box at the end of the line")
-            .setParentSetting(box);
+    private val bow = Setting("Bow", true)
+        .setDescription("Draw the trajectory of the bow")
 
-    public static Setting<Float> outlineWidth = new Setting<>("OutlineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
-            .setDescription("The width of the outline")
-            .setParentSetting(box)
-            .setVisibility(outline::getValue);
+    private val snowball = Setting("Snowball", true)
+        .setDescription("Draw the trajectory of snowballs")
 
-    public static Setting<Color> boxColour = new Setting<>("BoxColour", new Color(185, 17, 255, 130))
-            .setDescription("The colour of the box at the end of the line")
-            .setVisibility(() -> fill.getValue() || outline.getValue())
-            .setParentSetting(box);
+    private val egg = Setting("Egg", true)
+        .setDescription("Draw the trajectory of eggs")
 
-    public static Setting<Boolean> bow = new Setting<>("Bow", true)
-            .setDescription("Draw the trajectory of the bow");
+    private val exp = Setting("EXP", true)
+        .setDescription("Draw the trajectory of EXP bottles")
 
-    public static Setting<Boolean> snowball = new Setting<>("Snowball", true)
-            .setDescription("Draw the trajectory of snowballs");
+    private val potion = Setting("Potion", true)
+        .setDescription("Draw the trajectory of splash potions")
 
-    public static Setting<Boolean> egg = new Setting<>("Egg", true)
-            .setDescription("Draw the trajectory of eggs");
-
-    public static Setting<Boolean> exp = new Setting<>("EXP", true)
-            .setDescription("Draw the trajectory of EXP bottles");
-
-    public static Setting<Boolean> potion = new Setting<>("Potion", true)
-            .setDescription("Draw the trajectory of splash potions");
-
-    public Trajectories() {
-        super("Trajectories", Category.RENDER, "Shows where projectiles will land");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onRender3D() {
+    override fun onRender3D() {
         if (nullCheck()) {
-            return;
+            return
         }
-
-        ItemStack stack = mc.player.getHeldItemMainhand();
+        
+        val stack = minecraft.player.heldItemMainhand
 
         // Check the item we are holding is a projectile (or a bow) and that projectile is enabled
-        if (stack.getItem() instanceof ItemBow && bow.getValue() || stack.getItem() instanceof ItemSnowball && snowball.getValue() || stack.getItem() instanceof ItemEgg && egg.getValue() || stack.getItem() instanceof ItemSplashPotion && potion.getValue() || stack.getItem() instanceof ItemExpBottle && exp.getValue()) {
+        if (stack.item is ItemBow && bow.value || stack.item is ItemSnowball && snowball.value || stack.item is ItemEgg && egg.value || stack.item is ItemSplashPotion && potion.value || stack.item is ItemExpBottle && exp.value) {
             // If we are holding a bow, make sure we are charging
-            if (stack.getItem() instanceof ItemBow && !mc.player.isHandActive()) {
-                return;
+            if (stack.item is ItemBow && !minecraft.player.isHandActive) {
+                return
             }
 
             // Original arrow position
-            Vec3d position = new Vec3d(
-                    // X position
-                    mc.player.lastTickPosX + (mc.player.posX - mc.player.lastTickPosX) * ((IMinecraft) mc).getTimer().renderPartialTicks - (Math.cos((float) Math.toRadians(mc.player.rotationYaw)) * 0.16F),
-                    // Y position
-                    mc.player.lastTickPosY + (mc.player.posY - mc.player.lastTickPosY) * ((IMinecraft) mc).getTimer().renderPartialTicks + mc.player.getEyeHeight() - 0.15,
-                    // Z position
-                    mc.player.lastTickPosZ + (mc.player.posZ - mc.player.lastTickPosZ) * ((IMinecraft) mc).getTimer().renderPartialTicks - (Math.sin((float) Math.toRadians(mc.player.rotationYaw)) * 0.16F));
+            var position = Vec3d(minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * (minecraft as IMinecraft).timer.renderPartialTicks - cos(Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()) * 0.16f, minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * (minecraft as IMinecraft).timer.renderPartialTicks + minecraft.player.getEyeHeight() - 0.15, minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * (minecraft as IMinecraft).timer.renderPartialTicks - sin(Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()) * 0.16f)
 
             // Original arrow velocity
-            Vec3d velocity = new Vec3d(
-                    // X velocity
-                    -Math.sin(Math.toRadians(mc.player.rotationYaw)) * Math.cos(Math.toRadians(mc.player.rotationPitch)) * (stack.getItem() instanceof ItemBow ? 1.0F : 0.4F),
-                    // Y velocity
-                    -Math.sin(Math.toRadians(mc.player.rotationPitch)) * (stack.getItem() instanceof ItemBow ? 1.0F : 0.4F),
-                    // Z velocity
-                    Math.cos(Math.toRadians(mc.player.rotationYaw)) * Math.cos(Math.toRadians(mc.player.rotationPitch)) * (stack.getItem() instanceof ItemBow ? 1.0F : 0.4F));
+            var velocity = Vec3d( -sin(Math.toRadians(minecraft.player.rotationYaw.toDouble())) * cos(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f, -sin(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f, cos(Math.toRadians(minecraft.player.rotationYaw.toDouble())) * cos(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f)
 
             // Motion factor
-            double motion = Math.sqrt((velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z));
+            val motion = sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
 
             // New velocity
-            velocity = new Vec3d(velocity.x / motion, velocity.y / motion, velocity.z / motion);
+            velocity = Vec3d(velocity.x / motion, velocity.y / motion, velocity.z / motion)
 
             // If we are holding a bow
-            if (stack.getItem() instanceof ItemBow) {
+            velocity = if (stack.item is ItemBow) {
                 // Get the charge power
-                float power = MathHelper.clamp((((72000 - mc.player.getItemInUseCount()) / 20.0F) * ((72000 - mc.player.getItemInUseCount()) / 20.0F) + ((72000 - mc.player.getItemInUseCount()) / 20.0F) * 2.0F) / 3.0F, 0, 1) * 3;
+                val power = MathHelper.clamp(((72000 - minecraft.player.itemInUseCount) / 20.0f * ((72000 - minecraft.player.itemInUseCount) / 20.0f) + (72000 - minecraft.player.itemInUseCount) / 20.0f * 2.0f) / 3.0f, 0f, 1f) * 3
 
                 // Set velocity
-                velocity = new Vec3d(velocity.x * power, velocity.y * power, velocity.z * power);
-            }
-
-            // If we are holding a different projectile (e.g. snowball), times velocity by 1.5
-            else {
-                velocity = new Vec3d(velocity.x * 1.5, velocity.y * 1.5, velocity.z * 1.5);
+                Vec3d(velocity.x * power, velocity.y * power, velocity.z * power)
+            } else {
+                Vec3d(velocity.x * 1.5, velocity.y * 1.5, velocity.z * 1.5)
             }
 
             // Check we want to draw the line
-            if (line.getValue()) {
+            if (line.value!!) {
                 // GL render 3D
-                glPushMatrix();
-                glDisable(GL_TEXTURE_2D);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glDisable(GL_DEPTH_TEST);
-                glDepthMask(false);
-                glEnable(GL_LINE_SMOOTH);
+                glPushMatrix()
+                glDisable(GL_TEXTURE_2D)
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                glDisable(GL_DEPTH_TEST)
+                glDepthMask(false)
+                glEnable(GL_LINE_SMOOTH)
 
                 // Set line width
-                glLineWidth(lineWidth.getValue());
-                ColourUtil.setColour(lineColour.getValue().getRGB());
-
-                glBegin(GL_LINE_STRIP);
+                glLineWidth(lineWidth.value)
+                setColour(lineColour.value.rgb)
+                glBegin(GL_LINE_STRIP)
 
                 // Add vertices to the line whilst we haven't hit a target
-                for (int i = 0; i < 1000; i++) {
+                for (i in 0..999) {
                     // Add vertex
-                    glVertex3d(position.x - ((IRenderManager) mc.getRenderManager()).getRenderX(), position.y - ((IRenderManager) mc.getRenderManager()).getRenderY(), position.z - ((IRenderManager) mc.getRenderManager()).getRenderZ());
+                    glVertex3d(position.x - (minecraft.renderManager as IRenderManager).renderX, position.y - (minecraft.renderManager as IRenderManager).renderY, position.z - (minecraft.renderManager as IRenderManager).renderZ)
 
                     // Move position
-                    position = new Vec3d(position.x + (velocity.x * 0.1D), position.y + (velocity.y * 0.1D), position.z + (velocity.z * 0.1D));
-                    velocity = new Vec3d(velocity.x, velocity.y - (stack.getItem() instanceof ItemBow ? 0.05 : (stack.getItem() instanceof ItemPotion ? 0.4 : stack.getItem() instanceof ItemExpBottle ? 0.1 : 0.03)) * 0.1, velocity.z);
+                    position = Vec3d(position.x + velocity.x * 0.1, position.y + velocity.y * 0.1, position.z + velocity.z * 0.1)
+
+                    velocity = Vec3d(
+                        velocity.x,
+                        velocity.y - (if (stack.item is ItemBow) 0.05 else if (stack.item is ItemPotion) 0.4 else if (stack.item is ItemExpBottle) 0.1 else 0.03) * 0.1,
+                        velocity.z
+                    )
 
                     // Check if we hit a target
-                    RayTraceResult result = mc.world.rayTraceBlocks(EntityUtil.getInterpolatedPosition(mc.player).add(new Vec3d(0, mc.player.getEyeHeight(), 0)), new Vec3d(position.x, position.y, position.z));
-
+                    val result = minecraft.world.rayTraceBlocks(EntityUtil.getInterpolatedPosition(minecraft.player).add(Vec3d(0.0, minecraft.player.getEyeHeight().toDouble(), 0.0)), Vec3d(position.x, position.y, position.z)
+                    )
                     if (result != null) {
-                        break;
+                        break
                     }
                 }
 
                 // Stop adding vertices
-                glEnd();
+                glEnd()
 
                 // Disable GL render 3D
-                glDisable(GL_BLEND);
-                glEnable(GL_TEXTURE_2D);
-                glEnable(GL_DEPTH_TEST);
-                glDepthMask(true);
-                glDisable(GL_LINE_SMOOTH);
-                glPopMatrix();
+                glDisable(GL_BLEND)
+                glEnable(GL_TEXTURE_2D)
+                glEnable(GL_DEPTH_TEST)
+                glDepthMask(true)
+                glDisable(GL_LINE_SMOOTH)
+                glPopMatrix()
             }
 
             // Check we want to draw the box
-            if (box.getValue()) {
+            if (box.value!!) {
                 // Get highlight bb
-                AxisAlignedBB bb = new AxisAlignedBB((position.x - ((IRenderManager) mc.getRenderManager()).getRenderX()) - 0.25, (position.y - ((IRenderManager) mc.getRenderManager()).getRenderY()) - 0.25, (position.z - ((IRenderManager) mc.getRenderManager()).getRenderZ()) - 0.25,
-                        (position.x - ((IRenderManager) mc.getRenderManager()).getRenderX()) + 0.25, (position.y - ((IRenderManager) mc.getRenderManager()).getRenderY()) + 0.25, (position.z - ((IRenderManager) mc.getRenderManager()).getRenderZ()) + 0.25);
+                val bb = AxisAlignedBB(
+                    position.x - (minecraft.renderManager as IRenderManager).renderX - 0.25,
+                    position.y - (minecraft.renderManager as IRenderManager).renderY - 0.25,
+                    position.z - (minecraft.renderManager as IRenderManager).renderZ - 0.25,
+                    position.x - (minecraft.renderManager as IRenderManager).renderX + 0.25,
+                    position.y - (minecraft.renderManager as IRenderManager).renderY + 0.25,
+                    position.z - (minecraft.renderManager as IRenderManager).renderZ + 0.25
+                )
 
                 // Draw filled box
-                if (fill.getValue()) {
-                    RenderUtil.drawFilledBox(bb, boxColour.getValue());
+                if (fill.value) {
+                    drawFilledBox(bb, boxColour.value)
                 }
 
                 // Draw outline box
-                if (outline.getValue()) {
-                    RenderUtil.drawBoundingBox(bb, outlineWidth.getValue(), ColourUtil.integrateAlpha(boxColour.getValue(), 255));
+                if (outline.value) {
+                    drawBoundingBox(bb, outlineWidth.value, integrateAlpha(boxColour.value, 255f))
                 }
             }
         }

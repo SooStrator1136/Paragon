@@ -1,276 +1,253 @@
-package com.paragon.client.systems.module.impl.render;
+package com.paragon.client.systems.module.impl.render
 
-import com.paragon.api.util.string.StringUtil;
-import com.paragon.asm.mixins.accessor.IEntityRenderer;
-import com.paragon.client.shader.shaders.*;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityEnderChest;
-import net.minecraft.tileentity.TileEntityShulkerBox;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.awt.*;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.api.util.string.StringUtil
+import com.paragon.asm.mixins.accessor.IEntityRenderer
+import com.paragon.client.shader.shaders.*
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher
+import net.minecraft.client.shader.Framebuffer
+import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityLiving
+import net.minecraft.entity.item.EntityEnderCrystal
+import net.minecraft.entity.item.EntityItem
+import net.minecraft.entity.monster.EntityMob
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.tileentity.TileEntity
+import net.minecraft.tileentity.TileEntityChest
+import net.minecraft.tileentity.TileEntityEnderChest
+import net.minecraft.tileentity.TileEntityShulkerBox
+import net.minecraftforge.client.event.RenderGameOverlayEvent
+import net.minecraftforge.fml.common.eventhandler.EventPriority
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL20
+import java.awt.Color
 
 @SideOnly(Side.CLIENT)
-public class Shader extends Module {
+object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities and storages") {
 
-    public static Shader INSTANCE;
+    private val passive = Setting("Passive", true)
+        .setDescription("Apply shader to passive entities")
 
-    public static Setting<Boolean> passive = new Setting<>("Passive", true)
-            .setDescription("Apply shader to passive entities");
+    private val mobs = Setting("Mobs", true)
+        .setDescription("Apply shader to hostile entities")
+    
+    private val players = Setting("Players", true)
+        .setDescription("Apply shader to player entities")
 
-    public static Setting<Boolean> mobs = new Setting<>("Mobs", true)
-            .setDescription("Apply shader to hostile entities");
+    private val crystals = Setting("Crystals", true)
+        .setDescription("Apply shader to crystals")
 
-    public static Setting<Boolean> players = new Setting<>("Players", true)
-            .setDescription("Apply shader to player entities");
+    private val items = Setting("Items", true)
+        .setDescription("Apply shader to items")
 
-    public static Setting<Boolean> crystals = new Setting<>("Crystals", true)
-            .setDescription("Apply shader to crystals");
+    private val chests = Setting("Chests", true)
+        .setDescription("Apply shader to chests")
 
-    public static Setting<Boolean> items = new Setting<>("Items", true)
-            .setDescription("Apply shader to items");
+    private val shulkers = Setting("Shulkers", true)
+        .setDescription("Apply shader to shulkers")
 
-    public static Setting<Boolean> chests = new Setting<>("Chests", true)
-            .setDescription("Apply shader to chests");
+    private val enderChests = Setting("Ender Chests", true)
+        .setDescription("Apply shader to ender chests")
 
-    public static Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
-            .setDescription("Apply shader to shulkers");
-
-    public static Setting<Boolean> enderChests = new Setting<>("Ender Chests", true)
-            .setDescription("Apply shader to ender chests");
-
-    public static Setting<FragmentShader> shaderType = new Setting<>("FragmentShader", FragmentShader.DIAMONDS)
-            .setDescription("The shader to use");
+    private val shaderType = Setting("FragmentShader", FragmentShader.DIAMONDS)
+        .setDescription("The shader to use")
 
     // Diamonds
-    public static Setting<Float> diamondSpacing = new Setting<>("Spacing", 4f, 1f, 16f, 0.5f)
-            .setDescription("The spacing between diamonds")
-            .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAMONDS));
+    private val diamondSpacing = Setting("Spacing", 4f, 1f, 16f, 0.5f)
+        .setDescription("The spacing between diamonds")
+        .setParentSetting(shaderType)
+        .setVisibility { shaderType.value == FragmentShader.DIAMONDS }
 
-    public static Setting<Float> diamondSize = new Setting<>("Size", 1f, 0.1f, 10f, 0.1f)
-            .setDescription("The size of the diamonds")
-            .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAMONDS));
+    private val diamondSize = Setting("Size", 1f, 0.1f, 10f, 0.1f)
+        .setDescription("The size of the diamonds")
+        .setParentSetting(shaderType)
+        .setVisibility { shaderType.value == FragmentShader.DIAMONDS }
 
     // Outline
-    public static Setting<Float> outlineWidth = new Setting<>("Width", 1f, 1f, 5f, 0.5f)
-            .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.OUTLINE));
+    private val outlineWidth = Setting("Width", 1f, 1f, 5f, 0.5f)
+        .setParentSetting(shaderType)
+        .setVisibility { shaderType.value == FragmentShader.OUTLINE }
 
-    public static Setting<Boolean> outlineFill = new Setting<>("Fill", true)
-            .setDescription("Fill the outline")
-            .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.OUTLINE));
+    private val outlineFill = Setting("Fill", true)
+        .setDescription("Fill the outline")
+        .setParentSetting(shaderType)
+        .setVisibility { shaderType.value == FragmentShader.OUTLINE }
 
     // Diagonal
-    public static Setting<Float> diagonalSpacing = new Setting<>("Spacing", 4f, 1f, 16f, 0.5f)
-            .setDescription("The spacing between lines")
-            .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAGONAL));
+    private val diagonalSpacing = Setting("Spacing", 4f, 1f, 16f, 0.5f)
+        .setDescription("The spacing between lines")
+        .setParentSetting(shaderType)
+        .setVisibility { shaderType.value == FragmentShader.DIAGONAL }
 
-    public static Setting<Float> diagonalWidth = new Setting<>("Width", 1f, 1f, 16f, 0.5f)
-            .setDescription("The width of the lines")
-            .setParentSetting(shaderType)
-            .setVisibility(() -> shaderType.getValue().equals(FragmentShader.DIAGONAL));
+    private val diagonalWidth = Setting("Width", 1f, 1f, 16f, 0.5f)
+        .setDescription("The width of the lines")
+        .setParentSetting(shaderType)
+        .setVisibility { shaderType.value == FragmentShader.DIAGONAL }
 
     // Colour
-    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
-            .setDescription("The colour of the shader");
+    private val colour = Setting("Colour", Color(185, 17, 255))
+        .setDescription("The colour of the shader")
 
-    private final OutlineShader outlineShader = new OutlineShader();
-    private final DiagonalShader diagonalShader = new DiagonalShader();
-    private final DiamondsShader diamondsShader = new DiamondsShader();
-    private final FluidShader fluidShader = new FluidShader();
-    private final LiquidShader liquidShader = new LiquidShader();
-    private final SmokeShader smokeShader = new SmokeShader();
-
-    private Framebuffer framebuffer;
-    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
-
-    public Shader() {
-        super("Shader", Category.RENDER, "Apply a shader to entities and storages");
-
-        INSTANCE = this;
-    }
+    private val outlineShader = OutlineShader()
+    private val diagonalShader = DiagonalShader()
+    private val diamondsShader = DiamondsShader()
+    private val fluidShader = FluidShader()
+    private val liquidShader = LiquidShader()
+    private val smokeShader = SmokeShader()
+    private var framebuffer: Framebuffer? = null
+    private var lastScaleFactor = 0f
+    private var lastScaleWidth = 0f
+    private var lastScaleHeight = 0f
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR)) {
+    fun onRenderOverlay(event: RenderGameOverlayEvent.Pre) {
+        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
             // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
             // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
-
-            GlStateManager.enableAlpha();
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+            GlStateManager.enableAlpha()
+            GlStateManager.pushMatrix()
+            GlStateManager.pushAttrib()
 
             // Delete old framebuffer
             if (framebuffer != null) {
-                framebuffer.framebufferClear();
+                framebuffer!!.framebufferClear()
 
-                if (lastScaleFactor != event.getResolution().getScaleFactor() || lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
-                    framebuffer.deleteFramebuffer();
-                    framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
-                    framebuffer.framebufferClear();
+                if (lastScaleFactor != event.resolution.scaleFactor.toFloat() || lastScaleWidth != event.resolution.scaledWidth.toFloat() || lastScaleHeight != event.resolution.scaledHeight.toFloat()) {
+                    framebuffer!!.deleteFramebuffer()
+                    framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                    framebuffer!!.framebufferClear()
                 }
-
-                lastScaleFactor = event.getResolution().getScaleFactor();
-                lastScaleWidth = event.getResolution().getScaledWidth();
-                lastScaleHeight = event.getResolution().getScaledHeight();
+                lastScaleFactor = event.resolution.scaleFactor.toFloat()
+                lastScaleWidth = event.resolution.scaledWidth.toFloat()
+                lastScaleHeight = event.resolution.scaledHeight.toFloat()
             } else {
-                framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+                framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
             }
 
-            framebuffer.bindFramebuffer(false);
-            boolean previousShadows = mc.gameSettings.entityShadows;
-            mc.gameSettings.entityShadows = false;
+            framebuffer!!.bindFramebuffer(false)
+            val previousShadows = minecraft.gameSettings.entityShadows
+            minecraft.gameSettings.entityShadows = false
+            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
 
-            ((IEntityRenderer) mc.entityRenderer).setupCamera(event.getPartialTicks(), 0);
-            for (Entity entity : mc.world.loadedEntityList) {
-                if (entity != null && entity != mc.player && isEntityValid(entity)) {
-                    mc.getRenderManager().renderEntityStatic(entity, event.getPartialTicks(), false);
+            for (entity in minecraft.world.loadedEntityList) {
+                if (entity != null && entity !== minecraft.player && isEntityValid(entity)) {
+                    minecraft.renderManager.renderEntityStatic(entity, event.partialTicks, false)
                 }
             }
 
-            for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
+            for (tileEntity in minecraft.world.loadedTileEntityList) {
                 if (isStorageValid(tileEntity)) {
-                    double x = mc.getRenderManager().viewerPosX;
-                    double y = mc.getRenderManager().viewerPosY;
-                    double z = mc.getRenderManager().viewerPosZ;
-
-                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.getPos().getX() - x, tileEntity.getPos().getY() - y, tileEntity.getPos().getZ() - z, mc.getRenderPartialTicks());
+                    val x = minecraft.renderManager.viewerPosX
+                    val y = minecraft.renderManager.viewerPosY
+                    val z = minecraft.renderManager.viewerPosZ
+                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.pos.x - x, tileEntity.pos.y - y, tileEntity.pos.z - z, minecraft.renderPartialTicks)
                 }
             }
 
-            mc.gameSettings.entityShadows = previousShadows;
-            GlStateManager.enableBlend();
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            framebuffer.unbindFramebuffer();
-            mc.getFramebuffer().bindFramebuffer(true);
-            mc.entityRenderer.disableLightmap();
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.pushMatrix();
+            minecraft.gameSettings.entityShadows = previousShadows
+            GlStateManager.enableBlend()
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            // Render shaders
-            switch (shaderType.getValue()) {
-                case DIAMONDS:
-                    diamondsShader.setColor(colour.getValue());
-                    diamondsShader.setSpacing(diamondSpacing.getValue());
-                    diamondsShader.setSize(diamondSize.getValue());
-                    diamondsShader.startShader();
-                    break;
+            framebuffer!!.unbindFramebuffer()
+            minecraft.framebuffer.bindFramebuffer(true)
+            minecraft.entityRenderer.disableLightmap()
+            RenderHelper.disableStandardItemLighting()
+            GlStateManager.pushMatrix()
 
-                case OUTLINE:
-                    outlineShader.setColour(colour.getValue());
-                    outlineShader.setWidth(outlineWidth.getValue());
-                    outlineShader.setFill(outlineFill.getValue() ? 1 : 0);
-                    outlineShader.setOutline(1);
-                    outlineShader.startShader();
-                    break;
+            when (shaderType.value) {
+                FragmentShader.DIAMONDS -> {
+                    diamondsShader.setColor(colour.value)
+                    diamondsShader.setSpacing(diamondSpacing.value)
+                    diamondsShader.setSize(diamondSize.value)
+                    diamondsShader.startShader()
+                }
 
-                case DIAGONAL:
-                    diagonalShader.setColour(colour.getValue());
-                    diagonalShader.setWidth(diagonalWidth.getValue());
-                    diagonalShader.setSpacing(diagonalSpacing.getValue());
-                    diagonalShader.startShader();
-                    break;
+                FragmentShader.OUTLINE -> {
+                    outlineShader.setColour(colour.value)
+                    outlineShader.setWidth(outlineWidth.value)
+                    outlineShader.setFill(if (outlineFill.value) 1 else 0)
+                    outlineShader.setOutline(1)
+                    outlineShader.startShader()
+                }
 
-                case FLUID:
-                    fluidShader.setTime(fluidShader.getTime() + 0.01);
-                    fluidShader.startShader();
-                    break;
+                FragmentShader.DIAGONAL -> {
+                    diagonalShader.setColour(colour.value)
+                    diagonalShader.setWidth(diagonalWidth.value)
+                    diagonalShader.setSpacing(diagonalSpacing.value)
+                    diagonalShader.startShader()
+                }
 
-                case LIQUID:
-                    liquidShader.setTime(liquidShader.getTime() + 0.01);
-                    liquidShader.setColour(colour.getValue());
-                    liquidShader.startShader();
-                    break;
+                FragmentShader.FLUID -> {
+                    fluidShader.time = fluidShader.time + 0.01
+                    fluidShader.startShader()
+                }
 
-                case SMOKE:
-                    smokeShader.setTime(smokeShader.getTime() + 0.001f);
-                    smokeShader.setColour(colour.getValue());
-                    smokeShader.startShader();
-                    break;
+                FragmentShader.LIQUID -> {
+                    liquidShader.time = liquidShader.time + 0.01
+                    liquidShader.setColour(colour.value)
+                    liquidShader.startShader()
+                }
+
+                FragmentShader.SMOKE -> {
+                    smokeShader.time = smokeShader.time + 0.001f
+                    smokeShader.setColour(colour.value)
+                    smokeShader.startShader()
+                }
             }
 
-            mc.entityRenderer.setupOverlayRendering();
-
-            glBindTexture(GL_TEXTURE_2D, framebuffer.framebufferTexture);
-            glBegin(GL_QUADS);
-            glTexCoord2d(0, 1);
-            glVertex2d(0, 0);
-            glTexCoord2d(0, 0);
-            glVertex2d(0, event.getResolution().getScaledHeight());
-            glTexCoord2d(1, 0);
-            glVertex2d(event.getResolution().getScaledWidth(), event.getResolution().getScaledHeight());
-            glTexCoord2d(1, 1);
-            glVertex2d(event.getResolution().getScaledWidth(), 0);
-            glEnd();
+            minecraft.entityRenderer.setupOverlayRendering()
+            glBindTexture(GL_TEXTURE_2D, framebuffer!!.framebufferTexture)
+            glBegin(GL_QUADS)
+            glTexCoord2d(0.0, 1.0)
+            glVertex2d(0.0, 0.0)
+            glTexCoord2d(0.0, 0.0)
+            glVertex2d(0.0, event.resolution.scaledHeight.toDouble())
+            glTexCoord2d(1.0, 0.0)
+            glVertex2d(event.resolution.scaledWidth.toDouble(), event.resolution.scaledHeight.toDouble())
+            glTexCoord2d(1.0, 1.0)
+            glVertex2d(event.resolution.scaledWidth.toDouble(), 0.0)
+            glEnd()
 
             // Stop drawing shader
-            glUseProgram(0);
-            glPopMatrix();
-
-            mc.entityRenderer.enableLightmap();
-
-            mc.entityRenderer.setupOverlayRendering();
-
-            GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
+            GL20.glUseProgram(0)
+            glPopMatrix()
+            minecraft.entityRenderer.enableLightmap()
+            minecraft.entityRenderer.setupOverlayRendering()
+            GlStateManager.popMatrix()
+            GlStateManager.popAttrib()
         }
     }
 
-    private boolean isEntityValid(Entity entityIn) {
-        return entityIn instanceof EntityPlayer && players.getValue() ||
-                entityIn instanceof EntityLiving && !(entityIn instanceof EntityMob) && passive.getValue() ||
-                entityIn instanceof EntityMob && mobs.getValue() ||
-                entityIn instanceof EntityEnderCrystal && crystals.getValue() ||
-                entityIn instanceof EntityItem && items.getValue();
+    private fun isEntityValid(entityIn: Entity): Boolean {
+        return entityIn is EntityPlayer && players.value || entityIn is EntityLiving && entityIn !is EntityMob && passive.value || entityIn is EntityMob && mobs.value || entityIn is EntityEnderCrystal && crystals.value || entityIn is EntityItem && items.value
     }
 
-    public boolean isStorageValid(TileEntity tileEntity) {
-        if (tileEntity instanceof TileEntityChest) {
-            return chests.getValue();
+    fun isStorageValid(tileEntity: TileEntity?): Boolean {
+        if (tileEntity is TileEntityChest) {
+            return chests.value
         }
-
-        if (tileEntity instanceof TileEntityShulkerBox) {
-            return shulkers.getValue();
+        if (tileEntity is TileEntityShulkerBox) {
+            return shulkers.value
         }
-
-        if (tileEntity instanceof TileEntityEnderChest) {
-            return enderChests.getValue();
-        }
-
-        return false;
+        return if (tileEntity is TileEntityEnderChest) {
+            enderChests.value
+        } else false
     }
 
-    @Override
-    public String getData() {
-        return " " + StringUtil.getFormattedText(shaderType.getValue());
+    override fun getData(): String {
+        return " " + StringUtil.getFormattedText(shaderType.value)
     }
 
-    public enum FragmentShader {
+    enum class FragmentShader {
         /**
          * Outline shader
          */
@@ -301,5 +278,4 @@ public class Shader extends Module {
          */
         SMOKE
     }
-
 }

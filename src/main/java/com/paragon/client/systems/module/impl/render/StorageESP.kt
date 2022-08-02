@@ -1,223 +1,211 @@
-package com.paragon.client.systems.module.impl.render;
+package com.paragon.client.systems.module.impl.render
 
-import com.paragon.api.event.render.tileentity.RenderTileEntityEvent;
-import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.OutlineUtil;
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.string.StringUtil;
-import com.paragon.api.util.world.BlockUtil;
-import com.paragon.asm.mixins.accessor.IEntityRenderer;
-import com.paragon.client.shader.shaders.OutlineShader;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.tileentity.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.awt.*;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import com.paragon.api.event.render.tileentity.RenderTileEntityEvent
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
+import com.paragon.api.util.render.OutlineUtil.renderFive
+import com.paragon.api.util.render.OutlineUtil.renderFour
+import com.paragon.api.util.render.OutlineUtil.renderOne
+import com.paragon.api.util.render.OutlineUtil.renderThree
+import com.paragon.api.util.render.OutlineUtil.renderTwo
+import com.paragon.api.util.render.RenderUtil.drawBoundingBox
+import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.api.util.string.StringUtil
+import com.paragon.api.util.world.BlockUtil.getBlockBox
+import com.paragon.asm.mixins.accessor.IEntityRenderer
+import com.paragon.client.shader.shaders.OutlineShader
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher
+import net.minecraft.client.shader.Framebuffer
+import net.minecraft.tileentity.TileEntity
+import net.minecraft.tileentity.TileEntityChest
+import net.minecraft.tileentity.TileEntityEnderChest
+import net.minecraft.tileentity.TileEntityShulkerBox
+import net.minecraftforge.client.event.RenderGameOverlayEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL20.glUseProgram
+import java.awt.Color
+import java.util.function.Consumer
 
 @SideOnly(Side.CLIENT)
-public class StorageESP extends Module {
+object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage blocks in the world") {
 
-    public static StorageESP INSTANCE;
+    private val chests = Setting("Chests", true)
+        .setDescription("Highlight chests")
 
-    public static Setting<Boolean> chests = new Setting<>("Chests", true)
-            .setDescription("Highlight chests");
+    private val shulkers = Setting("Shulkers", true)
+        .setDescription("Highlight shulker boxes")
 
-    public static Setting<Boolean> shulkers = new Setting<>("Shulkers", true)
-            .setDescription("Highlight shulker boxes");
-
-    public static Setting<Boolean> enderChests = new Setting<>("EnderChests", true)
-            .setDescription("Highlight Ender Chests");
+    private val enderChests = Setting("EnderChests", true)
+        .setDescription("Highlight Ender Chests")
 
     // Render settings
-    public static Setting<Mode> mode = new Setting<>("Mode", Mode.SHADER)
-            .setDescription("How to render the entities");
+    private val mode = Setting<Mode?>("Mode", Mode.SHADER)
+        .setDescription("How to render the entities")
 
-    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1f, 0.1f, 8f, 0.1f)
-            .setDescription("How thick to render the outlines");
+    private val lineWidth = Setting("LineWidth", 1f, 0.1f, 8f, 0.1f)
+        .setDescription("How thick to render the outlines")
 
     // Outline shader
-    public static Setting<Boolean> outline = new Setting<>("Outline", true)
-            .setDescription("Outline the fill")
-            .setParentSetting(mode)
-            .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
+    private val outline = Setting("Outline", true)
+        .setDescription("Outline the fill")
+        .setParentSetting(mode)
+        .setVisibility { mode.value == Mode.SHADER }
 
-    public static Setting<Boolean> fill = new Setting<>("Fill", true)
-            .setDescription("Fill the outline")
-            .setParentSetting(mode)
-            .setVisibility(() -> mode.getValue().equals(Mode.SHADER));
+    private val fill = Setting("Fill", true)
+        .setDescription("Fill the outline")
+        .setParentSetting(mode)
+        .setVisibility { mode.value == Mode.SHADER }
 
-    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 17, 255))
-            .setDescription("The colour to highlight items in");
+    private val colour = Setting("Colour", Color(185, 17, 255))
+        .setDescription("The colour to highlight items in")
 
     // Shaders
-    private final OutlineShader outlineShader = new OutlineShader();
-    private Framebuffer framebuffer;
-    private float lastScaleFactor, lastScaleWidth, lastScaleHeight;
+    private val outlineShader = OutlineShader()
+    private var framebuffer: Framebuffer? = null
+    private var lastScaleFactor = 0f
+    private var lastScaleWidth = 0f
+    private var lastScaleHeight = 0f
 
-    public StorageESP() {
-        super("StorageESP", Category.RENDER, "Highlights storage blocks in the world");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onRender3D() {
-        if (mode.getValue().equals(Mode.BOX)) {
-            mc.world.loadedTileEntityList.forEach(tileEntity -> {
+    override fun onRender3D() {
+        if (mode.value == Mode.BOX) {
+            minecraft.world.loadedTileEntityList.forEach(Consumer { tileEntity: TileEntity ->
                 if (isStorageValid(tileEntity)) {
-                    if (fill.getValue()) {
-                        RenderUtil.drawFilledBox(BlockUtil.getBlockBox(tileEntity.getPos()), colour.getValue());
+                    if (fill.value) {
+                        drawFilledBox(getBlockBox(tileEntity.pos), colour.value)
                     }
 
-                    if (outline.getValue()) {
-                        RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(tileEntity.getPos()), lineWidth.getValue(), ColourUtil.integrateAlpha(colour.getValue(), 255));
+                    if (outline.value) {
+                        drawBoundingBox(getBlockBox(tileEntity.pos), lineWidth.value, integrateAlpha(colour.value, 255f))
                     }
                 }
-            });
+            })
         }
     }
 
     @SubscribeEvent
-    public void onRenderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR) && mode.getValue().equals(Mode.SHADER)) {
+    fun onRenderOverlay(event: RenderGameOverlayEvent.Pre) {
+        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && mode.value == Mode.SHADER) {
             // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
             // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
-
-            GlStateManager.enableAlpha();
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+            GlStateManager.enableAlpha()
+            GlStateManager.pushMatrix()
+            GlStateManager.pushAttrib()
 
             // Delete old framebuffer
             if (framebuffer != null) {
-                framebuffer.framebufferClear();
+                framebuffer!!.framebufferClear()
 
-                if (lastScaleFactor != event.getResolution().getScaleFactor() || lastScaleWidth != event.getResolution().getScaledWidth() || lastScaleHeight != event.getResolution().getScaledHeight()) {
-                    framebuffer.deleteFramebuffer();
-                    framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
-                    framebuffer.framebufferClear();
+                if (lastScaleFactor != event.resolution.scaleFactor.toFloat() || lastScaleWidth != event.resolution.scaledWidth.toFloat() || lastScaleHeight != event.resolution.scaledHeight.toFloat()) {
+                    framebuffer!!.deleteFramebuffer()
+                    framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                    framebuffer!!.framebufferClear()
                 }
 
-                lastScaleFactor = event.getResolution().getScaleFactor();
-                lastScaleWidth = event.getResolution().getScaledWidth();
-                lastScaleHeight = event.getResolution().getScaledHeight();
+                lastScaleFactor = event.resolution.scaleFactor.toFloat()
+                lastScaleWidth = event.resolution.scaledWidth.toFloat()
+                lastScaleHeight = event.resolution.scaledHeight.toFloat()
             } else {
-                framebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+                framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
             }
 
-            framebuffer.bindFramebuffer(false);
-            boolean previousShadows = mc.gameSettings.entityShadows;
-            mc.gameSettings.entityShadows = false;
+            framebuffer!!.bindFramebuffer(false)
+            val previousShadows = minecraft.gameSettings.entityShadows
+            minecraft.gameSettings.entityShadows = false
+            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
 
-            ((IEntityRenderer) mc.entityRenderer).setupCamera(event.getPartialTicks(), 0);
-
-            for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
+            for (tileEntity in minecraft.world.loadedTileEntityList) {
                 if (isStorageValid(tileEntity)) {
-                    double x = mc.getRenderManager().viewerPosX;
-                    double y = mc.getRenderManager().viewerPosY;
-                    double z = mc.getRenderManager().viewerPosZ;
-
-                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.getPos().getX() - x, tileEntity.getPos().getY() - y, tileEntity.getPos().getZ() - z, mc.getRenderPartialTicks());
+                    val x = minecraft.renderManager.viewerPosX
+                    val y = minecraft.renderManager.viewerPosY
+                    val z = minecraft.renderManager.viewerPosZ
+                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.pos.x - x, tileEntity.pos.y - y, tileEntity.pos.z - z, minecraft.renderPartialTicks)
                 }
             }
 
-            mc.gameSettings.entityShadows = previousShadows;
-            GlStateManager.enableBlend();
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            framebuffer.unbindFramebuffer();
-            mc.getFramebuffer().bindFramebuffer(true);
-            mc.entityRenderer.disableLightmap();
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.pushMatrix();
+            minecraft.gameSettings.entityShadows = previousShadows
+            GlStateManager.enableBlend()
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            framebuffer!!.unbindFramebuffer()
+            minecraft.framebuffer.bindFramebuffer(true)
+            minecraft.entityRenderer.disableLightmap()
+            RenderHelper.disableStandardItemLighting()
+            GlStateManager.pushMatrix()
 
             // Render shader
-            outlineShader.setColour(colour.getValue());
-            outlineShader.setWidth(lineWidth.getValue());
-            outlineShader.setFill(fill.getValue() ? 1 : 0);
-            outlineShader.setOutline(outline.getValue() ? 1 : 0);
-            outlineShader.startShader();
+            outlineShader.setColour(colour.value)
+            outlineShader.setWidth(lineWidth.value)
+            outlineShader.setFill(if (fill.value) 1 else 0)
+            outlineShader.setOutline(if (outline.value) 1 else 0)
+            outlineShader.startShader()
+            minecraft.entityRenderer.setupOverlayRendering()
 
-            mc.entityRenderer.setupOverlayRendering();
-
-            glBindTexture(GL_TEXTURE_2D, framebuffer.framebufferTexture);
-            glBegin(GL_QUADS);
-            glTexCoord2d(0, 1);
-            glVertex2d(0, 0);
-            glTexCoord2d(0, 0);
-            glVertex2d(0, event.getResolution().getScaledHeight());
-            glTexCoord2d(1, 0);
-            glVertex2d(event.getResolution().getScaledWidth(), event.getResolution().getScaledHeight());
-            glTexCoord2d(1, 1);
-            glVertex2d(event.getResolution().getScaledWidth(), 0);
-            glEnd();
+            glBindTexture(GL_TEXTURE_2D, framebuffer!!.framebufferTexture)
+            glBegin(GL_QUADS)
+            glTexCoord2d(0.0, 1.0)
+            glVertex2d(0.0, 0.0)
+            glTexCoord2d(0.0, 0.0)
+            glVertex2d(0.0, event.resolution.scaledHeight.toDouble())
+            glTexCoord2d(1.0, 0.0)
+            glVertex2d(event.resolution.scaledWidth.toDouble(), event.resolution.scaledHeight.toDouble())
+            glTexCoord2d(1.0, 1.0)
+            glVertex2d(event.resolution.scaledWidth.toDouble(), 0.0)
+            glEnd()
 
             // Stop drawing shader
-            glUseProgram(0);
-            glPopMatrix();
+            glUseProgram(0)
+            glPopMatrix()
 
-            mc.entityRenderer.enableLightmap();
-
-            GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
-
-            mc.entityRenderer.setupOverlayRendering();
+            minecraft.entityRenderer.enableLightmap()
+            GlStateManager.popMatrix()
+            GlStateManager.popAttrib()
+            minecraft.entityRenderer.setupOverlayRendering()
         }
     }
 
     @Listener
-    public void onTileEntityRender(RenderTileEntityEvent event) {
-        if (mode.getValue().equals(Mode.OUTLINE) && isStorageValid(event.getTileEntityIn())) {
-            TileEntity tileEntityIn = event.getTileEntityIn();
-            float partialTicks = event.getPartialTicks();
-            BlockPos blockpos = tileEntityIn.getPos();
+    fun onTileEntityRender(event: RenderTileEntityEvent) {
+        if (mode.value == Mode.OUTLINE && isStorageValid(event.tileEntityIn)) {
+            val tileEntityIn = event.tileEntityIn
+            val partialTicks = event.partialTicks
+            val blockPos = tileEntityIn.pos
 
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
-            OutlineUtil.renderOne(lineWidth.getValue());
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
-            OutlineUtil.renderTwo();
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
-            OutlineUtil.renderThree();
-            OutlineUtil.renderFour(colour.getValue());
-            event.getTileEntityRendererDispatcher().render(tileEntityIn, (double) blockpos.getX() - event.getStaticPlayerX(), (double) blockpos.getY() - event.getStaticPlayerY(), (double) blockpos.getZ() - event.getStaticPlayerZ(), partialTicks);
-            OutlineUtil.renderFive();
+            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            renderOne(lineWidth.value)
+            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            renderTwo()
+            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            renderThree()
+            renderFour(colour.value)
+            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            renderFive()
         }
     }
 
-    public boolean isStorageValid(TileEntity tileEntity) {
-        if (tileEntity instanceof TileEntityChest) {
-            return chests.getValue();
+    fun isStorageValid(tileEntity: TileEntity?): Boolean {
+        if (tileEntity is TileEntityChest) {
+            return chests.value
         }
-
-        if (tileEntity instanceof TileEntityShulkerBox) {
-            return shulkers.getValue();
+        if (tileEntity is TileEntityShulkerBox) {
+            return shulkers.value
         }
-
-        if (tileEntity instanceof TileEntityEnderChest) {
-            return enderChests.getValue();
-        }
-
-        return false;
+        return if (tileEntity is TileEntityEnderChest) {
+            enderChests.value
+        } else false
     }
 
-    @Override
-    public String getData() {
-        return StringUtil.getFormattedText(mode.getValue());
+    override fun getData(): String {
+        return StringUtil.getFormattedText(mode.value)
     }
 
-    public enum Mode {
+    enum class Mode {
         /**
          * Draws a box around the storage block
          */
@@ -233,5 +221,4 @@ public class StorageESP extends Module {
          */
         OUTLINE
     }
-
 }

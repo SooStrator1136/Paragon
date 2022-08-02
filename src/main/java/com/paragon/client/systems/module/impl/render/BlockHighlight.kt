@@ -1,65 +1,56 @@
-package com.paragon.client.systems.module.impl.render;
+package com.paragon.client.systems.module.impl.render
 
-import com.paragon.api.event.render.world.BlockHighlightEvent;
-import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.world.BlockUtil;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
-
-import java.awt.*;
+import com.paragon.api.event.render.world.BlockHighlightEvent
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
+import com.paragon.api.util.render.RenderUtil.drawBoundingBox
+import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.api.util.world.BlockUtil.getBlockBox
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.util.math.RayTraceResult
+import java.awt.Color
 
 /**
  * @author Surge
  */
-public class BlockHighlight extends Module {
+object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights the block you are looking at") {
 
-    public static BlockHighlight INSTANCE;
+    private val renderMode = Setting("RenderMode", RenderMode.BOTH)
+        .setDescription("How to highlight the block")
 
-    public static Setting<RenderMode> renderMode = new Setting<>("RenderMode", RenderMode.BOTH)
-            .setDescription("How to highlight the block");
+    private val lineWidth = Setting("LineWidth", 1f, 0.1f, 1.5f, 0.1f)
+        .setDescription("The width of the outline")
+        .setVisibility { renderMode.value != RenderMode.FILL }
 
-    public static Setting<Float> lineWidth = new Setting<>("LineWidth", 1f, 0.1f, 1.5f, 0.1f)
-            .setDescription("The width of the outline")
-            .setVisibility(() -> !renderMode.getValue().equals(RenderMode.FILL));
-
-    public static Setting<Color> colour = new Setting<>("Colour", new Color(185, 19, 211))
-            .setDescription("What colour to render the block");
-
-    public BlockHighlight() {
-        super("BlockHighlight", Category.RENDER, "Highlights the block you are looking at");
-
-        INSTANCE = this;
-    }
+    private val colour = Setting("Colour", Color(185, 19, 211))
+        .setDescription("What colour to render the block")
 
     @Listener
-    public void onBlockHighlight(BlockHighlightEvent event) {
-        event.cancel();
+    fun onBlockHighlight(event: BlockHighlightEvent) {
+        event.cancel()
     }
 
-    @Override
-    public void onRender3D() {
-        if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
+    override fun onRender3D() {
+        if (minecraft.objectMouseOver != null && minecraft.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
             // Get bounding box
-            AxisAlignedBB bb = BlockUtil.getBlockBox(mc.objectMouseOver.getBlockPos());
+            val bb = getBlockBox(minecraft.objectMouseOver.blockPos)
 
             // Draw fill
-            if (!renderMode.getValue().equals(RenderMode.OUTLINE)) {
-                RenderUtil.drawFilledBox(bb, ColourUtil.integrateAlpha(colour.getValue(), 180));
+            if (renderMode.value != RenderMode.OUTLINE) {
+                drawFilledBox(bb, integrateAlpha(colour.value, 180f))
             }
 
             // Draw outline
-            if (!renderMode.getValue().equals(RenderMode.FILL)) {
-                RenderUtil.drawBoundingBox(bb, lineWidth.getValue(), colour.getValue());
+            if (renderMode.value != RenderMode.FILL) {
+                drawBoundingBox(bb, lineWidth.value, colour.value)
             }
         }
     }
 
-    public enum RenderMode {
+    enum class RenderMode {
         /**
          * Fill the block
          */

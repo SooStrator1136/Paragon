@@ -21,7 +21,8 @@ import kotlin.math.min
 /**
  * @author Surge
  */
-class Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in the world") {
+object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in the world") {
+
     private val passive = Setting<Boolean?>("Passives", true)
         .setDescription("Draws lines to passive entities")
 

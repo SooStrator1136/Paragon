@@ -18,7 +18,7 @@ import java.util.function.Consumer
 /**
  * @author Surge
  */
-class HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand in when crystalling") {
+object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand in when crystalling") {
 
     // Hole filters and colours
     private var obsidian = Setting("Obsidian", true)
@@ -193,14 +193,7 @@ class HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand in
         BEDROCK
     }
 
-    inner class Hole(
-        /**
-         * Gets the hole's position
-         *
-         * @return The hole's position
-         */
-        val holePosition: BlockPos, private val holeType: HoleType
-    ) {
+    class Hole(val holePosition: BlockPos, private val holeType: HoleType) {
         /**
          * Gets the colour of the hole
          *
