@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.retrowindows.window.category
 import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
@@ -64,7 +65,7 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
             RenderUtil.drawRect(x + width - 9f, y + 4.5f, 1f, 6f, Color(50, 50, 50).rgb)
         }
 
-        renderText(title, x + 5, y + 4, -1)
+        FontUtil.drawStringWithShadow(title, x + 5, y + 4, -1)
 
         if (animation.getAnimationFactor() > 0) {
             if (mouseX in x..x + width && mouseY in y + height..y + height + scissorHeight) {

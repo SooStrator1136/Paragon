@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.zeroday.element.setting;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.ui.util.animation.Animation;
 import com.paragon.client.ui.util.animation.Easing;
 import com.paragon.client.ui.util.Click;
@@ -50,10 +51,10 @@ public final class BooleanElement extends Element {
             RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), 1, (float) (getHeight() * enabledAnimation.getAnimationFactor()), Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.5f + (0.25f * getHover().getAnimationFactor()))));
 
-            renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            FontUtil.drawStringWithShadow(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
             if (!getSubElements().isEmpty()) {
-                renderText("...", getX() + getWidth() - getStringWidth("...") - 5, getY() + 2f, -1);
+                FontUtil.drawStringWithShadow("...", getX() + getWidth() - FontUtil.getStringWidth("...") - 5, getY() + 2f, -1);
             }
 
             super.render(mouseX, mouseY, dWheel);

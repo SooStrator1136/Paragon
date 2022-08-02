@@ -37,7 +37,95 @@ class StorageManager {
             configFolder.mkdirs()
         }
 
-        val saveConfigFolder = File("paragon${File.separator}configs${File.separator}$configName")
+        val configFile = File("paragon${File.separator}configs${File.separator}$configName.json")
+
+        val json = JSONObject()
+
+        Paragon.INSTANCE.moduleManager.modules.forEach {
+            try {
+                val settings = JSONObject()
+
+                settings.put("enabled", it.isEnabled)
+
+                if (it is HUDModule) {
+                    settings.put("x", it.x)
+                    settings.put("y", it.y)
+                }
+
+                it.settings.forEach {setting ->
+                    try {
+                        when (setting.value) {
+                            is Color -> {
+                                val color = setting.value as Color
+                                settings.put(
+                                    setting.name,
+                                    color.red.toString() + ":" + color.green + ":" + color.blue + ":" + setting.alpha + ":" + setting.isRainbow + ":" + setting.rainbowSpeed + ":" + setting.rainbowSaturation + ":" + setting.isSync
+                                )
+                            }
+
+                            is Bind -> {
+                                val bind = setting.value as Bind
+                                settings.put(
+                                    setting.name,
+                                    bind.buttonCode.toString() + ":" + bind.device
+                                )
+                            }
+
+                            else -> settings.put(setting.name, setting.value)
+                        }
+
+                        if (setting.subsettings.isNotEmpty()) {
+                            for (subSetting in setting.subsettings) {
+                                val subSettingName = subSetting.parentSetting?.name + " " + subSetting.name
+                                when (subSetting.value) {
+                                    is Color -> {
+                                        val color = subSetting.value as Color
+                                        settings.put(
+                                            subSettingName,
+                                            color.red.toString() + ":" + color.green + ":" + color.blue + ":" + subSetting.alpha + ":" + subSetting.isRainbow + ":" + subSetting.rainbowSpeed + ":" + subSetting.rainbowSaturation + ":" + subSetting.isSync
+                                        )
+                                    }
+
+                                    is Bind -> {
+                                        val bind = subSetting.value as Bind
+                                        settings.put(
+                                            subSettingName,
+                                            bind.buttonCode.toString() + ":" + bind.device
+                                        )
+                                    }
+
+                                    else -> settings.put(subSettingName, subSetting.value)
+                                }
+                            }
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                json.put(it.name, settings)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
+
+        try {
+            // Create file writer instance
+            val fileWriter = FileWriter(configFile)
+
+            // Write with indentation factor of 4
+            fileWriter.write(json.toString(4))
+
+            // Flush and close
+            fileWriter.flush()
+            fileWriter.close()
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        /* val saveConfigFolder = File("paragon${File.separator}configs${File.separator}$configName")
 
         // Create the folder if it doesn't exist
         if (!saveConfigFolder.exists()) {
@@ -110,12 +198,106 @@ class StorageManager {
             } catch (throwable: Throwable) {
                 throwable.printStackTrace()
             }
-        }
+        } */
     }
 
     @Suppress("UNCHECKED_CAST")
     fun loadModules(configName: String) {
-        val loadFolder = File("paragon${File.separator}configs${File.separator}$configName")
+        // Create configs folder if it doesn't already exist
+        if (!configFolder.exists()) {
+            configFolder.mkdirs()
+        }
+
+        val configFile = File("paragon${File.separator}configs${File.separator}$configName.json")
+
+        val json = getJSON(configFile) ?: return
+
+        Paragon.INSTANCE.moduleManager.modules.forEach {
+            try {
+                val settings = json.getJSONObject(it.name)
+
+                if (settings.has("x") && settings.has("y")) {
+                    it as HUDModule
+                    it.x = settings.getInt("x").toFloat()
+                    it.y = settings.getInt("y").toFloat()
+                }
+
+                fun loadSetting(setting: Setting<*>, isSub: Boolean) {
+                    runCatching {
+                        val settingName = if (isSub) setting.parentSetting?.name + " " + setting.name else setting.name
+
+                        when (setting.value) {
+                            is Boolean -> (setting as Setting<Boolean?>).setValue(settings.getBoolean(settingName))
+                            is Bind -> {
+                                val bind = setting.value as Bind
+                                val parts = settings.getString(settingName).split(":".toRegex()).toTypedArray()
+
+                                bind.buttonCode = parts[0].toInt()
+                                bind.device = java.lang.Enum.valueOf(
+                                    Device::class.java,
+                                    parts[1]
+                                )
+                            }
+
+                            is Float -> (setting as Setting<Float?>).setValue(settings.getFloat(settingName))
+                            is Double -> (setting as Setting<Double?>).setValue(settings.getDouble(settingName))
+                            is Enum<*> -> {
+                                val enum = setting.value as Enum<*>
+                                val value = java.lang.Enum.valueOf(
+                                    enum::class.java,
+                                    settings.getString(settingName)
+                                )
+
+                                run breakLoop@{
+                                    enum::class.java.enumConstants.forEachIndexed { index, enumValue ->
+                                        if (enumValue.name == value.name) {
+                                            setting.index = index
+                                            return@breakLoop
+                                        }
+                                    }
+                                }
+
+                                (setting as Setting<Enum<*>>).setValue(value)
+                            }
+
+                            is Color -> {
+                                val values = settings.getString(settingName).split(":".toRegex()).toTypedArray()
+
+                                val color = Color(
+                                    values[0].toInt() / 255f,
+                                    values[1].toInt() / 255f,
+                                    values[2].toInt() / 255f,
+                                    values[3].toFloat() / 255f
+                                )
+
+                                setting.alpha = values[3].toFloat()
+                                setting.isRainbow = java.lang.Boolean.parseBoolean(values[4])
+                                setting.rainbowSpeed = values[5].toFloat()
+                                setting.rainbowSaturation = values[6].toFloat()
+                                setting.isSync = java.lang.Boolean.parseBoolean(values[7])
+                                (setting as Setting<Color?>).setValue(color)
+                            }
+                        }
+                    }
+                }
+
+                it.settings.forEach { setting ->
+                    loadSetting(setting, false)
+
+                    setting.subsettings.forEach { subSetting ->
+                        loadSetting(subSetting, true)
+                    }
+                }
+
+                if (settings.getBoolean("enabled") == !it.isEnabled) {
+                    it.toggle()
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }
+
+        /* val loadFolder = File("paragon${File.separator}configs${File.separator}$configName")
 
         if (!loadFolder.exists()) {
             loadFolder.mkdirs()
@@ -204,7 +386,7 @@ class StorageManager {
             } catch (throwable: Throwable) {
                 throwable.printStackTrace()
             }
-        }
+        } */
     }
 
     /**

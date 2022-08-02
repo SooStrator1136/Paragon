@@ -77,6 +77,10 @@ open class Module(name: String, val category: Category, description: String) : F
 
     open fun getData() = ""
 
+    open fun isActive(): Boolean {
+        return isEnabled
+    }
+
     /**
      * Toggles the module
      */

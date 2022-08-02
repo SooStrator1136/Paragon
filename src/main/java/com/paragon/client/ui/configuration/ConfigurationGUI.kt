@@ -1,5 +1,6 @@
 package com.paragon.client.ui.configuration
 
+import com.paragon.Paragon
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.ClickGUI.darkenBackground
 import com.paragon.client.ui.configuration.windows.Window
@@ -46,6 +47,8 @@ class ConfigurationGUI : GuiScreen() {
         currentGUI?.drawScreen(mouseX, mouseY, mouseDelta)
 
         windowsList.forEach { it.draw(mouseX, mouseY, mouseDelta) }
+
+        Paragon.INSTANCE.taskbar.draw(mouseX, mouseY)
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
@@ -62,6 +65,8 @@ class ConfigurationGUI : GuiScreen() {
         windowsList.reverse()
 
         currentGUI?.mouseClicked(mouseX, mouseY, mouseButton)
+
+        Paragon.INSTANCE.taskbar.mouseClicked(mouseX, mouseY, Click.getClick(mouseButton))
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {

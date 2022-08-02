@@ -3,8 +3,9 @@ package com.paragon.client.ui.configuration.old.impl.module;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.configuration.old.OldPanelGUI;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 /**
  * @author Wolfsurge
  */
-public class ModuleButton implements ITextRenderer {
+public class ModuleButton {
 
     // Opening / Closing animation
     private final Animation animation;
@@ -77,7 +78,7 @@ public class ModuleButton implements ITextRenderer {
         float scaleFactor = 1.25f;
 
         // Render the module's name
-        renderText(getModule().getName(), (getPanel().getX() + 3) * scaleFactor, (getOffset() + 4f) * scaleFactor, getModule().isEnabled() ? Colours.mainColour.getValue().getRGB() : -1);
+        FontUtil.drawStringWithShadow(getModule().getName(), (getPanel().getX() + 3) * scaleFactor, (getOffset() + 4f) * scaleFactor, getModule().isEnabled() ? Colours.mainColour.getValue().getRGB() : - 1);
 
         // Render some dots at the side if we have more settings than just the keybind
         if (module.getSettings().size() > 1) {

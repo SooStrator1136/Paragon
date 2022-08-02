@@ -5,6 +5,7 @@ import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
 import net.minecraft.util.text.TextFormatting;
@@ -84,10 +85,10 @@ public class SliderComponent extends SettingComponent<Number> {
 
         {
             float scaleFactor = 1 / 0.65f;
-            renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
+            FontUtil.drawStringWithShadow(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
 
-            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(String.valueOf(getSetting().getValue())) * 0.65f) - 5) * scaleFactor;
-            renderText(formatCode(TextFormatting.GRAY) + " " + getSetting().getValue(), side, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (FontUtil.getStringWidth(String.valueOf(getSetting().getValue())) * 0.65f) - 5) * scaleFactor;
+            FontUtil.drawStringWithShadow(TextFormatting.GRAY + " " + getSetting().getValue(), side, (getModuleButton().getOffset() + getOffset() + 3) * scaleFactor, -1);
         }
 
         GL11.glPopMatrix();

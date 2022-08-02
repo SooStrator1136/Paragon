@@ -1,7 +1,8 @@
 package com.paragon.client.ui.alt;
 
 import com.paragon.Paragon;
-import com.paragon.api.util.render.ITextRenderer;
+
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.managers.alt.Alt;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,7 +11,7 @@ import net.minecraft.client.gui.GuiTextField;
 import java.awt.Color;
 import java.io.IOException;
 
-public final class AddAltGUI extends GuiScreen implements ITextRenderer {
+public final class AddAltGUI extends GuiScreen {
 
     private GuiTextField emailField;
     private GuiTextField passwordField;
@@ -32,14 +33,14 @@ public final class AddAltGUI extends GuiScreen implements ITextRenderer {
         passwordField.drawTextBox();
 
         if (emailField.getText().isEmpty() && !emailField.isFocused()) {
-            renderText("Email", width / 2f - 97, height / 2f - 39, new Color(150, 150, 150).getRGB());
+            FontUtil.drawStringWithShadow("Email", width / 2f - 97, height / 2f - 39, new Color(150, 150, 150).getRGB());
         }
 
         if (passwordField.getText().isEmpty() && !passwordField.isFocused()) {
-            renderText("Password", width / 2f - 97, height / 2f - 17, new Color(150, 150, 150).getRGB());
+            FontUtil.drawStringWithShadow("Password", width / 2f - 97, height / 2f - 17, new Color(150, 150, 150).getRGB());
         }
 
-        renderCenteredString("Add Alt Account", width / 2f, 50, -1, false);
+        FontUtil.renderCenteredString("Add Alt Account", width / 2f, 50, -1, false);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

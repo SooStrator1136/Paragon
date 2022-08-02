@@ -2,10 +2,11 @@ package com.paragon.client.ui.alt;
 
 import com.paragon.api.util.Wrapper;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.ITextRenderer;
+
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.managers.alt.Alt;
 
-public final class AltEntry implements ITextRenderer, Wrapper {
+public final class AltEntry implements Wrapper {
 
     private final Alt alt;
     private float offset;
@@ -17,7 +18,7 @@ public final class AltEntry implements ITextRenderer, Wrapper {
 
     public void drawAlt(int mouseX, int mouseY, int screenWidth) {
         RenderUtil.drawRect(0, offset, screenWidth, 20, AltManagerGUI.selectedAltEntry == this ? 0x95111111 : 0x95000000);
-        renderCenteredString(alt.getEmail(), screenWidth / 2f, offset + 10, -1, true);
+        FontUtil.renderCenteredString(alt.getEmail(), screenWidth / 2f, offset + 10, -1, true);
     }
 
     public void clicked(int mouseX, int mouseY, int screenWidth) {

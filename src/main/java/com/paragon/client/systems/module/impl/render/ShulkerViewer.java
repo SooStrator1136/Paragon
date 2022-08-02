@@ -2,9 +2,10 @@ package com.paragon.client.systems.module.impl.render;
 
 import com.paragon.api.event.render.gui.RenderTooltipEvent;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.Colours;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,7 +20,7 @@ import java.awt.*;
 /**
  * @author Surge
  */
-public class ShulkerViewer extends Module implements ITextRenderer {
+public class ShulkerViewer extends Module {
 
     public ShulkerViewer() {
         super("ShulkerViewer", Category.RENDER, "Shows the contents of a shulker box in your inventory without having to open it");
@@ -53,7 +54,7 @@ public class ShulkerViewer extends Module implements ITextRenderer {
                     RenderUtil.drawBorder(event.getX() + 2, y, 168, 71, 1, Colours.mainColour.getValue().getRGB());
 
                     // Shulker box name
-                    renderText(event.getStack().getDisplayName(), event.getX() + 6, y + 2.5f, -1);
+                    FontUtil.drawStringWithShadow(event.getStack().getDisplayName(), event.getX() + 6, y + 2.5f, - 1);
 
                     // Separator thing
                     RenderUtil.drawRect(event.getX() + 2, y + 13, 168, 1, Colours.mainColour.getValue().getRGB());

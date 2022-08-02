@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.hud.impl;
 
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.systems.module.impl.combat.Aura;
@@ -19,19 +20,19 @@ public class CombatInfo extends HUDModule {
 
     @Override
     public void render() {
-        renderText("KA " + (Aura.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY(), Colours.mainColour.getValue().getRGB());
-        renderText("CA " + (AutoCrystal.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + getFontHeight(), Colours.mainColour.getValue().getRGB());
-        renderText("ACR " + (AutoCrystalRewrite.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + getFontHeight() * 2, Colours.mainColour.getValue().getRGB());
+        FontUtil.drawStringWithShadow("KA " + (Aura.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY(), Colours.mainColour.getValue().getRGB());
+        FontUtil.drawStringWithShadow("CA " + (AutoCrystal.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + FontUtil.getHeight(), Colours.mainColour.getValue().getRGB());
+        FontUtil.drawStringWithShadow("ACR " + (AutoCrystalRewrite.INSTANCE.isEnabled() ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled"), getX(), getY() + FontUtil.getHeight() * 2, Colours.mainColour.getValue().getRGB());
     }
 
     @Override
     public float getWidth() {
         // Longest
-        return getStringWidth("ACR Disabled");
+        return FontUtil.getStringWidth("ACR Disabled");
     }
 
     @Override
     public float getHeight() {
-        return getFontHeight() * 3;
+        return FontUtil.getHeight() * 3;
     }
 }

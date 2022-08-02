@@ -2,6 +2,7 @@ package com.paragon.client.ui.configuration.discord.settings.impl
 
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.Timer
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.client.ui.util.Click
 import net.minecraft.util.ChatAllowedCharacters
@@ -16,25 +17,25 @@ class DiscordString(val setting: Setting<String>) : DiscordSetting(setting) {
     private var typing = false
 
     init {
-        bounds.height = (fontHeight + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
     }
 
     override fun render(mouseX: Int, mouseY: Int) {
         super.render(mouseX, mouseY)
 
-        renderText(
+        FontUtil.drawStringWithShadow(
             setting.value,
             bounds.x.toFloat(),
-            bounds.y + fontHeight + 1F,
+            bounds.y + FontUtil.getHeight() + 1F,
             -1
         )
 
         if (typing) {
             if (cursorTimer.hasMSPassed(500.0)) {
-                renderText(
+                FontUtil.drawStringWithShadow(
                     "|",
-                    bounds.x + getStringWidth(setting.value) + 1F,
-                    bounds.y + fontHeight + 1F,
+                    bounds.x + FontUtil.getStringWidth(setting.value) + 1F,
+                    bounds.y + FontUtil.getHeight() + 1F,
                     -1
                 )
 

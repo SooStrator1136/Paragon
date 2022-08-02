@@ -1,8 +1,9 @@
 package com.paragon.client.ui.configuration.discord.category
 
 import com.paragon.api.module.Category
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
@@ -15,12 +16,12 @@ import java.awt.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
+class DiscordCategory(val category: Category) : IRenderable {
 
     val rect = Rectangle()
 
     private val indicator = ItemStack(category.indicator)
-    private val nameAnimation = Animation({ 500F }, false, ClickGUI.easing::value)
+    private val nameAnimation = Animation({ 200F }, false, ClickGUI.easing::value)
 
     override fun render(mouseX: Int, mouseY: Int) {
         val diff = rect.width / 10
@@ -59,25 +60,25 @@ class DiscordCategory(val category: Category) : IRenderable, ITextRenderer {
             RenderUtil.pushScissor(
                 rect.x + rect.width - 2.0,
                 rect.y.toDouble(),
-                (getStringWidth(category.Name) + 5) * nameAnimation.getAnimationFactor(),
+                (FontUtil.getStringWidth(category.Name) + 6) * nameAnimation.getAnimationFactor(),
                 rect.height.toDouble()
             )
 
             RenderUtil.drawRoundedRect(
                 (rect.x + rect.width).toDouble() - 2.0,
-                (rect.centerY - (fontHeight / 2) - 2),
-                getStringWidth(category.Name).toDouble() + 4,
-                fontHeight.toDouble() + 4,
+                (rect.centerY - (FontUtil.getHeight() / 2)),
+                FontUtil.getStringWidth(category.Name).toDouble() + 6,
+                FontUtil.getHeight().toDouble(),
                 5.0,
                 5.0,
                 5.0,
                 5.0,
                 GuiDiscord.CATEGORY_TEXT_BACKGROUND.rgb
             )
-            renderText(
+            FontUtil.drawStringWithShadow(
                 category.Name,
                 (rect.x + rect.width).toFloat(),
-                (rect.centerY - (fontHeight / 2)).toFloat(),
+                (rect.centerY - 4).toFloat(),
                 Color.WHITE.rgb
             )
 

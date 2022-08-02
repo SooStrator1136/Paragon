@@ -3,6 +3,7 @@ package com.paragon.client.ui.configuration.discord.settings.impl
 import com.paragon.Paragon
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.client.ui.util.Click
 import org.lwjgl.input.Keyboard
@@ -15,16 +16,16 @@ class DiscordBind(val setting: Setting<Bind>) : DiscordSetting(setting) {
     private var listening = false
 
     init {
-        bounds.height = (fontHeight + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
     }
 
     override fun render(mouseX: Int, mouseY: Int) {
         super.render(mouseX, mouseY)
 
-        renderText(
+        FontUtil.drawStringWithShadow(
             if (listening) "..." else setting.value.getButtonName(),
             bounds.x.toFloat(),
-            bounds.y + fontHeight + 1F,
+            bounds.y + FontUtil.getHeight() + 1F,
             -1
         )
 

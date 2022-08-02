@@ -3,14 +3,14 @@ package com.paragon.client.systems.module.hud.impl
 import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.client.systems.module.hud.HUDEditorGUI
 import com.paragon.client.systems.module.hud.HUDModule
 
 /**
  * @author Surge
  */
-object HUD : Module("HUD", Category.HUD, "Render the client's HUD on screen"), ITextRenderer {
+object HUD : Module("HUD", Category.HUD, "Render the client's HUD on screen")  {
 
     override fun onRender2D() {
         if (minecraft.currentScreen !is HUDEditorGUI) {

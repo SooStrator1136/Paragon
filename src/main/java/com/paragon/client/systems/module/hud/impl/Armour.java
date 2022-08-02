@@ -57,7 +57,7 @@ public class Armour extends HUDModule {
             float scaleFactor = 1 / 0.75f;
 
             // Render the damage percentage
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(String.valueOf(itemDamage), (getX() + xSpacing + (9 - (getStringWidth(String.valueOf(itemDamage)) / 2f))) * scaleFactor, getY() * scaleFactor, -1);
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(String.valueOf(itemDamage), (getX() + xSpacing + (9 - (mc.fontRenderer.getStringWidth(String.valueOf(itemDamage)) / 2f))) * scaleFactor, getY() * scaleFactor, -1);
 
             GL11.glScalef(scaleFactor, scaleFactor, scaleFactor);
 

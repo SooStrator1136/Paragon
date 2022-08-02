@@ -5,6 +5,7 @@ import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.ui.util.animation.Animation;
 import com.paragon.client.ui.util.animation.Easing;
 import com.paragon.client.ui.util.Click;
@@ -54,8 +55,8 @@ public final class BindElement extends Element {
             RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), 1, (float) (getHeight() * listeningAnimation.getAnimationFactor()), Color.HSBtoRGB(getParent().getLeftHue() / 360, 1f, (float) (0.5f + (0.25f * getHover().getAnimationFactor()))));
 
-            renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
-            renderText(setting.getValue().getButtonName(), (getX() + getWidth() - (getLayer() * 2)) - getStringWidth(setting.getValue().getButtonName()) - 3, getY() + getHeight() / 2 - 3.5f, new Color(150, 150, 155).getRGB());
+            FontUtil.drawStringWithShadow(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            FontUtil.drawStringWithShadow(setting.getValue().getButtonName(), (getX() + getWidth() - (getLayer() * 2)) - FontUtil.getStringWidth(setting.getValue().getButtonName()) - 3, getY() + getHeight() / 2 - 3.5f, new Color(150, 150, 155).getRGB());
 
             super.render(mouseX, mouseY, dWheel);
         }

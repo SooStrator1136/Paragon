@@ -1,7 +1,8 @@
 package com.paragon.client.ui.configuration.discord.settings.impl
 
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ITextRenderer
+import com.paragon.api.util.render.font.FontUtil
+
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.client.ui.util.Click
@@ -10,12 +11,12 @@ import org.lwjgl.util.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordBoolean(val setting: Setting<Boolean>) : DiscordSetting(setting), ITextRenderer {
+class DiscordBoolean(val setting: Setting<Boolean>) : DiscordSetting(setting) {
 
     private val stateRect = Rectangle()
 
     init {
-        bounds.height = (fontHeight + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
     }
 
     override fun render(mouseX: Int, mouseY: Int) {
@@ -23,15 +24,15 @@ class DiscordBoolean(val setting: Setting<Boolean>) : DiscordSetting(setting), I
 
         stateRect.setBounds(
             bounds.x,
-            (bounds.y + fontHeight + 1).toInt(),
-            getStringWidth(setting.value.toString()).toInt(),
-            fontHeight.toInt()
+            (bounds.y + FontUtil.getHeight() + 1).toInt(),
+            FontUtil.getStringWidth(setting.value.toString()).toInt(),
+            FontUtil.getHeight().toInt()
         )
 
-        renderText(
+        FontUtil.drawStringWithShadow(
             setting.value.toString(),
             bounds.x.toFloat(),
-            bounds.y + fontHeight + 1F,
+            bounds.y + FontUtil.getHeight() + 1F,
             if (stateRect.contains(mouseX, mouseY)) Colours.mainColour.value.rgb else -1
         )
     }

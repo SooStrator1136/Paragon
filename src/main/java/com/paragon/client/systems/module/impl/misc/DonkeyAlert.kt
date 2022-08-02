@@ -18,7 +18,7 @@ import java.util.*
 /**
  * @author EBS, SooStrator1136
  */
-object DonkeyAlert : Module("Donkey Alert", Category.MISC, "Allows you to find donkeys and other rideable entities easier") {
+object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find donkeys and other rideable entities easier") {
 
     private val donkeyAlert = Setting("Donkeys", true)
         .setDescription("Alert for donkeys")

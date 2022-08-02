@@ -1,7 +1,8 @@
 package com.paragon.client.managers.notifications
 
 import com.paragon.api.util.render.RenderUtil
-import com.paragon.api.util.render.ITextRenderer
+import com.paragon.api.util.render.font.FontUtil
+
 import com.paragon.client.systems.module.hud.impl.Notifications
 import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
@@ -9,7 +10,7 @@ import com.paragon.client.ui.util.animation.Easing
 /**
  * @author Surge
  */
-class Notification(val message: String, val type: NotificationType) : ITextRenderer {
+class Notification(val message: String, val type: NotificationType) {
 
     val animation: Animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
     private var started = false
@@ -22,12 +23,12 @@ class Notification(val message: String, val type: NotificationType) : ITextRende
             started = true
         }
 
-        val width = getStringWidth(message) + 10
+        val width = FontUtil.getStringWidth(message) + 10
         val x = Notifications.INSTANCE.x
 
         RenderUtil.pushScissor(Notifications.INSTANCE.x + (150 - 150) * animation.getAnimationFactor(), y.toDouble(), 300 * animation.getAnimationFactor(), 45.0)
         RenderUtil.drawRect(x + 150 - width / 2f, y, width, 30f, -0x70000000)
-        renderCenteredString(message, x + 150, y + 15f, -1, true)
+        FontUtil.renderCenteredString(message, x + 150, y + 15f, -1, true)
         RenderUtil.drawRect(x + 150 - width / 2f, y, width, 1f, type.colour)
         RenderUtil.popScissor()
 

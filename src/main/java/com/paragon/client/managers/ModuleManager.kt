@@ -89,6 +89,7 @@ class ModuleManager {
             ChorusControl(),
             Cryptic,
             CustomWorld(),
+            DonkeyAlert,
             ExtraTab(),
             FakePlayer(),
             FastUse(),
@@ -104,7 +105,6 @@ class ModuleManager {
             TeleTofu(),
             TimerModule(),
             XCarry(),
-            DonkeyAlert,
 
             // Client
             ClientFont,

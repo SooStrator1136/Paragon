@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.hud.impl;
 
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
 import net.minecraft.util.text.TextFormatting;
@@ -16,17 +17,17 @@ public class Coordinates extends HUDModule {
 
     @Override
     public void render() {
-        renderText(getText(), getX(), getY(), Colours.mainColour.getValue().getRGB());
+        FontUtil.drawStringWithShadow(getText(), getX(), getY(), Colours.mainColour.getValue().getRGB());
     }
 
     @Override
     public float getWidth() {
-        return getStringWidth(getText());
+        return FontUtil.getStringWidth(getText());
     }
 
     @Override
     public float getHeight() {
-        return getFontHeight();
+        return FontUtil.getHeight();
     }
 
     public String getText() {

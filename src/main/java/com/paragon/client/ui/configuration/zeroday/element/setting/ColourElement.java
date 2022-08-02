@@ -2,6 +2,7 @@ package com.paragon.client.ui.configuration.zeroday.element.setting;
 
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.api.setting.Setting;
 import com.paragon.client.ui.util.Click;
@@ -92,7 +93,7 @@ public final class ColourElement extends Element {
             RenderUtil.drawRect(getX() + getLayer(), getY(), getWidth() - getLayer() * 2, getHeight(), new Color((int) (40 + (30 * getHover().getAnimationFactor())), (int) (40 + (30 * getHover().getAnimationFactor())), (int) (45 + (30 * getHover().getAnimationFactor()))).getRGB());
             RenderUtil.drawRect(getX() + getLayer(), getY(), (float) MathHelper.clamp(((getWidth() - getLayer() * 2) * animation.getAnimationFactor()), 1, getWidth()), getHeight(), getSetting().getValue().getRGB());
 
-            renderText(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
+            FontUtil.drawStringWithShadow(setting.getName(), getX() + (getLayer() * 2) + 5, getY() + getHeight() / 2 - 3.5f, 0xFFFFFFFF);
 
             // ???
             // why doesnt it stop dragging when mouseReleased is called

@@ -2,8 +2,9 @@ package com.paragon.client.ui.configuration.old;
 
 import com.paragon.Paragon;
 import com.paragon.api.module.Category;
-import com.paragon.api.util.render.ITextRenderer;
+
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.Colours;
@@ -17,7 +18,7 @@ import java.util.Objects;
 /**
  * @author Wolfsurge
  */
-public class OldPanelGUI extends GuiImplementation implements ITextRenderer {
+public class OldPanelGUI extends GuiImplementation {
 
     public static OldPanelGUI INSTANCE = new OldPanelGUI();
 
@@ -58,9 +59,9 @@ public class OldPanelGUI extends GuiImplementation implements ITextRenderer {
         });
 
         if (ClickGUI.getTooltips().getValue() && !Objects.equals(tooltip, "")) {
-            RenderUtil.drawRect(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0x90000000);
-            RenderUtil.drawBorder(mouseX + 7, mouseY - 5, getStringWidth(tooltip) + 4, getFontHeight() + 2, 0.5f, Colours.mainColour.getValue().getRGB());
-            renderText(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
+            RenderUtil.drawRect(mouseX + 7, mouseY - 5, FontUtil.getStringWidth(tooltip) + 4, FontUtil.getHeight() + 2, 0x90000000);
+            RenderUtil.drawBorder(mouseX + 7, mouseY - 5, FontUtil.getStringWidth(tooltip) + 4, FontUtil.getHeight() + 2, 0.5f, Colours.mainColour.getValue().getRGB());
+            FontUtil.drawStringWithShadow(tooltip, mouseX + 9, mouseY - (ClientFont.INSTANCE.isEnabled() ? 2 : 4), -1);
         }
     }
 

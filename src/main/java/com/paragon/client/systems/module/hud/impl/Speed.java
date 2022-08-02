@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.hud.impl;
 
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.hud.HUDModule;
@@ -30,7 +31,7 @@ public class Speed extends HUDModule {
         double distX = mc.player.posX - mc.player.lastTickPosX;
         double distZ = mc.player.posZ - mc.player.lastTickPosZ;
 
-        renderText("Speed " + TextFormatting.WHITE + String.format("%.2f", unit.getValue().apply(getPlayerSpeed(distX, distZ))) + unit.getValue().name().toLowerCase(), getX(), getY(), Colours.mainColour.getValue().getRGB());
+        FontUtil.drawStringWithShadow("Speed " + TextFormatting.WHITE + String.format("%.2f", unit.getValue().apply(getPlayerSpeed(distX, distZ))) + unit.getValue().name().toLowerCase(), getX(), getY(), Colours.mainColour.getValue().getRGB());
     }
 
     public double getPlayerSpeed(double distX, double distZ) {
@@ -44,12 +45,12 @@ public class Speed extends HUDModule {
         double distX = mc.player.posX - mc.player.lastTickPosX;
         double distZ = mc.player.posZ - mc.player.lastTickPosZ;
 
-        return getStringWidth("Speed " +  String.format("%.2f", unit.getValue().apply(getPlayerSpeed(distX, distZ))) + unit.getValue().name().toLowerCase());
+        return FontUtil.getStringWidth("Speed " +  String.format("%.2f", unit.getValue().apply(getPlayerSpeed(distX, distZ))) + unit.getValue().name().toLowerCase());
     }
 
     @Override
     public float getHeight() {
-        return getFontHeight();
+        return FontUtil.getHeight();
     }
 
     public enum Unit {

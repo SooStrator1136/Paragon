@@ -5,6 +5,7 @@ import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
@@ -29,10 +30,10 @@ public class KeybindComponent extends SettingComponent<Bind> {
 
         {
             float scaleFactor = 1 / 0.65f;
-            renderText(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+            FontUtil.drawStringWithShadow(getSetting().getName(), (getModuleButton().getPanel().getX() + 5) * scaleFactor, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
 
-            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (getStringWidth(isListening ? " ..." : " " + getSetting().getValue().getButtonName()) * 0.65f) - 5) * scaleFactor;
-            renderText(formatCode(TextFormatting.GRAY) + (isListening ? " ..." : " " + getSetting().getValue().getButtonName()), side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
+            float side = (getModuleButton().getPanel().getX() + getModuleButton().getPanel().getWidth() - (FontUtil.getStringWidth(isListening ? " ..." : " " + getSetting().getValue().getButtonName()) * 0.65f) - 5) * scaleFactor;
+            FontUtil.drawStringWithShadow(TextFormatting.GRAY + (isListening ? " ..." : " " + getSetting().getValue().getButtonName()), side, (getModuleButton().getOffset() + getOffset() + 4.5f) * scaleFactor, -1);
         }
 
         GL11.glPopMatrix();

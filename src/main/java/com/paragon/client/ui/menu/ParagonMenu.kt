@@ -1,8 +1,9 @@
 package com.paragon.client.ui.menu
 
 import com.paragon.Paragon
-import com.paragon.api.util.render.ITextRenderer
+
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.util.animation.Animation
 import com.paragon.client.ui.util.animation.Easing
@@ -14,7 +15,7 @@ import java.io.IOException
 /**
  * @author Surge
  */
-class ParagonMenu : GuiScreen(), ITextRenderer {
+class ParagonMenu : GuiScreen() {
 
     // Credits expand animation
     private val creditsAnimation = Animation({ 500.0f }, false) { Easing.EXPO_IN_OUT }
@@ -66,7 +67,7 @@ class ParagonMenu : GuiScreen(), ITextRenderer {
         glScalef(2.5f, 2.5f, 2.5f)
         run {
             val scaleFactor = 1.0f / 2.5f
-            renderCenteredString(
+            FontUtil.renderCenteredString(
                 "Paragon",
                 width / 2f * scaleFactor,
                 (height / 2f - 30) * scaleFactor,
@@ -80,7 +81,7 @@ class ParagonMenu : GuiScreen(), ITextRenderer {
         glScalef(0.8f, 0.8f, 0.8f)
         run {
             val scaleFactor = 1 / 0.8f
-            renderCenteredString(
+            FontUtil.renderCenteredString(
                 "v" + Paragon.modVersion,
                 width / 2f * scaleFactor,
                 (height / 2f - 10) * scaleFactor,
@@ -107,7 +108,7 @@ class ParagonMenu : GuiScreen(), ITextRenderer {
         )
 
         // Title
-        renderText("Credits", 10f, 255f, -1)
+        FontUtil.drawStringWithShadow("Credits", 10f, 255f, -1)
 
         // Credits
         glScalef(0.65f, 0.65f, 0.65f)
@@ -119,7 +120,7 @@ class ParagonMenu : GuiScreen(), ITextRenderer {
                 "Shader OpenGL code - linustouchtips",
                 "Font Renderer - Cosmos Client"
             )) {
-                renderText(str, 10 * scaleFactor, y * scaleFactor, -1)
+                FontUtil.drawStringWithShadow(str, 10 * scaleFactor, y * scaleFactor, -1)
                 y += 10f
             }
             glScalef(scaleFactor, scaleFactor, scaleFactor)
