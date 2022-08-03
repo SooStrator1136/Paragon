@@ -20,4 +20,5 @@ object ViewClip : Module("ViewClip", Category.RENDER, "Lets your third person vi
         event.cancel()
         event.distance = distance.value
     }
+
 }

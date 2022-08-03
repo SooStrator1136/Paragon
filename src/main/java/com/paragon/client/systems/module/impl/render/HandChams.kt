@@ -4,19 +4,12 @@ import com.paragon.api.event.render.entity.RenderArmEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
-import com.paragon.asm.mixins.accessor.IEntityRenderer
-import com.paragon.client.shader.shaders.FluidShader
 import me.wolfsurge.cerauno.listener.Listener
-import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.model.ModelPlayer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper
-import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.shader.Framebuffer
 import net.minecraft.entity.player.EntityPlayer
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL20
 import java.awt.Color
 
 /**
@@ -46,7 +39,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
 
     private val colour = Setting("Colour", Color(185, 17, 255))
         .setDescription("The colour of the hand")
-    
+
     @Listener
     fun onRenderLeftPre(event: RenderArmEvent.LeftArmPre) {
         if (event.player == minecraft.player) {

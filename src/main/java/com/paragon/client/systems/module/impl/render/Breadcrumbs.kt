@@ -3,11 +3,10 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.PlayerUtil
 import com.paragon.api.util.render.ColourUtil.setColour
 import net.minecraft.util.math.Vec3d
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.util.*
@@ -43,15 +42,18 @@ object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behin
     }
 
     override fun onTick() {
-        if (nullCheck() || minecraft.player.ticksExisted <= 20) {
+        if (minecraft.anyNull || minecraft.player.ticksExisted <= 20) {
             // We may have just loaded into a world, so we need to clear the positions
             positions.clear()
             return
         }
 
         // Create position
-        val pos = Position(Vec3d(minecraft.player.lastTickPosX, minecraft.player.lastTickPosY, minecraft.player.lastTickPosZ), Color(Color.HSBtoRGB(colourHue / 360f, 1f, 1f)))
-        
+        val pos = Position(
+            Vec3d(minecraft.player.lastTickPosX, minecraft.player.lastTickPosY, minecraft.player.lastTickPosZ),
+            Color(Color.HSBtoRGB(colourHue / 360f, 1f, 1f))
+        )
+
         if (PlayerUtil.isMoving() || minecraft.player.posY != minecraft.player.lastTickPosY) {
             colourHue++
         }
@@ -79,7 +81,7 @@ object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behin
 
         // Disable lighting
         minecraft.entityRenderer.disableLightmap()
-        
+
         glBegin(GL_LINE_STRIP)
         for (pos in positions) {
             val renderPosX = minecraft.renderManager.viewerPosX
@@ -123,4 +125,5 @@ object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behin
         val isAlive: Boolean
             get() = lifespan > 0
     }
+
 }

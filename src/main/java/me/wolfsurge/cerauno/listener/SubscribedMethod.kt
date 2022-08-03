@@ -27,7 +27,7 @@ class SubscribedMethod(val source: Any?, method: Method) {
             // Check method modifiers for static
             val isStatic = Modifier.isStatic(method.modifiers)
 
-            // Create methodtype for invoking the methodhandle
+            // Create methodType for invoking the methodHandle
             val targetSignature = MethodType.methodType(Consumer::class.java)
 
             // Generate callsite
@@ -62,4 +62,5 @@ class SubscribedMethod(val source: Any?, method: Method) {
         // Avoids creation of duplicates
         private val handlerCache: MutableMap<Method, Consumer<Any>?> = ConcurrentHashMap()
     }
+
 }

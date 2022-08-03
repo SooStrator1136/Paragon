@@ -5,6 +5,7 @@ import com.paragon.api.event.render.entity.RenderEatingEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.entity.passive.EntityBat
 import net.minecraft.init.SoundEvents
@@ -42,7 +43,7 @@ object NoRender : Module("NoRender", Category.RENDER, "Cancels rendering certain
 
     @SubscribeEvent
     fun onRender(event: RenderGameOverlayEvent.Pre) {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -71,7 +72,10 @@ object NoRender : Module("NoRender", Category.RENDER, "Cancels rendering certain
 
     @SubscribeEvent
     fun onPlaySound(event: PlaySoundAtEntityEvent) {
-        if (nullCheck()) return
+        if (minecraft.anyNull) {
+            return
+        }
+
         if (bats.value && event.sound == SoundEvents.ENTITY_BAT_AMBIENT || event.sound == SoundEvents.ENTITY_BAT_DEATH || event.sound == SoundEvents.ENTITY_BAT_HURT || event.sound == SoundEvents.ENTITY_BAT_LOOP || event.sound == SoundEvents.ENTITY_BAT_TAKEOFF) {
             event.volume = 0.0f
             event.pitch = 0.0f
@@ -102,4 +106,5 @@ object NoRender : Module("NoRender", Category.RENDER, "Cancels rendering certain
             event.cancel()
         }
     }
+
 }

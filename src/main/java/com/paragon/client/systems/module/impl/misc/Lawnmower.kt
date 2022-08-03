@@ -50,7 +50,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
                 minecraft.player.posX.toInt(),
                 minecraft.player.posY.toInt(),
                 minecraft.player.posZ.toInt()
-            ) < range.value
+            ) <= range.value
         }
 
         if (timer.hasMSPassed(delay.value) && toRemove.isNotEmpty()) {

@@ -35,4 +35,5 @@ public class CombatInfo extends HUDModule {
     public float getHeight() {
         return FontUtil.getHeight() * 3;
     }
+
 }

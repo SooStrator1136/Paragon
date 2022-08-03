@@ -53,4 +53,5 @@ object NoSwing : Module("NoSwing", Category.RENDER, "Cancels the swing animation
          */
         METHOD_CANCEL
     }
+
 }

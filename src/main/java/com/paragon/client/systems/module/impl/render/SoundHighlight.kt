@@ -28,7 +28,7 @@ object SoundHighlight : Module("SoundHighlight", Category.RENDER, "Highlights th
 
     override fun onRender3D() {
         // Iterate through sounds
-        soundMap.forEach { (vec: Vec3d, pair: Pair<String, Long>) ->
+        soundMap.forEach { (vec, pair) ->
             // Draw nametag at sound position
             drawNametagText(pair.left, vec, Color(255, 255, 255, MathHelper.clamp(pair.right.toInt(), 4, 255)).rgb)
 
@@ -45,7 +45,9 @@ object SoundHighlight : Module("SoundHighlight", Category.RENDER, "Highlights th
         // Packet is a sound packet
         if (event.packet is SPacketSoundEffect) {
             val packet = event.packet
-            val path = if (format.value) I18n.format("subtitles." + event.packet.sound.soundName.resourcePath) else event.packet.sound.soundName.resourcePath
+            val path = if (format.value) {
+                I18n.format("subtitles." + event.packet.sound.soundName.resourcePath)
+            } else event.packet.sound.soundName.resourcePath
 
             // Exclude sounds that don't have translations
             if (!path.contains("subtitles.")) {
@@ -54,4 +56,5 @@ object SoundHighlight : Module("SoundHighlight", Category.RENDER, "Highlights th
             }
         }
     }
+
 }

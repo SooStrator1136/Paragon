@@ -47,7 +47,7 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
         .setDescription("Highlight Ender Chests")
 
     // Render settings
-    private val mode = Setting<Mode?>("Mode", Mode.SHADER)
+    private val mode = Setting("Mode", Mode.SHADER)
         .setDescription("How to render the entities")
 
     private val lineWidth = Setting("LineWidth", 1f, 0.1f, 8f, 0.1f)
@@ -69,7 +69,7 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
 
     // Shaders
     private val outlineShader = OutlineShader()
-    private var framebuffer: Framebuffer? = null
+    private var frameBuffer: Framebuffer? = null
     private var lastScaleFactor = 0f
     private var lastScaleWidth = 0f
     private var lastScaleHeight = 0f
@@ -83,13 +83,18 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
                     }
 
                     if (outline.value) {
-                        drawBoundingBox(getBlockBox(tileEntity.pos), lineWidth.value, integrateAlpha(colour.value, 255f))
+                        drawBoundingBox(
+                            getBlockBox(tileEntity.pos),
+                            lineWidth.value,
+                            integrateAlpha(colour.value, 255f)
+                        )
                     }
                 }
             })
         }
     }
 
+    @Suppress("ReplaceNotNullAssertionWithElvisReturn")
     @SubscribeEvent
     fun onRenderOverlay(event: RenderGameOverlayEvent.Pre) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && mode.value == Mode.SHADER) {
@@ -99,24 +104,24 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
             GlStateManager.pushMatrix()
             GlStateManager.pushAttrib()
 
-            // Delete old framebuffer
-            if (framebuffer != null) {
-                framebuffer!!.framebufferClear()
+            // Delete old frameBuffer
+            if (frameBuffer != null) {
+                frameBuffer!!.framebufferClear()
 
                 if (lastScaleFactor != event.resolution.scaleFactor.toFloat() || lastScaleWidth != event.resolution.scaledWidth.toFloat() || lastScaleHeight != event.resolution.scaledHeight.toFloat()) {
-                    framebuffer!!.deleteFramebuffer()
-                    framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
-                    framebuffer!!.framebufferClear()
+                    frameBuffer!!.deleteFramebuffer()
+                    frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                    frameBuffer!!.framebufferClear()
                 }
 
                 lastScaleFactor = event.resolution.scaleFactor.toFloat()
                 lastScaleWidth = event.resolution.scaledWidth.toFloat()
                 lastScaleHeight = event.resolution.scaledHeight.toFloat()
             } else {
-                framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
             }
 
-            framebuffer!!.bindFramebuffer(false)
+            frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
             (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
@@ -126,14 +131,20 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
                     val x = minecraft.renderManager.viewerPosX
                     val y = minecraft.renderManager.viewerPosY
                     val z = minecraft.renderManager.viewerPosZ
-                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.pos.x - x, tileEntity.pos.y - y, tileEntity.pos.z - z, minecraft.renderPartialTicks)
+                    TileEntityRendererDispatcher.instance.render(
+                        tileEntity,
+                        tileEntity.pos.x - x,
+                        tileEntity.pos.y - y,
+                        tileEntity.pos.z - z,
+                        minecraft.renderPartialTicks
+                    )
                 }
             }
 
             minecraft.gameSettings.entityShadows = previousShadows
             GlStateManager.enableBlend()
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            framebuffer!!.unbindFramebuffer()
+            frameBuffer!!.unbindFramebuffer()
             minecraft.framebuffer.bindFramebuffer(true)
             minecraft.entityRenderer.disableLightmap()
             RenderHelper.disableStandardItemLighting()
@@ -147,7 +158,7 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
             outlineShader.startShader()
             minecraft.entityRenderer.setupOverlayRendering()
 
-            glBindTexture(GL_TEXTURE_2D, framebuffer!!.framebufferTexture)
+            glBindTexture(GL_TEXTURE_2D, frameBuffer!!.framebufferTexture)
             glBegin(GL_QUADS)
             glTexCoord2d(0.0, 1.0)
             glVertex2d(0.0, 0.0)
@@ -177,33 +188,52 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
             val partialTicks = event.partialTicks
             val blockPos = tileEntityIn.pos
 
-            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            event.tileEntityRendererDispatcher.render(
+                tileEntityIn,
+                blockPos.x.toDouble() - event.staticPlayerX,
+                blockPos.y.toDouble() - event.staticPlayerY,
+                blockPos.z.toDouble() - event.staticPlayerZ,
+                partialTicks
+            )
             renderOne(lineWidth.value)
-            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            event.tileEntityRendererDispatcher.render(
+                tileEntityIn,
+                blockPos.x.toDouble() - event.staticPlayerX,
+                blockPos.y.toDouble() - event.staticPlayerY,
+                blockPos.z.toDouble() - event.staticPlayerZ,
+                partialTicks
+            )
             renderTwo()
-            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            event.tileEntityRendererDispatcher.render(
+                tileEntityIn,
+                blockPos.x.toDouble() - event.staticPlayerX,
+                blockPos.y.toDouble() - event.staticPlayerY,
+                blockPos.z.toDouble() - event.staticPlayerZ,
+                partialTicks
+            )
             renderThree()
             renderFour(colour.value)
-            event.tileEntityRendererDispatcher.render(tileEntityIn, blockPos.x.toDouble() - event.staticPlayerX, blockPos.y.toDouble() - event.staticPlayerY, blockPos.z.toDouble() - event.staticPlayerZ, partialTicks)
+            event.tileEntityRendererDispatcher.render(
+                tileEntityIn,
+                blockPos.x.toDouble() - event.staticPlayerX,
+                blockPos.y.toDouble() - event.staticPlayerY,
+                blockPos.z.toDouble() - event.staticPlayerZ,
+                partialTicks
+            )
             renderFive()
         }
     }
 
-    fun isStorageValid(tileEntity: TileEntity?): Boolean {
-        if (tileEntity is TileEntityChest) {
-            return chests.value
+    private fun isStorageValid(tileEntity: TileEntity?): Boolean {
+        return when (tileEntity) {
+            is TileEntityChest -> chests.value
+            is TileEntityShulkerBox -> shulkers.value
+            is TileEntityEnderChest -> enderChests.value
+            else -> false
         }
-        if (tileEntity is TileEntityShulkerBox) {
-            return shulkers.value
-        }
-        return if (tileEntity is TileEntityEnderChest) {
-            enderChests.value
-        } else false
     }
 
-    override fun getData(): String {
-        return StringUtil.getFormattedText(mode.value)
-    }
+    override fun getData(): String = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
         /**
@@ -221,4 +251,5 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
          */
         OUTLINE
     }
+
 }

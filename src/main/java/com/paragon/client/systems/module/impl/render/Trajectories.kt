@@ -3,7 +3,6 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.ColourUtil.setColour
@@ -15,7 +14,6 @@ import net.minecraft.item.*
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import kotlin.math.cos
@@ -24,7 +22,7 @@ import kotlin.math.sqrt
 
 object Trajectories : Module("Trajectories", Category.RENDER, "Shows where projectiles will land") {
 
-    private val line = Setting<Boolean?>("Line", true)
+    private val line = Setting("Line", true)
         .setDescription("Render a line to the projectile's destination")
 
     private val lineColour = Setting("LineColour", Color(185, 17, 255))
@@ -35,7 +33,7 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
         .setDescription("The width of the line")
         .setParentSetting(line)
 
-    private val box = Setting<Boolean?>("Box", true)
+    private val box = Setting("Box", true)
         .setDescription("Render a box at the projectile's destination")
 
     private val fill = Setting("Fill", true)
@@ -75,7 +73,7 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
         if (nullCheck()) {
             return
         }
-        
+
         val stack = minecraft.player.heldItemMainhand
 
         // Check the item we are holding is a projectile (or a bow) and that projectile is enabled
@@ -86,10 +84,22 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
             }
 
             // Original arrow position
-            var position = Vec3d(minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * (minecraft as IMinecraft).timer.renderPartialTicks - cos(Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()) * 0.16f, minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * (minecraft as IMinecraft).timer.renderPartialTicks + minecraft.player.getEyeHeight() - 0.15, minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * (minecraft as IMinecraft).timer.renderPartialTicks - sin(Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()) * 0.16f)
+            var position = Vec3d(
+                minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * (minecraft as IMinecraft).timer.renderPartialTicks - cos(
+                    Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()
+                ) * 0.16f,
+                minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * (minecraft as IMinecraft).timer.renderPartialTicks + minecraft.player.getEyeHeight() - 0.15,
+                minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * (minecraft as IMinecraft).timer.renderPartialTicks - sin(
+                    Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()
+                ) * 0.16f
+            )
 
             // Original arrow velocity
-            var velocity = Vec3d( -sin(Math.toRadians(minecraft.player.rotationYaw.toDouble())) * cos(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f, -sin(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f, cos(Math.toRadians(minecraft.player.rotationYaw.toDouble())) * cos(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f)
+            var velocity = Vec3d(
+                -sin(Math.toRadians(minecraft.player.rotationYaw.toDouble())) * cos(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f,
+                -sin(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f,
+                cos(Math.toRadians(minecraft.player.rotationYaw.toDouble())) * cos(Math.toRadians(minecraft.player.rotationPitch.toDouble())) * if (stack.item is ItemBow) 1.0f else 0.4f
+            )
 
             // Motion factor
             val motion = sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
@@ -100,7 +110,11 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
             // If we are holding a bow
             velocity = if (stack.item is ItemBow) {
                 // Get the charge power
-                val power = MathHelper.clamp(((72000 - minecraft.player.itemInUseCount) / 20.0f * ((72000 - minecraft.player.itemInUseCount) / 20.0f) + (72000 - minecraft.player.itemInUseCount) / 20.0f * 2.0f) / 3.0f, 0f, 1f) * 3
+                val power = MathHelper.clamp(
+                    ((72000 - minecraft.player.itemInUseCount) / 20.0f * ((72000 - minecraft.player.itemInUseCount) / 20.0f) + (72000 - minecraft.player.itemInUseCount) / 20.0f * 2.0f) / 3.0f,
+                    0f,
+                    1f
+                ) * 3
 
                 // Set velocity
                 Vec3d(velocity.x * power, velocity.y * power, velocity.z * power)
@@ -109,7 +123,7 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
             }
 
             // Check we want to draw the line
-            if (line.value!!) {
+            if (line.value) {
                 // GL render 3D
                 glPushMatrix()
                 glDisable(GL_TEXTURE_2D)
@@ -127,10 +141,18 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
                 // Add vertices to the line whilst we haven't hit a target
                 for (i in 0..999) {
                     // Add vertex
-                    glVertex3d(position.x - (minecraft.renderManager as IRenderManager).renderX, position.y - (minecraft.renderManager as IRenderManager).renderY, position.z - (minecraft.renderManager as IRenderManager).renderZ)
+                    glVertex3d(
+                        position.x - (minecraft.renderManager as IRenderManager).renderX,
+                        position.y - (minecraft.renderManager as IRenderManager).renderY,
+                        position.z - (minecraft.renderManager as IRenderManager).renderZ
+                    )
 
                     // Move position
-                    position = Vec3d(position.x + velocity.x * 0.1, position.y + velocity.y * 0.1, position.z + velocity.z * 0.1)
+                    position = Vec3d(
+                        position.x + velocity.x * 0.1,
+                        position.y + velocity.y * 0.1,
+                        position.z + velocity.z * 0.1
+                    )
 
                     velocity = Vec3d(
                         velocity.x,
@@ -139,7 +161,11 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
                     )
 
                     // Check if we hit a target
-                    val result = minecraft.world.rayTraceBlocks(EntityUtil.getInterpolatedPosition(minecraft.player).add(Vec3d(0.0, minecraft.player.getEyeHeight().toDouble(), 0.0)), Vec3d(position.x, position.y, position.z)
+                    val result = minecraft.world.rayTraceBlocks(
+                        EntityUtil.getInterpolatedPosition(minecraft.player).add(
+                            Vec3d(0.0, minecraft.player.getEyeHeight().toDouble(), 0.0)
+                        ),
+                        Vec3d(position.x, position.y, position.z)
                     )
                     if (result != null) {
                         break
@@ -159,7 +185,7 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
             }
 
             // Check we want to draw the box
-            if (box.value!!) {
+            if (box.value) {
                 // Get highlight bb
                 val bb = AxisAlignedBB(
                     position.x - (minecraft.renderManager as IRenderManager).renderX - 0.25,

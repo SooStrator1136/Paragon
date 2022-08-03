@@ -20,4 +20,5 @@ object AspectRatio : Module("AspectRatio", Category.RENDER, "Changes the aspect 
         event.cancel()
         event.ratio = ratio.value
     }
+
 }

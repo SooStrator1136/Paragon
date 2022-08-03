@@ -284,7 +284,7 @@ object RenderUtil : Wrapper {
      * In java usage will look like this:
      * ```
      * public void exampleScaleTo(float x, float y, float z, double scaleFacX, double scaleFacY, double scaleFacZ) {
-     *    scaleTo(x, y, z, scaleFacX, scaleFacY, scaleFacZ, unit -> {
+     *    scaleTo(x, y, z, scaleFacX, scaleFacY, scaleFacZ, () -> {
      *       methodThatWillBeScaled();
      *       return Unit.INSTANCE;
      *    });
@@ -299,13 +299,13 @@ object RenderUtil : Wrapper {
         scaleFacX: Double,
         scaleFacY: Double,
         scaleFacZ: Double,
-        block: (Unit) -> Unit
+        block: () -> Unit
     ) {
         GL11.glPushMatrix()
         GL11.glTranslatef(x, y, z)
         GL11.glScaled(scaleFacX, scaleFacY, scaleFacZ)
         GL11.glTranslatef(-x, -y, -z)
-        block.invoke(Unit)
+        block.invoke()
         GL11.glPopMatrix()
     }
 
@@ -686,7 +686,10 @@ object RenderUtil : Wrapper {
     }
 
     @JvmStatic
-    fun renderItemStack(itemStack: ItemStack, x: Float, y: Float, overlay: Boolean) {
+    fun renderItemStack(itemStack: ItemStack?, x: Float, y: Float, overlay: Boolean) {
+        if (itemStack == null) {
+            return
+        }
         val renderItem = minecraft.renderItem
         GlStateManager.enableDepth()
         renderItem.zLevel = 200f

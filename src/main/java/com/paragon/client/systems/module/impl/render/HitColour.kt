@@ -21,4 +21,5 @@ object HitColour : Module("HitColour", Category.RENDER, "Change the colour entit
         event.cancel()
         event.colour = colour.value
     }
+
 }

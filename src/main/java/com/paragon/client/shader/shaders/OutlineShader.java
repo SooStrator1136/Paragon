@@ -6,7 +6,7 @@ import java.awt.*;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class OutlineShader extends Shader {
+public final class OutlineShader extends Shader {
 
     private Color colour = new Color(0, 0, 0);
     private float width = 1F;

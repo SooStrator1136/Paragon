@@ -37,7 +37,7 @@ object ShulkerViewer : Module("ShulkerViewer", Category.RENDER, "Shows the conte
 
                     // Get item list in shulker
                     val items = NonNullList.withSize(27, ItemStack.EMPTY)
-                    ItemStackHelper.loadAllItems(event.stack.tagCompound!!.getCompoundTag("BlockEntityTag"), items)
+                    ItemStackHelper.loadAllItems(compound.getCompoundTag("BlockEntityTag"), items)
 
                     // Y offset
                     val y = event.y - 31
@@ -67,7 +67,7 @@ object ShulkerViewer : Module("ShulkerViewer", Category.RENDER, "Shows the conte
                         drawRect(itemX - 0.5f, itemY - 0.5f, 17f, 17f, Color(25, 25, 28).rgb)
 
                         // Render stack
-                        renderItemStack(item!!, itemX, itemY, true)
+                        renderItemStack(item, itemX, itemY, true)
 
                         // Increase count
                         a++

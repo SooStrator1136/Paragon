@@ -1,11 +1,11 @@
 package com.paragon.client.systems.module.hud.impl;
 
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.api.setting.Setting;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.function.Function;
@@ -79,4 +79,5 @@ public class Speed extends HUDModule {
             return algorithm.apply(value);
         }
     }
+
 }

@@ -76,7 +76,7 @@ class ModuleManager {
             ViewClip,
             ViewModel,
             VoidinqESP,
-            Xray(),
+            Xray,
 
             // Misc
             Announcer(),
@@ -128,7 +128,7 @@ class ModuleManager {
             Notifications(),
             Ping,
             Speed(),
-            Totems(),
+            Totems,
             Watermark()
         )
 

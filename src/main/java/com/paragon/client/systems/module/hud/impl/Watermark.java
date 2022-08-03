@@ -43,7 +43,7 @@ public final class Watermark extends HUDModule {
 
                 final float width = 880 / 4.0F;
                 final float height = 331 / 4.0F;
-                scaleTo(this.getX(), this.getY(), 0.0F, scaleFac.getValue(), scaleFac.getValue(), 1.0D, unit -> {
+                scaleTo(this.getX(), this.getY(), 0.0F, scaleFac.getValue(), scaleFac.getValue(), 1.0D, () -> {
                     RenderUtil.drawModalRectWithCustomSizedTexture(this.getX(), this.getY(), 0, 0, width, height, width, height);
                     return Unit.INSTANCE;
                 });

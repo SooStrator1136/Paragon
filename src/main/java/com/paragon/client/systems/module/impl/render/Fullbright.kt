@@ -17,7 +17,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
     private val mode = Setting("Mode", Mode.GAMMA)
         .setDescription("The mode to use for the brightness")
 
-    private var originalGamma: Float = 0f
+    private var originalGamma = 0f
 
     override fun onEnable() {
         // Set original gamma to current
@@ -41,7 +41,6 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
 
         when (mode.value) {
             Mode.GAMMA -> minecraft.gameSettings.gammaSetting = 50000f // Increase gamma
-
             Mode.EFFECT -> {
                 // Apply night vision
                 if (!minecraft.player.isPotionActive(MobEffects.NIGHT_VISION)) {

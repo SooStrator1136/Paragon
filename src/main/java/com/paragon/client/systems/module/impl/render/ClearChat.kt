@@ -20,4 +20,5 @@ object ClearChat : Module("ClearChat", Category.RENDER, "Removes the chat backgr
     fun onRenderChatBackground(event: RenderChatEvent) {
         event.colour = colour.value.rgb
     }
+
 }

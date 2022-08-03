@@ -1,12 +1,12 @@
 package com.paragon.client.systems.module.hud.impl;
 
 import com.paragon.Paragon;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.managers.notifications.Notification;
 import com.paragon.client.systems.module.hud.HUDEditorGUI;
 import com.paragon.client.systems.module.hud.HUDModule;
-import com.paragon.api.setting.Setting;
 
 import java.awt.*;
 
@@ -14,13 +14,13 @@ public class Notifications extends HUDModule {
 
     public static Notifications INSTANCE;
 
-    public static Setting<RenderType> renderType = new Setting<>("Render Type", RenderType.DISPLAY)
+    private static final Setting<RenderType> renderType = new Setting<>("Render Type", RenderType.DISPLAY)
             .setDescription("The way to render the notifications");
 
-    public static Setting<Direction> direction = new Setting<>("Direction", Direction.DOWN)
+    private static final Setting<Direction> direction = new Setting<>("Direction", Direction.DOWN)
             .setDescription("The vertical direction of the notifications");
 
-    public static Setting<Float> limit = new Setting<>("Limit", 3f, 1f, 20f, 1f)
+    private static final Setting<Float> limit = new Setting<>("Limit", 3f, 1f, 20f, 1f)
             .setDescription("The limit to the amount of notifications displayed")
             .setVisibility(() -> renderType.getValue().equals(RenderType.DISPLAY));
 

@@ -10,6 +10,7 @@ import java.lang.reflect.Method
  * @since 05/03/22
  */
 class EventBus {
+
     // A map of all classes and their subscribed methods
     private val subscribedMethods: MutableMap<Class<*>, ArrayList<SubscribedMethod>> = HashMap()
 
@@ -114,7 +115,7 @@ class EventBus {
     /**
      * Check if a method is good
      * @param method The method to check
-     * @return Whether it has one parameter (event), and it has the [Listener] listener annotation
+     * @return Whether it has one parameter (event), and it has the [Listener] annotation
      */
     private fun isMethodGood(method: Method): Boolean {
         return method.parameters.size == 1 && method.isAnnotationPresent(Listener::class.java)
@@ -125,7 +126,6 @@ class EventBus {
      * @param obj The object to check
      * @return Whether the object is registered
      */
-    fun isRegistered(obj: Any): Boolean {
-        return subscribedMethods.containsKey(obj.javaClass)
-    }
+    fun isRegistered(obj: Any) = subscribedMethods.containsKey(obj.javaClass)
+
 }

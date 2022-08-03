@@ -4,7 +4,6 @@ import com.paragon.api.event.render.world.BlockHighlightEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil.drawBoundingBox
 import com.paragon.api.util.render.RenderUtil.drawFilledBox
@@ -66,4 +65,5 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
          */
         BOTH
     }
+
 }

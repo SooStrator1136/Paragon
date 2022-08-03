@@ -3,7 +3,6 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
 import com.paragon.api.util.string.StringUtil
 import com.paragon.asm.mixins.accessor.IEntityRenderer
 import com.paragon.client.shader.shaders.*
@@ -26,7 +25,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20
 import java.awt.Color
@@ -39,7 +37,7 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
 
     private val mobs = Setting("Mobs", true)
         .setDescription("Apply shader to hostile entities")
-    
+
     private val players = Setting("Players", true)
         .setDescription("Apply shader to player entities")
 
@@ -103,11 +101,12 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
     private val fluidShader = FluidShader()
     private val liquidShader = LiquidShader()
     private val smokeShader = SmokeShader()
-    private var framebuffer: Framebuffer? = null
+    private var frameBuffer: Framebuffer? = null
     private var lastScaleFactor = 0f
     private var lastScaleWidth = 0f
     private var lastScaleHeight = 0f
 
+    @Suppress("ReplaceNotNullAssertionWithElvisReturn")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onRenderOverlay(event: RenderGameOverlayEvent.Pre) {
         if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR) {
@@ -118,22 +117,22 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
             GlStateManager.pushAttrib()
 
             // Delete old framebuffer
-            if (framebuffer != null) {
-                framebuffer!!.framebufferClear()
+            if (frameBuffer != null) {
+                frameBuffer!!.framebufferClear()
 
                 if (lastScaleFactor != event.resolution.scaleFactor.toFloat() || lastScaleWidth != event.resolution.scaledWidth.toFloat() || lastScaleHeight != event.resolution.scaledHeight.toFloat()) {
-                    framebuffer!!.deleteFramebuffer()
-                    framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
-                    framebuffer!!.framebufferClear()
+                    frameBuffer!!.deleteFramebuffer()
+                    frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                    frameBuffer!!.framebufferClear()
                 }
                 lastScaleFactor = event.resolution.scaleFactor.toFloat()
                 lastScaleWidth = event.resolution.scaledWidth.toFloat()
                 lastScaleHeight = event.resolution.scaledHeight.toFloat()
             } else {
-                framebuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
             }
 
-            framebuffer!!.bindFramebuffer(false)
+            frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
             (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
@@ -149,7 +148,13 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
                     val x = minecraft.renderManager.viewerPosX
                     val y = minecraft.renderManager.viewerPosY
                     val z = minecraft.renderManager.viewerPosZ
-                    TileEntityRendererDispatcher.instance.render(tileEntity, tileEntity.pos.x - x, tileEntity.pos.y - y, tileEntity.pos.z - z, minecraft.renderPartialTicks)
+                    TileEntityRendererDispatcher.instance.render(
+                        tileEntity,
+                        tileEntity.pos.x - x,
+                        tileEntity.pos.y - y,
+                        tileEntity.pos.z - z,
+                        minecraft.renderPartialTicks
+                    )
                 }
             }
 
@@ -157,7 +162,7 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
             GlStateManager.enableBlend()
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            framebuffer!!.unbindFramebuffer()
+            frameBuffer!!.unbindFramebuffer()
             minecraft.framebuffer.bindFramebuffer(true)
             minecraft.entityRenderer.disableLightmap()
             RenderHelper.disableStandardItemLighting()
@@ -205,7 +210,7 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
             }
 
             minecraft.entityRenderer.setupOverlayRendering()
-            glBindTexture(GL_TEXTURE_2D, framebuffer!!.framebufferTexture)
+            glBindTexture(GL_TEXTURE_2D, frameBuffer!!.framebufferTexture)
             glBegin(GL_QUADS)
             glTexCoord2d(0.0, 1.0)
             glVertex2d(0.0, 0.0)
@@ -231,21 +236,16 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
         return entityIn is EntityPlayer && players.value || entityIn is EntityLiving && entityIn !is EntityMob && passive.value || entityIn is EntityMob && mobs.value || entityIn is EntityEnderCrystal && crystals.value || entityIn is EntityItem && items.value
     }
 
-    fun isStorageValid(tileEntity: TileEntity?): Boolean {
-        if (tileEntity is TileEntityChest) {
-            return chests.value
+    private fun isStorageValid(tileEntity: TileEntity?): Boolean {
+        return when (tileEntity) {
+            is TileEntityChest -> chests.value
+            is TileEntityShulkerBox -> shulkers.value
+            is TileEntityEnderChest -> enderChests.value
+            else -> false
         }
-        if (tileEntity is TileEntityShulkerBox) {
-            return shulkers.value
-        }
-        return if (tileEntity is TileEntityEnderChest) {
-            enderChests.value
-        } else false
     }
 
-    override fun getData(): String {
-        return " " + StringUtil.getFormattedText(shaderType.value)
-    }
+    override fun getData(): String = " " + StringUtil.getFormattedText(shaderType.value)
 
     enum class FragmentShader {
         /**
@@ -278,4 +278,5 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
          */
         SMOKE
     }
+
 }

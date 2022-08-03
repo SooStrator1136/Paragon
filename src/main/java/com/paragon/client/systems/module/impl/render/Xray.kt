@@ -3,17 +3,16 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.event.render.world.*
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.init.Blocks
-import java.util.*
 
 /**
  * @author Surge
  */
-class Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids through blocks") {
-    
+object Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids through blocks") {
+
     private val visibleBlocks = listOf(
         Blocks.DIAMOND_ORE,
         Blocks.IRON_ORE,
@@ -34,18 +33,18 @@ class Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids thro
     )
 
     override fun onEnable() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
-        
+
         minecraft.renderGlobal.loadRenderers()
     }
 
     override fun onDisable() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
-        
+
         minecraft.renderGlobal.loadRenderers()
     }
 
@@ -77,4 +76,5 @@ class Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids thro
         event.returnValue = visibleBlocks.contains(getBlockAtPos(event.pos))
         event.cancel()
     }
+
 }

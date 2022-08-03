@@ -1,3 +1,5 @@
+@file:Suppress("ReplaceNotNullAssertionWithElvisReturn")
+
 package com.paragon.client.systems.module.impl.render
 
 import com.paragon.Paragon
@@ -5,7 +7,7 @@ import com.paragon.api.event.render.entity.RenderNametagEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.player.EntityFakePlayer
 import com.paragon.api.util.render.RenderUtil.drawBorder
@@ -28,6 +30,8 @@ import net.minecraft.util.text.TextFormatting
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * @author Surge
@@ -44,7 +48,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
     private val pops = Setting("Pops", true)
         .setDescription("Render the player's totem pop count")
 
-    private val armour = Setting<Boolean?>("Armour", true)
+    private val armour = Setting("Armour", true)
         .setDescription("Render the player's armour")
 
     private val armourDurability = Setting("Durability", true)
@@ -58,7 +62,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
     private val distanceScale = Setting("DistanceScale", true)
         .setDescription("Scale the nametag based on your distance from the player")
 
-    private val outline = Setting<Boolean?>("Outline", true)
+    private val outline = Setting("Outline", true)
         .setDescription("Render the nametag outline")
 
     private val outlineWidth = Setting("Width", 0.5f, 0.1f, 2f, 0.01f)
@@ -71,31 +75,31 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
 
     override fun onRender3D() {
         // Prevent null pointer exceptions
-        if (nullCheck() || Wrapper.mc.player.connection == null || Wrapper.mc.player.ticksExisted < 20) {
+        if (minecraft.anyNull || minecraft.player.connection == null || minecraft.player.ticksExisted < 20) {
             return
         }
 
         // Iterate through loaded players
-        for (player in Wrapper.mc.world.playerEntities) {
+        for (player in minecraft.world.playerEntities) {
             // Check the player isn't us
-            if (player === Wrapper.mc.player) {
+            if (player === minecraft.player) {
                 continue
             }
 
             // Get render x, y, and z
             val renderValues = doubleArrayOf(
-                (Wrapper.mc.renderManager as IRenderManager).renderX,
-                (Wrapper.mc.renderManager as IRenderManager).renderY,
-                (Wrapper.mc.renderManager as IRenderManager).renderZ
+                (minecraft.renderManager as IRenderManager).renderX,
+                (minecraft.renderManager as IRenderManager).renderY,
+                (minecraft.renderManager as IRenderManager).renderZ
             )
             // Get player interpolated position
             val renderVec = EntityUtil.getInterpolatedPosition(player)
 
             // Get scale
-            val distance = Wrapper.mc.player.getDistance(renderVec.x, renderVec.y, renderVec.z)
+            val distance = minecraft.player.getDistance(renderVec.x, renderVec.y, renderVec.z)
             var scale = scaleFactor.value * 5 / 50f
             if (distanceScale.value) {
-                scale = (Math.max((scaleFactor.value * 5).toDouble(), scaleFactor.value * distance) / 50).toFloat()
+                scale = (max((scaleFactor.value * 5).toDouble(), scaleFactor.value * distance) / 50).toFloat()
             }
 
             // Translate, rotate, and scale
@@ -107,10 +111,10 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                 renderVec.y + player.height + 0.1 + (if (player.isSneaking) 0.05 else 0.08) - renderValues[1],
                 renderVec.z - renderValues[2]
             )
-            GL11.glRotated(-Wrapper.mc.renderManager.playerViewY.toDouble(), 0.0, 1.0, 0.0)
+            GL11.glRotated(-minecraft.renderManager.playerViewY.toDouble(), 0.0, 1.0, 0.0)
             GL11.glRotated(
-                Wrapper.mc.renderManager.playerViewX.toDouble(),
-                (if (Wrapper.mc.gameSettings.thirdPersonView == 2) -1 else 1).toDouble(),
+                minecraft.renderManager.playerViewX.toDouble(),
+                (if (minecraft.gameSettings.thirdPersonView == 2) -1 else 1).toDouble(),
                 0.0,
                 0.0
             )
@@ -121,14 +125,14 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             val stringBuilder = StringBuilder(player.name)
             if (health.value) {
                 stringBuilder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player))
-                    .append(Math.round(EntityUtil.getEntityHealth(player)))
+                    .append(EntityUtil.getEntityHealth(player).roundToInt())
             }
-            if (ping.value && Wrapper.mc.connection != null) {
-                Wrapper.mc.connection!!.getPlayerInfo(player.uniqueID)
+            if (ping.value && minecraft.connection != null) {
+                minecraft.connection!!.getPlayerInfo(player.uniqueID)
                 stringBuilder.append(" ")
-                    .append(getPingColour(Wrapper.mc.connection!!.getPlayerInfo(player.uniqueID).responseTime)).append(
-                    Wrapper.mc.connection!!.getPlayerInfo(player.uniqueID).responseTime
-                )
+                    .append(getPingColour(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)).append(
+                        minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime
+                    )
             }
             if (pops.value) {
                 stringBuilder.append(" ").append(TextFormatting.GOLD).append("-")
@@ -145,7 +149,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             drawRect(0f, 0f, width, getHeight() + if (isEnabled) 0 else 2, -0x70000000)
 
             // Draw border
-            if (outline.value!!) {
+            if (outline.value) {
                 drawBorder(
                     0f,
                     0f,
@@ -160,7 +164,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             drawStringWithShadow(stringBuilder.toString(), 2f, 2f, -1)
 
             // Render armour
-            if (armour.value!!) {
+            if (armour.value) {
                 // Get the items we want to render
                 val stacks = ArrayList<ItemStack>()
                 stacks.add(player.heldItemMainhand)
@@ -193,13 +197,13 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                         GlStateManager.disableDepth()
                         GlStateManager.enableDepth()
                         RenderHelper.enableStandardItemLighting()
-                        Wrapper.mc.renderItem.zLevel = -100.0f
+                        minecraft.renderItem.zLevel = -100.0f
                         GlStateManager.scale(1f, 1f, 0.01f)
 
                         // Render the armour
-                        Wrapper.mc.renderItem.renderItemAndEffectIntoGUI(stack, armourX, y)
-                        Wrapper.mc.renderItem.renderItemOverlays(Wrapper.mc.fontRenderer, stack, armourX, y)
-                        Wrapper.mc.renderItem.zLevel = 0.0f
+                        minecraft.renderItem.renderItemAndEffectIntoGUI(stack, armourX, y)
+                        minecraft.renderItem.renderItemOverlays(minecraft.fontRenderer, stack, armourX, y)
+                        minecraft.renderItem.zLevel = 0.0f
                         GlStateManager.scale(1f, 1f, 1f)
                         RenderHelper.disableStandardItemLighting()
                         GlStateManager.enableAlpha()
@@ -271,15 +275,12 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
         }
     }
 
-    fun getPingColour(ping: Int): TextFormatting {
-        return if (ping < 0) {
-            TextFormatting.RED
-        } else if (ping < 50) {
-            TextFormatting.GREEN
-        } else if (ping < 150) {
-            TextFormatting.YELLOW
-        } else {
-            TextFormatting.RED
+    private fun getPingColour(ping: Int): TextFormatting {
+        return when {
+            ping < 0 -> TextFormatting.RED
+            ping < 50 -> TextFormatting.GREEN
+            ping < 150 -> TextFormatting.YELLOW
+            else -> TextFormatting.RED
         }
     }
 
@@ -289,4 +290,5 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             event.cancel()
         }
     }
+
 }

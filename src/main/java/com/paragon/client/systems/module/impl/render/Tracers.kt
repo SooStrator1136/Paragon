@@ -3,27 +3,24 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-
-import com.paragon.api.util.Wrapper
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.client.event.RenderWorldLastEvent
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.render.ColourUtil
-import net.minecraft.entity.item.EntityEnderCrystal
 import com.paragon.api.util.render.RenderUtil
 import net.minecraft.entity.Entity
+import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.MathHelper
+import net.minecraftforge.client.event.RenderWorldLastEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.awt.Color
 import java.util.function.Consumer
-import kotlin.math.min
 
 /**
  * @author Surge
  */
 object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in the world") {
 
-    private val passive = Setting<Boolean?>("Passives", true)
+    private val passive = Setting("Passives", true)
         .setDescription("Draws lines to passive entities")
 
     private val passiveColour = Setting("Colour", Color(0, 255, 0, 180))
@@ -31,7 +28,7 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
         .setParentSetting(passive)
         .setVisibility { distance.value != Distance.COLOUR }
 
-    private val mobs = Setting<Boolean?>("Mobs", true)
+    private val mobs = Setting("Mobs", true)
         .setDescription("Draws lines to monsters")
 
     private val mobColour = Setting("Colour", Color(255, 0, 0, 180))
@@ -39,7 +36,7 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
         .setParentSetting(mobs)
         .setVisibility { distance.value != Distance.COLOUR }
 
-    private val players = Setting<Boolean?>("Players", true)
+    private val players = Setting("Players", true)
         .setDescription("Draws lines to players")
 
     private val playerColour = Setting("Colour", Color(255, 255, 255, 180))
@@ -47,7 +44,7 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
         .setParentSetting(players)
         .setVisibility { distance.value != Distance.COLOUR }
 
-    private val crystals = Setting<Boolean?>("Crystals", true)
+    private val crystals = Setting("Crystals", true)
         .setDescription("Draws lines to ender crystals")
 
     private val crystalColour = Setting("Colour", Color(200, 0, 200, 180))
@@ -68,7 +65,13 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
     @SubscribeEvent
     fun onRenderWorld(event: RenderWorldLastEvent?) {
         minecraft.world.loadedEntityList.forEach(Consumer { entity: Entity ->
-            if (EntityUtil.isEntityAllowed(entity, players.value!!, mobs.value!!, passive.value!!) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value!!) {
+            if (EntityUtil.isEntityAllowed(
+                    entity,
+                    players.value,
+                    mobs.value,
+                    passive.value
+                ) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value
+            ) {
                 RenderUtil.drawTracer(entity, lineWidth.value, getColourByEntity(entity))
             }
         })
@@ -100,7 +103,9 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
         }
 
         if (distance.value != Distance.OFF) {
-            val factor: Float = MathHelper.clamp((minecraft.player.getDistanceSq(entityIn) / distanceDivider.value).toFloat(), 0f, 1f)
+            val factor: Float = MathHelper.clamp(
+                (minecraft.player.getDistanceSq(entityIn) / distanceDivider.value).toFloat(), 0f, 1f
+            )
 
             colour = if (distance.value == Distance.COLOUR) {
                 ColourUtil.integrateAlpha(Color(1f - factor, factor, 0f), colour.alpha.toFloat())

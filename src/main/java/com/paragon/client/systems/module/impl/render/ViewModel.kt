@@ -14,7 +14,7 @@ import net.minecraft.util.EnumHandSide
 object ViewModel : Module("ViewModel", Category.RENDER, "Changes the way items are rendered in your hand") {
 
     // Main hand settings
-    private val main = Setting<Boolean?>("MainHand", true)
+    private val main = Setting("MainHand", true)
         .setDescription("Modify your main hand")
 
     private val mainX = Setting("X", 0.19f, -2f, 2f, 0.01f)
@@ -54,7 +54,7 @@ object ViewModel : Module("ViewModel", Category.RENDER, "Changes the way items a
         .setParentSetting(main)
 
     // Offhand settings
-    private val offhand = Setting<Boolean?>("Offhand", true)
+    private val offhand = Setting("Offhand", true)
         .setDescription("Modify your offhand")
 
     private val offhandX = Setting("X", -0.19f, -2f, 2f, 0.01f)
@@ -95,14 +95,14 @@ object ViewModel : Module("ViewModel", Category.RENDER, "Changes the way items a
 
     @Listener
     fun onRenderItemPre(event: RenderItemEvent.Pre) {
-        if (event.side == EnumHandSide.LEFT && offhand.value!!) {
+        if (event.side == EnumHandSide.LEFT && offhand.value) {
             // Translate offhand item according to x, y, and z settings
             GlStateManager.translate(offhandX.value, offhandY.value, offhandZ.value)
 
             // Scale offhand
             GlStateManager.scale(offhandScaleX.value, offhandScaleY.value, offhandScaleZ.value)
         }
-        if (event.side == EnumHandSide.RIGHT && main.value!!) {
+        if (event.side == EnumHandSide.RIGHT && main.value) {
             // Translate main hand item according to x, y, and z settings
             GlStateManager.translate(mainX.value, mainY.value, mainZ.value)
 
@@ -113,13 +113,13 @@ object ViewModel : Module("ViewModel", Category.RENDER, "Changes the way items a
 
     @Listener
     fun onRenderItemPost(event: RenderItemEvent.Post) {
-        if (event.side == EnumHandSide.LEFT && offhand.value!!) {
+        if (event.side == EnumHandSide.LEFT && offhand.value) {
             // Rotate offhand item according to yaw, pitch, and roll settings
             GlStateManager.rotate(offhandYaw.value, 0f, 1f, 0f)
             GlStateManager.rotate(offhandPitch.value, 1f, 0f, 0f)
             GlStateManager.rotate(offhandRoll.value, 0f, 0f, 1f)
         }
-        if (event.side == EnumHandSide.RIGHT && main.value!!) {
+        if (event.side == EnumHandSide.RIGHT && main.value) {
             // Rotate main hand item according to yaw, pitch, and roll settings
             GlStateManager.rotate(mainYaw.value, 0f, 1f, 0f)
             GlStateManager.rotate(mainPitch.value, 1f, 0f, 0f)

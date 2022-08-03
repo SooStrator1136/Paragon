@@ -49,7 +49,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         .setDescription("Highlight passives")
 
     // Crystals
-    private val crystals = Setting<Boolean?>("Crystals", true)
+    private val crystals = Setting("Crystals", true)
         .setDescription("Highlight crystals")
 
     private val bounce = Setting("Bounce", false)
@@ -97,134 +97,136 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
 
     private val colour = Setting("Colour", Color(185, 17, 255, 85))
         .setDescription("The colour of the highlight")
-    
+
     private var rotating = 0
     private var lastTime: Long = 0
     private var cubeModel: ModelRenderer? = null
-    private val CUBELET_SCALE = 0.4
-    
+    private const val CUBELET_SCALE = 0.4
+
     @Listener
     fun onRenderEntity(event: RenderEntityEvent) {
         // Check entity is valid
-        if (isEntityValid(event.entity)) {
-            // Cancel model render
-            if (!texture.value) {
-                event.cancel()
-            }
-            
-            glPushMatrix()
-            glPushAttrib(GL_ALL_ATTRIB_BITS)
-
-            // Enable transparency
-            if (transparent.value) {
-                GlStateManager.enableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL)
-            }
-
-            // Disable texture
-            if (!texture.value) {
-                glDisable(GL_TEXTURE_2D)
-            }
-            val originalBlend = glIsEnabled(GL_BLEND)
-
-            // Enable blend
-            if (blend.value) {
-                glEnable(GL_BLEND)
-            }
-
-            // Disable lighting
-            if (lighting.value) {
-                glDisable(GL_LIGHTING)
-            }
-
-            // Remove depth
-            if (depth.value) {
-                glDepthMask(false)
-            }
-
-            // Remove depth
-            if (walls.value) {
-                glDisable(GL_DEPTH_TEST)
-            }
-            when (mode.value) {
-                Mode.WIRE -> glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-                Mode.WIRE_MODEL, Mode.MODEL -> glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-            }
-
-            // Anti aliasing for smooth lines
-            glEnable(GL_LINE_SMOOTH)
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-
-            // Set line width
-            glLineWidth(width.value)
-
-            // Set colour
-            glColor4f(
-                colour.value.red / 255f,
-                colour.value.green / 255f,
-                colour.value.blue / 255f,
-                colour.alpha / 255f
-            )
-
-            // Render model
-            event.renderModel()
-
-            // Re enable depth
-            if (walls.value && mode.value != Mode.WIRE_MODEL) {
-                glEnable(GL_DEPTH_TEST)
-            }
-
-            // Change polygon rendering mode
-            if (mode.value == Mode.WIRE_MODEL) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-            }
-            glColor4f(
-                colour.value.red / 255f,
-                colour.value.green / 255f,
-                colour.value.blue / 255f,
-                if (mode.value == Mode.MODEL) colour.alpha / 255f else 1f
-            )
-
-            // Render model
-            event.renderModel()
-
-            // Re enable depth
-            if (walls.value && mode.value == Mode.WIRE_MODEL) {
-                glEnable(GL_DEPTH_TEST)
-            }
-
-            // Enable lighting
-            if (lighting.value) {
-                glEnable(GL_LIGHTING)
-            }
-
-            // Enable depth
-            if (depth.value) {
-                glDepthMask(true)
-            }
-
-            // Enable blending
-            if (!originalBlend) {
-                glDisable(GL_BLEND)
-            }
-
-            // Enable texture
-            if (!texture.value) {
-                glEnable(GL_TEXTURE_2D)
-            }
-
-            // Reset colour
-            GlStateManager.color(1f, 1f, 1f, 1f)
-            if (transparent.value) {
-                GlStateManager.disableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL)
-            }
-            glPopAttrib()
-            glPopMatrix()
+        if (!isEntityValid(event.entity)) {
+            return
         }
+
+        // Cancel model render
+        if (!texture.value) {
+            event.cancel()
+        }
+
+        glPushMatrix()
+        glPushAttrib(GL_ALL_ATTRIB_BITS)
+
+        // Enable transparency
+        if (transparent.value) {
+            GlStateManager.enableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL)
+        }
+
+        // Disable texture
+        if (!texture.value) {
+            glDisable(GL_TEXTURE_2D)
+        }
+        val originalBlend = glIsEnabled(GL_BLEND)
+
+        // Enable blend
+        if (blend.value) {
+            glEnable(GL_BLEND)
+        }
+
+        // Disable lighting
+        if (lighting.value) {
+            glDisable(GL_LIGHTING)
+        }
+
+        // Remove depth
+        if (depth.value) {
+            glDepthMask(false)
+        }
+
+        // Remove depth
+        if (walls.value) {
+            glDisable(GL_DEPTH_TEST)
+        }
+        when (mode.value) {
+            Mode.WIRE -> glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            Mode.WIRE_MODEL, Mode.MODEL -> glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+        }
+
+        // Anti aliasing for smooth lines
+        glEnable(GL_LINE_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
+        // Set line width
+        glLineWidth(width.value)
+
+        // Set colour
+        glColor4f(
+            colour.value.red / 255f,
+            colour.value.green / 255f,
+            colour.value.blue / 255f,
+            colour.alpha / 255f
+        )
+
+        // Render model
+        event.renderModel()
+
+        // Re enable depth
+        if (walls.value && mode.value != Mode.WIRE_MODEL) {
+            glEnable(GL_DEPTH_TEST)
+        }
+
+        // Change polygon rendering mode
+        if (mode.value == Mode.WIRE_MODEL) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+        }
+        glColor4f(
+            colour.value.red / 255f,
+            colour.value.green / 255f,
+            colour.value.blue / 255f,
+            if (mode.value == Mode.MODEL) colour.alpha / 255f else 1f
+        )
+
+        // Render model
+        event.renderModel()
+
+        // Re enable depth
+        if (walls.value && mode.value == Mode.WIRE_MODEL) {
+            glEnable(GL_DEPTH_TEST)
+        }
+
+        // Enable lighting
+        if (lighting.value) {
+            glEnable(GL_LIGHTING)
+        }
+
+        // Enable depth
+        if (depth.value) {
+            glDepthMask(true)
+        }
+
+        // Enable blending
+        if (!originalBlend) {
+            glDisable(GL_BLEND)
+        }
+
+        // Enable texture
+        if (!texture.value) {
+            glEnable(GL_TEXTURE_2D)
+        }
+
+        // Reset colour
+        GlStateManager.color(1f, 1f, 1f, 1f)
+        if (transparent.value) {
+            GlStateManager.disableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL)
+        }
+        glPopAttrib()
+        glPopMatrix()
     }
 
     @Listener
     fun onRenderCrystal(event: RenderCrystalEvent) {
-        if (crystals.value!!) {
+        if (crystals.value) {
             // Cancel vanilla crystal render
             event.cancel()
             glPushMatrix()
@@ -345,7 +347,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         }
     }
 
-    fun renderCrystal(event: RenderCrystalEvent) {
+    private fun renderCrystal(event: RenderCrystalEvent) {
         if (rubiks.value) {
             cubeModel = event.cube
             GlStateManager.pushMatrix()
@@ -406,7 +408,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
                 RubiksCrystalUtil.cubeletStatus[currentSide[6]] = cubletsTemp[8]
                 RubiksCrystalUtil.cubeletStatus[currentSide[7]] = cubletsTemp[5]
                 RubiksCrystalUtil.cubeletStatus[currentSide[8]] = cubletsTemp[2]
-                
+
                 val trans = RubiksCrystalUtil.cubeSideTransforms[rotating]
                 for (x in -1..1) {
                     for (y in -1..1) {
@@ -435,7 +437,9 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
             val trans = RubiksCrystalUtil.cubeSideTransforms[rotating]
             GlStateManager.pushMatrix()
             GlStateManager.translate(trans[0] * CUBELET_SCALE, trans[1] * CUBELET_SCALE, trans[2] * CUBELET_SCALE)
-            val angle = Math.toRadians(Easing.EXPO_IN_OUT.ease(((currentTime - lastTime).toFloat() / time.value).toDouble())).toFloat() * 90
+            val angle = Math.toRadians(
+                Easing.EXPO_IN_OUT.ease(((currentTime - lastTime).toFloat() / time.value).toDouble())
+            ).toFloat() * 90
 
             val xx = (trans[0] * sin((angle / 2).toDouble())).toFloat()
             val yy = (trans[1] * sin((angle / 2).toDouble())).toFloat()
@@ -501,7 +505,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         GlStateManager.popMatrix()
     }
 
-    fun drawCubeletStatic(scale: Float, x: Int, y: Int, z: Int) {
+    private fun drawCubeletStatic(scale: Float, x: Int, y: Int, z: Int) {
         val id = RubiksCrystalUtil.cubeletLookup[x + 1][y + 1][z + 1]
         if (Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).anyMatch { i: Int -> i == id }) {
             return
@@ -509,7 +513,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         drawCubelet(scale, x, y, z, id)
     }
 
-    fun drawCubeletRotating(scale: Float, x: Int, y: Int, z: Int) {
+    private fun drawCubeletRotating(scale: Float, x: Int, y: Int, z: Int) {
         val id = RubiksCrystalUtil.cubeletLookup[x + 1][y + 1][z + 1]
         if (Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).noneMatch { i: Int -> i == id }) {
             return
@@ -518,21 +522,22 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         drawCubelet(scale, x - transform[0], y - transform[1], z - transform[2], id)
     }
 
-    fun applyRotation(x: Int, y: Int, z: Int, rX: Int, rY: Int, rZ: Int) {
+    private fun applyRotation(x: Int, y: Int, z: Int, rX: Int, rY: Int, rZ: Int) {
         val id = RubiksCrystalUtil.cubeletLookup[x + 1][y + 1][z + 1]
         if (Arrays.stream(RubiksCrystalUtil.cubeSides[rotating]).noneMatch { i: Int -> i == id }) {
             return
         }
         val angle = Math.toRadians(90.0).toFloat()
-        val xx = (rX * Math.sin((angle / 2).toDouble())).toFloat()
-        val yy = (rY * Math.sin((angle / 2).toDouble())).toFloat()
-        val zz = (rZ * Math.sin((angle / 2).toDouble())).toFloat()
-        val ww = Math.cos((angle / 2).toDouble()).toFloat()
+        val xx = (rX * sin((angle / 2).toDouble())).toFloat()
+        val yy = (rY * sin((angle / 2).toDouble())).toFloat()
+        val zz = (rZ * sin((angle / 2).toDouble())).toFloat()
+        val ww = cos((angle / 2).toDouble()).toFloat()
         RubiksCrystalUtil.cubeletStatus[id] =
             Quaternion.mul(Quaternion(xx, yy, zz, ww), RubiksCrystalUtil.cubeletStatus[id], null)
     }
 
-    fun drawCubelet(scale: Float, x: Int, y: Int, z: Int, id: Int) {
+    @Suppress("ReplaceNotNullAssertionWithElvisReturn")
+    private fun drawCubelet(scale: Float, x: Int, y: Int, z: Int, id: Int) {
         GlStateManager.pushMatrix()
         GlStateManager.translate(x * CUBELET_SCALE, y * CUBELET_SCALE, z * CUBELET_SCALE)
         GlStateManager.pushMatrix()
@@ -570,4 +575,5 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
          */
         WIRE_MODEL
     }
+
 }

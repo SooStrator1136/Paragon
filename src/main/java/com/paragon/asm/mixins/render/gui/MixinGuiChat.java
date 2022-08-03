@@ -2,6 +2,7 @@ package com.paragon.asm.mixins.render.gui;
 
 import com.paragon.Paragon;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = GuiChat.class, priority = Integer.MAX_VALUE)
-public class MixinGuiChat {
+public abstract class MixinGuiChat extends GuiScreen {
 
     @Shadow
     protected GuiTextField inputField;
