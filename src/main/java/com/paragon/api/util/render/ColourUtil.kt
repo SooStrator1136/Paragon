@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 object ColourUtil {
+
     /**
      * Creates a rainbow wave
      *
@@ -13,8 +14,9 @@ object ColourUtil {
      * @return A rainbow in the RGB format
      */
     fun getRainbow(time: Float, saturation: Float, addition: Int): Int {
-        val hue = (System.currentTimeMillis() + addition) % (time * 1000).toInt() / (time * 1000)
-        return Color.HSBtoRGB(hue, saturation, 1f)
+        val timeFac = if (time.isNaN()) 0.0 else time * 1000.0
+        val hue = (System.currentTimeMillis() + addition) % (time * 1000).toInt() / if (timeFac == 0.0) 1.0 else timeFac
+        return Color.HSBtoRGB(hue.toFloat(), saturation, 1f)
     }
 
     /**
