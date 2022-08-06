@@ -4,7 +4,6 @@ import com.paragon.Paragon
 import com.paragon.api.event.network.PacketEvent.PreReceive
 import com.paragon.api.event.network.PlayerEvent.PlayerJoinEvent
 import com.paragon.api.event.network.PlayerEvent.PlayerLeaveEvent
-import com.paragon.api.module.Module
 import com.paragon.api.util.Wrapper
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.client.Minecraft
@@ -20,13 +19,13 @@ class EventFactory : Wrapper {
 
     @SubscribeEvent
     fun onTick(event: ClientTickEvent?) {
-        Paragon.INSTANCE.moduleManager.modules.forEach { module: Module ->
-            if (module.isEnabled) {
-                module.onTick()
+        Paragon.INSTANCE.moduleManager.modules.forEach {
+            if (it.isEnabled) {
+                it.onTick()
             }
-            if (module.bind.value.isPressed() && Minecraft.getMinecraft().currentScreen == null) {
-                Paragon.INSTANCE.eventBus.unregister(module)
-                module.toggle()
+            if (it.bind.value.isPressed() && Minecraft.getMinecraft().currentScreen == null) {
+                Paragon.INSTANCE.eventBus.unregister(it)
+                it.toggle()
             }
         }
     }
@@ -34,9 +33,9 @@ class EventFactory : Wrapper {
     @SubscribeEvent
     fun onRender2D(event: RenderGameOverlayEvent) {
         if (event.type.equals(RenderGameOverlayEvent.ElementType.TEXT)) {
-            Paragon.INSTANCE.moduleManager.modules.forEach { module: Module ->
-                if (module.isEnabled) {
-                    module.onRender2D()
+            Paragon.INSTANCE.moduleManager.modules.forEach {
+                if (it.isEnabled) {
+                    it.onRender2D()
                 }
             }
         }
@@ -44,9 +43,9 @@ class EventFactory : Wrapper {
 
     @SubscribeEvent
     fun onRender3D(event: RenderWorldLastEvent?) {
-        Paragon.INSTANCE.moduleManager.modules.forEach { module: Module ->
-            if (module.isEnabled) {
-                module.onRender3D()
+        Paragon.INSTANCE.moduleManager.modules.forEach {
+            if (it.isEnabled) {
+                it.onRender3D()
             }
         }
     }
@@ -65,7 +64,7 @@ class EventFactory : Wrapper {
                 }
 
                 SPacketPlayerListItem.Action.REMOVE_PLAYER -> packet.entries.forEach { entry: AddPlayerData ->
-                    if(entry.profile.name != null) {
+                    if (entry.profile.name != null) {
                         Paragon.INSTANCE.eventBus.post(
                             PlayerLeaveEvent(entry.profile.name)
                         )

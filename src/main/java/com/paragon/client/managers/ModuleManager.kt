@@ -128,6 +128,7 @@ class ModuleManager {
             Notifications(),
             Ping,
             Speed(),
+            TabGui,
             Totems,
             Watermark()
         )

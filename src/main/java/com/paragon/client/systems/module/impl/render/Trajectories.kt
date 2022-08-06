@@ -203,7 +203,7 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
 
                 // Draw outline box
                 if (outline.value) {
-                    drawBoundingBox(bb, outlineWidth.value, integrateAlpha(boxColour.value, 255f))
+                    drawBoundingBox(bb, outlineWidth.value, boxColour.value.integrateAlpha(255f))
                 }
             }
         }

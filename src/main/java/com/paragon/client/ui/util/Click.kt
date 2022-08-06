@@ -1,7 +1,7 @@
 package com.paragon.client.ui.util
 
 /**
- * @author SooStrator1136
+ * @author Surge
  */
 enum class Click(val button: Int) {
 

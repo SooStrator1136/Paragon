@@ -1,7 +1,7 @@
 package com.paragon.client.ui.configuration.simple.element.setting.impl
 
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
@@ -20,7 +20,7 @@ class EnumElement(setting: Setting<Enum<*>>, x: Float, y: Float, width: Float, h
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         val hovered = isHovered(mouseX, mouseY)
 
-        RenderUtil.drawRect(x, y, width, height, ColourUtil.integrateAlpha(Colours.mainColour.value, if (hovered) 205f else 150f).rgb)
+        RenderUtil.drawRect(x, y, width, height, Colours.mainColour.value.integrateAlpha(if (hovered) 205f else 150f).rgb)
 
         glScalef(0.85f, 0.85f, 0.85f).let {
             val factor = 1 / 0.85f

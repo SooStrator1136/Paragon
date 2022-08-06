@@ -4,7 +4,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.entity.EntityUtil
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityEnderCrystal
@@ -108,9 +108,9 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
             )
 
             colour = if (distance.value == Distance.COLOUR) {
-                ColourUtil.integrateAlpha(Color(1f - factor, factor, 0f), colour.alpha.toFloat())
+                Color(1f - factor, factor, 0f).integrateAlpha(colour.alpha.toFloat())
             } else {
-                ColourUtil.integrateAlpha(colour, 255f * (1 - factor))
+                colour.integrateAlpha(255f * (1 - factor))
             }
         }
 

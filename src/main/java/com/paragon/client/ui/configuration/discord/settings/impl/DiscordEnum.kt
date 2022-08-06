@@ -12,7 +12,7 @@ import org.lwjgl.util.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordEnum(val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
+class DiscordEnum(private val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
 
     private val options = setting.value.javaClass.enumConstants
     private val optionRects = arrayOfNulls<Rectangle>(options.size)

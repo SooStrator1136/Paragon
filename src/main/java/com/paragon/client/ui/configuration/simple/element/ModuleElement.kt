@@ -3,7 +3,7 @@ package com.paragon.client.ui.configuration.simple.element
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
@@ -45,7 +45,7 @@ class ModuleElement(val module: Module, val panel: Panel, x: Float, y: Float, wi
         }
 
         if (module.isEnabled) {
-            RenderUtil.drawRect(x, y, width, height, ColourUtil.integrateAlpha(Colours.mainColour.value, if (hovered) 190f else 150f).rgb)
+            RenderUtil.drawRect(x, y, width, height, Colours.mainColour.value.integrateAlpha(if (hovered) 190f else 150f).rgb)
         }
 
         glScalef(0.85f, 0.85f, 0.85f).let {

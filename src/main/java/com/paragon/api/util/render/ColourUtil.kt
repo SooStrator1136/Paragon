@@ -36,15 +36,14 @@ object ColourUtil {
     /**
      * Integrates alpha into a colour
      *
-     * @param colour The original colour
      * @param alpha  The new alpha
      * @return The new colour
      */
     @JvmStatic
-    fun integrateAlpha(colour: Color, alpha: Float): Color {
-        val red = colour.red / 255f
-        val green = colour.green / 255f
-        val blue = colour.blue / 255f
+    fun Color.integrateAlpha(alpha: Float): Color {
+        val red = this.red / 255f
+        val green = this.green / 255f
+        val blue = this.blue / 255f
         return Color(red, green, blue, alpha / 255f)
     }
 }

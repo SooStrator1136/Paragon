@@ -1,7 +1,7 @@
 package com.paragon.client.ui.configuration.simple.element.setting.impl
 
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.ui.configuration.simple.element.setting.SettingElement
@@ -50,15 +50,13 @@ class ColourElement(setting: Setting<Color>, x: Float, y: Float, width: Float, h
         val hovered = isHovered(mouseX, mouseY)
 
         setting.setValue(
-            ColourUtil.integrateAlpha(
-                Color(
-                    Color.HSBtoRGB(
-                        hueSetting.value.toFloat() / 360f,
-                        saturationSetting.value.toFloat() / 100f,
-                        brightnessSetting.value.toFloat() / 100f
-                    )
-                ), alphaSetting.value.toFloat()
-            )
+            Color(
+                Color.HSBtoRGB(
+                    hueSetting.value.toFloat() / 360f,
+                    saturationSetting.value.toFloat() / 100f,
+                    brightnessSetting.value.toFloat() / 100f
+                )
+            ).integrateAlpha(alphaSetting.value.toFloat())
         )
 
         setting.alpha = alphaSetting.value.toFloat()
@@ -67,7 +65,7 @@ class ColourElement(setting: Setting<Color>, x: Float, y: Float, width: Float, h
         setting.rainbowSpeed = rainbowSpeedSetting.value.toFloat()
         setting.isSync = syncSetting.value
 
-        RenderUtil.drawRect(x, y, width, height, ColourUtil.integrateAlpha(setting.value, if (hovered) 205f else setting.value.alpha.toFloat()).rgb)
+        RenderUtil.drawRect(x, y, width, height, setting.value.integrateAlpha(if (hovered) 205f else setting.value.alpha.toFloat()).rgb)
 
         glScalef(0.85f, 0.85f, 0.85f).let {
             val factor = 1 / 0.85f

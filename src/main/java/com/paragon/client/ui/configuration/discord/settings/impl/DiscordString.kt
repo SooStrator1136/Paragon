@@ -11,7 +11,7 @@ import org.lwjgl.input.Keyboard
 /**
  * @author SooStrator1136
  */
-class DiscordString(val setting: Setting<String>) : DiscordSetting(setting) {
+class DiscordString(private val setting: Setting<String>) : DiscordSetting(setting) {
 
     private val cursorTimer = Timer()
     private var typing = false

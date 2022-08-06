@@ -8,6 +8,7 @@ import com.paragon.api.util.calculations.MathsUtil.getPercentOf
 import com.paragon.api.util.calculations.MathsUtil.roundDouble
 import com.paragon.api.util.calculations.MathsUtil.roundToIncrementation
 import com.paragon.api.util.minus
+import com.paragon.api.util.plus
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
@@ -24,7 +25,7 @@ import kotlin.random.Random
 /**
  * @author SooStrator1136
  */
-class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
+class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setting) {
 
     var dragging = false
 
@@ -33,8 +34,14 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
     private val size = Random.nextInt(100, 999).toString() + "." + Random.nextInt(10, 99) + " KB"
 
     private val maxProgressInfoWidth = max(
-        getStringWidth("${setting.min}/${setting.max}"),
-        getStringWidth("${setting.max}/${setting.max}")
+        max(
+            getStringWidth("${setting.min}/${setting.max}"),
+            getStringWidth("${setting.max}/${setting.max}")
+        ),
+        max(
+            getStringWidth((setting.max!! - setting.incrementation!!).toString() + "/${setting.max}"),
+            getStringWidth((setting.min!! + setting.incrementation!!).toString() + "/${setting.max}")
+        )
     )
 
     init {
@@ -171,19 +178,22 @@ class DiscordNumber(val setting: Setting<Number>) : DiscordSetting(setting) {
         setting.setValue(getNewValue(mouseX))
     }
 
-    private fun getNewValue(mouseX: Int) = roundDouble(
-        roundToIncrementation(
-            setting.incrementation!!.toDouble(),
-            getPercentOf(
-                getPercent(
-                    (mouseX - sliderBounds.x).toDouble(),
-                    sliderBounds.width - 1.0
-                ),
-                (setting.max!! - setting.min!!).toDouble(),
-            )
-        ),
-        BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
-    )
+    private fun getNewValue(mouseX: Int): Number {
+        val toReturn = roundDouble( //TODO fix??
+            roundToIncrementation(
+                setting.incrementation!!.toDouble(),
+                getPercentOf(
+                    getPercent(
+                        (mouseX - sliderBounds.x).toDouble(),
+                        sliderBounds.width - 1.0
+                    ),
+                    (setting.max!! - setting.min!!).toDouble(),
+                )
+            ),
+            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+        )
+        return if (setting.value is Float) toReturn.toFloat() else toReturn
+    }
 
     override fun onKey(keyCode: Int) {}
 

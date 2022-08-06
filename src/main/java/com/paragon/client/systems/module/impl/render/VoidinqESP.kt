@@ -4,7 +4,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.world.BlockUtil
 import net.minecraft.util.math.AxisAlignedBB
@@ -89,7 +89,7 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
                 RenderUtil.drawBoundingBox(
                     outlineBB,
                     outlineWidth.value,
-                    ColourUtil.integrateAlpha(colour.value, 255f)
+                    colour.value.integrateAlpha(255f)
                 )
             }
 

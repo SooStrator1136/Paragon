@@ -2,7 +2,7 @@ package com.paragon.client.ui.configuration.simple.element.setting.impl
 
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
@@ -28,7 +28,7 @@ class BindElement(setting: Setting<Bind>, x: Float, y: Float, width: Float, heig
         }
 
         if (listening) {
-            RenderUtil.drawRect(x, y, width, height, ColourUtil.integrateAlpha(Colours.mainColour.value, if (hovered) 205f else 150f).rgb)
+            RenderUtil.drawRect(x, y, width, height, Colours.mainColour.value.integrateAlpha(if (hovered) 205f else 150f).rgb)
         }
 
         glScalef(0.85f, 0.85f, 0.85f).let {

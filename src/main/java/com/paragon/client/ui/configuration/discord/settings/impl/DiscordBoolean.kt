@@ -11,7 +11,7 @@ import org.lwjgl.util.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordBoolean(val setting: Setting<Boolean>) : DiscordSetting(setting) {
+class DiscordBoolean(private val setting: Setting<Boolean>) : DiscordSetting(setting) {
 
     private val stateRect = Rectangle()
 

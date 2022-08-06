@@ -39,7 +39,7 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
 
             // Draw fill
             if (renderMode.value != RenderMode.OUTLINE) {
-                drawFilledBox(bb, integrateAlpha(colour.value, 180f))
+                drawFilledBox(bb, colour.value.integrateAlpha(180f))
             }
 
             // Draw outline

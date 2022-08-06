@@ -17,7 +17,7 @@ object GuiDiscord : GuiImplementation(), Wrapper {
 
     var D_WHEEL = 0
         private set
-    val BASE_RECT = Rectangle(10, 10, minecraft.currentScreen!!.width - 20, minecraft.currentScreen!!.height - 20)
+    val BASE_RECT = Rectangle()
 
     val USER_FIELD_BACKGROUND = Color(41, 43, 47)
     val USER_COPIED_COLOR = Color(59, 165, 93)
@@ -75,12 +75,15 @@ object GuiDiscord : GuiImplementation(), Wrapper {
     }
 
     override fun onGuiClosed() {
+        ModuleBar.scrollOffset = 0
         ModuleBar.focusedModule = null
         ModuleBar.shownModules.clear()
         ModuleBar.lastCopyTime = 0L
         SettingsBar.shownSettings.clear()
         SettingsBar.scrollOffset = 0
         Paragon.INSTANCE.configurationGUI.closeOnEscape = true
+
+        super.onGuiClosed()
     }
 
     override fun doesGuiPauseGame() = ClickGUI.pause.value

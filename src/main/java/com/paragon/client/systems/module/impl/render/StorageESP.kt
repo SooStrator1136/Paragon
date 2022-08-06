@@ -86,7 +86,7 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
                         drawBoundingBox(
                             getBlockBox(tileEntity.pos),
                             lineWidth.value,
-                            integrateAlpha(colour.value, 255f)
+                            colour.value.integrateAlpha(255f)
                         )
                     }
                 }

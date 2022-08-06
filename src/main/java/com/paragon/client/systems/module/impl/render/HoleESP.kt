@@ -4,7 +4,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
-import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.api.util.world.BlockUtil.getBlockBox
@@ -24,21 +24,21 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
     private val obsidian = Setting("Obsidian", true)
         .setDescription("Highlight obsidian holes")
 
-    private val obsidianColour = Setting("Colour", ColourUtil.integrateAlpha(Color.RED, 130f))
+    private val obsidianColour = Setting("Colour", Color.RED.integrateAlpha(130f))
         .setDescription("Colour of obsidian holes")
         .setParentSetting(obsidian)
 
     private val mixed = Setting("Mixed", true)
         .setDescription("Highlight mixed holes (holes that are a mix of obsidian and bedrock)")
 
-    private val mixedColour = Setting("Colour", ColourUtil.integrateAlpha(Color.ORANGE, 130f))
+    private val mixedColour = Setting("Colour", Color.ORANGE.integrateAlpha(130f))
         .setDescription("The colour for mixed holes")
         .setParentSetting(mixed)
 
     private val bedrock = Setting("Bedrock", true)
         .setDescription("Highlight bedrock holes")
 
-    private val bedrockColour = Setting("Colour", ColourUtil.integrateAlpha(Color.GREEN, 130f))
+    private val bedrockColour = Setting("Colour", Color.GREEN.integrateAlpha(130f))
         .setDescription("The colour for bedrock holes")
         .setParentSetting(bedrock)
 
@@ -143,7 +143,7 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
                         blockBB.maxZ
                     ),
                     outlineWidth.value,
-                    ColourUtil.integrateAlpha(it.holeColour, 255f)
+                    it.holeColour.integrateAlpha(255f)
                 )
             }
             if (glow.value) {
@@ -212,9 +212,9 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
         val holeColour: Color
             get() {
                 return when (holeType) {
-                    HoleType.OBSIDIAN -> ColourUtil.integrateAlpha(obsidianColour.value, obsidianColour.alpha)
-                    HoleType.MIXED -> ColourUtil.integrateAlpha(mixedColour.value, mixedColour.alpha)
-                    HoleType.BEDROCK -> ColourUtil.integrateAlpha(bedrockColour.value, bedrockColour.alpha)
+                    HoleType.OBSIDIAN -> obsidianColour.value
+                    HoleType.MIXED -> mixedColour.value
+                    HoleType.BEDROCK -> bedrockColour.value
                 }
             }
 
