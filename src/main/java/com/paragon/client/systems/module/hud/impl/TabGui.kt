@@ -289,6 +289,14 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                         FontUtil.getHeight(),
                         color.value.darker().rgb
                     )
+
+                    RenderUtil.drawRect(
+                        x + catWidth,
+                        y + catHeight,
+                        1F,
+                        ((shownModules!!.size * (FontUtil.getHeight() + 1F)) - catHeight) + ((Category.values().indexOf(focusedCategory) * (FontUtil.getHeight() + 1F))),
+                        color.value.rgb
+                    )
                 }
             }
         }
