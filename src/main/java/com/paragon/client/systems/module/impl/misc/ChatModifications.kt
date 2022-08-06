@@ -1,44 +1,35 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.Paragon;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.paragon.Paragon
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import net.minecraftforge.client.event.ClientChatEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 /**
  * @author Surge
  */
-public class ChatModifications extends Module {
+object ChatModifications : Module("ChatModifications", Category.MISC, "Changes the way you send messages") {
 
-    public static ChatModifications INSTANCE;
+    private val coloured = Setting("Coloured", false)
+        .setDescription("Adds a '>' before the message")
 
-    public static Setting<Boolean> coloured = new Setting<>("Coloured", false)
-            .setDescription("Adds a '>' before the message");
-
-    public static Setting<Boolean> suffix = new Setting<>("Suffix", true)
-            .setDescription("Adds a Paragon suffix to the end of the message");
-
-    public ChatModifications() {
-        super("ChatModifications", Category.MISC, "Changes the way you send messages");
-
-        INSTANCE = this;
-    }
+    private val suffix = Setting("Suffix", true)
+        .setDescription("Adds a Paragon suffix to the end of the message")
 
     @SubscribeEvent
-    public void onChat(ClientChatEvent event) {
-        if (event.getMessage().startsWith("/") || Paragon.INSTANCE.getCommandManager().startsWithPrefix(event.getMessage())) {
-            return;
+    fun onChat(event: ClientChatEvent) {
+        if (event.message.startsWith("/") || Paragon.INSTANCE.commandManager.startsWithPrefix(event.message)) {
+            return
         }
 
-        if (coloured.getValue()) {
-            event.setMessage("> " + event.getMessage());
+        if (coloured.value) {
+            event.message = "> " + event.message
         }
 
-        if (suffix.getValue()) {
-            event.setMessage(event.getMessage() + " | Paragon");
+        if (suffix.value) {
+            event.message = event.message + " | Paragon"
         }
     }
-
 }

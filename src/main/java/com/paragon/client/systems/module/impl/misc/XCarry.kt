@@ -1,28 +1,25 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PacketEvent;
-import com.paragon.asm.mixins.accessor.ICPacketCloseWindow;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.network.play.client.CPacketCloseWindow;
+import com.paragon.api.event.network.PacketEvent.PreSend
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.util.Wrapper
+import com.paragon.asm.mixins.accessor.ICPacketCloseWindow
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.network.play.client.CPacketCloseWindow
 
 /**
  * @author Surge
  */
-public class XCarry extends Module {
-
-    public XCarry() {
-        super("XCarry", Category.MISC, "Lets you carry items in your crafting grid");
-    }
-
+object XCarry : Module("XCarry", Category.MISC, "Lets you carry items in your crafting grid") {
+    
     @Listener
-    public void onPacketSent(PacketEvent.PreSend event) {
-        if (event.getPacket() instanceof CPacketCloseWindow) {
-            if (((ICPacketCloseWindow) event.getPacket()).getID() == mc.player.inventoryContainer.windowId) {
-                event.cancel();
+    fun onPacketSent(event: PreSend) {
+        if (event.packet is CPacketCloseWindow) {
+            if ((event.packet as ICPacketCloseWindow).id == minecraft.player.inventoryContainer.windowId) {
+                event.cancel()
             }
         }
     }
-
+    
 }

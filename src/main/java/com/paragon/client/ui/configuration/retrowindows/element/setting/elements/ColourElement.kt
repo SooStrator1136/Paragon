@@ -113,7 +113,6 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             subSettings.forEach {
                 if (it is SliderElement && it.dragging) {
                     val hsb = Color.RGBtoHSB(finalColour.red, finalColour.green, finalColour.blue, null)
-                    println(hsb[1])
                     finalColour = Color(Color.HSBtoRGB(hueSetting.value.toInt() / 360f, hsb[1], hsb[2]))
 
                     pickingColour = false

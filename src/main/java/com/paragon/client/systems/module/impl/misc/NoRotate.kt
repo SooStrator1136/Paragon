@@ -1,34 +1,31 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PacketEvent;
-import com.paragon.asm.mixins.accessor.ISPacketPlayerPosLook;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.network.play.server.SPacketPlayerPosLook;
+import com.paragon.api.event.network.PacketEvent.PreReceive
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.util.Wrapper
+import com.paragon.asm.mixins.accessor.ISPacketPlayerPosLook
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.network.play.server.SPacketPlayerPosLook
 
 /**
  * @author Surge
  */
-public class NoRotate extends Module {
-
-    public NoRotate() {
-        super("NoRotate", Category.MISC, "Stops the server from rotating your head");
-    }
-
+object NoRotate : Module("NoRotate", Category.MISC, "Stops the server from rotating your head") {
+    
     @Listener
-    public void onPacketReceive(PacketEvent.PreReceive event) {
-        if (nullCheck() || event.getPacket() == null) {
-            return;
+    fun onPacketReceive(event: PreReceive) {
+        if (nullCheck()) {
+            return
         }
-
-        if (event.getPacket() instanceof SPacketPlayerPosLook) {
+        
+        if (event.packet is SPacketPlayerPosLook) {
             // Set packet yaw
-            ((ISPacketPlayerPosLook) event.getPacket()).setYaw(mc.player.rotationYaw);
+            (event.packet as ISPacketPlayerPosLook).setYaw(minecraft.player.rotationYaw)
 
             // Set packet pitch
-            ((ISPacketPlayerPosLook) event.getPacket()).setPitch(mc.player.rotationPitch);
+            (event.packet as ISPacketPlayerPosLook).setPitch(minecraft.player.rotationPitch)
         }
     }
-
+    
 }

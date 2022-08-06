@@ -1,83 +1,67 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.asm.mixins.accessor.IKeyBinding;
-import com.paragon.api.module.Category;
-import com.paragon.api.module.Module;
-import com.paragon.api.setting.Setting;
-import net.minecraft.client.settings.KeyBinding;
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.asm.mixins.accessor.IKeyBinding
+import net.minecraft.client.settings.KeyBinding
 
 /**
  * @author Surge
  * @since 14/05/22
  */
-public class AutoWalk extends Module {
+object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk") {
 
-    public static AutoWalk INSTANCE;
-
-    public static Setting<Direction> direction = new Setting<>("Direction", Direction.FORWARD)
-            .setDescription("The direction to walk in");
-
-    public AutoWalk() {
-        super("AutoWalk", Category.MISC, "Makes you constantly walk");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onDisable() {
+    private val direction = Setting("Direction", Direction.FORWARD)
+        .setDescription("The direction to walk in")
+    
+    override fun onDisable() {
         if (nullCheck()) {
-            return;
+            return
         }
 
         // Reset the key on disable
-        ((IKeyBinding) direction.getValue().getKey()).setPressed(false);
+        (direction.value.key as IKeyBinding).setPressed(false)
     }
 
-    @Override
-    public void onTick() {
+    override fun onTick() {
         if (nullCheck()) {
-            return;
+            return
         }
 
         // Set the key to pressed
-        ((IKeyBinding) direction.getValue().getKey()).setPressed(true);
+        (direction.value.key as IKeyBinding).setPressed(true)
     }
 
-    public enum Direction {
-        /**
-         * Walk forward
-         */
-        FORWARD(mc.gameSettings.keyBindForward),
-
-        /**
-         * Walk backward
-         */
-        BACKWARD(mc.gameSettings.keyBindBack),
-
-        /**
-         * Walk left
-         */
-        LEFT(mc.gameSettings.keyBindLeft),
-
-        /**
-         * Walk right
-         */
-        RIGHT(mc.gameSettings.keyBindRight);
-
-        // The keybind that we want to "press"
-        private final KeyBinding key;
-
-        Direction(KeyBinding keyBinding) {
-            this.key = keyBinding;
-        }
-
+    enum class Direction(
         /**
          * Gets the keybind
          *
          * @return The keybind
          */
-        public KeyBinding getKey() {
-            return key;
-        }
+        // The keybind that we want to "press"
+        val key: KeyBinding
+    ) {
+        /**
+         * Walk forward
+         */
+        FORWARD(minecraft.gameSettings.keyBindForward),
+
+        /**
+         * Walk backward
+         */
+        BACKWARD(minecraft.gameSettings.keyBindBack),
+
+        /**
+         * Walk left
+         */
+        LEFT(minecraft.gameSettings.keyBindLeft),
+
+        /**
+         * Walk right
+         */
+        RIGHT(minecraft.gameSettings.keyBindRight);
+
     }
 }

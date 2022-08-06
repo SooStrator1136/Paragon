@@ -1,86 +1,76 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PacketEvent;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import com.paragon.api.event.network.PacketEvent.PreSend
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.network.play.client.CPacketUseEntity
+import net.minecraftforge.event.entity.living.LivingDeathEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 
 /**
  * @author Surge
  */
-public class AutoEZ extends Module {
+object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message when you kill an opponent") {
 
-    public static AutoEZ INSTANCE;
+    private val maximumRange = Setting("MaxRange", 10.0, 1.0, 20.0, 0.1)
+        .setDescription("The furthest distance from the player to target")
 
-    public static Setting<Double> maximumRange = new Setting<>("MaxRange", 10.0D, 1.0D, 20.0D, 0.1D)
-            .setDescription("The furthest distance from the player to target");
-
+    @JvmStatic
+    fun addTarget(name: String?) {
+        if (!targeted.contains(minecraft.world.getPlayerEntityByName(name))) {
+            targeted.add(minecraft.world.getPlayerEntityByName(name))
+        }
+    }
+    
     // List of targeted players
-    private final List<EntityPlayer> targeted = new CopyOnWriteArrayList<>();
+    private val targeted: MutableList<EntityPlayer?> = CopyOnWriteArrayList()
 
-    public AutoEZ() {
-        super("AutoEZ", Category.MISC, "Automatically sends a message when you kill an opponent");
-
-        INSTANCE = this;
-    }
-
-    public static void addTarget(String name) {
-        if (!INSTANCE.targeted.contains(mc.world.getPlayerEntityByName(name))) {
-            INSTANCE.targeted.add(mc.world.getPlayerEntityByName(name));
-        }
-    }
-
-    @Override
-    public void onTick() {
+    override fun onTick() {
         if (nullCheck()) {
-            return;
+            return
         }
 
-        targeted.removeIf(player -> !(player.getDistance(mc.player) <= maximumRange.getValue()));
+        targeted.removeIf { player: EntityPlayer? -> player!!.getDistance(minecraft.player) > maximumRange.value }
 
         // Iterate through entities
-        targeted.forEach(player -> {
-            if (player.getHealth() <= 0 && targeted.contains(player)) {
-                mc.player.sendChatMessage(player.getName() + ", did you really just die to the worst client?!");
-                targeted.remove(player);
+        targeted.forEach(Consumer { player: EntityPlayer? ->
+            if (player!!.health <= 0 && targeted.contains(player)) {
+                minecraft.player.sendChatMessage(player.name + ", did you really just die to the worst client?!")
+                targeted.remove(player)
             }
-        });
+        })
     }
 
     @Listener
-    public void onPacketSent(PacketEvent.PreSend event) {
-        if (event.getPacket() instanceof CPacketUseEntity) {
-            CPacketUseEntity packet = (CPacketUseEntity) event.getPacket();
-
-            if (packet.getAction() == CPacketUseEntity.Action.ATTACK) {
-                if (packet.getEntityFromWorld(mc.world) instanceof EntityPlayer) {
-                    addTarget(packet.getEntityFromWorld(mc.world).getName());
+    fun onPacketSent(event: PreSend) {
+        if (event.packet is CPacketUseEntity) {
+            val packet = event.packet
+            if (packet.action == CPacketUseEntity.Action.ATTACK) {
+                if (packet.getEntityFromWorld(minecraft.world) is EntityPlayer) {
+                    addTarget((packet.getEntityFromWorld(minecraft.world) as EntityPlayer).getName())
                 }
             }
         }
     }
 
     @SubscribeEvent
-    public void onLivingDeath(LivingDeathEvent event) {
+    fun onLivingDeath(event: LivingDeathEvent) {
         if (nullCheck()) {
-            return;
+            return
         }
 
-        if (event.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntity();
-
-            if (player.getHealth() <= 0 && targeted.contains(player)) {
-                mc.player.sendChatMessage(player.getName() + ", did you really just die to the worst client?!");
-                targeted.remove(player);
+        if (event.entity is EntityPlayer) {
+            val player = event.entity as EntityPlayer
+            if (player.health <= 0 && targeted.contains(player)) {
+                minecraft.player.sendChatMessage(player.name + ", did you really just die to the worst client?!")
+                targeted.remove(player)
             }
         }
     }
-
 }

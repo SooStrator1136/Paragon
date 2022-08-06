@@ -1,88 +1,77 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PlayerEvent;
-import com.paragon.api.util.calculations.Timer;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.paragon.api.event.network.PlayerEvent.PlayerJoinEvent
+import com.paragon.api.event.network.PlayerEvent.PlayerLeaveEvent
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.api.util.calculations.Timer
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraftforge.event.world.BlockEvent.BreakEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 /**
  * @author Surge
  */
-public class Announcer extends Module {
-
-    public static Announcer INSTANCE;
+object Announcer : Module("Announcer", Category.MISC, "Announces events to the chat") {
 
     // Event settings
-    public static Setting<Double> chatTimer = new Setting<>("Delay", 5D, 1D, 60D, 1D)
-            .setDescription("The amount of time in seconds between each chat message");
+    private val chatTimer = Setting("Delay", 5.0, 1.0, 60.0, 1.0)
+        .setDescription("The amount of time in seconds between each chat message")
 
-    public static Setting<Boolean> breakBlocks = new Setting<>("BreakBlocks", true)
-            .setDescription("Announce when a block is broken");
+    private val breakBlocks = Setting("BreakBlocks", true)
+        .setDescription("Announce when a block is broken")
 
-    public static Setting<Boolean> playerJoin = new Setting<>("PlayerJoin", true)
-            .setDescription("Announce when players join the server");
+    private val playerJoin = Setting("PlayerJoin", true)
+        .setDescription("Announce when players join the server")
 
-    public static Setting<Boolean> playerLeave = new Setting<>("PlayerLeave", true)
-            .setDescription("Announce when players leave the server");
+    private val playerLeave = Setting("PlayerLeave", true)
+        .setDescription("Announce when players leave the server")
 
     // Timer to determine when we should send the message
-    public static Timer timer = new Timer();
-
+    private val timer = Timer()
+    
     // Part 1 is the first part of the message, Part 2 is the value, Part 3 is the second part of the message
-    private String[] announceComponents = new String[]{"", "0", ""};
+    private var announceComponents = arrayOf("", "0", "")
 
-    public Announcer() {
-        super("Announcer", Category.MISC, "Announces events to the chat");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onTick() {
+    override fun onTick() {
         if (nullCheck()) {
-            return;
+            return
         }
-
-        if (timer.hasMSPassed(chatTimer.getValue() * 1000) && !announceComponents[0].equals("") && !announceComponents[2].equals("")) {
-            mc.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2]);
-            announceComponents = new String[]{"", "0", ""};
-
-            timer.reset();
+        if (timer.hasMSPassed(chatTimer.value * 1000) && announceComponents[0] != "" && announceComponents[2] != "") {
+            minecraft.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2])
+            announceComponents = arrayOf("", "0", "")
+            timer.reset()
         }
     }
 
     @SubscribeEvent
-    public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (breakBlocks.getValue()) {
-            String first = "I just broke ";
-            String third = " blocks!";
-
-            if (!announceComponents[0].equals(first) && !announceComponents[2].equals(third)) {
-                announceComponents = new String[]{first, "0", third};
+    fun onBlockBreak(event: BreakEvent?) {
+        if (breakBlocks.value) {
+            val first = "I just broke "
+            val third = " blocks!"
+            if (announceComponents[0] != first && announceComponents[2] != third) {
+                announceComponents = arrayOf(first, "0", third)
             }
-
-            announceComponents = new String[]{first, String.valueOf(Integer.parseInt(announceComponents[1]) + 1), third};
+            announceComponents = arrayOf(first, (announceComponents[1].toInt() + 1).toString(), third)
         }
     }
 
     @Listener
-    public void onPlayerJoin(PlayerEvent.PlayerJoinEvent event) {
-        if (playerJoin.getValue()) {
-            if (!event.getName().equals(mc.player.getName())) {
-                mc.player.sendChatMessage("Welcome to the server, " + event.getName() + "!");
+    fun onPlayerJoin(event: PlayerJoinEvent) {
+        if (playerJoin.value) {
+            if (event.name != minecraft.player.name) {
+                minecraft.player.sendChatMessage("Welcome to the server, " + event.name + "!")
             }
         }
     }
 
     @Listener
-    public void onPlayerLeave(PlayerEvent.PlayerLeaveEvent event) {
-        if (playerLeave.getValue()) {
-            if (!event.getName().equals(mc.player.getName())) {
-                mc.player.sendChatMessage("See you later, " + event.getName() + "!");
+    fun onPlayerLeave(event: PlayerLeaveEvent) {
+        if (playerLeave.value) {
+            if (event.name != minecraft.player.name) {
+                minecraft.player.sendChatMessage("See you later, " + event.name + "!")
             }
         }
     }

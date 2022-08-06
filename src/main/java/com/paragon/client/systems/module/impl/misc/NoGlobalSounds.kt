@@ -1,57 +1,49 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PacketEvent;
-import com.paragon.api.module.Category;
-import com.paragon.api.module.Module;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.network.play.server.SPacketEffect;
-import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.util.SoundCategory;
+import com.paragon.api.event.network.PacketEvent.PreReceive
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.init.SoundEvents
+import net.minecraft.network.play.server.SPacketEffect
+import net.minecraft.network.play.server.SPacketSoundEffect
+import net.minecraft.util.SoundCategory
 
 /**
  * @author Surge
  * @since 14/05/22
  */
-public class NoGlobalSounds extends Module {
-
-    public static NoGlobalSounds INSTANCE;
+object NoGlobalSounds : Module("NoGlobalSounds", Category.MISC, "Prevents global sounds from playing") {
 
     // Sounds to cancel
-    public static Setting<Boolean> endPortal = new Setting<>("EndPortal", true)
-            .setDescription("Disables the end portal spawn sound");
+    private val endPortal = Setting("EndPortal", true)
+        .setDescription("Disables the end portal spawn sound")
 
-    public static Setting<Boolean> witherSpawn = new Setting<>("WitherSpawn", true)
-            .setDescription("Disables the wither spawn sound");
+    private val witherSpawn = Setting("WitherSpawn", true)
+        .setDescription("Disables the wither spawn sound")
 
-    public static Setting<Boolean> dragonDeath = new Setting<>("DragonDeath", true)
-            .setDescription("Disables the dragon death sound");
+    private val dragonDeath = Setting("DragonDeath", true)
+        .setDescription("Disables the dragon death sound")
 
-    public static Setting<Boolean> lightning = new Setting<>("Lightning", true)
-            .setDescription("Disables the lightning sound");
-
-    public NoGlobalSounds() {
-        super("NoGlobalSounds", Category.MISC, "Prevents global sounds from playing");
-
-        INSTANCE = this;
-    }
+    private val lightning = Setting("Lightning", true)
+        .setDescription("Disables the lightning sound")
 
     @Listener
-    public void onPacketReceive(PacketEvent.PreReceive event) {
-        if (event.getPacket() instanceof SPacketSoundEffect) {
-            SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+    fun onPacketReceive(event: PreReceive) {
+        if (event.packet is SPacketSoundEffect) {
+            val packet = event.packet
 
-            if (packet.getCategory().equals(SoundCategory.WEATHER) && packet.getSound().equals(SoundEvents.ENTITY_LIGHTNING_THUNDER) && lightning.getValue()) {
-                event.cancel();
+            if (packet.category == SoundCategory.WEATHER && packet.sound == SoundEvents.ENTITY_LIGHTNING_THUNDER && lightning.value) {
+                event.cancel()
             }
         }
 
-        if (event.getPacket() instanceof SPacketEffect) {
-            SPacketEffect packet = (SPacketEffect) event.getPacket();
+        if (event.packet is SPacketEffect) {
+            val packet = event.packet
 
-            if (packet.getSoundType() == 1038 && endPortal.getValue() || packet.getSoundType() == 1023 && witherSpawn.getValue() || packet.getSoundType() == 1028 && dragonDeath.getValue()) {
-                event.cancel();
+            if (packet.soundType == 1038 && endPortal.value || packet.soundType == 1023 && witherSpawn.value || packet.soundType == 1028 && dragonDeath.value) {
+                event.cancel()
             }
         }
     }

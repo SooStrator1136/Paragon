@@ -1,63 +1,54 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import net.minecraft.client.gui.GuiMainMenu
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
 
 /**
  * @author Surge
  */
 @SideOnly(Side.CLIENT)
-public class AutoLog extends Module {
+object AutoLog : Module("AutoLog", Category.MISC, "Automatically logs you out when you reach a certain health") {
 
-    public static AutoLog INSTANCE;
-
-    public static Setting<DisconnectMode> logMode = new Setting<>("LogMode", DisconnectMode.DISCONNECT)
-            .setDescription("How to log you out of the server");
-
-    public static Setting<Float> health = new Setting<>("Health", 6f, 1f, 20f, 1f)
-            .setDescription("The health to log you out at");
-
-    public static Setting<Boolean> autoDisable = new Setting<>("AutoDisable", true)
-            .setDescription("Disables the module after logging you out");
-
-    public AutoLog() {
-        super("AutoLog", Category.MISC, "Automatically logs you out when you reach a certain health");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onTick() {
+    private val logMode = Setting("LogMode", DisconnectMode.DISCONNECT)
+        .setDescription("How to log you out of the server")
+    
+    private val health = Setting("Health", 6f, 1f, 20f, 1f)
+        .setDescription("The health to log you out at")
+    
+    private val autoDisable = Setting("AutoDisable", true)
+        .setDescription("Disables the module after logging you out")
+    
+    override fun onTick() {
         if (nullCheck()) {
-            return;
+            return
         }
 
-        if (mc.player.getHealth() <= health.getValue()) {
-            switch (logMode.getValue()) {
-                case KICK:
-                    // Set current item to an invalid number
-                    mc.player.inventory.currentItem = -1;
-                    break;
-                case DISCONNECT:
+        if (minecraft.player.health <= health.value) {
+            when (logMode.value) {
+                DisconnectMode.KICK ->                     // Set current item to an invalid number
+                    minecraft.player.inventory.currentItem = -1
+
+                DisconnectMode.DISCONNECT -> {
                     // Disconnect from server
-                    mc.world.sendQuittingDisconnectingPacket();
-                    mc.loadWorld(null);
-                    mc.displayGuiScreen(new GuiMainMenu());
-                    break;
+                    minecraft.world.sendQuittingDisconnectingPacket()
+                    minecraft.loadWorld(null)
+                    minecraft.displayGuiScreen(GuiMainMenu())
+                }
             }
 
-            if (autoDisable.getValue()) {
+            if (autoDisable.value) {
                 // Toggle module state
-                toggle();
+                toggle()
             }
         }
     }
 
-    public enum DisconnectMode {
+    enum class DisconnectMode {
         /**
          * Disconnects you from the server
          */

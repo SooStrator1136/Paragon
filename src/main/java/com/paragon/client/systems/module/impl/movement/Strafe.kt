@@ -4,7 +4,6 @@ import com.paragon.api.event.player.PlayerMoveEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper.mc
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.player.PlayerUtil
 import com.paragon.asm.mixins.accessor.IMinecraft
@@ -52,7 +51,7 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
 
     @Listener
     fun onMove(event: PlayerMoveEvent) {
-        if (mc.player.ticksExisted < 1) {
+        if (minecraft.player.ticksExisted < 1) {
             speed = PlayerUtil.getBaseMoveSpeed()
         }
 
@@ -62,14 +61,14 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
         }
 
         // Make sure we are moving
-        if (PlayerUtil.isMoving() && !PlayerUtil.isInLiquid() && !mc.player.isOverWater) {
+        if (PlayerUtil.isMoving() && !PlayerUtil.isInLiquid() && !minecraft.player.isOverWater) {
             // Check on ground state and whether the delay has passed
-            if (mc.player.onGround && timer.hasMSPassed(delay.value)) {
+            if (minecraft.player.onGround && timer.hasMSPassed(delay.value)) {
                 // Increase timer speed
                 setTimerSpeed(timerSpeed.value)
 
                 // Simulate a jump, but with 0.41 instead of 0.42 as it seems to bypass better?
-                event.y = ((0.41f).toFloat().also { mc.player.motionY = it.toDouble() }).toDouble()
+                event.y = ((0.41f).toFloat().also { minecraft.player.motionY = it.toDouble() }).toDouble()
 
                 // Set speed
                 speed = PlayerUtil.getBaseMoveSpeed() * speedFactor.value.toDouble()
@@ -84,7 +83,7 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
                 setTimerSpeed(airSpeed.value)
 
                 // Check state or horizontal collision state
-                if (state == State.SLOW || mc.player.collidedHorizontally) {
+                if (state == State.SLOW || minecraft.player.collidedHorizontally) {
                     // Decrease speed
                     speed -= airFriction.value * PlayerUtil.getBaseMoveSpeed()
 

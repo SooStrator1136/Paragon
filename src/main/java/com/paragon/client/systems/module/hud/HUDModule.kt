@@ -2,7 +2,6 @@ package com.paragon.client.systems.module.hud
 
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
-import com.paragon.api.util.Wrapper
 import com.paragon.api.util.render.RenderUtil.screenHeight
 import com.paragon.api.util.render.RenderUtil.screenWidth
 import net.minecraft.client.gui.ScaledResolution
@@ -34,7 +33,7 @@ abstract class HUDModule(name: String, description: String) : Module(name, Categ
     fun updateComponent(mouseX: Int, mouseY: Int) {
         // Set X and Y
         if (isDragging) {
-            val sr = ScaledResolution(Wrapper.mc)
+            val sr = ScaledResolution(minecraft)
             val newX = MathHelper.clamp(mouseX - lastX, 1f, screenWidth)
             val newY = MathHelper.clamp(mouseY - lastY, 1f, screenHeight)
             x = newX

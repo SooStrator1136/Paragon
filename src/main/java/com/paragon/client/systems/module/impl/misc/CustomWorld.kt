@@ -1,55 +1,47 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PacketEvent;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.network.play.server.SPacketTimeUpdate;
+import com.paragon.api.event.network.PacketEvent.PreReceive
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.network.play.server.SPacketTimeUpdate
 
-public class CustomWorld extends Module {
+object CustomWorld : Module("CustomWorld", Category.MISC, "Changes the way the world is shown client side") {
 
-    public static CustomWorld INSTANCE;
-
-    public static Setting<Boolean> customWeather = new Setting<>("CustomWeather", true)
-            .setDescription("Set the world weather to a custom value");
-
-    public static Setting<Weather> weather = new Setting<>("Weather", Weather.CLEAR)
-            .setDescription("The weather to display")
-            .setParentSetting(customWeather);
-
-    public static Setting<Boolean> customTime = new Setting<>("CustomTime", true)
-            .setDescription("Set the world time to a custom value");
-
-    public static Setting<Float> time = new Setting<>("Time", 1000f, 0f, 24000f, 1f)
-            .setDescription("The time of day")
-            .setParentSetting(customTime);
-
-    public CustomWorld() {
-        super("CustomWorld", Category.MISC, "Changes the way the world is shown client side");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onTick() {
+    private val customWeather = Setting<Boolean?>("CustomWeather", true)
+        .setDescription("Set the world weather to a custom value")
+    
+    private val weather = Setting("Weather", Weather.CLEAR)
+        .setDescription("The weather to display")
+        .setParentSetting(customWeather)
+    
+    private val customTime = Setting<Boolean?>("CustomTime", true)
+        .setDescription("Set the world time to a custom value")
+    
+    private val time = Setting("Time", 1000f, 0f, 24000f, 1f)
+        .setDescription("The time of day")
+        .setParentSetting(customTime)
+    
+    override fun onTick() {
         if (nullCheck()) {
-            return;
+            return
         }
-
-        mc.world.setRainStrength(weather.getValue().getRainStrength());
-        mc.world.setWorldTime(time.getValue().longValue());
+        
+        minecraft.world.setRainStrength(weather.value.rainStrength.toFloat())
+        minecraft.world.worldTime = time.value.toLong()
     }
 
     @Listener
-    public void onPacketReceive(PacketEvent.PreReceive event) {
-        if (event.getPacket() instanceof SPacketTimeUpdate) {
+    fun onPacketReceive(event: PreReceive) {
+        if (event.packet is SPacketTimeUpdate) {
             // Stop the world from updating the time
-            event.cancel();
+            event.cancel()
         }
     }
 
-    public enum Weather {
+    enum class Weather(val rainStrength: Int) {
         /**
          * Clear weather - no rain or thunder
          */
@@ -65,19 +57,5 @@ public class CustomWorld extends Module {
          */
         THUNDER(2);
 
-        private int rainStrength;
-
-        Weather(int rainStrength) {
-            this.rainStrength = rainStrength;
-        }
-
-        /**
-         * Gets the rain strength
-         *
-         * @return The rain strength
-         */
-        public int getRainStrength() {
-            return rainStrength;
-        }
     }
 }

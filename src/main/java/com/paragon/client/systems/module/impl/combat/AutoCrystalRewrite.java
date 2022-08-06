@@ -342,7 +342,6 @@ public class AutoCrystalRewrite extends Module {
                         break;
 
                     case BOTH:
-                        System.out.println(renderColour.getAlpha());
                         RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getAlpha() * factor));
                         RenderUtil.drawBoundingBox(highlightBB, renderOutlineWidth.getValue(), renderOutlineColour.getValue());
                         break;

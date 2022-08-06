@@ -5,7 +5,6 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Bind.Device
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper.mc
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.entity.EntityUtil
@@ -219,13 +218,13 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         }
 
         if (returnSlot != -1) {
-            mc.playerController.windowClick(0, slot, 0, ClickType.PICKUP, mc.player)
+            minecraft.playerController.windowClick(0, slot, 0, ClickType.PICKUP, minecraft.player)
         }
 
-        mc.playerController.updateController()
+        minecraft.playerController.updateController()
 
-        if (inventorySpoof.value && mc.connection != null) {
-            mc.connection!!.sendPacket(CPacketCloseWindow(window))
+        if (inventorySpoof.value && minecraft.connection != null) {
+            minecraft.connection!!.sendPacket(CPacketCloseWindow(window))
         }
     }
 

@@ -1,90 +1,94 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.Paragon;
-import com.paragon.api.util.player.InventoryUtil;
-import com.paragon.client.managers.social.Player;
-import com.paragon.client.managers.social.Relationship;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Mouse;
+import com.paragon.Paragon
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.api.util.player.InventoryUtil
+import com.paragon.client.managers.social.Player
+import com.paragon.client.managers.social.Relationship
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.init.Items
+import net.minecraft.util.EnumHand
+import net.minecraft.util.math.RayTraceResult
+import net.minecraft.util.text.TextFormatting
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.InputEvent
+import org.lwjgl.input.Mouse
 
 /**
  * @author Surge
  */
-public class MiddleClick extends Module {
+object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform actions when you middle click") {
 
-    public static MiddleClick INSTANCE;
-
-    public static Setting<Boolean> friend = new Setting<>("Friend", true)
-            .setDescription("Add a friend when you middle click on an player");
-
-    public static Setting<Boolean> pearl = new Setting<>("Pearl", true)
-            .setDescription("Throw an ender pearl when you miss an entity");
-
+    private val friend = Setting("Friend", true)
+        .setDescription("Add a friend when you middle click on an player")
+    private val pearl = Setting("Pearl", true)
+        .setDescription("Throw an ender pearl when you miss an entity")
+    
     // To prevent excessive spam
-    private boolean hasClicked = false;
-
-    public MiddleClick() {
-        super("MiddleClick", Category.MISC, "Allows you to perform actions when you middle click");
-
-        INSTANCE = this;
-    }
+    private var hasClicked = false
 
     @SubscribeEvent
-    public void onMouseInput(InputEvent.MouseInputEvent event) {
+    fun onMouseInput(event: InputEvent.MouseInputEvent?) {
         if (nullCheck()) {
-            return;
+            return
         }
 
         // Check that middle click button is pressed, and we haven't just clicked
         if (Mouse.isButtonDown(2)) {
-            RayTraceResult.Type result = mc.objectMouseOver.typeOfHit;
-
+            val result = minecraft.objectMouseOver.typeOfHit
             if (!hasClicked) {
                 // If the type of hit is a player
-                if (result.equals(RayTraceResult.Type.ENTITY) && mc.objectMouseOver.entityHit instanceof EntityPlayer && friend.getValue()) {
+                if (result == RayTraceResult.Type.ENTITY && minecraft.objectMouseOver.entityHit is EntityPlayer && friend.value) {
                     // Create new player object
-                    Player player = new Player(mc.objectMouseOver.entityHit.getName(), Relationship.FRIEND);
+                    val player = Player(minecraft.objectMouseOver.entityHit.name, Relationship.FRIEND)
 
-                    if (Paragon.INSTANCE.getSocialManager().isFriend(player.getName())) {
+                    if (Paragon.INSTANCE.socialManager.isFriend(player.name)) {
                         // Remove player from social list
-                        Paragon.INSTANCE.getSocialManager().removePlayer(player.getName());
-                        Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.RED + "Removed player " + TextFormatting.GRAY + player.getName() + TextFormatting.RED + " from your socials list!", false);
-                    } else {
+                        Paragon.INSTANCE.socialManager.removePlayer(player.name)
+                        Paragon.INSTANCE.commandManager.sendClientMessage(
+                            TextFormatting.RED.toString() + "Removed player " + TextFormatting.GRAY + player.name + TextFormatting.RED + " from your socials list!",
+                            false
+                        )
+                    }
+
+                    else {
                         // Add player to social list
-                        Paragon.INSTANCE.getSocialManager().addPlayer(player);
-                        Paragon.INSTANCE.getCommandManager().sendClientMessage(TextFormatting.GREEN + "Added player " + TextFormatting.GRAY + player.getName() + TextFormatting.GREEN + " to your friends list!", false);
+                        Paragon.INSTANCE.socialManager.addPlayer(player)
+                        Paragon.INSTANCE.commandManager.sendClientMessage(
+                            TextFormatting.GREEN.toString() + "Added player " + TextFormatting.GRAY + player.name + TextFormatting.GREEN + " to your friends list!",
+                            false
+                        )
                     }
                 }
 
-                else if (pearl.getValue()) {
+                else if (pearl.value) {
                     // The last slot we were on
-                    int prevSlot = mc.player.inventory.currentItem;
+                    val prevSlot = minecraft.player.inventory.currentItem
 
                     // Switch to pearl, if we can
                     if (InventoryUtil.switchToItem(Items.ENDER_PEARL, false)) {
                         // Throw pearl
-                        mc.playerController.processRightClick(mc.player, mc.world, EnumHand.MAIN_HAND);
+                        minecraft.playerController.processRightClick(
+                            minecraft.player,
+                            minecraft.world,
+                            EnumHand.MAIN_HAND
+                        )
 
                         // Switch back to old slot
-                        InventoryUtil.switchToSlot(prevSlot, false);
+                        InventoryUtil.switchToSlot(prevSlot, false)
                     }
                 }
             }
 
             // We have clicked
-            this.hasClicked = true;
+            hasClicked = true
         } else {
             // Reset hasClicked
-            this.hasClicked = false;
+            hasClicked = false
         }
     }
+    
 }

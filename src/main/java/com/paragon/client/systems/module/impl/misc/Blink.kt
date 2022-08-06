@@ -1,159 +1,129 @@
-package com.paragon.client.systems.module.impl.misc;
+package com.paragon.client.systems.module.impl.misc
 
-import com.paragon.api.event.network.PacketEvent;
-import com.paragon.api.util.calculations.Timer;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
-import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import com.paragon.api.event.network.PacketEvent.PreSend
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
+import com.paragon.api.util.calculations.Timer
+import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.client.entity.EntityOtherPlayerMP
+import net.minecraft.network.play.client.CPacketPlayer
+import net.minecraft.util.math.BlockPos
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 
 /**
  * @author Surge
  */
 @SideOnly(Side.CLIENT)
-public class Blink extends Module {
-
-    public static Blink INSTANCE;
+object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a length of time") {
 
     // General
-    public static Setting<Mode> mode = new Setting<>("Mode", Mode.PACKETS_QUEUED)
-            .setDescription("When to send queued packets");
+    var mode = Setting<Mode?>("Mode", Mode.PACKETS_QUEUED)
+        .setDescription("When to send queued packets")
 
     // Packet queue flush settings
-    public static Setting<Double> queueLength = new Setting<>("QueueLength", 50D, 1D, 1000D, 1D)
-            .setDescription("The size of the queue to start sending packets")
-            .setParentSetting(mode)
-            .setVisibility(() -> mode.getValue().equals(Mode.PACKETS_QUEUED));
-
-    public static Setting<Double> delay = new Setting<>("Delay", 4D, 0.1D, 10D, 0.1D)
-            .setDescription("The delay between sending packets in seconds")
-            .setParentSetting(mode)
-            .setVisibility(() -> mode.getValue().equals(Mode.DELAY));
-
-    public static Setting<Double> distance = new Setting<>("Distance", 10D, 1D, 100D, 0.1D)
-            .setDescription("The distance to the fake player to start sending packets")
-            .setParentSetting(mode)
-            .setVisibility(() -> mode.getValue().equals(Mode.DISTANCE));
-
+    var queueLength = Setting("QueueLength", 50.0, 1.0, 1000.0, 1.0)
+        .setDescription("The size of the queue to start sending packets")
+        .setParentSetting(mode)
+        .setVisibility { mode.value == Mode.PACKETS_QUEUED }
+    
+    var delay = Setting("Delay", 4.0, 0.1, 10.0, 0.1)
+        .setDescription("The delay between sending packets in seconds")
+        .setParentSetting(mode)
+        .setVisibility { mode.value == Mode.DELAY }
+    
+    var distance = Setting("Distance", 10.0, 1.0, 100.0, 0.1)
+        .setDescription("The distance to the fake player to start sending packets")
+        .setParentSetting(mode)
+        .setVisibility { mode.value == Mode.DISTANCE }
+    
     // Using CopyOnWriteArrayList to avoid ConcurrentModificationException
-    private final List<CPacketPlayer> packetQueue = new CopyOnWriteArrayList<>();
-    private final Timer timer = new Timer();
-    private BlockPos lastPosition;
+    private val packetQueue: MutableList<CPacketPlayer> = CopyOnWriteArrayList()
+    private val timer = Timer()
+    private var lastPosition: BlockPos? = null
 
-    public Blink() {
-        super("Blink", Category.MISC, "Cancels sending packets for a length of time");
-
-        INSTANCE = this;
-    }
-
-    @Override
-    public void onEnable() {
+    override fun onEnable() {
         if (nullCheck()) {
-            return;
+            return
         }
-
-        EntityOtherPlayerMP fakePlayer = new EntityOtherPlayerMP(mc.world, mc.player.getGameProfile());
-
-        fakePlayer.copyLocationAndAnglesFrom(mc.player);
-        fakePlayer.rotationYawHead = mc.player.rotationYawHead;
-        fakePlayer.inventory.copyInventory(mc.player.inventory);
-        fakePlayer.setSneaking(mc.player.isSneaking());
-        fakePlayer.setPrimaryHand(mc.player.getPrimaryHand());
-
-        mc.world.addEntityToWorld(-351352, fakePlayer);
-
-        lastPosition = mc.player.getPosition();
+        val fakePlayer = EntityOtherPlayerMP(minecraft.world, minecraft.player.gameProfile)
+        fakePlayer.copyLocationAndAnglesFrom(minecraft.player)
+        fakePlayer.rotationYawHead = minecraft.player.rotationYawHead
+        fakePlayer.inventory.copyInventory(minecraft.player.inventory)
+        fakePlayer.isSneaking = minecraft.player.isSneaking
+        fakePlayer.primaryHand = minecraft.player.primaryHand
+        minecraft.world.addEntityToWorld(-351352, fakePlayer)
+        lastPosition = minecraft.player.position
     }
 
-    @Override
-    public void onDisable() {
+    override fun onDisable() {
         if (nullCheck()) {
-            return;
+            return
         }
-
-        sendPackets();
-
-        mc.world.removeEntityFromWorld(-351352);
-        lastPosition = null;
+        sendPackets()
+        minecraft.world.removeEntityFromWorld(-351352)
+        lastPosition = null
     }
 
-    @Override
-    public void onTick() {
+    override fun onTick() {
         if (nullCheck()) {
-            return;
+            return
         }
 
         if (lastPosition == null) {
-            lastPosition = mc.player.getPosition();
+            lastPosition = minecraft.player.position
         }
 
-        switch (mode.getValue()) {
-            case PACKETS_QUEUED:
-                if (packetQueue.size() >= queueLength.getValue()) {
-                    sendPackets();
-                }
+        when (mode.value) {
+            Mode.PACKETS_QUEUED -> if (packetQueue.size >= queueLength.value) {
+                sendPackets()
+            }
 
-                break;
+            Mode.DELAY -> if (timer.hasMSPassed(delay.value * 1000)) {
+                sendPackets()
+                timer.reset()
+            }
 
-            case DELAY:
-                if (timer.hasMSPassed(delay.getValue() * 1000)) {
-                    sendPackets();
-                    timer.reset();
-                }
+            Mode.DISTANCE -> if (minecraft.player.getDistance(lastPosition!!.x.toDouble(), lastPosition!!.y.toDouble(), lastPosition!!.z.toDouble()) >= distance.value) {
+                sendPackets()
+            }
 
-                break;
-
-            case DISTANCE:
-                if (mc.player.getDistance(lastPosition.getX(), lastPosition.getY(), lastPosition.getZ()) >= distance.getValue()) {
-                    sendPackets();
-                }
-
-                break;
+            else -> {}
         }
     }
 
     @Listener
-    public void onPacketSent(PacketEvent.PreSend event) {
+    fun onPacketSent(event: PreSend) {
         if (nullCheck()) {
-            return;
+            return
         }
-
-        if (event.getPacket() instanceof CPacketPlayer) {
-            event.cancel();
-            packetQueue.add((CPacketPlayer) event.getPacket());
+        if (event.packet is CPacketPlayer) {
+            event.cancel()
+            packetQueue.add(event.packet)
         }
     }
 
-    public void sendPackets() {
-        lastPosition = mc.player.getPosition();
-
-        mc.world.removeEntityFromWorld(-351352);
-
+    fun sendPackets() {
+        lastPosition = minecraft.player.position
+        minecraft.world.removeEntityFromWorld(-351352)
         if (!packetQueue.isEmpty()) {
-            packetQueue.forEach(packet -> mc.player.connection.sendPacket(packet));
-            packetQueue.clear();
+            packetQueue.forEach(Consumer { packet: CPacketPlayer? -> minecraft.player.connection.sendPacket(packet) })
+            packetQueue.clear()
         }
-
-        EntityOtherPlayerMP fakePlayer = new EntityOtherPlayerMP(mc.world, mc.player.getGameProfile());
-
-        fakePlayer.copyLocationAndAnglesFrom(mc.player);
-        fakePlayer.rotationYawHead = mc.player.rotationYawHead;
-        fakePlayer.inventory.copyInventory(mc.player.inventory);
-        fakePlayer.setSneaking(mc.player.isSneaking());
-        fakePlayer.setPrimaryHand(mc.player.getPrimaryHand());
-
-        mc.world.addEntityToWorld(-351352, fakePlayer);
+        val fakePlayer = EntityOtherPlayerMP(minecraft.world, minecraft.player.gameProfile)
+        fakePlayer.copyLocationAndAnglesFrom(minecraft.player)
+        fakePlayer.rotationYawHead = minecraft.player.rotationYawHead
+        fakePlayer.inventory.copyInventory(minecraft.player.inventory)
+        fakePlayer.isSneaking = minecraft.player.isSneaking
+        fakePlayer.primaryHand = minecraft.player.primaryHand
+        minecraft.world.addEntityToWorld(-351352, fakePlayer)
     }
 
-    public enum Mode {
+    enum class Mode {
         /**
          * Send queued packets after a certain amount of packets have been queued
          */
@@ -174,5 +144,4 @@ public class Blink extends Module {
          */
         MANUAL
     }
-
 }

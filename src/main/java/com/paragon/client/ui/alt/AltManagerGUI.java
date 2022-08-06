@@ -106,10 +106,10 @@ public final class AltManagerGUI extends GuiScreen implements Wrapper {
     protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case 0:
-                Wrapper.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+                getMinecraft().displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
                 break;
             case 1:
-                Wrapper.mc.displayGuiScreen(new AddAltGUI());
+                getMinecraft().displayGuiScreen(new AddAltGUI());
                 break;
             case 2:
                 Paragon.INSTANCE.getAltManager().getAlts().removeIf(alt -> alt.getEmail().equals(selectedAltEntry.getAlt().getEmail()) && alt.getPassword().equals(selectedAltEntry.getAlt().getPassword()));
