@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.player.PlayerUtil
 import com.paragon.api.util.render.ColourUtil
@@ -34,6 +35,10 @@ object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :(("
         .setDescription("Render the hat on other players")
 
     override fun onRender3D() {
+        if (minecraft.anyNull) {
+            return
+        }
+
         minecraft.world?.playerEntities?.forEach {
             // We don't want to render the hat
             if (it === minecraft.player && !firstPerson.value && minecraft.gameSettings.thirdPersonView == 0 || !others.value && it !== minecraft.player) {

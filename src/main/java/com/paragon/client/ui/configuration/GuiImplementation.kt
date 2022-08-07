@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration
 
+import com.paragon.Paragon
+import com.paragon.client.systems.module.impl.client.ClickGUI
 import net.minecraft.client.Minecraft
 
 /**
@@ -18,8 +20,11 @@ abstract class GuiImplementation {
     abstract fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int)
     abstract fun keyTyped(typedChar: Char, keyCode: Int)
 
-    abstract fun onGuiClosed()
-    abstract fun doesGuiPauseGame(): Boolean
+    open fun onGuiClosed() {
+        Paragon.INSTANCE.storageManager.saveModules("current")
+    }
+
+    open fun doesGuiPauseGame(): Boolean = ClickGUI.pause.value
 
     fun drawDefaultBackground() {
         Minecraft.getMinecraft().currentScreen?.drawDefaultBackground()

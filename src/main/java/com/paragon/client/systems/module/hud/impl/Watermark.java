@@ -6,12 +6,13 @@ import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.hud.HUDModule;
 import com.paragon.client.systems.module.impl.client.Colours;
+import kotlin.Unit;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import static org.lwjgl.opengl.GL11.*;
+import static com.paragon.api.util.render.RenderUtil.scaleTo;
 
-public class Watermark extends HUDModule {
+public final class Watermark extends HUDModule {
 
     public static Watermark INSTANCE;
 
@@ -21,6 +22,8 @@ public class Watermark extends HUDModule {
     private static Setting<Double> scaleFac = new Setting<>("Size", 1.0, 0.1, 2.0, 0.05)
             .setDescription("The scale of the image watermark")
             .setVisibility(() -> display.getValue().equals(Display.IMAGE));
+
+    private final ResourceLocation icon = new ResourceLocation("paragon", "textures/paragon.png");
 
     public Watermark() {
         super("Watermark", "Renders the client's name on screen");
@@ -36,17 +39,14 @@ public class Watermark extends HUDModule {
                 break;
 
             case IMAGE:
-                mc.getTextureManager().bindTexture(new ResourceLocation("paragon", "textures/paragon.png"));
+                mc.getTextureManager().bindTexture(this.icon);
 
-                glPushMatrix();
-                float width = 880 / 4f;
-                float height = 331 / 4f;
-                glTranslatef(getX(), getY(), 0F);
-                glScaled(scaleFac.getValue(), scaleFac.getValue(), 1.0);
-                glTranslatef(-getX(), -getY(), 0F);
-
-                RenderUtil.drawModalRectWithCustomSizedTexture(getX(), getY(), 0, 0, width, height, width, height);
-                glPopMatrix();
+                final float width = 880 / 4.0F;
+                final float height = 331 / 4.0F;
+                scaleTo(this.getX(), this.getY(), 0.0F, scaleFac.getValue(), scaleFac.getValue(), 1.0D, () -> {
+                    RenderUtil.drawModalRectWithCustomSizedTexture(this.getX(), this.getY(), 0, 0, width, height, width, height);
+                    return Unit.INSTANCE;
+                });
                 break;
         }
     }

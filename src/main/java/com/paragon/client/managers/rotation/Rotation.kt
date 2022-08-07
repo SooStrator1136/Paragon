@@ -4,4 +4,4 @@ package com.paragon.client.managers.rotation
  * @author Surge
  * @since 23/03/22
  */
-class Rotation(val yaw: Float, val pitch: Float, val rotate: Rotate, val priority: RotationPriority)
+data class Rotation(val yaw: Float, val pitch: Float, val rotate: Rotate, val priority: RotationPriority)

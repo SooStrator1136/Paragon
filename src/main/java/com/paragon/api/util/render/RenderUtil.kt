@@ -19,12 +19,16 @@ import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Toolkit
+import kotlin.math.cos
+import kotlin.math.sin
 
 @SideOnly(Side.CLIENT)
 object RenderUtil : Wrapper {
+
     private val tessellator = Tessellator.getInstance()
     private val bufferBuilder = tessellator.buffer
 
@@ -158,8 +162,7 @@ object RenderUtil : Wrapper {
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
         glBegin(GL_POLYGON)
         setColour(colour)
-        var i: Int
-        i = 0
+        var i = 0
         while (i <= 90) {
             glVertex2d(
                 x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0,
@@ -170,16 +173,16 @@ object RenderUtil : Wrapper {
         i = 90
         while (i <= 180) {
             glVertex2d(
-                x + bLeft + Math.sin(i * Math.PI / 180.0) * bLeft * -1.0,
-                y + height - bLeft + Math.cos(i * Math.PI / 180.0) * bLeft * -1.0
+                x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0,
+                y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0
             )
             i += 3
         }
         i = 0
         while (i <= 90) {
             glVertex2d(
-                x + width - bRight + Math.sin(i * Math.PI / 180.0) * bRight,
-                y + height - bRight + Math.cos(i * Math.PI / 180.0) * bRight
+                x + width - bRight + sin(i * Math.PI / 180.0) * bRight,
+                y + height - bRight + cos(i * Math.PI / 180.0) * bRight
             )
             i += 3
         }
@@ -187,7 +190,7 @@ object RenderUtil : Wrapper {
         while (i <= 180) {
             glVertex2d(
                 x + width - tRight + Math.sin(i * Math.PI / 180.0) * tRight,
-                y + tRight + Math.cos(i * Math.PI / 180.0) * tRight
+                y + tRight + cos(i * Math.PI / 180.0) * tRight
             )
             i += 3
         }
@@ -225,44 +228,43 @@ object RenderUtil : Wrapper {
         glLineWidth(lineWidth)
         glBegin(GL_LINE_STRIP)
         setColour(colour)
-        var i: Int
-        i = 0
+        var i = 0
         while (i <= 90) {
             glVertex2d(
-                x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0,
-                y + tLeft + Math.cos(i * Math.PI / 180.0) * tLeft * -1.0
+                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0,
+                y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
             )
             i += 3
         }
         i = 90
         while (i <= 180) {
             glVertex2d(
-                x + bLeft + Math.sin(i * Math.PI / 180.0) * bLeft * -1.0,
-                y + height - bLeft + Math.cos(i * Math.PI / 180.0) * bLeft * -1.0
+                x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0,
+                y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0
             )
             i += 3
         }
         i = 0
         while (i <= 90) {
             glVertex2d(
-                x + width - bRight + Math.sin(i * Math.PI / 180.0) * bRight,
-                y + height - bRight + Math.cos(i * Math.PI / 180.0) * bRight
+                x + width - bRight + sin(i * Math.PI / 180.0) * bRight,
+                y + height - bRight + cos(i * Math.PI / 180.0) * bRight
             )
             i += 3
         }
         i = 90
         while (i <= 180) {
             glVertex2d(
-                x + width - tRight + Math.sin(i * Math.PI / 180.0) * tRight,
-                y + tRight + Math.cos(i * Math.PI / 180.0) * tRight
+                x + width - tRight + sin(i * Math.PI / 180.0) * tRight,
+                y + tRight + cos(i * Math.PI / 180.0) * tRight
             )
             i += 3
         }
         i = 0
         while (i <= 90) {
             glVertex2d(
-                x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0,
-                y + tLeft + Math.cos(i * Math.PI / 180.0) * tLeft * -1.0
+                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0,
+                y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
             )
             i += 3
         }
@@ -276,6 +278,35 @@ object RenderUtil : Wrapper {
         glPopAttrib()
         glLineWidth(1f)
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
+    }
+
+    /**
+     * In java usage will look like this:
+     * ```
+     * public void exampleScaleTo(float x, float y, float z, double scaleFacX, double scaleFacY, double scaleFacZ) {
+     *    scaleTo(x, y, z, scaleFacX, scaleFacY, scaleFacZ, () -> {
+     *       methodThatWillBeScaled();
+     *       return Unit.INSTANCE;
+     *    });
+     * }
+     * ```
+     */
+    @JvmStatic
+    inline fun scaleTo(
+        x: Float,
+        y: Float,
+        z: Float,
+        scaleFacX: Double,
+        scaleFacY: Double,
+        scaleFacZ: Double,
+        block: () -> Unit
+    ) {
+        GL11.glPushMatrix()
+        GL11.glTranslatef(x, y, z)
+        GL11.glScaled(scaleFacX, scaleFacY, scaleFacZ)
+        GL11.glTranslatef(-x, -y, -z)
+        block.invoke()
+        GL11.glPopMatrix()
     }
 
     @JvmStatic
@@ -298,21 +329,20 @@ object RenderUtil : Wrapper {
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
         glBegin(GL_POLYGON)
-        var i: Int
         setColour(left)
-        i = 0
+        var i = 0
         while (i <= 90) {
             glVertex2d(
-                x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0,
-                y + tLeft + Math.cos(i * Math.PI / 180.0) * tLeft * -1.0
+                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0,
+                y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
             )
             i += 3
         }
         i = 90
         while (i <= 180) {
             glVertex2d(
-                x + bLeft + Math.sin(i * Math.PI / 180.0) * bLeft * -1.0,
-                y + height - bLeft + Math.cos(i * Math.PI / 180.0) * bLeft * -1.0
+                x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0,
+                y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0
             )
             i += 3
         }
@@ -320,16 +350,16 @@ object RenderUtil : Wrapper {
         i = 0
         while (i <= 90) {
             glVertex2d(
-                x + width - bRight + Math.sin(i * Math.PI / 180.0) * bRight,
-                y + height - bRight + Math.cos(i * Math.PI / 180.0) * bRight
+                x + width - bRight + sin(i * Math.PI / 180.0) * bRight,
+                y + height - bRight + cos(i * Math.PI / 180.0) * bRight
             )
             i += 3
         }
         i = 90
         while (i <= 180) {
             glVertex2d(
-                x + width - tRight + Math.sin(i * Math.PI / 180.0) * tRight,
-                y + tRight + Math.cos(i * Math.PI / 180.0) * tRight
+                x + width - tRight + sin(i * Math.PI / 180.0) * tRight,
+                y + tRight + cos(i * Math.PI / 180.0) * tRight
             )
             i += 3
         }
@@ -398,7 +428,7 @@ object RenderUtil : Wrapper {
      * @param width  Width of scissor
      * @param height Height of scissor
      */
-    fun scissorRect(x: Double, y: Double, width: Double, height: Double) {
+    private fun scissorRect(x: Double, y: Double, width: Double, height: Double) {
         var x = x
         var y = y
         var width = width
@@ -507,7 +537,7 @@ object RenderUtil : Wrapper {
      * @param colour        The colour of the outline
      */
     @JvmStatic
-    fun drawBoundingBox(axisAlignedBB: AxisAlignedBB?, lineThickness: Float, colour: Color) {
+    fun drawBoundingBox(axisAlignedBB: AxisAlignedBB, lineThickness: Float, colour: Color) {
         glBlendFunc(770, 771)
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
@@ -534,7 +564,7 @@ object RenderUtil : Wrapper {
      * @param colour        The colour of the outline
      */
     @JvmStatic
-    fun drawFilledBox(axisAlignedBB: AxisAlignedBB?, colour: Color) {
+    fun drawFilledBox(axisAlignedBB: AxisAlignedBB, colour: Color) {
         glBlendFunc(770, 771)
         glEnable(GL_BLEND)
         glLineWidth(1f)
@@ -657,6 +687,9 @@ object RenderUtil : Wrapper {
 
     @JvmStatic
     fun renderItemStack(itemStack: ItemStack?, x: Float, y: Float, overlay: Boolean) {
+        if (itemStack == null) {
+            return
+        }
         val renderItem = minecraft.renderItem
         GlStateManager.enableDepth()
         renderItem.zLevel = 200f

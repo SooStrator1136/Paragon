@@ -38,13 +38,13 @@ class RotationManager : Wrapper {
             return
         }
 
-        if (!rotationsQueue.isEmpty()) {
-            // Fix ArrayIndexOutOfBoundsException
-            if (rotationsQueue.size == 0) {
-                return
-            }
+        if (rotationsQueue.isNotEmpty()) {
 
             rotationsQueue.removeIf { it.rotate == Rotate.NONE }
+
+            if (rotationsQueue.isEmpty()) {
+                return
+            }
 
             rotationsQueue.sortBy { it.priority.priority }
 

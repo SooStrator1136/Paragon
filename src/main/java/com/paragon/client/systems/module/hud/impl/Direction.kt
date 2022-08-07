@@ -1,3 +1,5 @@
+@file:Suppress("SuspiciousVarProperty")
+
 package com.paragon.client.systems.module.hud.impl
 
 import com.paragon.api.util.player.PlayerUtil
@@ -21,8 +23,14 @@ object Direction : HUDModule("Direction", "Displays what direction you are facin
         )
     }
 
-    override fun getWidth() = FontUtil.getStringWidth("Direction " + StringUtil.getFormattedText(PlayerUtil.getDirection()) + " [" + PlayerUtil.getAxis(PlayerUtil.getDirection()) + "]")
+    override var width: Float = 0.0F
+        get() = FontUtil.getStringWidth(
+            "Direction " + StringUtil.getFormattedText(PlayerUtil.getDirection()) + " [" + PlayerUtil.getAxis(
+                PlayerUtil.getDirection()
+            ) + "]"
+        )
 
-    override fun getHeight() = FontUtil.getHeight()
+    override var height = FontUtil.getHeight()
+        get() = FontUtil.getHeight()
 
 }

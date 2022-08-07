@@ -12,7 +12,7 @@ import org.lwjgl.util.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordEnum(val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
+class DiscordEnum(private val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
 
     private val options = setting.value.javaClass.enumConstants
     private val optionRects = arrayOfNulls<Rectangle>(options.size)
@@ -21,6 +21,7 @@ class DiscordEnum(val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
         for (i in options.indices) {
             optionRects[i] = Rectangle()
         }
+        bounds.height = (msgStyleHeight + FontUtil.getHeight()).toInt()
     }
 
     override fun render(mouseX: Int, mouseY: Int) {
@@ -54,7 +55,7 @@ class DiscordEnum(val setting: Setting<Enum<*>>) : DiscordSetting(setting) {
 
         val lastRect = optionRects[optionRects.size - 1]
         if (lastRect != null) {
-            bounds.height = (lastRect.y + lastRect.height) - bounds.y
+            bounds.height = ((lastRect.y + lastRect.height) - bounds.y) + 2
         }
     }
 

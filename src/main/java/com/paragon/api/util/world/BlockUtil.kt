@@ -58,16 +58,48 @@ object BlockUtil : Wrapper {
      * @return The bounding box of the entity
      */
     @JvmStatic
-    fun getBlockBox(blockPos: BlockPos): AxisAlignedBB = AxisAlignedBB(blockPos.x.toDouble(), blockPos.y.toDouble(), blockPos.z.toDouble(), (blockPos.x + 1).toDouble(), (blockPos.y + 1).toDouble(), (blockPos.z + 1).toDouble()).offset(-minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ)
+    fun getBlockBox(blockPos: BlockPos): AxisAlignedBB = AxisAlignedBB(
+        blockPos.x.toDouble(),
+        blockPos.y.toDouble(),
+        blockPos.z.toDouble(),
+        (blockPos.x + 1).toDouble(),
+        (blockPos.y + 1).toDouble(),
+        (blockPos.z + 1).toDouble()
+    ).offset(
+        -minecraft.renderManager.viewerPosX,
+        -minecraft.renderManager.viewerPosY,
+        -minecraft.renderManager.viewerPosZ
+    )
 
     @JvmStatic
     fun canSeePos(pos: BlockPos): Boolean {
         for (facing in EnumFacing.values()) {
-            if (minecraft.world.rayTraceBlocks(Vec3d(minecraft.player.posX, minecraft.player.posY + minecraft.player.getEyeHeight().toDouble(), minecraft.player.posZ), Vec3d(pos.offset(facing).x + 0.5, (pos.offset(facing).y + 1).toDouble(), pos.offset(facing).z + 0.5), false, true, false) == null) {
+            if (minecraft.world.rayTraceBlocks(
+                    Vec3d(
+                        minecraft.player.posX,
+                        minecraft.player.posY + minecraft.player.getEyeHeight().toDouble(),
+                        minecraft.player.posZ
+                    ),
+                    Vec3d(
+                        pos.offset(facing).x + 0.5,
+                        (pos.offset(facing).y + 1).toDouble(),
+                        pos.offset(facing).z + 0.5
+                    ),
+                    false,
+                    true,
+                    false
+                ) == null
+            ) {
                 return true
             }
         }
-        return minecraft.world.rayTraceBlocks(Vec3d(minecraft.player.posX, minecraft.player.posY + minecraft.player.getEyeHeight().toDouble(), minecraft.player.posZ), Vec3d(pos.x + 0.5, (pos.y + 1).toDouble(), pos.z + 0.5), false, true, false) == null
+        return minecraft.world.rayTraceBlocks(
+            Vec3d(
+                minecraft.player.posX,
+                minecraft.player.posY + minecraft.player.getEyeHeight().toDouble(),
+                minecraft.player.posZ
+            ), Vec3d(pos.x + 0.5, (pos.y + 1).toDouble(), pos.z + 0.5), false, true, false
+        ) == null
     }
 
     /**
@@ -87,7 +119,11 @@ object BlockUtil : Wrapper {
                 continue
             }
             val block = getBlockAtPos(pos.offset(facing))
-            if (block === Blocks.AIR || block !== Blocks.OBSIDIAN && block !== Blocks.BEDROCK && obbyBedrock || block!!.isReplaceable(minecraft.world, pos.offset(facing))) {
+            if (block === Blocks.AIR || block !== Blocks.OBSIDIAN && block !== Blocks.BEDROCK && obbyBedrock || block!!.isReplaceable(
+                    minecraft.world,
+                    pos.offset(facing)
+                )
+            ) {
                 return false
             }
         }

@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RotationUtil implements Wrapper {
+public final class RotationUtil implements Wrapper {
 
     /**
      * Gets the rotation to a block position
@@ -19,7 +19,7 @@ public class RotationUtil implements Wrapper {
      * @param yOffset The y offset to use
      * @return The calculated angles
      */
-    public static Vec2f getRotationToBlockPos(BlockPos pos, double yOffset) {
+    public static Vec2f getRotationToBlockPos(final BlockPos pos, final double yOffset) {
         return getRotationToVec3d(new Vec3d(pos.getX() + 0.5, pos.getY() + yOffset, pos.getZ() + 0.5));
     }
 
@@ -29,13 +29,13 @@ public class RotationUtil implements Wrapper {
      * @param vec3d The Vec3D to calculate rotations to
      * @return A Vec2f of the angles
      */
-    public static Vec2f getRotationToVec3d(Vec3d vec3d) {
-        float yaw = (float) (Math.toDegrees(
+    public static Vec2f getRotationToVec3d(final Vec3d vec3d) {
+        final float yaw = (float) (Math.toDegrees(
                 Math.atan2(
                         vec3d.subtract(mc.player.getPositionEyes(1)).z,
                         vec3d.subtract(mc.player.getPositionEyes(1)).x)) - 90);
 
-        float pitch = (float) Math.toDegrees(
+        final float pitch = (float) Math.toDegrees(
                 -Math.atan2(
                         vec3d.subtract(mc.player.getPositionEyes(1)).y,
                         Math.hypot(
@@ -45,7 +45,7 @@ public class RotationUtil implements Wrapper {
         return new Vec2f(MathHelper.wrapDegrees(yaw), MathHelper.wrapDegrees(pitch));
     }
 
-    public static void rotate(Vec2f rotationVec, boolean packet) {
+    public static void rotate(final Vec2f rotationVec, final boolean packet) {
         if (packet) {
             mc.player.connection.sendPacket(new CPacketPlayer.Rotation(rotationVec.x, rotationVec.y, mc.player.onGround));
             return;
@@ -57,17 +57,18 @@ public class RotationUtil implements Wrapper {
     }
 
     public static float normalizeAngle(float angle) {
-        angle %= 360.0f;
+        float normalizedAngle = angle;
+        normalizedAngle %= 360.0f;
 
-        if (angle >= 180.0f) {
-            angle -= 360.0f;
+        if (normalizedAngle >= 180.0f) {
+            normalizedAngle -= 360.0f;
         }
 
-        if (angle < -180.0f) {
-            angle += 360.0f;
+        if (normalizedAngle < -180.0f) {
+            normalizedAngle += 360.0f;
         }
 
-        return angle;
+        return normalizedAngle;
     }
 
 }

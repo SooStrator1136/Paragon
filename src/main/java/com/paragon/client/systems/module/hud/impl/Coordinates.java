@@ -33,4 +33,5 @@ public class Coordinates extends HUDModule {
     public String getText() {
         return "X " + TextFormatting.WHITE + Math.round(mc.player.posX) + TextFormatting.RESET + " Y " + TextFormatting.WHITE + Math.round(mc.player.posY) + TextFormatting.RESET + " Z " + TextFormatting.WHITE + Math.round(mc.player.posZ);
     }
+
 }

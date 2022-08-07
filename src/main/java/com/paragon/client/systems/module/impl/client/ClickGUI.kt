@@ -9,6 +9,7 @@ import com.paragon.api.setting.Setting
 import com.paragon.client.ui.configuration.GuiImplementation
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.old.OldPanelGUI
+import com.paragon.client.ui.configuration.simple.SimpleGUI
 import com.paragon.client.ui.util.animation.Easing
 import org.lwjgl.input.Keyboard
 
@@ -52,10 +53,12 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     @JvmStatic
     val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f)
         .setDescription("How fast animations are")
+        .setVisibility { style.value != Style.SIMPLE }
 
     @JvmStatic
     val easing = Setting("Easing", Easing.EXPO_IN_OUT)
         .setDescription("The easing type of the animation")
+        .setVisibility { style.value != Style.SIMPLE }
 
     @JvmStatic
     val darkenBackground = Setting("DarkenBackground", true)
@@ -100,6 +103,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
         Style.DISCORD -> GuiDiscord
         Style.OLD -> OldPanelGUI.INSTANCE
+        Style.SIMPLE -> SimpleGUI
     }
 
     override fun onEnable() {
@@ -126,7 +130,12 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         /**
          * Discord like gui
          */
-        DISCORD
+        DISCORD,
+
+        /**
+         * Simple GUI (basically Phobos)
+         */
+        SIMPLE
     }
 
     enum class Icon {

@@ -1,9 +1,10 @@
 package com.paragon.client.systems.module.impl.render
 
-import com.paragon.api.util.string.StringUtil
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
+import com.paragon.api.util.string.StringUtil
 import net.minecraft.init.MobEffects
 import net.minecraft.potion.PotionEffect
 
@@ -16,7 +17,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
     private val mode = Setting("Mode", Mode.GAMMA)
         .setDescription("The mode to use for the brightness")
 
-    private var originalGamma: Float = 0f
+    private var originalGamma = 0f
 
     override fun onEnable() {
         // Set original gamma to current
@@ -28,19 +29,18 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         minecraft.gameSettings.gammaSetting = this.originalGamma
 
         // Remove night vision
-        if (!nullCheck()) {
+        if (!minecraft.anyNull) {
             minecraft.player.removePotionEffect(MobEffects.NIGHT_VISION)
         }
     }
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
         when (mode.value) {
             Mode.GAMMA -> minecraft.gameSettings.gammaSetting = 50000f // Increase gamma
-
             Mode.EFFECT -> {
                 // Apply night vision
                 if (!minecraft.player.isPotionActive(MobEffects.NIGHT_VISION)) {
@@ -52,7 +52,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
     }
 
-    override fun getData() = StringUtil.getFormattedText(mode.value)
+    override fun getData(): String = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
         /**

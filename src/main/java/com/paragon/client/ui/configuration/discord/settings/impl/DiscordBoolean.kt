@@ -11,12 +11,12 @@ import org.lwjgl.util.Rectangle
 /**
  * @author SooStrator1136
  */
-class DiscordBoolean(val setting: Setting<Boolean>) : DiscordSetting(setting) {
+class DiscordBoolean(private val setting: Setting<Boolean>) : DiscordSetting(setting) {
 
     private val stateRect = Rectangle()
 
     init {
-        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt() + 2
     }
 
     override fun render(mouseX: Int, mouseY: Int) {

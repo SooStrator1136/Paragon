@@ -1,6 +1,5 @@
 package com.paragon.client.systems.module.impl.combat;
 
-import com.paragon.Paragon;
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
@@ -17,8 +16,6 @@ import com.paragon.api.util.world.BlockUtil;
 import com.paragon.asm.mixins.accessor.ICPacketUseEntity;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import com.paragon.client.managers.rotation.Rotate;
-import com.paragon.client.managers.rotation.Rotation;
-import com.paragon.client.managers.rotation.RotationPriority;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -61,208 +58,208 @@ public class AutoCrystalRewrite extends Module {
 
     public static AutoCrystalRewrite INSTANCE;
 
-    public static Setting<Order> order = new Setting<>("Order", Order.PLACE_EXPLODE)
+    public static final Setting<Order> order = new Setting<>("Order", Order.PLACE_EXPLODE)
             .setDescription("The order in which to complete actions");
 
-    public static Setting<Timing> timing = new Setting<>("Timing", Timing.SEQUENTIAL)
+    public static final Setting<Timing> timing = new Setting<>("Timing", Timing.SEQUENTIAL)
             .setDescription("When to perform actions");
 
     // TARGETING
 
-    public static Setting<TargetSort> targeting = new Setting<>("Targeting", TargetSort.DISTANCE)
+    public static final Setting<TargetSort> targeting = new Setting<>("Targeting", TargetSort.DISTANCE)
             .setDescription("The target priority to use");
 
-    public static Setting<Double> targetRange = new Setting<>("Range", 10.0D, 1.0D, 15.0D, 0.1D)
+    public static final Setting<Double> targetRange = new Setting<>("Range", 10.0D, 1.0D, 15.0D, 0.1D)
             .setDescription("The furthest a target can be away from you")
             .setParentSetting(targeting);
 
-    public static Setting<Boolean> players = new Setting<>("Players", true)
+    public static final Setting<Boolean> players = new Setting<>("Players", true)
             .setDescription("Whether to target players")
             .setParentSetting(targeting);
 
-    public static Setting<Boolean> mobs = new Setting<>("Mobs", true)
+    public static final Setting<Boolean> mobs = new Setting<>("Mobs", true)
             .setDescription("Whether to target mobs")
             .setParentSetting(targeting);
 
-    public static Setting<Boolean> animals = new Setting<>("Animals", true)
+    public static final Setting<Boolean> animals = new Setting<>("Animals", true)
             .setDescription("Whether to target animals")
             .setParentSetting(targeting);
 
     // PLACEMENTS
 
-    public static Setting<Boolean> place = new Setting<>("Place", true)
+    public static final Setting<Boolean> place = new Setting<>("Place", true)
             .setDescription("Whether to place crystals");
 
-    public static Setting<Float> placeDelay = new Setting<>("Delay", 50f, 0f, 1000f, 1f)
+    public static final Setting<Float> placeDelay = new Setting<>("Delay", 50f, 0f, 1000f, 1f)
             .setDescription("The delay between placing crystals")
             .setParentSetting(place);
 
-    public static Setting<Perform> placePerform = new Setting<>("Perform", Perform.SILENT_SWITCH)
+    public static final Setting<Perform> placePerform = new Setting<>("Perform", Perform.SILENT_SWITCH)
             .setDescription("When to perform the action of placing crystals")
             .setParentSetting(place);
 
-    public static Setting<Boolean> swapBack = new Setting<>("SwapBack", true)
+    public static final Setting<Boolean> swapBack = new Setting<>("SwapBack", true)
             .setDescription("Whether to swap back to the original item after placing crystals")
             .setParentSetting(place)
             .setVisibility(() -> placePerform.getValue().equals(Perform.KEEP));
 
-    public static Setting<Double> placeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
+    public static final Setting<Double> placeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
             .setDescription("The furthest distance a crystal can be placed")
             .setParentSetting(place);
 
-    public static Setting<Boolean> multiplace = new Setting<>("Multiplace", false)
+    public static final Setting<Boolean> multiplace = new Setting<>("Multiplace", false)
             .setDescription("Allow placing multiple crystals at different positions")
             .setParentSetting(place);
 
-    public static Setting<Double> placeMinimum = new Setting<>("Minimum", 4.0D, 1.0D, 36.0D, 1D)
+    public static final Setting<Double> placeMinimum = new Setting<>("Minimum", 4.0D, 1.0D, 36.0D, 1D)
             .setDescription("The minimum damage the crystal must deal to place")
             .setParentSetting(place);
 
-    public static Setting<Double> placeMaximum = new Setting<>("Maximum", 10.0D, 1.0D, 36.0D, 1D)
+    public static final Setting<Double> placeMaximum = new Setting<>("Maximum", 10.0D, 1.0D, 36.0D, 1D)
             .setDescription("The maximum damage the crystal can deal to you to place")
             .setParentSetting(place);
 
-    public static Setting<Raytrace> placeRaytrace = new Setting<>("Raytrace", Raytrace.HALF)
+    public static final Setting<Raytrace> placeRaytrace = new Setting<>("Raytrace", Raytrace.HALF)
             .setDescription("The raytrace method to use when placing crystals")
             .setParentSetting(place);
 
-    public static Setting<PlaceMode> placeMode = new Setting<>("Place", PlaceMode.VANILLA)
+    public static final Setting<PlaceMode> placeMode = new Setting<>("Place", PlaceMode.VANILLA)
             .setDescription("How to place the crystal")
             .setParentSetting(place);
 
-    public static Setting<Boolean> placeSwing = new Setting<>("Swing", true)
+    public static final Setting<Boolean> placeSwing = new Setting<>("Swing", true)
             .setDescription("Whether to swing the item when placing")
             .setParentSetting(place);
 
     // EXPLODE
 
-    public static Setting<Boolean> explode = new Setting<>("Explode", true)
+    public static final Setting<Boolean> explode = new Setting<>("Explode", true)
             .setDescription("Whether to explode crystals");
 
-    public static Setting<Float> explodeDelay = new Setting<>("Delay", 50f, 0f, 1000f, 1f)
+    public static final Setting<Float> explodeDelay = new Setting<>("Delay", 50f, 0f, 1000f, 1f)
             .setDescription("The delay between exploding crystals")
             .setParentSetting(explode);
 
-    public static Setting<Double> explodeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
+    public static final Setting<Double> explodeRange = new Setting<>("Range", 5.0D, 1.0D, 7.0D, 0.1D)
             .setDescription("The furthest distance a crystal can be exploded away from you")
             .setParentSetting(explode);
 
-    public static Setting<Float> explodeTicks = new Setting<>("Ticks", 1f, 0f, 5f, 1f)
+    public static final Setting<Float> explodeTicks = new Setting<>("Ticks", 1f, 0f, 5f, 1f)
             .setDescription("The number of ticks the crystal has to have existed before exploding")
             .setParentSetting(explode);
 
-    public static Setting<Double> explodeMinimum = new Setting<>("Minimum", 4.0D, 1.0D, 36.0D, 1D)
+    public static final Setting<Double> explodeMinimum = new Setting<>("Minimum", 4.0D, 1.0D, 36.0D, 1D)
             .setDescription("The minimum damage the crystal must deal to explode")
             .setParentSetting(explode);
 
-    public static Setting<Double> explodeMaximum = new Setting<>("Maximum", 10.0D, 1.0D, 36.0D, 1D)
+    public static final Setting<Double> explodeMaximum = new Setting<>("Maximum", 10.0D, 1.0D, 36.0D, 1D)
             .setDescription("The maximum damage the crystal can deal to you to explode")
             .setParentSetting(explode);
 
-    public static Setting<ExplodeMode> explodeMode = new Setting<>("Explode", ExplodeMode.VANILLA)
+    public static final Setting<ExplodeMode> explodeMode = new Setting<>("Explode", ExplodeMode.VANILLA)
             .setDescription("How to explode the crystal")
             .setParentSetting(explode);
 
-    public static Setting<Sync> sync = new Setting<>("Sync", Sync.ATTACK)
+    public static final Setting<Sync> sync = new Setting<>("Sync", Sync.ATTACK)
             .setDescription("When to sync the explosion")
             .setParentSetting(explode);
 
     // PAUSE
 
-    public static Setting<Boolean> pause = new Setting<>("Pause", true)
+    public static final Setting<Boolean> pause = new Setting<>("Pause", true)
             .setDescription("Pause when certain things are occurring");
 
-    public static Setting<Boolean> eating = new Setting<>("Eating", true)
+    public static final Setting<Boolean> eating = new Setting<>("Eating", true)
             .setDescription("Pause when eating")
             .setParentSetting(pause);
 
-    public static Setting<Boolean> drinking = new Setting<>("Drinking", true)
+    public static final Setting<Boolean> drinking = new Setting<>("Drinking", true)
             .setDescription("Pause when drinking")
             .setParentSetting(pause);
 
-    public static Setting<Boolean> lowHealth = new Setting<>("LowHealth", true)
+    public static final Setting<Boolean> lowHealth = new Setting<>("LowHealth", true)
             .setDescription("Pause when health is low")
             .setParentSetting(pause);
 
-    public static Setting<Float> healthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
+    public static final Setting<Float> healthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
             .setDescription("The amount of health needed to pause")
             .setParentSetting(lowHealth)
             .setVisibility(lowHealth::getValue);
 
-    public static Setting<Boolean> mending = new Setting<>("Mending", true)
+    public static final Setting<Boolean> mending = new Setting<>("Mending", true)
             .setDescription("Pause when mending")
             .setParentSetting(pause);
 
-    public static Setting<Double> pauseTicks = new Setting<>("Ticks", 0D, 0D, 5D, 1D)
+    public static final Setting<Double> pauseTicks = new Setting<>("Ticks", 0D, 0D, 5D, 1D)
             .setDescription("The number of ticks to pause between performing actions")
             .setParentSetting(pause);
 
 
     // OVERRIDE
 
-    public static Setting<Boolean> override = new Setting<>("Override", true)
+    public static final Setting<Boolean> override = new Setting<>("Override", true)
             .setDescription("Override the minimum damage settings when certain things are occurring");
 
-    public static Setting<Boolean> overrideHealth = new Setting<>("Health", true)
+    public static final Setting<Boolean> overrideHealth = new Setting<>("Health", true)
             .setDescription("Override when the target's health is low")
             .setParentSetting(override);
 
-    public static Setting<Float> overrideHealthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
+    public static final Setting<Float> overrideHealthAmount = new Setting<>("HealthAmount", 10f, 1f, 20f, 1f)
             .setDescription("The amount of health needed to override")
             .setParentSetting(overrideHealth)
             .setVisibility(overrideHealth::getValue);
 
-    public static Setting<Boolean> overrideArmour = new Setting<>("Armour", true)
+    public static final Setting<Boolean> overrideArmour = new Setting<>("Armour", true)
             .setDescription("Override when the target's armour is low")
             .setParentSetting(override);
 
-    public static Setting<Float> armourDurability = new Setting<>("Durability", 100f, 0f, 200f, 1f)
+    public static final Setting<Float> armourDurability = new Setting<>("Durability", 100f, 0f, 200f, 1f)
             .setDescription("Override when one of the target's armour pieces has less than this durability")
             .setParentSetting(override)
             .setVisibility(overrideArmour::getValue);
 
-    public static Setting<Bind> forceOverride = new Setting<>("ForceOverride", new Bind(0, Bind.Device.KEYBOARD))
+    public static final Setting<Bind> forceOverride = new Setting<>("ForceOverride", new Bind(0, Bind.Device.KEYBOARD))
             .setDescription("Force the override to be used")
             .setParentSetting(override);
 
-    public static Setting<Boolean> maxIgnore = new Setting<>("MaxIgnore", true)
+    public static final Setting<Boolean> maxIgnore = new Setting<>("MaxIgnore", true)
             .setDescription("Ignore the maximum damage settings when certain things are occurring")
             .setParentSetting(override);
 
 
     // ROTATIONS
 
-    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
+    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
             .setDescription("Rotate the player");
 
-    public static Setting<Boolean> rotateBack = new Setting<>("Back", true)
+    public static final Setting<Boolean> rotateBack = new Setting<>("Back", true)
             .setDescription("Whether to rotate back to your original original after rotating")
             .setParentSetting(rotate);
 
     // RENDER
 
-    public static Setting<Boolean> render = new Setting<>("Render", true)
+    public static final Setting<Boolean> render = new Setting<>("Render", true)
             .setDescription("Whether to render the placement position");
 
-    public static Setting<Render> renderMode = new Setting<>("Mode", Render.BOTH)
+    public static final Setting<Render> renderMode = new Setting<>("Mode", Render.BOTH)
             .setDescription("The render mode to use")
             .setParentSetting(render);
 
-    public static Setting<Float> renderOutlineWidth = new Setting<>("Width", 1.0F, 0.0F, 5.0F, 0.1F)
+    public static final Setting<Float> renderOutlineWidth = new Setting<>("Width", 1.0F, 0.0F, 5.0F, 0.1F)
             .setDescription("The width of the outline")
             .setParentSetting(render)
             .setVisibility(() -> !renderMode.getValue().equals(Render.FILL));
 
-    public static Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255))
+    public static final Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255))
             .setDescription("The colour of the render")
             .setParentSetting(render);
 
-    public static Setting<Color> renderOutlineColour = new Setting<>("OutlineColour", new Color(185, 17, 255))
+    public static final Setting<Color> renderOutlineColour = new Setting<>("OutlineColour", new Color(185, 17, 255))
             .setDescription("The colour of the render")
             .setParentSetting(render)
             .setVisibility(() -> !renderMode.getValue().equals(Render.FILL));
 
-    public static Setting<Text> renderText = new Setting<>("Text", Text.BOTH)
+    public static final Setting<Text> renderText = new Setting<>("Text", Text.BOTH)
             .setDescription("The text to render")
             .setParentSetting(render);
 
@@ -275,7 +272,7 @@ public class AutoCrystalRewrite extends Module {
 
     private final Map<BlockPos, Float> renderPositions = new ConcurrentHashMap<>();
 
-    private State state = null;
+    private State elongatedMuskrat = null;
 
     private int passedTicks = 0;
 
@@ -287,7 +284,7 @@ public class AutoCrystalRewrite extends Module {
 
     @Override
     public void onDisable() {
-        state = null;
+        elongatedMuskrat = null;
         renderPositions.clear();
 
         if (originalSlot != -1 && swapBack.getValue()) {
@@ -345,7 +342,6 @@ public class AutoCrystalRewrite extends Module {
                         break;
 
                     case BOTH:
-                        System.out.println(renderColour.getAlpha());
                         RenderUtil.drawFilledBox(highlightBB, ColourUtil.integrateAlpha(renderColour.getValue(), renderColour.getAlpha() * factor));
                         RenderUtil.drawBoundingBox(highlightBB, renderOutlineWidth.getValue(), renderOutlineColour.getValue());
                         break;
@@ -413,6 +409,9 @@ public class AutoCrystalRewrite extends Module {
      * @return The best target
      */
     private EntityLivingBase findTarget(ArrayList<BlockPos> positions, float positionOffset) {
+        if (positions.isEmpty()) {
+            return null;
+        }
         List<EntityLivingBase> validEntities = mc.world.loadedEntityList.stream().filter(entity -> !entity.isDead && mc.player.getDistance(entity) <= targetRange.getValue() && EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), animals.getValue())).sorted(Comparator.comparingDouble(entity -> {
             switch (targeting.getValue()) {
                 case DISTANCE:
@@ -438,7 +437,7 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void explodeCrystals() {
-        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue()) || timing.getValue().equals(Timing.SEQUENTIAL) && state.equals(State.PLACING)) {
+        if (!explode.getValue() || !explodeTimer.hasMSPassed(explodeDelay.getValue()) || timing.getValue().equals(Timing.SEQUENTIAL) && elongatedMuskrat.equals(State.PLACING)) {
             return;
         }
 
@@ -509,7 +508,7 @@ public class AutoCrystalRewrite extends Module {
     }
 
     private void placeCrystals() {
-        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2) || timing.getValue().equals(Timing.SEQUENTIAL) && state.equals(State.EXPLODING)) {
+        if (!place.getValue() || !placeTimer.hasMSPassed(placeDelay.getValue() / 2) || timing.getValue().equals(Timing.SEQUENTIAL) && elongatedMuskrat.equals(State.EXPLODING)) {
             return;
         }
 
@@ -856,28 +855,28 @@ public class AutoCrystalRewrite extends Module {
          * Explodes ender crystals then places them
          */
         EXPLODE_PLACE(() -> {
-            if (AutoCrystalRewrite.INSTANCE.state == null) {
-                AutoCrystalRewrite.INSTANCE.state = State.EXPLODING;
+            if (AutoCrystalRewrite.INSTANCE.elongatedMuskrat == null) {
+                AutoCrystalRewrite.INSTANCE.elongatedMuskrat = State.EXPLODING;
             }
 
             INSTANCE.explodeCrystals();
             INSTANCE.placeCrystals();
 
-            AutoCrystalRewrite.INSTANCE.state = AutoCrystalRewrite.INSTANCE.state == State.EXPLODING ? State.PLACING : State.EXPLODING;
+            AutoCrystalRewrite.INSTANCE.elongatedMuskrat = AutoCrystalRewrite.INSTANCE.elongatedMuskrat == State.EXPLODING ? State.PLACING : State.EXPLODING;
         }),
 
         /**
          * Places ender crystals then explodes them
          */
         PLACE_EXPLODE(() -> {
-            if (AutoCrystalRewrite.INSTANCE.state == null) {
-                AutoCrystalRewrite.INSTANCE.state = State.PLACING;
+            if (AutoCrystalRewrite.INSTANCE.elongatedMuskrat == null) {
+                AutoCrystalRewrite.INSTANCE.elongatedMuskrat = State.PLACING;
             }
 
             INSTANCE.placeCrystals();
             INSTANCE.explodeCrystals();
 
-            AutoCrystalRewrite.INSTANCE.state = AutoCrystalRewrite.INSTANCE.state == State.EXPLODING ? State.PLACING : State.EXPLODING;
+            AutoCrystalRewrite.INSTANCE.elongatedMuskrat = AutoCrystalRewrite.INSTANCE.elongatedMuskrat == State.EXPLODING ? State.PLACING : State.EXPLODING;
         });
 
         private final Runnable function;

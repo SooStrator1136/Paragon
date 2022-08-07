@@ -1,6 +1,7 @@
 package com.paragon.api.setting
 
 import com.paragon.api.util.render.ColourUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.client.systems.module.impl.client.Colours
 import java.awt.Color
 import java.util.function.Supplier
@@ -22,12 +23,14 @@ class Setting<T> {
         get() {
             if (field is Color) {
                 if (isSync && this !== Colours.mainColour) {
-                    return Colours.mainColour.value as T
+                    return Colours.mainColour.value.integrateAlpha(alpha) as T
                 }
 
                 if (isRainbow) {
-                    return ColourUtil.integrateAlpha(Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)), alpha) as T
+                    return Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)).integrateAlpha(alpha) as T
                 }
+
+                return (field as Color).integrateAlpha(alpha) as T
             }
 
             return field

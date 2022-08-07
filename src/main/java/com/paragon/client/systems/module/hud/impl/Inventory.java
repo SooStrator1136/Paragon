@@ -49,4 +49,5 @@ public class Inventory extends HUDModule {
     public float getHeight() {
         return 18 * 3 + 4;
     }
+
 }

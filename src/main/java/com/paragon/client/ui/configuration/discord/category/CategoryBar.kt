@@ -6,6 +6,7 @@ import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.module.DiscordModule
 import com.paragon.client.ui.configuration.discord.module.ModuleBar
+import com.paragon.client.ui.configuration.discord.settings.SettingsBar
 import net.minecraft.client.gui.Gui
 import org.lwjgl.util.Rectangle
 
@@ -75,6 +76,7 @@ object CategoryBar : IRenderable {
                 Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category.category }.forEach {
                     ModuleBar.shownModules.add(DiscordModule(it))
                 }
+                SettingsBar.shownSettings.clear()
                 break
             }
         }

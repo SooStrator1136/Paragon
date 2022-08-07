@@ -11,12 +11,12 @@ import org.lwjgl.input.Keyboard
 /**
  * @author SooStrator1136
  */
-class DiscordBind(val setting: Setting<Bind>) : DiscordSetting(setting) {
+class DiscordBind(private val setting: Setting<Bind>) : DiscordSetting(setting) {
 
     private var listening = false
 
     init {
-        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt() + 2
     }
 
     override fun render(mouseX: Int, mouseY: Int) {

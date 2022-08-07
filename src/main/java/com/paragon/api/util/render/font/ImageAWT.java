@@ -7,10 +7,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.Color;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -20,9 +22,9 @@ import static org.lwjgl.opengl.GL11.*;
  */
 @SuppressWarnings("unused")
 @SideOnly(value = Side.CLIENT)
-public class ImageAWT implements Wrapper {
+public final class ImageAWT implements Wrapper {
 
-    private static final ArrayList<ImageAWT> activeFontRenderers = new ArrayList<>();
+    private static final List<ImageAWT> activeFontRenderers = new ArrayList<>();
     private static int gcTicks = 0;
     private final Font font;
     private final CharLocation[] charLocations;
@@ -70,10 +72,10 @@ public class ImageAWT implements Wrapper {
 
         bindTexture(textureID);
 
-        float red = (float) (color >> 16 & 0xFF) / 255.0f;
-        float green = (float) (color >> 8 & 0xFF) / 255.0f;
-        float blue = (float) (color & 0xFF) / 255.0f;
-        float alpha = (float) (color >> 24 & 0xFF) / 255.0f;
+        float red = (color >> 16 & 0xFF) / 255.0f;
+        float green = (color >> 8 & 0xFF) / 255.0f;
+        float blue = (color & 0xFF) / 255.0f;
+        float alpha = (color >> 24 & 0xFF) / 255.0f;
 
         color(red, green, blue, alpha);
 
@@ -255,4 +257,5 @@ public class ImageAWT implements Wrapper {
             this.height = height;
         }
     }
+
 }

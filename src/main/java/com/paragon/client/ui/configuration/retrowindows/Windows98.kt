@@ -8,8 +8,8 @@ import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.GuiImplementation
-import com.paragon.client.ui.configuration.retrowindows.window.Window
-import com.paragon.client.ui.configuration.retrowindows.window.category.CategoryWindow
+import com.paragon.client.ui.configuration.retrowindows.element.CategoryWindow
+import com.paragon.client.ui.configuration.shared.Panel
 import com.paragon.client.ui.util.Click
 import java.awt.Color
 
@@ -18,7 +18,7 @@ import java.awt.Color
  */
 class Windows98 : GuiImplementation() {
 
-    private val windows = ArrayList<Window>()
+    private val windows = ArrayList<Panel>()
 
     init {
         var x = 20f

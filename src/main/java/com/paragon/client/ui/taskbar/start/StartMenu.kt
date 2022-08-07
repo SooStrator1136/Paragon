@@ -2,7 +2,6 @@ package com.paragon.client.ui.taskbar.start
 
 import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
-import com.paragon.api.util.Wrapper.mc
 
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
@@ -117,7 +116,7 @@ object StartMenu : Wrapper {
                 }
             }
         }
-        val startY = ScaledResolution(mc).scaledHeight - (226 * expandAnimation.getAnimationFactor())
+        val startY = ScaledResolution(minecraft).scaledHeight - (226 * expandAnimation.getAnimationFactor())
         if (mouseX in 0..150 && mouseY >= startY && mouseY <= startY + 200) {
             callback = true
         }

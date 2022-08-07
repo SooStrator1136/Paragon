@@ -58,4 +58,5 @@ public class Crystals extends HUDModule {
 
         return count;
     }
+
 }

@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 object ColourUtil {
+
     /**
      * Creates a rainbow wave
      *
@@ -13,8 +14,9 @@ object ColourUtil {
      * @return A rainbow in the RGB format
      */
     fun getRainbow(time: Float, saturation: Float, addition: Int): Int {
-        val hue = (System.currentTimeMillis() + addition) % (time * 1000).toInt() / (time * 1000)
-        return Color.HSBtoRGB(hue, saturation, 1f)
+        val timeFac = if (time.isNaN()) 0.0 else time * 1000.0
+        val hue = (System.currentTimeMillis() + addition) % (time * 1000).toInt() / if (timeFac == 0.0) 1.0 else timeFac
+        return Color.HSBtoRGB(hue.toFloat(), saturation, 1f)
     }
 
     /**
@@ -34,15 +36,14 @@ object ColourUtil {
     /**
      * Integrates alpha into a colour
      *
-     * @param colour The original colour
      * @param alpha  The new alpha
      * @return The new colour
      */
     @JvmStatic
-    fun integrateAlpha(colour: Color, alpha: Float): Color {
-        val red = colour.red / 255f
-        val green = colour.green / 255f
-        val blue = colour.blue / 255f
+    fun Color.integrateAlpha(alpha: Float): Color {
+        val red = this.red / 255f
+        val green = this.green / 255f
+        val blue = this.blue / 255f
         return Color(red, green, blue, alpha / 255f)
     }
 }

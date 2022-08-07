@@ -2,7 +2,6 @@ package com.paragon.client.ui.console
 
 import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
-
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
@@ -12,11 +11,9 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.input.Keyboard
 import java.awt.Color
-import java.util.*
-import kotlin.collections.ArrayList
 
 @SideOnly(Side.CLIENT)
-class Console(val title: String, val width: Float, val height: Float) : Wrapper {
+class Console(private val title: String, val width: Float, val height: Float) : Wrapper {
 
     // List of lines
     private val lines: MutableList<String> = ArrayList(5)
@@ -36,7 +33,14 @@ class Console(val title: String, val width: Float, val height: Float) : Wrapper 
 
     fun init() {
         val scaledResolution = ScaledResolution(minecraft)
-        guiTextField = GuiTextField(0, minecraft.fontRenderer, (scaledResolution.scaledWidth / 2 - width / 2).toInt() + 3, (scaledResolution.scaledHeight / 2 - height / 2 + height - 13).toInt(), width.toInt() - 6, 11)
+        guiTextField = GuiTextField(
+            0,
+            minecraft.fontRenderer,
+            (scaledResolution.scaledWidth / 2 - width / 2).toInt() + 3,
+            (scaledResolution.scaledHeight / 2 - height / 2 + height - 13).toInt(),
+            width.toInt() - 6,
+            11
+        )
     }
 
     fun draw(mouseX: Int, mouseY: Int) {
@@ -95,4 +99,5 @@ class Console(val title: String, val width: Float, val height: Float) : Wrapper 
     fun addLine(line: String) {
         lines.add(line)
     }
+
 }

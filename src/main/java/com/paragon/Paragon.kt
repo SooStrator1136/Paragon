@@ -1,23 +1,22 @@
 package com.paragon
 
 import com.paragon.api.event.EventFactory
-import com.paragon.api.util.render.BlurUtil
 import com.paragon.client.managers.*
-import com.paragon.client.managers.social.SocialManager
 import com.paragon.client.managers.alt.AltManager
 import com.paragon.client.managers.notifications.NotificationManager
 import com.paragon.client.managers.rotation.RotationManager
+import com.paragon.client.managers.social.SocialManager
 import com.paragon.client.ui.configuration.ConfigurationGUI
 import com.paragon.client.ui.configuration.retrowindows.Windows98
+import com.paragon.client.ui.configuration.zeroday.ZerodayGUI
 import com.paragon.client.ui.console.Console
 import com.paragon.client.ui.taskbar.Taskbar
-import com.paragon.client.ui.configuration.zeroday.ZerodayGUI
 import me.wolfsurge.cerauno.EventBus
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
@@ -34,7 +33,9 @@ class Paragon {
 
         if (ForgeVersion.buildVersion < 2860) {
             JOptionPane.showMessageDialog(null, "Forge version is too old. Paragon requires Forge to be at least build 2860.", "Outdated Forge!", JOptionPane.ERROR_MESSAGE)
-            Desktop.getDesktop().browse(URI("https://files.minecraftforge.net/net/minecraftforge/forge/index_1.12.2.html"))
+            Desktop.getDesktop().browse(
+                URI("https://files.minecraftforge.net/net/minecraftforge/forge/index_1.12.2.html")
+            )
             Minecraft.getMinecraft().shutdown()
 
             // When trying to exit throws an exception lmao

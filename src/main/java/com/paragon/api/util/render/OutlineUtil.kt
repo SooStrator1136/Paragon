@@ -13,6 +13,7 @@ import java.awt.Color
  * @author Hexeption
  */
 object OutlineUtil : Wrapper {
+
     @JvmStatic
     fun renderOne(lineWidth: Float) {
         checkSetupFBO()
@@ -72,7 +73,7 @@ object OutlineUtil : Wrapper {
         glPopAttrib()
     }
 
-    fun setColor(c: Color) {
+    private fun setColor(c: Color) {
         glColor4d(
             (c.red / 255f).toDouble(),
             (c.green / 255f).toDouble(),
@@ -81,7 +82,7 @@ object OutlineUtil : Wrapper {
         )
     }
 
-    fun checkSetupFBO() {
+    private fun checkSetupFBO() {
         // Gets the FBO of Minecraft
         val fbo = Minecraft.getMinecraft().framebuffer
 
@@ -98,33 +99,48 @@ object OutlineUtil : Wrapper {
     /**
      * Sets up the FBO with depth and stencil
      *
-     * @param fbo Framebuffer
+     * @param fbo FrameBuffer
      */
-    fun setupFBO(fbo: Framebuffer) {
+    private fun setupFBO(fbo: Framebuffer) {
         // Deletes old render buffer extensions such as depth
         // Args: Render Buffer ID
         EXTFramebufferObject.glDeleteRenderbuffersEXT(fbo.depthBuffer)
 
         // Generates a new render buffer ID for the depth and stencil extension
-        val stencil_depth_buffer_ID = EXTFramebufferObject.glGenRenderbuffersEXT()
+        val stencilDepthBufferId = EXTFramebufferObject.glGenRenderbuffersEXT()
 
         // Binds new render buffer by ID
         // Args: Target (GL_RENDERBUFFER_EXT), ID
-        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, stencil_depth_buffer_ID)
+        EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, stencilDepthBufferId)
 
         // Adds the depth and stencil extension
         // Args: Target (GL_RENDERBUFFER_EXT), Extension (GL_DEPTH_STENCIL_EXT),
         // Width, Height
-        EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, EXTPackedDepthStencil.GL_DEPTH_STENCIL_EXT, minecraft.displayWidth, minecraft.displayHeight)
+        EXTFramebufferObject.glRenderbufferStorageEXT(
+            EXTFramebufferObject.GL_RENDERBUFFER_EXT,
+            EXTPackedDepthStencil.GL_DEPTH_STENCIL_EXT,
+            minecraft.displayWidth,
+            minecraft.displayHeight
+        )
 
         // Adds the stencil attachment
         // Args: Target (GL_FRAMEBUFFER_EXT), Attachment
         // (GL_STENCIL_ATTACHMENT_EXT), Target (GL_RENDERBUFFER_EXT), ID
-        EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, stencil_depth_buffer_ID)
+        EXTFramebufferObject.glFramebufferRenderbufferEXT(
+            EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
+            EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT,
+            EXTFramebufferObject.GL_RENDERBUFFER_EXT,
+            stencilDepthBufferId
+        )
 
         // Adds the depth attachment
         // Args: Target (GL_FRAMEBUFFER_EXT), Attachment
         // (GL_DEPTH_ATTACHMENT_EXT), Target (GL_RENDERBUFFER_EXT), ID
-        EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, stencil_depth_buffer_ID)
+        EXTFramebufferObject.glFramebufferRenderbufferEXT(
+            EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
+            EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT,
+            EXTFramebufferObject.GL_RENDERBUFFER_EXT,
+            stencilDepthBufferId
+        )
     }
 }

@@ -46,9 +46,20 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
     init {
         val configDirectory = File("paragon${File.separator}configs")
 
-        for (directory in configDirectory.list()!!) {
-            configsList.add(ConfigElement(directory, x, y, width, height))
+        for (file in configDirectory.list()!!) {
+            configsList.add(ConfigElement(file, x, y, width, height))
         }
+    }
+
+    override fun scroll(mouseX: Int, mouseY: Int, mouseDelta: Int): Boolean {
+        if (mouseX.toFloat() in x..x + width && mouseY.toFloat() in (y + 16f)..(y + height - 16f)) {
+            if (mouseDelta != 0) {
+                scroll += 18 * if (mouseDelta > 0) 1 else -1
+                return true
+            }
+        }
+
+        return super.scroll(mouseX, mouseY, mouseDelta)
     }
 
     override fun draw(mouseX: Int, mouseY: Int, mouseDelta: Int) {
@@ -71,6 +82,10 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         RenderUtil.drawRect(x + width - 16f, y, 16f, grabbableHeight, 0x90000000.toInt())
         FontUtil.defaultFont.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.defaultFont.getStringWidth("X") / 2f), y + 1.5f, -1)
 
+        if (scroll > 0) {
+            scroll = 0f
+        }
+
         saveButton.x = x + (width / 2f) + 2
         saveButton.y = y + height - 19f
         saveButton.width = (width / 2f) - 5
@@ -87,9 +102,9 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
         val configDirectory = File("paragon${File.separator}configs")
 
-        for (directory in configDirectory.list()!!) {
-            if (!configsList.any { it.name == directory }) {
-                configsList.add(ConfigElement(directory, x, y, width, height))
+        for (file in configDirectory.list()!!) {
+            if (!configsList.any { it.name == file }) {
+                configsList.add(ConfigElement(file, x, y, width, height))
             }
         }
 
@@ -98,14 +113,6 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         configsList.removeIf { it.remove || !configDirectory.list()?.contains(it.name)!! }
 
         RenderUtil.pushScissor(x.toDouble(), y.toDouble() + grabbableHeight + 1, width.toDouble() * openAnimation.getAnimationFactor(), (height.toDouble() - (grabbableHeight * 2) - 3) * openAnimation.getAnimationFactor())
-
-        if (mouseDelta != 0) {
-            scroll += 18 * if (mouseDelta > 0) 1 else -1
-        }
-
-        if (scroll > 0) {
-            scroll = 0f
-        }
 
         if (configsList.isNotEmpty()) {
             val last = configsList[configsList.size - 1]
@@ -176,16 +183,16 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
         fun clicked(mouseX: Int, mouseY: Int, click: Click): Boolean {
             if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) {
-                val file = File("paragon${File.separator}configs${File.separator}${name}")
+                val file = File("paragon${File.separator}configs${File.separator}${name}.json")
 
-                FileUtils.deleteDirectory(file)
+                file.delete()
 
                 return true
             }
 
             if (mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height) {
                 if (click == Click.LEFT) {
-                    Paragon.INSTANCE.storageManager.loadModules(name)
+                    Paragon.INSTANCE.storageManager.loadModules(name.replace(".json", ""))
                     return true
                 }
             }

@@ -27,15 +27,23 @@ class ConfigurationGUI : GuiScreen() {
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
 
+        Paragon.INSTANCE.taskbar.tooltip = ""
+
         if (currentGUI != ClickGUI.getGUI()) {
             currentGUI = ClickGUI.getGUI()
             currentGUI?.initGui()
         }
 
-        val mouseDelta = Mouse.getDWheel()
+        var mouseDelta = Mouse.getDWheel()
 
         if (removeBuffer.isNotEmpty()) {
             windowsList.removeIf(removeBuffer::contains)
+        }
+
+        windowsList.forEach {
+            if (it.scroll(mouseX, mouseY, mouseDelta)) {
+                mouseDelta = 0
+            }
         }
 
         if (darkenBackground.value) {

@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.movement
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -13,7 +14,7 @@ object EntitySpeed : Module("EntitySpeed", Category.MOVEMENT, "Allows entities t
 
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 

@@ -3,6 +3,7 @@ package com.paragon.client.systems.module.impl.misc
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.anyNull
 import java.io.File
 
 object Spammer : Module("Spammer", Category.MISC, "Spams messages in chat (defined in spammer.txt)") {
@@ -18,7 +19,7 @@ object Spammer : Module("Spammer", Category.MISC, "Spams messages in chat (defin
     }
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 

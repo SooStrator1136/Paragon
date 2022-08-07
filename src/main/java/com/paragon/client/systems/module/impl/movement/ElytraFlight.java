@@ -1,13 +1,13 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.player.TravelEvent;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.string.StringUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.client.CPacketEntityAction;
 
@@ -17,7 +17,7 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 public class ElytraFlight extends Module {
 
     public static ElytraFlight INSTANCE;
-    
+
     // Mode for elytra flight
     public static Setting<Mode> mode = new Setting<>("Mode", Mode.CONTROL)
             .setDescription("The mode to use");

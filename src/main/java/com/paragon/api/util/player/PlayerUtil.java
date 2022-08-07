@@ -8,7 +8,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
-public class PlayerUtil implements Wrapper {
+public final class PlayerUtil implements Wrapper {
 
     public static void stopMotion(float fallSpeed) {
         mc.player.setVelocity(0, fallSpeed, 0);
@@ -78,9 +78,7 @@ public class PlayerUtil implements Wrapper {
         if (forwardInput != 0.0f) {
             if (strafeInput > 0.0f) {
                 playerYaw += ((forwardInput > 0.0f) ? -45 : 45);
-            }
-
-            else if (strafeInput < 0.0f) {
+            } else if (strafeInput < 0.0f) {
                 playerYaw += ((forwardInput > 0.0f) ? 45 : -45);
             }
 
@@ -88,9 +86,7 @@ public class PlayerUtil implements Wrapper {
 
             if (forwardInput > 0.0f) {
                 forwardInput = 1.0f;
-            }
-
-            else if (forwardInput < 0.0f) {
+            } else if (forwardInput < 0.0f) {
                 forwardInput = -1.0f;
             }
         }

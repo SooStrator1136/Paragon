@@ -3,37 +3,38 @@ package com.paragon.api.util.player;
 import com.paragon.api.util.Wrapper;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
 import net.minecraft.util.EnumHand;
+import org.jetbrains.annotations.Nullable;
 
-public class InventoryUtil implements Wrapper {
+public final class InventoryUtil implements Wrapper {
 
-    public static boolean isHolding(Item item) {
+    public static boolean isHolding(final Item item) {
         return mc.player.getHeldItemMainhand().getItem().equals(item) || mc.player.getHeldItemOffhand().getItem().equals(item);
     }
 
-    public static boolean isHolding(Item item, EnumHand hand) {
+    public static boolean isHolding(final Item item, final EnumHand hand) {
         return mc.player.getHeldItem(hand).getItem().equals(item);
     }
 
+    @Nullable
     public static EnumHand getHandHolding(Item item) {
         if (mc.player.getHeldItemMainhand().getItem() == item) {
             return EnumHand.MAIN_HAND;
-        }
-
-        else if (mc.player.getHeldItemOffhand().getItem() == item) {
+        } else if (mc.player.getHeldItemOffhand().getItem() == item) {
             return EnumHand.OFF_HAND;
         }
 
         return null;
     }
 
-    public static int getItemSlot(Item itemIn) {
+    public static int getItemSlot(final Item itemIn) {
         for (int i = 9; i < 36; i++) {
-            Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
+            final Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
             if (itemInInv == itemIn) {
                 return i;
             }
@@ -42,9 +43,9 @@ public class InventoryUtil implements Wrapper {
         return -1;
     }
 
-    public static int getItemInHotbar(Item itemIn) {
+    public static int getItemInHotbar(final Item itemIn) {
         for (int i = 0; i < 9; i++) {
-            Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
+            final Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
 
             if (itemInInv == itemIn) {
                 return i;
@@ -61,7 +62,7 @@ public class InventoryUtil implements Wrapper {
      * @param silent Switch silently - use packets instead
      * @return Whether the switch was successful
      */
-    public static boolean switchToItem(Item itemIn, boolean silent) {
+    public static boolean switchToItem(final Item itemIn, final boolean silent) {
         if (getItemInHotbar(itemIn) == -1) {
             return false;
         }
@@ -75,7 +76,7 @@ public class InventoryUtil implements Wrapper {
         return true;
     }
 
-    public static void switchToSlot(int slot, boolean silent) {
+    public static void switchToSlot(final int slot, final boolean silent) {
         if (silent) {
             mc.player.connection.sendPacket(new CPacketHeldItemChange(slot));
             // Sync item
@@ -85,11 +86,11 @@ public class InventoryUtil implements Wrapper {
         }
     }
 
-    public static int getCountOfItem(Item item, boolean hotbarOnly, boolean ignoreHotbar) {
+    public static int getCountOfItem(final Item item, final boolean hotbarOnly, final boolean ignoreHotbar) {
         int count = 0;
 
         for (int i = (ignoreHotbar ? 9 : 0); i < (hotbarOnly ? 9 : 36); i++) {
-            ItemStack stack = mc.player.inventory.getStackInSlot(i);
+            final ItemStack stack = mc.player.inventory.getStackInSlot(i);
 
             if (stack.getItem() == item) {
                 count += stack.getCount();
@@ -107,7 +108,7 @@ public class InventoryUtil implements Wrapper {
         int slot = -1;
 
         for (int i = 0; i < 9; i++) {
-            Item item = mc.player.inventory.getStackInSlot(i).getItem();
+            final Item item = mc.player.inventory.getStackInSlot(i).getItem();
 
             if (item instanceof ItemBlock && ((ItemBlock) item).getBlock().equals(block)) {
                 slot = i;
@@ -118,4 +119,5 @@ public class InventoryUtil implements Wrapper {
 
         return slot;
     }
+
 }

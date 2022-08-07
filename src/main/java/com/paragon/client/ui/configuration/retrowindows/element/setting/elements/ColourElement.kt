@@ -113,7 +113,6 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             subSettings.forEach {
                 if (it is SliderElement && it.dragging) {
                     val hsb = Color.RGBtoHSB(finalColour.red, finalColour.green, finalColour.blue, null)
-                    println(hsb[1])
                     finalColour = Color(Color.HSBtoRGB(hueSetting.value.toInt() / 360f, hsb[1], hsb[2]))
 
                     pickingColour = false
@@ -187,9 +186,8 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         super.mouseClicked(mouseX, mouseY, click)
 
         if (click == Click.LEFT && expanded.state) {
-            if (mouseX in x + 4..x + 80 && mouseY in y + height + 2..y + height + 78) {
+            if (mouseX in (x + (width / 2f)) - (76 / 2)..(x + (width / 2f)) + (76 / 2) && mouseY in y + height + 2..y + height + 78) {
                 pickingColour = true
-                //println("Picking colour")
             }
         }
 

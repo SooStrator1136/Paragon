@@ -11,13 +11,13 @@ import org.lwjgl.input.Keyboard
 /**
  * @author SooStrator1136
  */
-class DiscordString(val setting: Setting<String>) : DiscordSetting(setting) {
+class DiscordString(private val setting: Setting<String>) : DiscordSetting(setting) {
 
     private val cursorTimer = Timer()
     private var typing = false
 
     init {
-        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt()
+        bounds.height = (FontUtil.getHeight() + msgStyleHeight).toInt() + 2
     }
 
     override fun render(mouseX: Int, mouseY: Int) {

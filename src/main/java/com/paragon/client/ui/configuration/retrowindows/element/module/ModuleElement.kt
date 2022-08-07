@@ -7,10 +7,10 @@ import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
-import com.paragon.client.ui.configuration.retrowindows.element.RawElement
+import com.paragon.client.ui.configuration.shared.RawElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.elements.*
-import com.paragon.client.ui.configuration.retrowindows.window.category.CategoryWindow
+import com.paragon.client.ui.configuration.retrowindows.element.CategoryWindow
 import com.paragon.client.ui.util.Click
 import com.paragon.client.ui.util.animation.Animation
 import net.minecraft.util.math.MathHelper

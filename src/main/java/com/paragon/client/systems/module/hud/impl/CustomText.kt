@@ -1,3 +1,5 @@
+@file:Suppress("SuspiciousVarProperty")
+
 package com.paragon.client.systems.module.hud.impl
 
 import com.paragon.api.setting.Setting
@@ -20,8 +22,12 @@ object CustomText : HUDModule("CustomText", "Display custom text of your choice!
         FontUtil.drawStringWithShadow(text.value, x, y, textColour.value.rgb)
     }
 
-    override fun getWidth() = FontUtil.getStringWidth(text.value)
+    //override fun getWidth() = FontUtil.getStringWidth(text.value)
 
-    override fun getHeight() = FontUtil.getHeight()
+    override var width = FontUtil.getStringWidth(text.value)
+        get() = FontUtil.getStringWidth(text.value)
+
+    override var height = FontUtil.getHeight()
+        get() = FontUtil.getHeight()
 
 }
