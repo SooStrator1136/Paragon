@@ -82,9 +82,11 @@ class ModuleManager {
             AutoEZ,
             AutoLog,
             AutoTranslate,
+
             AutoWalk,
             Blink,
             ChatModifications,
+            ChorusControl(),
             Cryptic,
             CustomWorld,
             DonkeyAlert,
