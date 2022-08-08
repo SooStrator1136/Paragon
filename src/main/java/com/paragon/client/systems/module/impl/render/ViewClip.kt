@@ -12,8 +12,7 @@ import me.wolfsurge.cerauno.listener.Listener
  */
 object ViewClip : Module("ViewClip", Category.RENDER, "Lets your third person view clip to the world") {
 
-    var distance = Setting("Distance", 10.0, 1.0, 20.0, 0.1)
-        .setDescription("How far your camera is from your body")
+    var distance = Setting("Distance", 10.0, 1.0, 20.0, 0.1) describedBy "How far your camera is from your body"
 
     @Listener
     fun onCameraClip(event: CameraClipEvent) {

@@ -176,4 +176,10 @@ class Setting<T> {
             return java.lang.Enum.valueOf(enumeration::class.java, values[index]) as T
         }
 
+    infix fun describedBy(description: String) = setDescription(description)
+
+    infix fun visibleWhen(isVisible: Supplier<Boolean>) = setVisibility(isVisible)
+
+    infix fun subOf(parent: Setting<*>?) = setParentSetting(parent)
+
 }
