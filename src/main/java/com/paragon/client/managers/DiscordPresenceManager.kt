@@ -20,8 +20,8 @@ class DiscordPresenceManager : Wrapper {
         rpc.Discord_Initialize(id, eventHandlers, true, null)
 
         presence.largeImageKey = "logo"
-        presence.startTimestamp = System.currentTimeMillis() / 1000L
         presence.largeImageText = "Paragon Client @ https://github.com/Wolfsurge/Paragon"
+        presence.startTimestamp = System.currentTimeMillis() / 1000L
         presence.details = getDetails()
         presence.state = "Username: " + mc.session.username
         rpc.Discord_UpdatePresence(presence)
@@ -29,8 +29,6 @@ class DiscordPresenceManager : Wrapper {
 
     fun updateRPC() {
         presence.largeImageKey = "logo"
-        presence.state = "Username: " + mc.session.username
-        presence.startTimestamp = System.currentTimeMillis() / 1000L
         presence.largeImageText = "Paragon Client @ https://github.com/Wolfsurge/Paragon"
         presence.details = getDetails()
         presence.state = "Username: " + mc.session.username
