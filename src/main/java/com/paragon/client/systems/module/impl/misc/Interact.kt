@@ -64,48 +64,52 @@ object Interact : Module("Interact", Category.MISC, "Changes the way you interac
     @Listener
     fun onPacketSent(event: PacketEvent.PreSend) {
         // Check packet is a player try use item on block packet
-        if (buildHeight.value && event.packet is CPacketPlayerTryUseItemOnBlock) {
-            // Get packet
-            val packet = event.packet
+        if (!buildHeight.value || event.packet !is CPacketPlayerTryUseItemOnBlock) {
+            return
+        }
 
-            // Check the position we are trying to place at is 255 or above, and we are placing on top of a block
-            if (packet.pos.y >= 255 && packet.direction == EnumFacing.UP) {
+        // Get packet
+        val packet = event.packet
 
-                // Send new packet with the place direction being down
-                minecraft.player.connection.sendPacket(
-                    CPacketPlayerTryUseItemOnBlock(
-                        packet.pos,
-                        EnumFacing.DOWN,
-                        packet.hand,
-                        packet.facingX,
-                        packet.facingY,
-                        packet.facingZ
-                    )
+        // Check the position we are trying to place at is 255 or above, and we are placing on top of a block
+        if (packet.pos.y >= 255 && packet.direction == EnumFacing.UP) {
+
+            // Send new packet with the place direction being down
+            minecraft.player.connection.sendPacket(
+                CPacketPlayerTryUseItemOnBlock(
+                    packet.pos,
+                    EnumFacing.DOWN,
+                    packet.hand,
+                    packet.facingX,
+                    packet.facingY,
+                    packet.facingZ
                 )
+            )
 
-                // Don't send original packet
-                event.cancel()
-            }
+            // Don't send original packet
+            event.cancel()
         }
     }
 
     @Listener
     fun onRaytrace(event: RaytraceEntityEvent) {
-        if (noTrace.value) {
-            // Cancel if we are holding a pickaxe
-            if (pickaxe.value && minecraft.player.heldItemMainhand.item is ItemPickaxe) {
-                event.cancel()
-            }
+        if (!noTrace.value) {
+            return
+        }
 
-            // Cancel if we are holding crystals
-            if (crystals.value && minecraft.player.heldItemMainhand.item == Items.END_CRYSTAL) {
-                event.cancel()
-            }
+        // Cancel if we are holding a pickaxe
+        if (pickaxe.value && minecraft.player.heldItemMainhand.item is ItemPickaxe) {
+            event.cancel()
+        }
 
-            // Cancel if we are holding blocks
-            if (blocks.value && (minecraft.player.heldItemMainhand.item is ItemBlock || minecraft.player.heldItemOffhand.item is ItemBlock)) {
-                event.cancel()
-            }
+        // Cancel if we are holding crystals
+        if (crystals.value && minecraft.player.heldItemMainhand.item == Items.END_CRYSTAL) {
+            event.cancel()
+        }
+
+        // Cancel if we are holding blocks
+        if (blocks.value && (minecraft.player.heldItemMainhand.item is ItemBlock || minecraft.player.heldItemOffhand.item is ItemBlock)) {
+            event.cancel()
         }
     }
 

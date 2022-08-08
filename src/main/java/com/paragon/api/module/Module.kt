@@ -1,12 +1,12 @@
 package com.paragon.api.module
 
-import com.paragon.client.systems.module.hud.impl.ArrayListHUD
-import com.paragon.api.event.client.ModuleToggleEvent
 import com.paragon.Paragon
+import com.paragon.api.event.client.ModuleToggleEvent
 import com.paragon.api.feature.Feature
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.Wrapper
+import com.paragon.client.systems.module.hud.impl.ArrayListHUD
 import com.paragon.client.ui.util.animation.Animation
 import net.minecraftforge.common.MinecraftForge
 import org.lwjgl.input.Keyboard
@@ -29,7 +29,7 @@ open class Module(name: String, val category: Category, description: String) : F
     val settings: MutableList<Setting<*>> = ArrayList()
 
     // Arraylist animation
-    var animation = Animation({ ArrayListHUD.animationSpeed.value }, false) { ArrayListHUD.easing.value }
+    val animation = Animation({ ArrayListHUD.animationSpeed.value }, false) { ArrayListHUD.easing.value }
 
     // Whether the module is enabled
     var isEnabled = false
@@ -52,11 +52,11 @@ open class Module(name: String, val category: Category, description: String) : F
     // TEMPORARY
     fun reflectSettings() {
         Arrays.stream(javaClass.declaredFields)
-            .filter { field -> Setting::class.java.isAssignableFrom(field.type) }
-            .forEach { field ->
-                field.isAccessible = true
+            .filter { Setting::class.java.isAssignableFrom(it.type) }
+            .forEach {
+                it.isAccessible = true
                 try {
-                    val setting = field[this] as Setting<*>
+                    val setting = it[this] as Setting<*>
                     if (setting.parentSetting == null) {
                         settings.add(setting)
                     }
@@ -77,9 +77,7 @@ open class Module(name: String, val category: Category, description: String) : F
 
     open fun getData() = ""
 
-    open fun isActive(): Boolean {
-        return isEnabled
-    }
+    open fun isActive() = isEnabled
 
     /**
      * Toggles the module
@@ -92,8 +90,7 @@ open class Module(name: String, val category: Category, description: String) : F
 
         isEnabled = !isEnabled
 
-        val moduleToggleEvent = ModuleToggleEvent(this)
-        Paragon.INSTANCE.eventBus.post(moduleToggleEvent)
+        Paragon.INSTANCE.eventBus.post(ModuleToggleEvent(this))
 
         if (isEnabled) {
             // Register events

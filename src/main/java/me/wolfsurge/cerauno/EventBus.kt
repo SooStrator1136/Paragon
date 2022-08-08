@@ -6,6 +6,7 @@ import java.lang.reflect.Method
 
 /**
  * The main EventBus object. All events are posted from here, as well as objects being subscribed
+ *
  * @author Surge
  * @since 05/03/22
  */
@@ -16,15 +17,15 @@ class EventBus {
 
     /**
      * Register an object
-     * @param obj The object to register
+     * @param target The object to register
      */
-    fun register(obj: Any) {
+    fun register(target: Any) {
         // Iterate through every method in the object's class
-        for (method in obj.javaClass.declaredMethods) {
+        for (method in target.javaClass.declaredMethods) {
             // Check if the method is 'good'
             if (isMethodGood(method)) {
                 // Register the method to the map
-                registerMethod(method, obj)
+                registerMethod(method, target)
             }
         }
     }

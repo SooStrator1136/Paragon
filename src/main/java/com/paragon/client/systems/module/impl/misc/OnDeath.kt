@@ -4,7 +4,7 @@ import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import net.minecraft.util.text.TextFormatting
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -16,13 +16,13 @@ object OnDeath : Module("OnDeath", Category.MISC, "Do certain actions when you d
 
     private val printCoords = Setting("PrintCoords", true)
         .setDescription("Prints your death coordinates in chat (client-side only)")
-    
+
     private val respawn = Setting("Respawn", true)
         .setDescription("Respawns you after death")
 
     @SubscribeEvent
     fun onLivingDeath(event: LivingDeathEvent) {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -47,4 +47,5 @@ object OnDeath : Module("OnDeath", Category.MISC, "Do certain actions when you d
             }
         }
     }
+
 }

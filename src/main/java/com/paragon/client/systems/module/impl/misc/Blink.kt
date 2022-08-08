@@ -4,7 +4,7 @@ import com.paragon.api.event.network.PacketEvent.PreSend
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.client.entity.EntityOtherPlayerMP
@@ -13,7 +13,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.function.Consumer
 
 /**
  * @author Surge
@@ -22,34 +21,35 @@ import java.util.function.Consumer
 object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a length of time") {
 
     // General
-    var mode = Setting<Mode?>("Mode", Mode.PACKETS_QUEUED)
+    private val mode = Setting<Mode?>("Mode", Mode.PACKETS_QUEUED)
         .setDescription("When to send queued packets")
 
     // Packet queue flush settings
-    var queueLength = Setting("QueueLength", 50.0, 1.0, 1000.0, 1.0)
+    private val queueLength = Setting("QueueLength", 50.0, 1.0, 1000.0, 1.0)
         .setDescription("The size of the queue to start sending packets")
         .setParentSetting(mode)
         .setVisibility { mode.value == Mode.PACKETS_QUEUED }
-    
-    var delay = Setting("Delay", 4.0, 0.1, 10.0, 0.1)
+
+    private var delay = Setting("Delay", 4.0, 0.1, 10.0, 0.1)
         .setDescription("The delay between sending packets in seconds")
         .setParentSetting(mode)
         .setVisibility { mode.value == Mode.DELAY }
-    
-    var distance = Setting("Distance", 10.0, 1.0, 100.0, 0.1)
+
+    private val distance = Setting("Distance", 10.0, 1.0, 100.0, 0.1)
         .setDescription("The distance to the fake player to start sending packets")
         .setParentSetting(mode)
         .setVisibility { mode.value == Mode.DISTANCE }
-    
+
     // Using CopyOnWriteArrayList to avoid ConcurrentModificationException
     private val packetQueue: MutableList<CPacketPlayer> = CopyOnWriteArrayList()
     private val timer = Timer()
     private var lastPosition: BlockPos? = null
 
     override fun onEnable() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
+
         val fakePlayer = EntityOtherPlayerMP(minecraft.world, minecraft.player.gameProfile)
         fakePlayer.copyLocationAndAnglesFrom(minecraft.player)
         fakePlayer.rotationYawHead = minecraft.player.rotationYawHead
@@ -61,16 +61,17 @@ object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a len
     }
 
     override fun onDisable() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
+
         sendPackets()
         minecraft.world.removeEntityFromWorld(-351352)
         lastPosition = null
     }
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -98,22 +99,23 @@ object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a len
 
     @Listener
     fun onPacketSent(event: PreSend) {
-        if (nullCheck()) {
+        if (minecraft.anyNull || event.packet !is CPacketPlayer) {
             return
         }
-        if (event.packet is CPacketPlayer) {
-            event.cancel()
-            packetQueue.add(event.packet)
-        }
+
+        event.cancel()
+        packetQueue.add(event.packet)
     }
 
-    fun sendPackets() {
+    private fun sendPackets() {
         lastPosition = minecraft.player.position
         minecraft.world.removeEntityFromWorld(-351352)
-        if (!packetQueue.isEmpty()) {
-            packetQueue.forEach(Consumer { packet: CPacketPlayer? -> minecraft.player.connection.sendPacket(packet) })
+
+        if (packetQueue.isNotEmpty()) {
+            packetQueue.forEach { minecraft.player.connection.sendPacket(it) }
             packetQueue.clear()
         }
+
         val fakePlayer = EntityOtherPlayerMP(minecraft.world, minecraft.player.gameProfile)
         fakePlayer.copyLocationAndAnglesFrom(minecraft.player)
         fakePlayer.rotationYawHead = minecraft.player.rotationYawHead
@@ -144,4 +146,5 @@ object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a len
          */
         MANUAL
     }
+
 }

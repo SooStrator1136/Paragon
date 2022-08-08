@@ -174,11 +174,11 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
         /**
          * The colour is slightly different for each module in the array list
          */
-        RAINBOW_WAVE({ addition: Int ->
+        RAINBOW_WAVE({
             ColourUtil.getRainbow(
                 Colours.mainColour.rainbowSpeed,
                 Colours.mainColour.rainbowSaturation / 100f,
-                addition
+                it
             )
         }),
 

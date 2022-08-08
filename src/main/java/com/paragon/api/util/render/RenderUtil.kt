@@ -19,7 +19,6 @@ import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Toolkit
@@ -280,6 +279,41 @@ object RenderUtil : Wrapper {
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
     }
 
+    @JvmStatic
+    fun drawCircle(x: Double, y: Double, radius: Double, color: Int) { //Probably not the best but does the job
+        GlStateManager.alphaFunc(GL_GREATER, 0.001f)
+        GlStateManager.enableAlpha()
+        GlStateManager.enableBlend()
+        GlStateManager.disableTexture2D()
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0)
+
+        setColour(color)
+
+        for (i in 0..359) {
+            val cs = -i * Math.PI / 180.0
+            val ps = (-i - 1) * Math.PI / 180.0
+
+            val outer = doubleArrayOf(
+                cos(cs) * radius,
+                -sin(cs) * radius,
+                cos(ps) * radius,
+                -sin(ps) * radius
+            )
+
+            glBegin(GL_QUADS)
+            glVertex2d(x, y)
+            glVertex2d(x + outer[2], y + outer[3])
+            glVertex2d(x, y)
+            glVertex2d(x + outer[0], y + outer[1])
+            glEnd()
+        }
+        GlStateManager.alphaFunc(GL_GREATER, 0.1f)
+        GlStateManager.color(1f, 1f, 1f, 1f)
+        GlStateManager.disableBlend()
+        GlStateManager.enableTexture2D()
+        glLineWidth(1f)
+    }
+
     /**
      * In java usage will look like this:
      * ```
@@ -301,12 +335,12 @@ object RenderUtil : Wrapper {
         scaleFacZ: Double,
         block: () -> Unit
     ) {
-        GL11.glPushMatrix()
-        GL11.glTranslatef(x, y, z)
-        GL11.glScaled(scaleFacX, scaleFacY, scaleFacZ)
-        GL11.glTranslatef(-x, -y, -z)
+        glPushMatrix()
+        glTranslatef(x, y, z)
+        glScaled(scaleFacX, scaleFacY, scaleFacZ)
+        glTranslatef(-x, -y, -z)
         block.invoke()
-        GL11.glPopMatrix()
+        glPopMatrix()
     }
 
     @JvmStatic
@@ -726,7 +760,7 @@ object RenderUtil : Wrapper {
     @JvmStatic
     val screenWidth: Float
         get() = Toolkit.getDefaultToolkit().screenSize.width / 2f
-    
+
     @JvmStatic
     val screenHeight: Float
         get() = Toolkit.getDefaultToolkit().screenSize.height / 2f
@@ -744,4 +778,5 @@ object RenderUtil : Wrapper {
             defaultFont.getStringWidth(text!!).toFloat()
         } else Minecraft.getMinecraft().fontRenderer.getStringWidth(text).toFloat()
     }
+
 }

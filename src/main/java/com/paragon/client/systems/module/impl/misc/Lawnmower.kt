@@ -48,7 +48,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
         toRemove.filter {
             BlockUtil.canSeePos(it) && it.getDistance(
                 minecraft.player.posX.toInt(),
-                minecraft.player.posY.toInt(),
+                (minecraft.player.posY + minecraft.player.getEyeHeight()).toInt(),
                 minecraft.player.posZ.toInt()
             ) <= range.value
         }

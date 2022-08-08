@@ -4,7 +4,7 @@ import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.InventoryUtil
 import com.paragon.client.managers.social.Player
 import com.paragon.client.managers.social.Relationship
@@ -26,13 +26,13 @@ object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform
         .setDescription("Add a friend when you middle click on an player")
     private val pearl = Setting("Pearl", true)
         .setDescription("Throw an ender pearl when you miss an entity")
-    
+
     // To prevent excessive spam
     private var hasClicked = false
 
     @SubscribeEvent
     fun onMouseInput(event: InputEvent.MouseInputEvent?) {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -52,9 +52,7 @@ object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform
                             TextFormatting.RED.toString() + "Removed player " + TextFormatting.GRAY + player.name + TextFormatting.RED + " from your socials list!",
                             false
                         )
-                    }
-
-                    else {
+                    } else {
                         // Add player to social list
                         Paragon.INSTANCE.socialManager.addPlayer(player)
                         Paragon.INSTANCE.commandManager.sendClientMessage(
@@ -62,9 +60,7 @@ object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform
                             false
                         )
                     }
-                }
-
-                else if (pearl.value) {
+                } else if (pearl.value) {
                     // The last slot we were on
                     val prevSlot = minecraft.player.inventory.currentItem
 
@@ -90,5 +86,5 @@ object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform
             hasClicked = false
         }
     }
-    
+
 }

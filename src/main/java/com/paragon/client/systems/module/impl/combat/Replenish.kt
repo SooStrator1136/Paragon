@@ -3,7 +3,6 @@ package com.paragon.client.systems.module.impl.combat
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
 import net.minecraft.inventory.ClickType
 import net.minecraft.item.ItemBlock
 import net.minecraft.item.ItemStack
@@ -14,10 +13,10 @@ import net.minecraft.network.play.client.CPacketEntityAction
  * @author Surge
  */
 object Replenish : Module("Replenish", Category.COMBAT, "Automatically refills items in your hotbar") {
-    
+
     var inventorySpoof = Setting("InventorySpoof", true)
         .setDescription("Spoofs opening your inventory")
-    
+
     var percent = Setting("Percent", 50f, 1f, 100f, 1f)
         .setDescription("The point at which to refill")
 

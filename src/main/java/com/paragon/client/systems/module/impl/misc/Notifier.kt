@@ -23,7 +23,7 @@ object Notifier : Module("Notifier", Category.MISC, "Notifies you when events ha
     private val pop = Setting("Pop", true)
         .setDescription("Notifies you when a player pops a totem")
 
-    private val death = Setting<Boolean?>("Death", true)
+    private val death = Setting("Death", true)
         .setDescription("Notifies you when a player dies")
 
     private val noPops = Setting("NoPops", true)
@@ -32,44 +32,44 @@ object Notifier : Module("Notifier", Category.MISC, "Notifies you when events ha
 
     @Listener
     fun onModuleToggle(moduleToggleEvent: ModuleToggleEvent) {
-        if (moduleEnabled.value) {
-            if (!moduleToggleEvent.module.isIgnored && moduleToggleEvent.module !is HUDModule) {
-                Paragon.INSTANCE.notificationManager.addNotification(
-                    Notification(
-                        moduleToggleEvent.module.name + " was " + if (moduleToggleEvent.module.isEnabled) "Enabled" else "Disabled",
-                        NotificationType.INFO
-                    )
-                )
-            }
+        if (!moduleEnabled.value || !(!moduleToggleEvent.module.isIgnored && moduleToggleEvent.module !is HUDModule)) {
+            return
         }
+
+        Paragon.INSTANCE.notificationManager.addNotification(
+            Notification(
+                moduleToggleEvent.module.name + " was " + if (moduleToggleEvent.module.isEnabled) "Enabled" else "Disabled",
+                NotificationType.INFO
+            )
+        )
     }
 
     @Listener
     fun onTotemPop(event: TotemPopEvent) {
-        if (pop.value) {
-            Paragon.INSTANCE.notificationManager.addNotification(
-                Notification(
-                    event.player.name + " has popped " + Paragon.INSTANCE.popManager.getPops(
-                        event.player
-                    ) + " totems!", NotificationType.INFO
-                )
-            )
+        if (!pop.value) {
+            return
         }
+
+        Paragon.INSTANCE.notificationManager.addNotification(
+            Notification(
+                event.player.name + " has popped " + Paragon.INSTANCE.popManager.getPops(
+                    event.player
+                ) + " totems!", NotificationType.INFO
+            )
+        )
     }
 
     @Listener
     fun onPlayerDeath(event: PlayerDeathEvent) {
-        if (death.value!!) {
-            if (!noPops.value && event.pops == 0) {
-                return
-            }
-            Paragon.INSTANCE.notificationManager.addNotification(
-                Notification(
-                    event.entityPlayer.name + " has died after popping " + event.pops + " totems!",
-                    NotificationType.INFO
-                )
-            )
+        if (!death.value || (!noPops.value && event.pops == 0)) {
+            return
         }
+        Paragon.INSTANCE.notificationManager.addNotification(
+            Notification(
+                event.entityPlayer.name + " has died after popping " + event.pops + " totems!",
+                NotificationType.INFO
+            )
+        )
     }
 
 }

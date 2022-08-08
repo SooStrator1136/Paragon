@@ -5,7 +5,7 @@ import com.paragon.api.event.network.PlayerEvent.PlayerLeaveEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraftforge.event.world.BlockEvent.BreakEvent
@@ -31,14 +31,15 @@ object Announcer : Module("Announcer", Category.MISC, "Announces events to the c
 
     // Timer to determine when we should send the message
     private val timer = Timer()
-    
+
     // Part 1 is the first part of the message, Part 2 is the value, Part 3 is the second part of the message
     private var announceComponents = arrayOf("", "0", "")
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
+
         if (timer.hasMSPassed(chatTimer.value * 1000) && announceComponents[0] != "" && announceComponents[2] != "") {
             minecraft.player.sendChatMessage(announceComponents[0] + announceComponents[1] + announceComponents[2])
             announceComponents = arrayOf("", "0", "")
@@ -60,19 +61,16 @@ object Announcer : Module("Announcer", Category.MISC, "Announces events to the c
 
     @Listener
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        if (playerJoin.value) {
-            if (event.name != minecraft.player.name) {
-                minecraft.player.sendChatMessage("Welcome to the server, " + event.name + "!")
-            }
+        if (playerJoin.value && event.name != minecraft.player.name) {
+            minecraft.player.sendChatMessage("Welcome to the server, " + event.name + "!")
         }
     }
 
     @Listener
     fun onPlayerLeave(event: PlayerLeaveEvent) {
-        if (playerLeave.value) {
-            if (event.name != minecraft.player.name) {
-                minecraft.player.sendChatMessage("See you later, " + event.name + "!")
-            }
+        if (playerLeave.value && event.name != minecraft.player.name) {
+            minecraft.player.sendChatMessage("See you later, " + event.name + "!")
         }
     }
+
 }

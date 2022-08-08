@@ -16,47 +16,47 @@ enum class Easing(private val easeFunction: (Double) -> Double) {
     /**
      * Speed gradually increases
      */
-    CUBIC_IN({ input -> input * input * input }),
+    CUBIC_IN({ it * it * it }),
 
     /**
      * Speed gradually decreases
      */
-    CUBIC_OUT({ input -> 1 - (1 - input).pow(3.0) }),
+    CUBIC_OUT({ 1 - (1 - it).pow(3.0) }),
 
     /**
      * Speed gradually increases until halfway and then decreases
      */
-    CUBIC_IN_OUT({ input -> if (input < 0.5) 4 * input * input * input else 1 - (-2 * input + 2).pow(3.0) / 2 }),
+    CUBIC_IN_OUT({ if (it < 0.5) 4 * it * it * it else 1 - (-2 * it + 2).pow(3.0) / 2 }),
 
     /**
      * Speed gradually increases
      */
-    QUINT_IN({ input -> input * input * input * input * input }),
+    QUINT_IN({ it * it * it * it * it }),
 
     /**
      * Speed gradually decreases
      */
-    QUINT_OUT({ input -> 1 - (1 - input).pow(5.0) }),
+    QUINT_OUT({ 1 - (1 - it).pow(5.0) }),
 
     /**
      * Speed gradually increases until halfway and then decreases
      */
-    QUINT_IN_OUT({ input -> if (input < 0.5) 16 * input * input * input * input * input else 1 - (-2 * input + 2).pow(5.0) / 2 }),
+    QUINT_IN_OUT({ if (it < 0.5) 16 * it * it * it * it * it else 1 - (-2 * it + 2).pow(5.0) / 2 }),
 
     /**
      * Speed gradually increases
      */
-    EXPO_IN({ input -> if (input == 0.0) 0.0 else 2.0.pow(10.0 * input - 10.0) }),
+    EXPO_IN({ if (it == 0.0) 0.0 else 2.0.pow(10.0 * it - 10.0) }),
 
     /**
      * Speed gradually decreases
      */
-    EXPO_OUT({ input -> if (input == 1.0) 1.0 else 1 - 2.0.pow(-10 * input) }),
+    EXPO_OUT({ if (it == 1.0) 1.0 else 1 - 2.0.pow(-10 * it) }),
 
     /**
      * Speed gradually increases until halfway and then decreases
      */
-    EXPO_IN_OUT({ input -> if (input == 0.0) 0.0 else if (input == 1.0) 1.0 else if (input < 0.5) 2.0.pow(20 * input - 10) / 2.0 else (2 - 2.0.pow(-20 * input + 10)) / 2.0 });
+    EXPO_IN_OUT({ if (it == 0.0) 0.0 else if (it == 1.0) 1.0 else if (it < 0.5) 2.0.pow(20 * it - 10) / 2.0 else (2 - 2.0.pow(-20 * it + 10)) / 2.0 });
 
     /**
      * Apply the easing function to the input

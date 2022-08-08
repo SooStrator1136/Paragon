@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -16,15 +16,15 @@ object AutoLog : Module("AutoLog", Category.MISC, "Automatically logs you out wh
 
     private val logMode = Setting("LogMode", DisconnectMode.DISCONNECT)
         .setDescription("How to log you out of the server")
-    
+
     private val health = Setting("Health", 6f, 1f, 20f, 1f)
         .setDescription("The health to log you out at")
-    
+
     private val autoDisable = Setting("AutoDisable", true)
         .setDescription("Disables the module after logging you out")
-    
+
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -59,4 +59,5 @@ object AutoLog : Module("AutoLog", Category.MISC, "Automatically logs you out wh
          */
         KICK
     }
+
 }

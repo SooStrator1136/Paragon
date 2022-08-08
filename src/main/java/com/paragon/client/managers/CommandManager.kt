@@ -4,9 +4,7 @@ import com.paragon.Paragon
 import com.paragon.api.util.Wrapper
 import com.paragon.client.systems.command.impl.*
 import com.paragon.client.systems.module.impl.misc.Cryptic
-import net.minecraft.util.text.ITextComponent
 import net.minecraft.util.text.TextComponentString
-import net.minecraft.util.text.TextFormatting
 import net.minecraft.util.text.TextFormatting.*
 import net.minecraftforge.client.event.ClientChatEvent
 import net.minecraftforge.common.MinecraftForge
@@ -59,7 +57,7 @@ class CommandManager : Wrapper {
     fun sendClientMessage(message: String, fromConsole: Boolean) {
         // Only send chat message if the message wasn't sent from the console
         if (!fromConsole) {
-            minecraft.player.sendMessage(TextComponentString(TextFormatting.LIGHT_PURPLE.toString() + "Paragon " + TextFormatting.WHITE + "> " + message))
+            minecraft.player.sendMessage(TextComponentString(LIGHT_PURPLE.toString() + "Paragon " + WHITE + "> " + message))
         }
 
         Paragon.INSTANCE.console.addLine(LIGHT_PURPLE.toString() + "Paragon " + WHITE + "> " + message)

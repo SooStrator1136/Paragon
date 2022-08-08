@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.asm.mixins.accessor.IKeyBinding
 import net.minecraft.client.settings.KeyBinding
 
@@ -15,9 +15,9 @@ object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk")
 
     private val direction = Setting("Direction", Direction.FORWARD)
         .setDescription("The direction to walk in")
-    
+
     override fun onDisable() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -26,7 +26,7 @@ object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk")
     }
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -34,15 +34,7 @@ object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk")
         (direction.value.key as IKeyBinding).setPressed(true)
     }
 
-    enum class Direction(
-        /**
-         * Gets the keybind
-         *
-         * @return The keybind
-         */
-        // The keybind that we want to "press"
-        val key: KeyBinding
-    ) {
+    enum class Direction(val key: KeyBinding) {
         /**
          * Walk forward
          */
@@ -64,4 +56,5 @@ object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk")
         RIGHT(minecraft.gameSettings.keyBindRight);
 
     }
+
 }
