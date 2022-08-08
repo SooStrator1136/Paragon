@@ -16,6 +16,16 @@ inline fun <E> Collection<E>.anyIndexed(predicate: (E) -> Boolean): Int {
     return -1
 }
 
+inline fun <T> Array<T>.anyIndexed(predicate: (T) -> Boolean): Int {
+    if (isEmpty()) return -1
+    forEachIndexed { index, element ->
+        if (predicate(element)) {
+            return index
+        }
+    }
+    return -1
+}
+
 /**
  * Assumes that the both given numbers are the same primitive type, if that isn't the case inaccuracies will appear
  */

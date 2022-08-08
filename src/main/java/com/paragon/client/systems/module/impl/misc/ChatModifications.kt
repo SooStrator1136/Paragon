@@ -32,4 +32,5 @@ object ChatModifications : Module("ChatModifications", Category.MISC, "Changes t
             event.message = event.message + " | Paragon"
         }
     }
+
 }

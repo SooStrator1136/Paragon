@@ -4,14 +4,13 @@ import com.paragon.api.event.network.PacketEvent.PreSend
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.play.client.CPacketUseEntity
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.function.Consumer
 
 /**
  * @author Surge
@@ -27,24 +26,24 @@ object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message w
             targeted.add(minecraft.world.getPlayerEntityByName(name))
         }
     }
-    
+
     // List of targeted players
     private val targeted: MutableList<EntityPlayer?> = CopyOnWriteArrayList()
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
-        targeted.removeIf { player: EntityPlayer? -> player!!.getDistance(minecraft.player) > maximumRange.value }
+        targeted.removeIf { it!!.getDistance(minecraft.player) > maximumRange.value }
 
         // Iterate through entities
-        targeted.forEach(Consumer { player: EntityPlayer? ->
+        targeted.forEach { player: EntityPlayer? ->
             if (player!!.health <= 0 && targeted.contains(player)) {
                 minecraft.player.sendChatMessage(player.name + ", did you really just die to the worst client?!")
                 targeted.remove(player)
             }
-        })
+        }
     }
 
     @Listener
@@ -61,7 +60,7 @@ object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message w
 
     @SubscribeEvent
     fun onLivingDeath(event: LivingDeathEvent) {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
@@ -73,4 +72,5 @@ object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message w
             }
         }
     }
+
 }

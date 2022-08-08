@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import com.paragon.asm.mixins.accessor.IMinecraft
 import com.paragon.asm.mixins.accessor.ITimer
 
@@ -20,10 +20,11 @@ object TimerModule : Module("Timer", Category.MISC, "Modifies how long each tick
     }
 
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
 
         ((minecraft as IMinecraft).timer as ITimer).tickLength = 50 / timer.value
     }
+
 }

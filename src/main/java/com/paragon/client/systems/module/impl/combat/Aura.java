@@ -1,6 +1,9 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.Timer;
 import com.paragon.api.util.entity.EntityUtil;
 import com.paragon.api.util.player.EntityFakePlayer;
@@ -9,9 +12,6 @@ import com.paragon.api.util.player.RotationUtil;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
 import com.paragon.client.managers.rotation.RotationPriority;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -75,6 +75,12 @@ public class Aura extends Module {
     public static Setting<Boolean> packetAttack = new Setting<>("Packet", false)
             .setDescription("Attack with a packet");
 
+    public EntityLivingBase getLastTarget() {
+        return this.lastTarget;
+    }
+
+    private EntityLivingBase lastTarget = null;
+
     private final Timer attackTimer = new Timer();
     private EntityLivingBase target;
 
@@ -109,6 +115,7 @@ public class Aura extends Module {
                 EntityLivingBase entityLivingBase = (EntityLivingBase) entities.get(0);
 
                 target = entityLivingBase;
+                lastTarget = target;
 
                 // Get our old slot
                 int oldSlot = mc.player.inventory.currentItem;
@@ -122,12 +129,14 @@ public class Aura extends Module {
                             if (swordSlot > -1) {
                                 InventoryUtil.switchToSlot(swordSlot, false);
                             } else {
+                                lastTarget = null;
                                 return;
                             }
                         }
 
                     case HOLDING:
                         if (!InventoryUtil.isHoldingSword()) {
+                            lastTarget = null;
                             return;
                         }
                 }
@@ -166,6 +175,8 @@ public class Aura extends Module {
                 if (oldSlot != mc.player.inventory.currentItem && when.getValue().equals(When.SILENT_SWITCH)) {
                     InventoryUtil.switchToSlot(oldSlot, false);
                 }
+            } else {
+                lastTarget = null;
             }
 
             attackTimer.reset();

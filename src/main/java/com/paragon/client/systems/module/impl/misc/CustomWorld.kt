@@ -4,7 +4,7 @@ import com.paragon.api.event.network.PacketEvent.PreReceive
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
+import com.paragon.api.util.anyNull
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.network.play.server.SPacketTimeUpdate
 
@@ -12,23 +12,23 @@ object CustomWorld : Module("CustomWorld", Category.MISC, "Changes the way the w
 
     private val customWeather = Setting<Boolean?>("CustomWeather", true)
         .setDescription("Set the world weather to a custom value")
-    
+
     private val weather = Setting("Weather", Weather.CLEAR)
         .setDescription("The weather to display")
         .setParentSetting(customWeather)
-    
+
     private val customTime = Setting<Boolean?>("CustomTime", true)
         .setDescription("Set the world time to a custom value")
-    
+
     private val time = Setting("Time", 1000f, 0f, 24000f, 1f)
         .setDescription("The time of day")
         .setParentSetting(customTime)
-    
+
     override fun onTick() {
-        if (nullCheck()) {
+        if (minecraft.anyNull) {
             return
         }
-        
+
         minecraft.world.setRainStrength(weather.value.rainStrength.toFloat())
         minecraft.world.worldTime = time.value.toLong()
     }
@@ -58,4 +58,5 @@ object CustomWorld : Module("CustomWorld", Category.MISC, "Changes the way the w
         THUNDER(2);
 
     }
+
 }

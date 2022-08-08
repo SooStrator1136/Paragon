@@ -276,6 +276,12 @@ public class AutoCrystalRewrite extends Module {
 
     private int passedTicks = 0;
 
+    public EntityLivingBase getLastTarget() {
+        return this.lastTarget;
+    }
+
+    private EntityLivingBase lastTarget = null;
+
     public AutoCrystalRewrite() {
         super("AutoCrystalRewrite", Category.COMBAT, "Automatically places and explodes ender crystals");
 
@@ -291,11 +297,13 @@ public class AutoCrystalRewrite extends Module {
             mc.player.inventory.currentItem = originalSlot;
             originalSlot = -1;
         }
+        lastTarget = null;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onTick(TickEvent.ClientTickEvent event) {
         if (nullCheck() || pause.getValue() && (eating.getValue() && PlayerUtil.isPlayerEating() || drinking.getValue() && PlayerUtil.isPlayerDrinking() || lowHealth.getValue() && EntityUtil.getEntityHealth(mc.player) <= healthAmount.getValue() || mending.getValue() && mc.player.isHandActive() && mc.player.getActiveItemStack().getItem().equals(Items.EXPERIENCE_BOTTLE))) {
+            lastTarget = null;
             return;
         }
 
@@ -410,6 +418,7 @@ public class AutoCrystalRewrite extends Module {
      */
     private EntityLivingBase findTarget(ArrayList<BlockPos> positions, float positionOffset) {
         if (positions.isEmpty()) {
+            lastTarget = null;
             return null;
         }
         List<EntityLivingBase> validEntities = mc.world.loadedEntityList.stream().filter(entity -> !entity.isDead && mc.player.getDistance(entity) <= targetRange.getValue() && EntityUtil.isEntityAllowed(entity, players.getValue(), mobs.getValue(), animals.getValue())).sorted(Comparator.comparingDouble(entity -> {
@@ -430,6 +439,7 @@ public class AutoCrystalRewrite extends Module {
         })).map(EntityLivingBase.class::cast).collect(Collectors.toList());
 
         if (validEntities.isEmpty()) {
+            lastTarget = null;
             return null;
         }
 
@@ -448,6 +458,7 @@ public class AutoCrystalRewrite extends Module {
         }
 
         EntityLivingBase target = findTarget(positions, 0.5f);
+        lastTarget = target;
 
         if (target == null) {
             return;
@@ -565,21 +576,15 @@ public class AutoCrystalRewrite extends Module {
 
                     if (InventoryUtil.isHolding(Items.END_CRYSTAL, EnumHand.MAIN_HAND)) {
                         alreadyHolding = true;
-                    }
-
-                    else {
+                    } else {
                         mc.player.inventory.currentItem = crystalSlot;
                         ((IPlayerControllerMP) mc.playerController).hookSyncCurrentPlayItem();
                     }
 
                     crystalHand = EnumHand.MAIN_HAND;
-                }
-
-                else if (InventoryUtil.isHolding(Items.END_CRYSTAL, EnumHand.OFF_HAND)) {
+                } else if (InventoryUtil.isHolding(Items.END_CRYSTAL, EnumHand.OFF_HAND)) {
                     crystalHand = EnumHand.OFF_HAND;
-                }
-
-                else {
+                } else {
                     return;
                 }
 
