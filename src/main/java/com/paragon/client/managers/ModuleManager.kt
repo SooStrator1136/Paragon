@@ -81,6 +81,7 @@ class ModuleManager {
 
             // Misc
             Announcer,
+            AntiHunger,
             AutoEZ,
             AutoLog,
             AutoTranslate,
