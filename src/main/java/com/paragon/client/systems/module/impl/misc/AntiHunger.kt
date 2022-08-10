@@ -9,6 +9,11 @@ import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayer
 
+/**
+ * @author GentlemanMC
+ * @since the 10th of August 2022
+ */
+
 object AntiHunger :
     Module("AntiHunger", Category.MISC, "Tries to remove huger lost") {
 
@@ -16,8 +21,6 @@ object AntiHunger :
     private val antiSprint = Setting("AntiSprint", true) describedBy "Kassuk tries to code"
 
     private var previousSprint = false
-
-
 
     override fun onEnable() {
         if (minecraft.player.isSprinting) {
@@ -28,17 +31,14 @@ object AntiHunger :
                 )
             )
         }
-        super.onEnable()
+        onEnable()
     }
-
     override fun onDisable() {
-        super.onDisable()
+        onDisable()
         if (previousSprint) {
             previousSprint = false
             minecraft.player.connection.sendPacket(
-                CPacketEntityAction(
-                    minecraft.player,
-                    CPacketEntityAction.Action.START_SPRINTING
+                CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_SPRINTING
                 )
             )
         }
@@ -52,11 +52,12 @@ object AntiHunger :
                     (event.packet as ICPacketPlayer).setOnGround(true)
                 }
             }
-            //Kassuk part
-        } else if (event.packet is CPacketEntityAction) {
+
+        //Kassuk part
+        }
+        else if (event.packet is CPacketEntityAction) {
             val packet = event.packet
-            if (packet.action.equals(CPacketEntityAction.Action.START_SPRINTING) || packet.action.equals(CPacketEntityAction.Action.STOP_SPRINTING)
-            ) {
+            if (packet.action.equals(CPacketEntityAction.Action.START_SPRINTING) || packet.action.equals(CPacketEntityAction.Action.STOP_SPRINTING)) {
                 if (antiSprint.value) {
                     event.isCancelled()
                 }
