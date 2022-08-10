@@ -5,8 +5,8 @@ import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import org.lwjgl.input.Keyboard
 import java.awt.Color
 import java.awt.geom.Point2D
@@ -107,7 +107,6 @@ object Keystrokes : HUDModule("Keystrokes", "Keystrokes duh?") {
     }
 
     internal class KeyEntry(private val keyCode: Int) {
-
         val bounds = Rectangle2D.Float()
 
         private val animation = Animation(animationSpeed::value, false, animationEasing::value)

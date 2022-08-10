@@ -4,8 +4,8 @@ import com.paragon.api.util.Wrapper;
 
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.configuration.zeroday.panel.CategoryPanel;
-import com.paragon.client.ui.util.animation.Animation;
-import com.paragon.client.ui.util.animation.Easing;
+import me.surge.animation.Animation;
+import me.surge.animation.Easing;
 import com.paragon.client.ui.util.Click;
 
 import java.util.ArrayList;

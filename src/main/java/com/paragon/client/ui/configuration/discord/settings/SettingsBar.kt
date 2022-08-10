@@ -11,7 +11,7 @@ import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.category.CategoryBar
 import com.paragon.client.ui.configuration.discord.module.ModuleBar
 import com.paragon.client.ui.configuration.discord.settings.impl.*
-import com.paragon.client.ui.util.animation.Animation
+import me.surge.animation.Animation
 import org.lwjgl.util.Rectangle
 import java.awt.Color
 import java.util.*

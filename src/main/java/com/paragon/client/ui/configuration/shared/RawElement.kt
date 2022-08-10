@@ -14,6 +14,6 @@ abstract class RawElement(var x: Float, var y: Float, var width: Float, var heig
     open fun mouseReleased(mouseX: Float, mouseY: Float, click: Click) {}
     open fun keyTyped(character: Char, keyCode: Int) {}
 
-    fun isHovered(mouseX: Float, mouseY: Float) = mouseX in x..x + width && mouseY in y..y + height
+    open fun isHovered(mouseX: Float, mouseY: Float) = mouseX in x..x + width && mouseY in y..y + height
 
 }

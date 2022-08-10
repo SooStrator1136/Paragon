@@ -7,8 +7,8 @@ import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.taskbar.start.StartMenu
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import java.awt.Color
 

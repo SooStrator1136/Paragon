@@ -9,10 +9,9 @@ import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.windows.Window
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import net.minecraft.util.ChatAllowedCharacters
-import org.apache.commons.io.FileUtils
 import org.lwjgl.input.Keyboard
 import java.awt.Color
 import java.io.File

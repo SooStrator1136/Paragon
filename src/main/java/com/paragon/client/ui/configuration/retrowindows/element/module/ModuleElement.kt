@@ -12,7 +12,7 @@ import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingE
 import com.paragon.client.ui.configuration.retrowindows.element.setting.elements.*
 import com.paragon.client.ui.configuration.retrowindows.element.CategoryWindow
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
+import me.surge.animation.Animation
 import net.minecraft.util.math.MathHelper
 import org.lwjgl.opengl.GL11.glScalef
 import java.awt.Color

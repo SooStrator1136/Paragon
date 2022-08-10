@@ -6,7 +6,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RubiksCrystalUtil
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Easing
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.client.Minecraft
 import net.minecraft.client.model.ModelRenderer

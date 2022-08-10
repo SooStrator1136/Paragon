@@ -12,8 +12,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.util.math.MathHelper
-import org.lwjgl.opengl.GL11.GL_SMOOTH
-import org.lwjgl.opengl.GL11.glScalef
+import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
@@ -174,7 +173,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         tessellator.draw()
 
         // GL shit pt 2
-        GlStateManager.shadeModel(7424)
+        GlStateManager.shadeModel(GL_FLAT)
         GlStateManager.enableAlpha()
         GlStateManager.enableTexture2D()
         GlStateManager.popMatrix()

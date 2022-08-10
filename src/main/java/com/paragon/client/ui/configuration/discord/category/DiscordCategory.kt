@@ -9,7 +9,7 @@ import com.paragon.api.util.render.font.FontUtil.getStringWidth
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
-import com.paragon.client.ui.util.animation.Animation
+import me.surge.animation.Animation
 import net.minecraft.item.ItemStack
 import java.awt.Color
 import java.awt.Rectangle

@@ -4,8 +4,8 @@ package com.paragon.client.ui.menu
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.renderer.GlStateManager

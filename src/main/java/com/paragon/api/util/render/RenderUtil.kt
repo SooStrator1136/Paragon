@@ -25,6 +25,7 @@ import java.awt.Toolkit
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 @SideOnly(Side.CLIENT)
 object RenderUtil : Wrapper {
 
@@ -72,7 +73,7 @@ object RenderUtil : Wrapper {
     }
 
     fun drawHorizontalGradientRect(x: Float, y: Float, width: Float, height: Float, leftColour: Int, rightColour: Int) {
-        val left = Color(leftColour)
+        /* val left = Color(leftColour)
         val right = Color(rightColour)
         val lA = left.alpha / 255.0f
         val lG = left.green / 255.0f
@@ -82,6 +83,7 @@ object RenderUtil : Wrapper {
         val rG = right.green / 255.0f
         val rB = right.blue / 255.0f
         val rR = right.red / 255.0f
+
         GlStateManager.pushMatrix()
         GlStateManager.disableTexture2D()
         GlStateManager.enableBlend()
@@ -95,16 +97,48 @@ object RenderUtil : Wrapper {
         GlStateManager.shadeModel(7425)
         val tessellator = Tessellator.getInstance()
         val bufferbuilder = tessellator.buffer
+
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
         bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(rR, rG, rB, rA).endVertex()
         bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(lR, lG, lB, lA).endVertex()
         bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(lR, lG, lB, lA).endVertex()
         bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(rR, rG, rB, rA).endVertex()
         tessellator.draw()
+
         GlStateManager.shadeModel(7424)
         GlStateManager.enableAlpha()
         GlStateManager.enableTexture2D()
-        GlStateManager.popMatrix()
+        GlStateManager.popMatrix() */
+
+        glEnable(GL_BLEND)
+        glDisable(GL_TEXTURE_2D)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glShadeModel(GL_SMOOTH)
+        glBegin(GL_POLYGON)
+
+        glColor4f(
+            (leftColour shr 16 and 0xFF) / 255.0f,
+            (leftColour shr 8 and 0xFF) / 255.0f,
+            (leftColour and 0xFF) / 255.0f,
+            (leftColour shr 24 and 0xFF) / 255.0f
+        )
+
+        glVertex2f(x, y)
+        glVertex2f(x, y + height)
+
+        glColor4f(
+            (rightColour shr 16 and 0xFF) / 255.0f,
+            (rightColour shr 8 and 0xFF) / 255.0f,
+            (rightColour and 0xFF) / 255.0f,
+            (rightColour shr 24 and 0xFF) / 255.0f
+        )
+
+        glVertex2f(x + width, y + height)
+        glVertex2f(x + width, y)
+        glEnd()
+        glShadeModel(GL_FLAT)
+        glEnable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
     }
 
     fun drawVerticalGradientRect(x: Float, y: Float, width: Float, height: Float, topColour: Int, bottomColour: Int) {
@@ -120,6 +154,7 @@ object RenderUtil : Wrapper {
             GlStateManager.SourceFactor.ONE,
             GlStateManager.DestFactor.ZERO
         )
+
         GlStateManager.shadeModel(7425)
         val tessellator = Tessellator.getInstance()
         val bufferbuilder = tessellator.buffer

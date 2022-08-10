@@ -4,8 +4,8 @@ import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 
 import com.paragon.client.systems.module.hud.impl.Notifications
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 
 /**
  * @author Surge

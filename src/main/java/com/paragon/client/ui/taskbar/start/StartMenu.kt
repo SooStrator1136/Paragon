@@ -10,8 +10,8 @@ import com.paragon.client.ui.configuration.windows.impl.ChangelogWindow
 import com.paragon.client.ui.configuration.windows.impl.ConfigWindow
 import com.paragon.client.ui.console.ConsoleGUI
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.MathHelper

@@ -50,7 +50,9 @@ public final class OldPanelGUI extends GuiImplementation {
             drawDefaultBackground();
         }
 
-        scrollPanels();
+        for (Panel panel : panels) {
+            panel.setY(panel.getY() + (mouseDelta / 100f) * ClickGUI.getScrollSpeed().getValue());
+        }
 
         // Render panels
         panels.forEach(panel -> {

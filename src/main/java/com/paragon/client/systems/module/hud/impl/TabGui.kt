@@ -5,6 +5,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.Timer
+import com.paragon.api.util.render.ColourUtil.fade
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDModule
@@ -296,6 +297,44 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                         1F,
                         ((shownModules!!.size * (FontUtil.getHeight() + 1F)) - catHeight) + ((Category.values().indexOf(focusedCategory) * (FontUtil.getHeight() + 1F))),
                         color.value.rgb
+                    )
+                }
+            }
+
+            ClickGUI.Style.PARAGON -> {
+                RenderUtil.drawRect(
+                    x,
+                    y,
+                    catWidth,
+                    catHeight,
+                    Color(40, 40, 60).rgb
+                )
+
+                RenderUtil.drawRect(
+                    x,
+                    y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory)),
+                    catWidth,
+                    FontUtil.getHeight() + 1F,
+                    Color(60, 60, 80).rgb
+                )
+
+                if (focusedModule != null && shownModules != null) {
+                    moduleY = y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory))
+
+                    RenderUtil.drawRect(
+                        x + catWidth,
+                        moduleY,
+                        moduleWidth - 1,
+                        moduleHeight,
+                        Color(40, 40, 60).rgb
+                    )
+
+                    RenderUtil.drawRect(
+                        x + catWidth,
+                        moduleY + ((FontUtil.getHeight() + 1F) * shownModules!!.indexOf(focusedModule)),
+                        moduleWidth - 1,
+                        FontUtil.getHeight(),
+                        Color(60, 60, 80).rgb
                     )
                 }
             }

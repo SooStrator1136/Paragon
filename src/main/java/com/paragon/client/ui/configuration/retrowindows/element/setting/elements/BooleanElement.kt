@@ -8,7 +8,7 @@ import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.SettingElement
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
+import me.surge.animation.Animation
 import net.minecraft.util.math.MathHelper
 import org.lwjgl.opengl.GL11.glScalef
 import java.awt.Color

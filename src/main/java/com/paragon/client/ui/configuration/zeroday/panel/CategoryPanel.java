@@ -11,7 +11,7 @@ import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
 import com.paragon.client.ui.configuration.zeroday.element.setting.*;
 import com.paragon.client.ui.util.Click;
-import com.paragon.client.ui.util.animation.Animation;
+import me.surge.animation.Animation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;

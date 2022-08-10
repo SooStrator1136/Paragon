@@ -3,8 +3,8 @@ package com.paragon.client.ui.configuration.windows
 import com.paragon.Paragon
 
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import net.minecraft.util.math.Vec2f
 
 /**

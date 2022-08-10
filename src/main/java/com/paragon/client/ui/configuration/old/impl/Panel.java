@@ -11,7 +11,7 @@ import com.paragon.client.systems.module.impl.client.ClientFont;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.configuration.old.OldPanelGUI;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
-import com.paragon.client.ui.util.animation.Animation;
+import me.surge.animation.Animation;
 
 import java.awt.*;
 import java.util.ArrayList;

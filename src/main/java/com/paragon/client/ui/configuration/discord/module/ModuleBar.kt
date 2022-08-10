@@ -11,8 +11,8 @@ import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.IRenderable
 import com.paragon.client.ui.configuration.discord.category.CategoryBar
 import com.paragon.client.ui.configuration.discord.settings.SettingsBar
-import com.paragon.client.ui.util.animation.Animation
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Animation
+import me.surge.animation.Easing
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.util.Rectangle
 import java.awt.Color

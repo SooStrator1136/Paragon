@@ -47,7 +47,7 @@ class Setting<T> {
         private set
 
     // For mode settings
-    var index = 0
+    var index = -1
 
     // For colour settings
     var alpha = 0f
@@ -100,6 +100,19 @@ class Setting<T> {
      * @param value the value of the setting.
      */
     fun setValue(value: T) {
+        if (value is Enum<*>) {
+            index = nextIndex
+        }
+
+        this.value = value
+    }
+
+    /**
+     * Sets the value without updating anything else
+     *
+     * @param value the value of the setting.
+     */
+    fun setValueRaw(value: T) {
         this.value = value
     }
 
@@ -171,9 +184,15 @@ class Setting<T> {
             val enumeration = value as Enum<*>
             val values = enumeration.javaClass.enumConstants.map { it.name }.toTypedArray()
 
-            index = if (index + 1 > values.size - 1) 0 else index + 1
+            return java.lang.Enum.valueOf(enumeration::class.java, values[nextIndex]) as T
+        }
 
-            return java.lang.Enum.valueOf(enumeration::class.java, values[index]) as T
+    val nextIndex: Int
+        get() {
+            val enumeration = value as Enum<*>
+            val values = enumeration.javaClass.enumConstants.map { it.name }.toTypedArray()
+
+            return if (index + 1 > values.size - 1) 0 else index + 1
         }
 
     infix fun describedBy(description: String) = setDescription(description)

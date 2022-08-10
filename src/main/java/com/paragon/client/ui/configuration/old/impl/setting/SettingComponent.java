@@ -8,7 +8,7 @@ import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.systems.module.impl.client.Colours;
 import com.paragon.client.ui.configuration.old.OldPanelGUI;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
-import com.paragon.client.ui.util.animation.Animation;
+import me.surge.animation.Animation;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 

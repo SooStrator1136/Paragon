@@ -11,7 +11,7 @@ import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDEditorGUI
 import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.text.TextFormatting.GRAY
 import net.minecraft.util.text.TextFormatting.WHITE

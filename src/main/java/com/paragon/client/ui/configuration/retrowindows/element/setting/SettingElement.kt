@@ -7,7 +7,7 @@ import com.paragon.client.ui.configuration.shared.RawElement
 import com.paragon.client.ui.configuration.retrowindows.element.module.ModuleElement
 import com.paragon.client.ui.configuration.retrowindows.element.setting.elements.*
 import com.paragon.client.ui.util.Click
-import com.paragon.client.ui.util.animation.Animation
+import me.surge.animation.Animation
 import java.awt.Color
 
 /**

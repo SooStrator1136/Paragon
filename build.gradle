@@ -73,6 +73,7 @@ dependencies {
     libaries group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
     libaries group: 'club.minnced', name: 'java-discord-rpc', version: '2.0.1'
     libaries group: 'com.github.therealbush', name: 'translator', version: '1.0.2'
+    libaries group: 'com.github.Wolfsurge', name: 'animationsystem', version: '1.0'
 
     libaries group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.7.0'
     libaries group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.7.0'
@@ -99,6 +100,18 @@ processResources {
     }
 }
 
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+task prepareAssets(type: Copy) {
+    group = 'build'
+    from project.file('src/main/resources')
+    into project.file('build/classes/java/main')
+}
+
 jar {
     manifest.attributes(
             'Manifest-Version': 1.0,
@@ -115,3 +128,5 @@ jar {
         }
     }
 }
+
+classes.dependsOn(prepareAssets)

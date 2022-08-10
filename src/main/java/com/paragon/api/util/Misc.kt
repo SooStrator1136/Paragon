@@ -55,3 +55,7 @@ operator fun Number.plus(toAdd: Number): Number {
         else -> 0 //Shouldn't be reached
     }
 }
+
+fun Boolean.toBinary(): Int {
+    return if (this) 1 else 0
+}

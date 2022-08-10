@@ -46,4 +46,23 @@ object ColourUtil {
         val blue = this.blue / 255f
         return Color(red, green, blue, alpha / 255f)
     }
+
+    /**
+     * Stolen from Monsoon 3.0 lel
+     * (im dev so its fine (probably))
+     */
+    @JvmStatic
+    fun Color.fade(secondary: Color, factor: Double): Color {
+        val redDiff: Int = secondary.red - this.red
+        val greenDiff: Int = secondary.green - this.green
+        val blueDiff: Int = secondary.blue - this.blue
+        val alphaDiff: Int = secondary.alpha - this.alpha
+
+        val newRed = (this.red + redDiff * factor).toInt()
+        val newGreen = (this.green + greenDiff * factor).toInt()
+        val newBlue = (this.blue + blueDiff * factor).toInt()
+        val newAlpha = (this.alpha + alphaDiff * factor).toInt()
+
+        return Color(newRed, newGreen, newBlue, newAlpha)
+    }
 }

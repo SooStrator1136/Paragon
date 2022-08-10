@@ -9,8 +9,9 @@ import com.paragon.api.setting.Setting
 import com.paragon.client.ui.configuration.GuiImplementation
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.old.OldPanelGUI
+import com.paragon.client.ui.configuration.paragon.ParagonGUI
 import com.paragon.client.ui.configuration.simple.SimpleGUI
-import com.paragon.client.ui.util.animation.Easing
+import me.surge.animation.Easing
 import org.lwjgl.input.Keyboard
 
 /**
@@ -99,6 +100,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
 
     fun getGUI(): GuiImplementation = when (style.value) {
+        Style.PARAGON -> ParagonGUI
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
         Style.DISCORD -> GuiDiscord
@@ -112,6 +114,11 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     }
 
     enum class Style {
+        /**
+         * Original Paragon GUI
+         */
+        PARAGON,
+
         /**
          * Windows 98 themed GUI
          */

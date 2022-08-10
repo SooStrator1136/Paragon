@@ -10,7 +10,7 @@ import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
 import com.paragon.client.ui.configuration.old.OldPanelGUI;
 import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
-import com.paragon.client.ui.util.animation.Animation;
+import me.surge.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;

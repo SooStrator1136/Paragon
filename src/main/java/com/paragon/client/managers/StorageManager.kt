@@ -8,6 +8,7 @@ import com.paragon.client.managers.alt.Alt
 import com.paragon.client.managers.social.Player
 import com.paragon.client.managers.social.Relationship
 import com.paragon.client.systems.module.hud.HUDModule
+import net.minecraft.util.math.MathHelper
 import org.apache.commons.io.FileUtils
 import org.json.JSONArray
 import org.json.JSONException
@@ -243,10 +244,7 @@ class StorageManager {
                             is Double -> (setting as Setting<Double?>).setValue(settings.getDouble(settingName))
                             is Enum<*> -> {
                                 val enum = setting.value as Enum<*>
-                                val value = java.lang.Enum.valueOf(
-                                    enum::class.java,
-                                    settings.getString(settingName)
-                                )
+                                val value = java.lang.Enum.valueOf(enum::class.java, settings.getString(settingName))
 
                                 run breakLoop@{
                                     enum::class.java.enumConstants.forEachIndexed { index, enumValue ->
@@ -257,7 +255,7 @@ class StorageManager {
                                     }
                                 }
 
-                                (setting as Setting<Enum<*>>).setValue(value)
+                                (setting as Setting<Enum<*>>).setValueRaw(value)
                             }
 
                             is Color -> {

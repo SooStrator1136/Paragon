@@ -8,7 +8,7 @@ import com.paragon.api.setting.Setting;
 import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
-import com.paragon.client.ui.util.animation.Animation;
+import me.surge.animation.Animation;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
