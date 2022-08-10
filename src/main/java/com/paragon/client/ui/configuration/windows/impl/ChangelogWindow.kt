@@ -1,6 +1,5 @@
 package com.paragon.client.ui.configuration.windows.impl
 
-import com.paragon.Paragon
 import com.paragon.api.util.render.BlurUtil
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil

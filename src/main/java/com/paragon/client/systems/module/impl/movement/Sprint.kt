@@ -22,19 +22,17 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
     }
 
     override fun onTick() {
-        minecraft?.player?.let { player ->
+        minecraft?.player?.let {
             when (mode.value) {
                 Mode.OMNI -> {
-                    // If we aren't moving, do not make us sprint
                     if (onlyWhenMoving.value && !PlayerUtil.isMoving()) {
                         return
                     }
 
-                    // Make us sprint
-                    player.isSprinting = true
+                    it.isSprinting = true
                 }
 
-                Mode.LEGIT -> player.isSprinting = player.movementInput.moveForward > 0 // Make us sprint if we are pressing forward
+                Mode.LEGIT -> it.isSprinting = it.movementInput.moveForward > 0
             }
         }
     }

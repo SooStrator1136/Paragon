@@ -15,3 +15,5 @@ Added Keystrokes
 Added TargetHUD
 Added SourceESP
 Added PhaseESP
+Added Graphs
+Added AntiHunger

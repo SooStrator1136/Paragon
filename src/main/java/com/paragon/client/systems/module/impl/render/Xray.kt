@@ -13,7 +13,7 @@ import net.minecraft.init.Blocks
  */
 object Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids through blocks") {
 
-    private val visibleBlocks = listOf(
+    private val visibleBlocks = arrayOf(
         Blocks.DIAMOND_ORE,
         Blocks.IRON_ORE,
         Blocks.GOLD_ORE,

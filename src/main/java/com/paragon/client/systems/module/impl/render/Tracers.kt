@@ -20,47 +20,48 @@ import java.util.function.Consumer
  */
 object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in the world") {
 
-    private val passive = Setting("Passives", true)
-        .setDescription("Draws lines to passive entities")
+    private val passive = Setting("Passives", true) describedBy "Draws lines to passive entities"
 
-    private val passiveColour = Setting("Colour", Color(0, 255, 0, 180))
-        .setDescription("The colour to render the passive tracers in")
-        .setParentSetting(passive)
-        .setVisibility { distance.value != Distance.COLOUR }
+    private val passiveColour = Setting(
+        "Colour",
+        Color(0, 255, 0, 180)
+    ) describedBy "The colour to render the passive tracers in" subOf passive visibleWhen { distance.value != Distance.COLOUR }
 
-    private val mobs = Setting("Mobs", true)
-        .setDescription("Draws lines to monsters")
+    private val mobs = Setting("Mobs", true) describedBy "Draws lines to monsters"
 
-    private val mobColour = Setting("Colour", Color(255, 0, 0, 180))
-        .setDescription("The colour to render the mob tracers in")
-        .setParentSetting(mobs)
-        .setVisibility { distance.value != Distance.COLOUR }
+    private val mobColour = Setting(
+        "Colour",
+        Color(255, 0, 0, 180)
+    ) describedBy "The colour to render the mob tracers in" subOf mobs visibleWhen { distance.value != Distance.COLOUR }
 
-    private val players = Setting("Players", true)
-        .setDescription("Draws lines to players")
+    private val players = Setting("Players", true) describedBy "Draws lines to players"
 
-    private val playerColour = Setting("Colour", Color(255, 255, 255, 180))
-        .setDescription("The colour to render the player tracers in")
-        .setParentSetting(players)
-        .setVisibility { distance.value != Distance.COLOUR }
+    private val playerColour = Setting(
+        "Colour",
+        Color(255, 255, 255, 180)
+    ) describedBy "The colour to render the player tracers in" subOf players visibleWhen { distance.value != Distance.COLOUR }
 
-    private val crystals = Setting("Crystals", true)
-        .setDescription("Draws lines to ender crystals")
+    private val crystals = Setting("Crystals", true) describedBy "Draws lines to ender crystals"
 
-    private val crystalColour = Setting("Colour", Color(200, 0, 200, 180))
-        .setDescription("The colour to render the ender crystal tracers in")
-        .setParentSetting(crystals)
-        .setVisibility { distance.value != Distance.COLOUR }
+    private val crystalColour = Setting(
+        "Colour",
+        Color(200, 0, 200, 180)
+    ) describedBy "The colour to render the ender crystal tracers in" subOf crystals visibleWhen { distance.value != Distance.COLOUR }
 
-    private val distance = Setting("Distance", Distance.ALPHA)
-        .setDescription("Change the colour depending on the distance to the entity")
+    private val distance = Setting(
+        "Distance",
+        Distance.ALPHA
+    ) describedBy "Change the colour depending on the distance to the entity"
 
-    private val distanceDivider = Setting("Divider", 1500f, 0f, 5000f, 100f)
-        .setDescription("The divider to use when calculating the distance factor")
-        .setParentSetting(distance)
+    private val distanceDivider = Setting(
+        "Divider",
+        1500f,
+        0f,
+        5000f,
+        100f
+    ) describedBy "The divider to use when calculating the distance factor" subOf distance
 
-    private val lineWidth = Setting("LineWidth", 0.5f, 0.1f, 2f, 0.1f)
-        .setDescription("How thick to render the lines")
+    private val lineWidth = Setting("LineWidth", 0.5f, 0.1f, 2f, 0.1f) describedBy "How thick to render the lines"
 
     @SubscribeEvent
     fun onRenderWorld(event: RenderWorldLastEvent?) {
@@ -84,26 +85,20 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
      * @return The entity's colour
      */
     private fun getColourByEntity(entityIn: Entity): Color {
-        var colour: Color = passiveColour.value
+        var colour = passiveColour.value
 
         if (EntityUtil.isPassive(entityIn)) {
             colour = passiveColour.value
-        }
-
-        if (EntityUtil.isMonster(entityIn)) {
+        } else if (EntityUtil.isMonster(entityIn)) {
             colour = mobColour.value
-        }
-
-        if (entityIn is EntityPlayer) {
+        } else if (entityIn is EntityPlayer) {
             colour = playerColour.value
-        }
-
-        if (entityIn is EntityEnderCrystal) {
+        } else if (entityIn is EntityEnderCrystal) {
             colour = crystalColour.value
         }
 
         if (distance.value != Distance.OFF) {
-            val factor: Float = MathHelper.clamp(
+            val factor = MathHelper.clamp(
                 (minecraft.player.getDistanceSq(entityIn) / distanceDivider.value).toFloat(), 0f, 1f
             )
 
@@ -133,4 +128,5 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
          */
         OFF
     }
+
 }

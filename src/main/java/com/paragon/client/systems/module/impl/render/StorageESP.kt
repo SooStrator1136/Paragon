@@ -32,7 +32,6 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20.glUseProgram
 import java.awt.Color
-import java.util.function.Consumer
 
 @SideOnly(Side.CLIENT)
 object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage blocks in the world") {
@@ -64,21 +63,21 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
 
     override fun onRender3D() {
         if (mode.value == Mode.BOX) {
-            minecraft.world.loadedTileEntityList.forEach(Consumer { tileEntity: TileEntity ->
-                if (isStorageValid(tileEntity)) {
+            minecraft.world.loadedTileEntityList.forEach {
+                if (isStorageValid(it)) {
                     if (fill.value) {
-                        drawFilledBox(getBlockBox(tileEntity.pos), colour.value)
+                        drawFilledBox(getBlockBox(it.pos), colour.value)
                     }
 
                     if (outline.value) {
                         drawBoundingBox(
-                            getBlockBox(tileEntity.pos),
+                            getBlockBox(it.pos),
                             lineWidth.value,
                             colour.value.integrateAlpha(255f)
                         )
                     }
                 }
-            })
+            }
         }
     }
 

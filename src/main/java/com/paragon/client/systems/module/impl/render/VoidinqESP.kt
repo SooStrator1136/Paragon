@@ -6,60 +6,84 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
 import java.awt.Color
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @author Surge
  */
 object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes in the world") {
 
-    private val range = Setting("Range", 5f, 0f, 20f, 1f)
-        .setDescription("The range to check for holes")
+    private val range = Setting("Range", 5f, 0f, 50f, 1f) describedBy "The range to check for holes"
 
     // Render settings
-    private val fill = Setting("Fill", true)
-        .setDescription("Fill the holes ;)")
+    private val fill = Setting("Fill", true) describedBy "Fill the holes ;)" //💀
 
-    private val fillHeight = Setting("Height", 0f, 0f, 2f, 0.01f)
-        .setDescription("How tall the fill is")
-        .setParentSetting(fill)
+    private val fillHeight = Setting(
+        "Height",
+        0f,
+        0f,
+        2f,
+        0.01f
+    ) describedBy "How tall the fill is" subOf fill
 
-    private val outline = Setting("Outline", true)
-        .setDescription("Outline the hole")
+    private val outline = Setting("Outline", true) describedBy "Outline the hole"
 
-    private val outlineWidth = Setting("Width", 1f, 1f, 3f, 1f)
-        .setDescription("The width of the outlines")
-        .setParentSetting(outline)
+    private val outlineWidth = Setting(
+        "Width",
+        1f,
+        1f,
+        3f,
+        1f
+    ) describedBy "The width of the outlines" subOf outline
 
-    private val outlineHeight = Setting("Height", 0f, 0f, 2f, 0.01f)
-        .setDescription("How tall the outline is")
-        .setParentSetting(outline)
+    private val outlineHeight = Setting(
+        "Height",
+        0f,
+        0f,
+        2f,
+        0.01f
+    ) describedBy "How tall the outline is" subOf outline
 
-    private val glow = Setting("Gradient", true)
-        .setDescription("Renders a glow effect above the box")
+    private val glow = Setting("Gradient", true) describedBy "Renders a glow effect above the box"
 
-    private val glowHeight = Setting("Height", 1f, 0f, 2f, 0.01f)
-        .setDescription("How tall the glow is")
-        .setParentSetting(glow)
+    private val glowHeight = Setting(
+        "Height",
+        1f,
+        0f,
+        2f,
+        0.01f
+    ) describedBy "How tall the glow is" subOf glow
 
-    private val colour = Setting("Colour", Color(200, 0, 0, 150))
-        .setDescription("The highlight colour")
+    private val colour = Setting("Colour", Color(200, 0, 0, 150)) describedBy "The highlight colour"
 
-    private val holes: ArrayList<BlockPos> = ArrayList()
+    private val holes: MutableList<BlockPos> = CopyOnWriteArrayList()
+
+    private var lastJob: Job? = null
 
     override fun onTick() {
         if (minecraft.anyNull) {
             return
         }
 
-        holes.clear()
+        backgroundThread {
+            if (lastJob == null || lastJob!!.isCompleted) {
+                lastJob = launch {
+                    val toAdd = BlockUtil.getSphere(range.value, false).filter {
+                        it.y == 0 && minecraft.world.getBlockState(it).material.isReplaceable
+                    }
 
-        holes.addAll(BlockUtil.getSphere(range.value, false).filter {
-            it.y == 0 && minecraft.world.getBlockState(it).material.isReplaceable
-        })
+                    holes.clear()
+                    holes.addAll(toAdd)
+                }
+            }
+        }
     }
 
     override fun onRender3D() {

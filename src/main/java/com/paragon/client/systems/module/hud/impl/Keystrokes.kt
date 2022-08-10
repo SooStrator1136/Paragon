@@ -18,17 +18,37 @@ import java.awt.geom.Rectangle2D
 object Keystrokes : HUDModule("Keystrokes", "Keystrokes duh?") {
 
     //Bounds
-    private val keySize = Setting("Size", 20F, 10F, 50F, 1F)
-    private val keyDistance = Setting("Distance", 2F, 1F, 10F, 0.1F)
+    private val keySize = Setting(
+        "Size",
+        20F,
+        10F,
+        50F,
+        1F
+    ) describedBy "Size of the keys"
+    private val keyDistance = Setting(
+        "Distance",
+        2F,
+        1F,
+        10F,
+        0.1F
+    ) describedBy "Distance between the keys"
 
     //Animation
-    private val animationSpeed = Setting("Animation Speed", 300F, 100F, 2000F, 50F)
-        .setDescription("The time to fill the rect with a circle")
+    private val animationSpeed = Setting(
+        "Animation Speed",
+        300F,
+        100F,
+        2000F,
+        50F
+    ) describedBy "The time to fill the rect with a circle"
     private val animationEasing = Setting("Easing", Easing.LINEAR)
 
     //Coloring
     private val backgroundColor = Setting("Background", Color(0, 0, 0, 35))
-    private val circleColor = Setting("Fill color", Colours.mainColour.value)
+    private val circleColor = Setting(
+        "Fill color",
+        Colours.mainColour.value
+    ) describedBy "Color of the circle filling indicating the pressed keys"
 
     //Could have used an array but uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
     private val keyW = KeyEntry(Keyboard.KEY_W)

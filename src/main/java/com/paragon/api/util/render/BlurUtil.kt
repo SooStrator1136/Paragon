@@ -10,7 +10,6 @@ import net.minecraft.client.shader.ShaderGroup
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 
 /**
@@ -19,6 +18,7 @@ import org.lwjgl.opengl.GL11.*
  */
 @SideOnly(Side.CLIENT)
 object BlurUtil : Wrapper {
+
     private var lastScale = -1
     private var lastScaleWidth = -1
     private var lastScaleHeight = -1

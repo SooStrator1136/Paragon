@@ -4,6 +4,7 @@ import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.Wrapper
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.player.RotationUtil
@@ -12,6 +13,7 @@ import com.paragon.client.managers.rotation.Rotate
 import com.paragon.client.managers.rotation.Rotation
 import com.paragon.client.managers.rotation.RotationPriority
 import net.minecraft.init.Blocks
+import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketPlayerDigging
 import net.minecraft.util.math.BlockPos
 
@@ -55,16 +57,26 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
 
         if (timer.hasMSPassed(delay.value) && toRemove.isNotEmpty()) {
             val blockPos = toRemove.removeFirst()
-            val toDestroy = RotationUtil.getRotationToBlockPos(blockPos, 0.5)
+            val rotation = RotationUtil.getRotationToBlockPos(blockPos, 0.5)
 
-            Paragon.INSTANCE.rotationManager.addRotation(
-                Rotation(
-                    toDestroy.x,
-                    toDestroy.y,
-                    rotateMode.value,
-                    RotationPriority.HIGH
+            if (rotateMode.value == Rotate.LEGIT) {
+                Paragon.INSTANCE.rotationManager.addRotation(
+                    Rotation(
+                        rotation.x,
+                        rotation.y,
+                        rotateMode.value,
+                        RotationPriority.HIGH
+                    )
                 )
-            )
+            } else if (rotateMode.value == Rotate.PACKET) {
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Rotation(
+                        rotation.x,
+                        rotation.y,
+                        Wrapper.mc.player.onGround
+                    )
+                )
+            }
 
             minecraft.objectMouseOver.sideHit
 

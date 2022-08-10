@@ -25,14 +25,23 @@ import java.awt.Color
  */
 object TargetHUD : HUDModule("TargetHUD", "") {
 
-    private val scale = Setting("Size", 1.0, 0.1, 2.0, 0.1)
-        .setDescription("Size of the module")
+    private val scale = Setting(
+        "Size",
+        1.0,
+        0.1,
+        2.0,
+        0.1
+    ) describedBy "Size of the module"
 
-    private val color = Setting("Color", Color.BLACK.integrateAlpha(75F))
-        .setDescription("Background color")
+    private val color = Setting("Color", Color.BLACK.integrateAlpha(75F)) describedBy "Background color"
 
-    private val clearDelay = Setting("Delay", 100.0, 50.0, 2000.0, 50.0)
-        .setDescription("Delay to switch/clear the target")
+    private val clearDelay = Setting(
+        "Delay",
+        100.0,
+        50.0,
+        2000.0,
+        50.0
+    ) describedBy "Delay to switch/clear the target"
 
     private var target: Entity? = null
 

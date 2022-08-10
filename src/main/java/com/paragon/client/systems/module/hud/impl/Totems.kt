@@ -16,8 +16,7 @@ object Totems : HUDModule("Totems", "Displays the amount of totems in your inven
     override fun render() {
         drawRect(x, y, width, height, 0x70000000)
         drawBorder(x, y, width, height, 1f, Colours.mainColour.value.rgb)
-        val itemStack = ItemStack(Items.TOTEM_OF_UNDYING, getTotemAmount())
-        renderItemStack(itemStack, x + 1, y + 2, true)
+        renderItemStack(ItemStack(Items.TOTEM_OF_UNDYING, getTotemAmount()), x + 1, y + 2, true)
     }
 
     override var width = 19F
@@ -28,8 +27,7 @@ object Totems : HUDModule("Totems", "Displays the amount of totems in your inven
         var count = 0
 
         for (i in 0..35) {
-            val itemStack = minecraft.player.inventory.getStackInSlot(i)
-            if (itemStack.item === Items.TOTEM_OF_UNDYING) {
+            if (minecraft.player.inventory.getStackInSlot(i).item === Items.TOTEM_OF_UNDYING) {
                 count++
             }
         }

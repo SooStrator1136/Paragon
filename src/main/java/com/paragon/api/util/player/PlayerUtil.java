@@ -42,10 +42,10 @@ public final class PlayerUtil implements Wrapper {
         if (mover != null) {
             if (forward != 0) {
                 if (strafe >= 1) {
-                    playerYaw += (float) (forward > 0 ? -45 : 45);
+                    playerYaw += (forward > 0 ? -45 : 45);
                     strafe = 0;
                 } else if (strafe <= -1) {
-                    playerYaw += (float) (forward > 0 ? 45 : -45);
+                    playerYaw += (forward > 0 ? 45 : -45);
                     strafe = 0;
                 }
 

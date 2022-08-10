@@ -23,13 +23,13 @@ import java.awt.Color
  */
 object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
 
-    private val scale = Setting("Size", 1.0, 0.5, 5.0, 0.1)
-        .setDescription("The size of the PotionHUD")
+    private val scale = Setting("Size", 1.0, 0.5, 5.0, 0.1) describedBy "The size of the PotionHUD"
 
     private val mode = Setting("Mode", Mode.INVENTORY)
 
-    private val rainbowSpeed = Setting("Rainbow speed", 20F, 5F, 50F, 2.5F)
-        .setVisibility { mode.value == Mode.PYRO }
+    private val rainbowSpeed = Setting("Rainbow speed", 20F, 5F, 50F, 2.5F) visibleWhen { mode.value == Mode.PYRO }
+    private val showBg = Setting("Background", true) visibleWhen { mode.value == Mode.PYRO }
+    private val syncTextColor = Setting("Sync text", false) visibleWhen { mode.value == Mode.PYRO }
 
     private val offset = Setting("Offset", 0F, 0F, 10F, 1F)
         .setDescription("The offset between the effects")
@@ -132,21 +132,23 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                             )
                         )
 
-                        RenderUtil.drawRect(
-                            x,
-                            effectY,
-                            maxWidth,
-                            FontUtil.getHeight() + 1F,
-                            color.integrateAlpha(100F).rgb
-                        )
-                        RenderUtil.drawBorder(
-                            x,
-                            effectY,
-                            maxWidth,
-                            FontUtil.getHeight() + 1F,
-                            1F,
-                            color.darker().rgb
-                        )
+                        if (showBg.value) {
+                            RenderUtil.drawRect(
+                                x,
+                                effectY,
+                                maxWidth,
+                                FontUtil.getHeight() + 1F,
+                                color.integrateAlpha(100F).rgb
+                            )
+                            RenderUtil.drawBorder(
+                                x,
+                                effectY,
+                                maxWidth,
+                                FontUtil.getHeight() + 1F,
+                                1F,
+                                color.darker().rgb
+                            )
+                        }
 
                         val scaleFac = FontUtil.getHeight() / 18.0
                         scaleTo(x, effectY, 0F, scaleFac, scaleFac, 1.0) {
@@ -174,7 +176,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                             ) + " ${Potion.getPotionDurationString(effect, 1F)}",
                             x + FontUtil.getHeight() + 1F,
                             effectY + 1F,
-                            -1
+                            if (syncTextColor.value) color.rgb else -1
                         )
 
                         effectY += FontUtil.getHeight() + offset.value + 2F
@@ -188,8 +190,6 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
 
     //Pasted from Gui class
     private fun drawTexturedModalRect(x: Int, y: Int, textureX: Int, textureY: Int, width: Int, height: Int) {
-        val f = 0.00390625f
-        val f1 = 0.00390625f
         val tessellator = Tessellator.getInstance()
         val bufferbuilder = tessellator.buffer
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX)

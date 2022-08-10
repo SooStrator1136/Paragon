@@ -8,6 +8,8 @@ import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import net.minecraft.block.BlockLiquid
 import net.minecraft.init.Blocks
 import net.minecraft.util.math.BlockPos
@@ -27,26 +29,32 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
     //Might fuck up performance 🤷
     private val sources: MutableList<BlockPos> = CopyOnWriteArrayList()
 
+    private var lastJob: Job? = null
+
     override fun onTick() {
         if (minecraft.anyNull) {
             return
         }
 
         backgroundThread {
-            sources.addAll(BlockUtil.getSphere(range.value, true).filter {
-                !sources.contains(it)
-                        && BlockUtil.getBlockAtPos(it) is BlockLiquid
-                        && minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) == 0
-            })
+            if (lastJob == null || lastJob!!.isCompleted) {
+                lastJob = launch {
+                    sources.addAll(BlockUtil.getSphere(range.value, true).filter {
+                        !sources.contains(it)
+                                && BlockUtil.getBlockAtPos(it) is BlockLiquid
+                                && minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) == 0
+                    })
 
-            sources.removeIf {
-                BlockUtil.getBlockAtPos(it) !is BlockLiquid
-                        || minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) != 0
-                        || it.getDistance(
-                    minecraft.player.posX.toInt(),
-                    minecraft.player.posY.toInt(),
-                    minecraft.player.posZ.toInt()
-                ) > range.value
+                    sources.removeIf {
+                        BlockUtil.getBlockAtPos(it) !is BlockLiquid
+                                || minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) != 0
+                                || it.getDistance(
+                            minecraft.player.posX.toInt(),
+                            minecraft.player.posY.toInt(),
+                            minecraft.player.posZ.toInt()
+                        ) > range.value
+                    }
+                }
             }
         }
     }
@@ -61,6 +69,7 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
     }
 
     override fun onDisable() {
+        lastJob = null
         sources.clear()
     }
 

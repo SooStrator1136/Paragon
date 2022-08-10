@@ -307,11 +307,12 @@ object RenderUtil : Wrapper {
             glVertex2d(x + outer[0], y + outer[1])
             glEnd()
         }
+
         GlStateManager.alphaFunc(GL_GREATER, 0.1f)
         GlStateManager.color(1f, 1f, 1f, 1f)
         GlStateManager.disableBlend()
         GlStateManager.enableTexture2D()
-        glLineWidth(1f)
+        glLineWidth(1F)
     }
 
     /**
