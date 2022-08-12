@@ -29,8 +29,8 @@ public class Step extends Module {
 
         put(0.875, new double[] { 0.39, 0.7, 0.875 });
         put(1.0, new double[] { 0.42, 0.75, 1.0 });
-
-        // you can add the rest of ur step positions here
+        put(1.5, new double[] { 0.42, 0.78, 0.63, 0.51, 0.9, 1.21, 1.45, 1.43 });
+        put(2.0, new double[] { 0.425, 0.821, 0.699, 0.599, 1.022, 1.372, 1.652, 1.869, 2.019, 1.919 });
     }};
 
     public static Step INSTANCE;
@@ -72,9 +72,7 @@ public class Step extends Module {
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {
-        if (nullCheck() ||
-                // wtf
-                !isEnabled()) {
+        if (nullCheck()) {
             return;
         }
 
@@ -96,7 +94,7 @@ public class Step extends Module {
 
     @Listener
     public void onStep(StepEvent event) {
-        if (mode.getValue().equals(Mode.NCP) && event.getEntity().equals(mc.player)) {
+        if (mode.getValue().equals(Mode.NCP) && event.getEntity().equals(mc.player) && !mc.player.capabilities.isFlying) {
             double height = event.getBB().minY - mc.player.posY;
 
             // don't step if there are any flagging conditions
