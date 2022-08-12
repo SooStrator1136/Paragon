@@ -28,66 +28,96 @@ import kotlin.math.floor
  */
 object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your offhand") {
 
-    private val item = Setting("Item", EnumItem.CRYSTAL)
-        .setDescription("The item to prioritise in your offhand")
+    private val item = Setting(
+        "Item",
+        EnumItem.CRYSTAL
+    ) describedBy "The item to prioritise in your offhand"
 
-    private val fallback = Setting("Fallback", EnumItem.GAPPLE)
-        .setDescription("The item to fallback to if the priority item isn't found")
+    private val fallback = Setting(
+        "Fallback",
+        EnumItem.GAPPLE
+    ) describedBy "The item to fallback to if the priority item isn't found"
 
-    private val keySwap = Setting("KeySwap", EnumItem.TOTEM)
-        .setDescription("Swap the item in your offhand when you press a key")
+    private val keySwap = Setting(
+        "KeySwap",
+        EnumItem.TOTEM
+    ) describedBy "Swap the item in your offhand when you press a key"
 
-    private val key = Setting("Key", Bind(0, Device.KEYBOARD))
-        .setDescription("The key to press to swap the item in your offhand")
-        .setParentSetting(keySwap)
+    private val key = Setting(
+        "Key",
+        Bind(0, Device.KEYBOARD)
+    ) describedBy "The key to press to swap the item in your offhand" subOf keySwap
 
-    private val overrideSafety = Setting("OverrideSafety", false)
-        .setDescription("Override the safety check to swap the item in your offhand")
-        .setParentSetting(keySwap)
+    private val overrideSafety = Setting(
+        "OverrideSafety",
+        false
+    ) describedBy "Override the safety check to swap the item in your offhand" subOf keySwap
 
-    private val dynamicGapple = Setting("DynamicGapple", DynamicGapple.SWORD)
-        .setDescription("When to dynamically switch to a gapple")
+    private val dynamicGapple = Setting(
+        "DynamicGapple",
+        DynamicGapple.SWORD
+    ) describedBy "When to dynamically switch to a gapple"
 
-    private val safety = Setting("Safety", true)
-        .setDescription("Switch to a totem in dangerous situations")
+    private val safety = Setting(
+        "Safety",
+        true
+    ) describedBy "Switch to a totem in dangerous situations"
 
-    private val health = Setting("Health", true)
-        .setDescription("Switch to a totem when you are low on health")
-        .setParentSetting(safety)
+    private val health = Setting(
+        "Health",
+        true
+    ) describedBy "Switch to a totem when you are low on health" subOf safety
 
-    private val healthValue = Setting("HealthValue", 10f, 0f, 20f, 1f)
-        .setDescription("The health value for when to switch to a totem")
-        .setParentSetting(safety)
-        .setVisibility(health::value)
+    private val healthValue = Setting(
+        "HealthValue",
+        10f,
+        0f,
+        20f,
+        1f
+    ) describedBy "The health value for when to switch to a totem" subOf safety visibleWhen health::value
 
-    private val falling = Setting("Falling", true)
-        .setDescription("Switch to a totem when you are falling")
-        .setParentSetting(safety)
+    private val falling = Setting(
+        "Falling",
+        true
+    ) describedBy "Switch to a totem when you are falling" subOf safety
 
-    private val elytra = Setting("Elytra", true)
-        .setDescription("Switch to a totem when you are flying")
-        .setParentSetting(safety)
+    private val elytra = Setting(
+        "Elytra",
+        true
+    ) describedBy "Switch to a totem when you are flying" subOf safety
 
-    private val lava = Setting("Lava", true)
-        .setDescription("Switch to a totem when you are in lava")
-        .setParentSetting(safety)
+    private val lava = Setting(
+        "Lava",
+        true
+    ) describedBy "Switch to a totem when you are in lava" subOf safety
 
-    private val fire = Setting("Fire", false)
-        .setDescription("Switch to a totem when you are on fire")
-        .setParentSetting(safety)
+    private val fire = Setting(
+        "Fire",
+        false
+    ) describedBy "Switch to a totem when you are on fire" subOf safety
 
-    private val crystal = Setting("Crystal", true)
-        .setDescription("Switch to a totem when in vicinity of a potentially deadly crystal")
-        .setParentSetting(safety)
+    private val crystal = Setting(
+        "Crystal",
+        true
+    ) describedBy "Switch to a totem when in vicinity of a potentially deadly crystal" subOf safety
 
-    private val delay = Setting("Delay", 5f, 0f, 200f, 1f)
-        .setDescription("The delay before switching items")
+    private val delay = Setting(
+        "Delay",
+        5f,
+        0f,
+        200f,
+        1f
+    ) describedBy "The delay before switching items"
 
-    private val stopMotion = Setting("StopMotion", true)
-        .setDescription("Stop the player when swapping")
+    private val stopMotion = Setting(
+        "StopMotion",
+        true
+    ) describedBy "Stop the player when swapping"
 
-    private val inventorySpoof = Setting("InventorySpoof", true)
-        .setDescription("Spoof opening your inventory")
+    private val inventorySpoof = Setting(
+        "InventorySpoof",
+        true
+    ) describedBy "Spoof opening your inventory"
 
     private val swapTimer = Timer()
 

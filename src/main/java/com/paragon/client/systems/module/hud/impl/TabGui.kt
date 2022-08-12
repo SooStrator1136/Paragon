@@ -5,7 +5,6 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.Timer
-import com.paragon.api.util.render.ColourUtil.fade
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDModule
@@ -22,13 +21,18 @@ import java.awt.Color
  */
 object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
 
-    private val color = Setting("Color", Colours.mainColour.value)
-        .setDescription("Color that will be used in most of the styles")
-    private val style = Setting("Style", ClickGUI.style.value)
-        .setDescription("Style of the TabGui")
-    private val background = Setting("Background", Color(100, 100, 100, 150))
-        .setParentSetting(style)
-        .setVisibility { style.value == ClickGUI.Style.ZERODAY }
+    private val color = Setting(
+        "Color",
+        Colours.mainColour.value
+    ) describedBy "Color that will be used in most of the styles"
+    private val style = Setting(
+        "Style",
+        ClickGUI.style.value
+    ) describedBy "Style of the TabGui"
+    private val background = Setting(
+        "Background",
+        Color(100, 100, 100, 150)
+    ) subOf style visibleWhen { style.value == ClickGUI.Style.ZERODAY }
 
     private var focusedModule: Module? = null
     private var shownModules: Array<Module>? = null

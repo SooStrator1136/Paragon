@@ -17,17 +17,25 @@ import net.minecraft.util.SoundCategory
 object NoGlobalSounds : Module("NoGlobalSounds", Category.MISC, "Prevents global sounds from playing") {
 
     // Sounds to cancel
-    private val endPortal = Setting("EndPortal", true)
-        .setDescription("Disables the end portal spawn sound")
+    private val endPortal = Setting(
+        "EndPortal",
+        true
+    ) describedBy "Disables the end portal spawn sound"
 
-    private val witherSpawn = Setting("WitherSpawn", true)
-        .setDescription("Disables the wither spawn sound")
+    private val witherSpawn = Setting(
+        "WitherSpawn",
+        true
+    ) describedBy "Disables the wither spawn sound"
 
-    private val dragonDeath = Setting("DragonDeath", true)
-        .setDescription("Disables the dragon death sound")
+    private val dragonDeath = Setting(
+        "DragonDeath",
+        true
+    ) describedBy "Disables the dragon death sound"
 
-    private val lightning = Setting("Lightning", true)
-        .setDescription("Disables the lightning sound")
+    private val lightning = Setting(
+        "Lightning",
+        true
+    ) describedBy "Disables the lightning sound"
 
     @Listener
     fun onPacketReceive(event: PreReceive) {

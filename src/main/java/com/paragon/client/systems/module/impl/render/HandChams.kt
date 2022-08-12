@@ -18,27 +18,43 @@ import java.awt.Color
  */
 object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour") {
 
-    private val mode = Setting("Mode", Mode.WIRE_MODEL)
-        .setDescription("The render mode to use")
+    private val mode = Setting(
+        "Mode",
+        Mode.WIRE_MODEL
+    ) describedBy "The render mode to use"
 
-    private val texture = Setting("Texture", false)
-        .setDescription("Render the entity's texture")
+    private val texture = Setting(
+        "Texture",
+        false
+    ) describedBy "Render the entity's texture"
 
-    private val lighting = Setting("Lighting", true)
-        .setDescription("Disables lighting")
+    private val lighting = Setting(
+        "Lighting",
+        true
+    ) describedBy "Disables lighting"
 
-    private val blend = Setting("Blend", true)
-        .setDescription("Enables blending")
+    private val blend = Setting(
+        "Blend",
+        true
+    ) describedBy "Enables blending"
 
-    private val transparent = Setting("Transparent", true)
-        .setDescription("Enables transparency on models")
+    private val transparent = Setting(
+        "Transparent",
+        true
+    ) describedBy "Enables transparency on models"
 
-    private val width = Setting("Width", 1f, 0.1f, 3f, 0.1f)
-        .setDescription("The width of the outline")
-        .setVisibility { mode.value != Mode.MODEL }
+    private val width = Setting(
+        "Width",
+        1f,
+        0.1f,
+        3f,
+        0.1f
+    ) describedBy "The width of the outline" visibleWhen { mode.value != Mode.MODEL }
 
-    private val colour = Setting("Colour", Color(185, 17, 255))
-        .setDescription("The colour of the hand")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255)
+    ) describedBy "The colour of the hand"
 
     @Listener
     fun onRenderLeftPre(event: RenderArmEvent.LeftArmPre) {
@@ -85,7 +101,12 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
             }
 
             if (mode.value == Mode.WIRE_MODEL) {
-                glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f)
+                glColor4f(
+                    colour.value.red / 255f,
+                    colour.value.green / 255f,
+                    colour.value.blue / 255f,
+                    colour.alpha / 255f
+                )
 
                 glLineWidth(width.value)
                 renderLeftArm(event.player, event.useSmallArms)
@@ -166,7 +187,12 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
             }
 
             if (mode.value == Mode.WIRE_MODEL) {
-                glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f)
+                glColor4f(
+                    colour.value.red / 255f,
+                    colour.value.green / 255f,
+                    colour.value.blue / 255f,
+                    colour.alpha / 255f
+                )
 
                 renderRightArm(event.player, event.useSmallArms)
 

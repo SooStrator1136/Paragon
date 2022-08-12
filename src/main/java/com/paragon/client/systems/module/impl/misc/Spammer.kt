@@ -8,8 +8,13 @@ import java.io.File
 
 object Spammer : Module("Spammer", Category.MISC, "Spams messages in chat (defined in spammer.txt)") {
 
-    private val delay = Setting("Delay", 1f, 0.1f, 10f, 0.1f)
-        .setDescription("Delay between messages (in minutes)")
+    private val delay = Setting(
+        "Delay",
+        1f,
+        0.1f,
+        10f,
+        0.1f
+    ) describedBy "Delay between messages (in minutes)"
 
     private var lines: Array<String> = arrayOf()
     private var lastMS: Long = 0L

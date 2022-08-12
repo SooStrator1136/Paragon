@@ -11,10 +11,14 @@ import com.paragon.api.util.string.StringUtil
  */
 object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
 
-    private val mode = Setting("Mode", Mode.LEGIT).setDescription("The mode to sprint in")
-    private val onlyWhenMoving = Setting("WhenMoving", true)
-        .setDescription("Only omni sprint when actually moving")
-        .setVisibility { mode.value === Mode.OMNI }
+    private val mode = Setting(
+        "Mode",
+        Mode.LEGIT
+    ) describedBy "The mode to sprint in"
+    private val onlyWhenMoving = Setting(
+        "WhenMoving",
+        true
+    ) describedBy "Only omni sprint when actually moving" visibleWhen { mode.value === Mode.OMNI }
 
     override fun onDisable() {
         // Stop sprinting when we disable
@@ -37,7 +41,7 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
         }
     }
 
-    override fun getData(): String = StringUtil.getFormattedText(mode.value)
+    override fun getData() = StringUtil.getFormattedText(mode.value)
 
     enum class Mode {
 

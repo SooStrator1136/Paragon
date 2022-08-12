@@ -21,18 +21,26 @@ import kotlin.math.sin
 object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :((") {
 
     // Colours
-    private val topColour = Setting("TopColour", Color(185, 17, 255, 180))
-        .setDescription("The top colour of the hat")
+    private val topColour = Setting(
+        "TopColour",
+        Color(185, 17, 255, 180)
+    ) describedBy "The top colour of the hat"
 
-    private val bottomColour = Setting("BottomColour", Color(185, 17, 255, 180))
-        .setDescription("The bottom colour of the hat")
+    private val bottomColour = Setting(
+        "BottomColour",
+        Color(185, 17, 255, 180)
+    ) describedBy "The bottom colour of the hat"
 
     // Settings
-    private val firstPerson = Setting("FirstPerson", false)
-        .setDescription("Render the hat in first person")
+    private val firstPerson = Setting(
+        "FirstPerson",
+        false
+    ) describedBy "Render the hat in first person"
 
-    private val others = Setting("Others", true)
-        .setDescription("Render the hat on other players")
+    private val others = Setting(
+        "Others",
+        true
+    ) describedBy "Render the hat on other players"
 
     override fun onRender3D() {
         if (minecraft.anyNull) {

@@ -4,7 +4,6 @@ import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.Wrapper
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.player.RotationUtil
@@ -22,8 +21,13 @@ import net.minecraft.util.math.BlockPos
  */
 object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers") {
 
-    private val range = Setting("Range", 4F, 1F, 7F, 0.1F)
-        .setDescription("The range in which to remove lawn")
+    private val range = Setting(
+        "Range",
+        4F,
+        1F,
+        7F,
+        0.1F
+    ) describedBy "The range in which to remove lawn"
 
     private val delay = Setting("Delay", 100.0, 0.0, 1000.0, 10.0)
 
@@ -38,7 +42,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
     private val timer = Timer()
     private val toRemove = ArrayDeque<BlockPos>()
 
-    override fun onTick() {
+    override fun onTick() { //TODO use coroutine for blocks
         if (minecraft.anyNull) {
             return
         }
@@ -73,7 +77,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
                     CPacketPlayer.Rotation(
                         rotation.x,
                         rotation.y,
-                        Wrapper.mc.player.onGround
+                        minecraft.player.onGround
                     )
                 )
             }

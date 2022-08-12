@@ -10,19 +10,28 @@ import net.minecraft.network.play.server.SPacketTimeUpdate
 
 object CustomWorld : Module("CustomWorld", Category.MISC, "Changes the way the world is shown client side") {
 
-    private val customWeather = Setting<Boolean?>("CustomWeather", true)
-        .setDescription("Set the world weather to a custom value")
+    private val customWeather = Setting(
+        "CustomWeather",
+        true
+    ) describedBy "Set the world weather to a custom value"
 
-    private val weather = Setting("Weather", Weather.CLEAR)
-        .setDescription("The weather to display")
-        .setParentSetting(customWeather)
+    private val weather = Setting(
+        "Weather",
+        Weather.CLEAR
+    ) describedBy "The weather to display" subOf customWeather
 
-    private val customTime = Setting<Boolean?>("CustomTime", true)
-        .setDescription("Set the world time to a custom value")
+    private val customTime = Setting(
+        "CustomTime",
+        true
+    ) describedBy "Set the world time to a custom value"
 
-    private val time = Setting("Time", 1000f, 0f, 24000f, 1f)
-        .setDescription("The time of day")
-        .setParentSetting(customTime)
+    private val time = Setting(
+        "Time",
+        1000f,
+        0f,
+        24000f,
+        1f
+    ) describedBy "The time of day" subOf customTime
 
     override fun onTick() {
         if (minecraft.anyNull) {

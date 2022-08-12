@@ -33,7 +33,10 @@ object TargetHUD : HUDModule("TargetHUD", "") {
         0.1
     ) describedBy "Size of the module"
 
-    private val color = Setting("Color", Color.BLACK.integrateAlpha(75F)) describedBy "Background color"
+    private val color = Setting(
+        "Color",
+        Color.BLACK.integrateAlpha(75F)
+    ) describedBy "Background color"
 
     private val clearDelay = Setting(
         "Delay",

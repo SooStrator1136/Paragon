@@ -31,72 +31,111 @@ import kotlin.math.sin
  */
 object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") {
 
-    private val mode = Setting("Mode", Mode.WIRE_MODEL)
-        .setDescription("The render mode to use")
+    private val mode = Setting(
+        "Mode",
+        Mode.WIRE_MODEL
+    ) describedBy "The render mode to use"
 
-    private val width = Setting("Width", 1f, 0.1f, 3f, 0.1f)
-        .setDescription("The width of the lines")
-        .setVisibility { mode.value != Mode.MODEL }
+    private val width = Setting(
+        "Width",
+        1f,
+        0.1f,
+        3f,
+        0.1f
+    ) describedBy "The width of the lines" visibleWhen { mode.value != Mode.MODEL }
 
     // Entity filters
-    private val players = Setting("Players", true)
-        .setDescription("Highlight players")
+    private val players = Setting(
+        "Players",
+        true
+    ) describedBy "Highlight players"
 
-    private val mobs = Setting("Mobs", true)
-        .setDescription("Highlight mobs")
+    private val mobs = Setting(
+        "Mobs",
+        true
+    ) describedBy "Highlight mobs"
 
-    private val passives = Setting("Passives", true)
-        .setDescription("Highlight passives")
+    private val passives = Setting(
+        "Passives",
+        true
+    ) describedBy "Highlight passives"
 
     // Crystals
-    private val crystals = Setting("Crystals", true)
-        .setDescription("Highlight crystals")
+    private val crystals = Setting(
+        "Crystals",
+        true
+    ) describedBy "Highlight crystals"
 
-    private val bounce = Setting("Bounce", false)
-        .setDescription("Make the crystals bounce like they do in vanilla")
+    private val bounce = Setting(
+        "Bounce",
+        false
+    ) describedBy "Make the crystals bounce like they do in vanilla"
 
-    private val scaleSetting = Setting("Scale", 0.6f, 0.0f, 1f, 0.01f)
-        .setDescription("The scale of the crystal")
-        .setParentSetting(crystals)
+    private val scaleSetting = Setting(
+        "Scale",
+        0.6f,
+        0.0f,
+        1f,
+        0.01f
+    ) describedBy "The scale of the crystal" subOf crystals
 
-    private val rubiks = Setting("Rubik's Cube", false)
-        .setDescription("Make end crystals look like Rubik's cubes")
-        .setParentSetting(crystals)
+    private val rubiks = Setting(
+        "Rubik's Cube",
+        false
+    ) describedBy "Make end crystals look like Rubik's cubes" subOf crystals
 
-    private val time = Setting("Time", 400f, 200f, 1000f, 1f)
-        .setDescription("The time it takes for a side to rotate")
-        .setParentSetting(crystals)
-        .setVisibility { rubiks.value }
+    private val time = Setting(
+        "Time",
+        400f,
+        200f,
+        1000f,
+        1f
+    ) describedBy "The time it takes for a side to rotate" subOf crystals visibleWhen { rubiks.value }
 
     private val cube = Setting("Cube", true)
         .setDescription("Render the crystal cube")
         .setParentSetting(crystals)
 
-    private val glass = Setting("Glass", true)
-        .setDescription("Render the glass")
-        .setParentSetting(crystals)
+    private val glass = Setting(
+        "Glass",
+        true
+    ) describedBy "Render the glass" subOf crystals
 
     // Render settings
-    private val texture = Setting("Texture", false)
-        .setDescription("Render the entity's texture")
+    private val texture = Setting(
+        "Texture",
+        false
+    ) describedBy "Render the entity's texture"
 
-    private val lighting = Setting("Lighting", true)
-        .setDescription("Disables lighting")
+    private val lighting = Setting(
+        "Lighting",
+        true
+    ) describedBy "Disables lighting"
 
-    private val blend = Setting("Blend", true)
-        .setDescription("Enables blending")
+    private val blend = Setting(
+        "Blend",
+        true
+    ) describedBy "Enables blending"
 
-    private val transparent = Setting("Transparent", true)
-        .setDescription("Enables transparency on models")
+    private val transparent = Setting(
+        "Transparent",
+        true
+    ) describedBy "Enables transparency on models"
 
-    private val depth = Setting("Depth", true)
-        .setDescription("Enables depth")
+    private val depth = Setting(
+        "Depth",
+        true
+    ) describedBy "Enables depth"
 
-    private val walls = Setting("Walls", true)
-        .setDescription("Render entities through walls")
+    private val walls = Setting(
+        "Walls",
+        true
+    ) describedBy "Render entities through walls"
 
-    private val colour = Setting("Colour", Color(185, 17, 255, 85))
-        .setDescription("The colour of the highlight")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255, 85)
+    ) describedBy "The colour of the highlight"
 
     private var rotating = 0
     private var lastTime: Long = 0

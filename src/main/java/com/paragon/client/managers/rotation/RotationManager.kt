@@ -38,13 +38,9 @@ class RotationManager : Wrapper {
             return
         }
 
+        rotationsQueue.removeIf { it.rotate == Rotate.NONE }
+
         if (rotationsQueue.isNotEmpty()) {
-
-            rotationsQueue.removeIf { it.rotate == Rotate.NONE }
-
-            if (rotationsQueue.isEmpty()) {
-                return
-            }
 
             rotationsQueue.sortBy { it.priority.priority }
 

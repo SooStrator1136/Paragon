@@ -14,8 +14,10 @@ import net.minecraft.potion.PotionEffect
  */
 object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightness beyond vanilla values") {
 
-    private val mode = Setting("Mode", Mode.GAMMA)
-        .setDescription("The mode to use for the brightness")
+    private val mode = Setting(
+        "Mode",
+        Mode.GAMMA
+    ) describedBy "The mode to use for the brightness"
 
     private var originalGamma = 0f
 

@@ -47,41 +47,60 @@ import java.util.function.Consumer
 object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") {
 
     // Entity filters
-    private val passive = Setting("Passives", true)
-        .setDescription("Highlight passive entities")
+    private val passive = Setting(
+        "Passives",
+        true
+    ) describedBy "Highlight passive entities"
 
-    private val mobs = Setting("Mobs", true)
-        .setDescription("Highlight mobs")
+    private val mobs = Setting(
+        "Mobs",
+        true
+    ) describedBy "Highlight mobs"
 
-    private val players = Setting("Players", true)
-        .setDescription("Highlight player entities")
+    private val players = Setting(
+        "Players",
+        true
+    ) describedBy "Highlight player entities"
 
-    private val items = Setting("Items", true)
-        .setDescription("Highlight items")
+    private val items = Setting(
+        "Items",
+        true
+    ) describedBy "Highlight items"
 
-    private val crystals = Setting("Crystals", true)
-        .setDescription("Highlight crystals")
+    private val crystals = Setting(
+        "Crystals",
+        true
+    ) describedBy "Highlight crystals"
 
     // Render settings
-    private val mode = Setting("Mode", Mode.SHADER)
-        .setDescription("How to render the entities")
+    private val mode = Setting(
+        "Mode",
+        Mode.SHADER
+    ) describedBy "How to render the entities"
 
-    private val lineWidth = Setting("LineWidth", 1f, 0.1f, 3f, 0.1f)
-        .setDescription("How thick to render the outlines")
+    private val lineWidth = Setting(
+        "LineWidth",
+        1f,
+        0.1f,
+        3f,
+        0.1f
+    ) describedBy "How thick to render the outlines"
 
     // Outline shader
-    private val outline = Setting("Outline", true)
-        .setDescription("Outline the fill")
-        .setParentSetting(mode)
-        .setVisibility { mode.value == Mode.SHADER }
+    private val outline = Setting(
+        "Outline",
+        true
+    ) describedBy "Outline the fill" subOf mode visibleWhen { mode.value == Mode.SHADER }
 
-    private val fill = Setting("Fill", true)
-        .setDescription("Fill the outline")
-        .setParentSetting(mode)
-        .setVisibility { mode.value == Mode.SHADER }
+    private val fill = Setting(
+        "Fill",
+        true
+    ) describedBy "Fill the outline" subOf mode visibleWhen { mode.value == Mode.SHADER }
 
-    private val colour = Setting("Colour", Color(185, 17, 255))
-        .setDescription("The colour to highlight items in")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255)
+    ) describedBy "The colour to highlight items in"
 
     // Shaders
     private val outlineShader = OutlineShader()

@@ -98,7 +98,12 @@ public final class HoleFill extends Module {
 
         positions.clear();
 
-        List<BlockPos> valid = BlockUtil.getSphere(range.getValue(), false).stream().filter(block -> attemptedPositions.getOrDefault(block, 0) < 3 && BlockUtil.isSafeHole(block, obsidianBedrock.getValue()) && BlockUtil.canSeePos(block) && mc.player.getPosition() != block).sorted(Comparator.comparingDouble(block -> mc.player.getDistanceSq(block))).collect(Collectors.toList());
+        List<BlockPos> valid = BlockUtil.getSphere(range.getValue(), false).stream().filter(block ->
+                attemptedPositions.getOrDefault(block, 0) < 3
+                        && BlockUtil.isSafeHole(block, obsidianBedrock.getValue())
+                        && BlockUtil.canSeePos(block)
+                        && mc.player.getPosition() != block
+        ).sorted(Comparator.comparingDouble(block -> mc.player.getDistanceSq(block))).collect(Collectors.toList());
 
         Collections.reverse(valid);
 

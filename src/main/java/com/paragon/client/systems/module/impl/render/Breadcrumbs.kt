@@ -17,21 +17,36 @@ import java.util.function.Consumer
  */
 object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behind you") {
 
-    private val infinite = Setting("Infinite", false)
-        .setDescription("Breadcrumbs last forever")
+    private val infinite = Setting(
+        "Infinite",
+        false
+    ) describedBy "Breadcrumbs last forever"
 
-    private val lifespanValue = Setting("Lifespan", 100f, 1f, 1000f, 1f)
-        .setDescription("The lifespan of the positions in ticks")
-        .setVisibility { !infinite.value }
+    private val lifespanValue = Setting(
+        "Lifespan",
+        100f,
+        1f,
+        1000f,
+        1f
+    ) describedBy "The lifespan of the positions in ticks" visibleWhen { !infinite.value }
 
-    private val lineWidth = Setting("LineWidth", 1f, 0.1f, 5f, 0.1f)
-        .setDescription("The width of the lines")
+    private val lineWidth = Setting(
+        "LineWidth",
+        1f,
+        0.1f,
+        5f,
+        0.1f
+    ) describedBy "The width of the lines"
 
-    private val colour = Setting("Colour", Color(185, 17, 255))
-        .setDescription("The colour of the breadcrumbs")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255)
+    ) describedBy "The colour of the breadcrumbs"
 
-    private val rainbow = Setting("Rainbow", true)
-        .setDescription("Makes the trail a rainbow")
+    private val rainbow = Setting(
+        "Rainbow",
+        true
+    ) describedBy "Makes the trail a rainbow"
 
     private val positions = LinkedList<Position>()
     private var colourHue = 0

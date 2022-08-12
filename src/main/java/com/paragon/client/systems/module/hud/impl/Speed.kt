@@ -17,7 +17,10 @@ import kotlin.math.hypot
  */
 object Speed : HUDModule("Speed", "Displays your current speed") {
 
-    private val unit = Setting("Unit", Unit.BPS) describedBy "The unit to display the speed in"
+    private val unit = Setting(
+        "Unit",
+        Unit.BPS
+    ) describedBy "The unit to display the speed in"
 
     override fun render() {
         drawStringWithShadow(

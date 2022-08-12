@@ -1,15 +1,15 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.managers.rotation.Rotate;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -35,31 +35,31 @@ public class Surround extends Module {
     public static Surround INSTANCE;
 
     // General settings
-    public static Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
+    private static final Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
             .setDescription("When to automatically disable the module");
 
-    public static Setting<Double> blocksPerTick = new Setting<>("BlocksPerTick", 4D, 1D, 10D, 1D)
+    private static final Setting<Double> blocksPerTick = new Setting<>("BlocksPerTick", 4D, 1D, 10D, 1D)
             .setDescription("The maximum amount of blocks to be placed per tick");
 
-    public static Setting<Center> center = new Setting<>("Center", Center.MOTION)
+    private static final Setting<Center> center = new Setting<>("Center", Center.MOTION)
             .setDescription("Center the player on the block when enabled");
 
-    public static Setting<Air> air = new Setting<>("Air", Air.SUPPORT)
+    public static final Setting<Air> air = new Setting<>("Air", Air.SUPPORT)
             .setDescription("Place blocks beneath where we are placing");
 
     // Rotate settings
-    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
+    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
             .setDescription("How to rotate the player");
 
-    public static Setting<Boolean> rotateBack = new Setting<>("RotateBack", true)
+    private static final Setting<Boolean> rotateBack = new Setting<>("RotateBack", true)
             .setDescription("Rotate the player back to their original rotation")
             .setParentSetting(rotate);
 
     // Render
-    public static Setting<Boolean> render = new Setting<>("Render", true)
+    public static final Setting<Boolean> render = new Setting<>("Render", true)
             .setDescription("Render a highlight on the positions we need to place blocks at");
 
-    public static Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255, 130))
+    private static final Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255, 130))
             .setDescription("The colour of the highlight")
             .setParentSetting(render);
 

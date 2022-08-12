@@ -22,10 +22,14 @@ import org.lwjgl.input.Mouse
  */
 object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform actions when you middle click") {
 
-    private val friend = Setting("Friend", true)
-        .setDescription("Add a friend when you middle click on an player")
-    private val pearl = Setting("Pearl", true)
-        .setDescription("Throw an ender pearl when you miss an entity")
+    private val friend = Setting(
+        "Friend",
+        true
+    ) describedBy "Add a friend when you middle click on an player"
+    private val pearl = Setting(
+        "Pearl",
+        true
+    ) describedBy "Throw an ender pearl when you miss an entity"
 
     // To prevent excessive spam
     private var hasClicked = false

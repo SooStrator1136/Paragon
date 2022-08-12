@@ -9,8 +9,13 @@ import me.wolfsurge.cerauno.listener.Listener
 
 object ExtraTab : Module("ExtraTab", Category.MISC, "Extends the limit of players on the tab list") {
 
-    private val limit = Setting("Limit", 500f, 1f, 500f, 1f)
-        .setDescription("The limit of players")
+    private val limit = Setting(
+        "Limit",
+        500f,
+        1f,
+        500f,
+        1f
+    ) describedBy "The limit of players"
 
     @Listener
     fun onTabList(event: TabListEvent) {

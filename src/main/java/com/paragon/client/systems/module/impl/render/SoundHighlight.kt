@@ -20,8 +20,10 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object SoundHighlight : Module("SoundHighlight", Category.RENDER, "Highlights the positions of sounds in the world") {
 
-    private val format = Setting("Format", true)
-        .setDescription("Use the translated names rather than the raw sound paths")
+    private val format = Setting(
+        "Format",
+        true
+    ) describedBy "Use the translated names rather than the raw sound paths"
 
     // Map of sounds to render
     private val soundMap: MutableMap<Vec3d, Pair<String, Long>> = ConcurrentHashMap()
@@ -37,7 +39,7 @@ object SoundHighlight : Module("SoundHighlight", Category.RENDER, "Highlights th
         }
 
         // Remove sounds with alpha 0
-        soundMap.entries.removeIf { (_, value): Map.Entry<Vec3d, Pair<String, Long>> -> value.right <= 0 }
+        soundMap.entries.removeIf { (_, value) -> value.right <= 0 }
     }
 
     @Listener

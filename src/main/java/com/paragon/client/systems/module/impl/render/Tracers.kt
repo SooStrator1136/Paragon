@@ -34,14 +34,20 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
         Color(255, 0, 0, 180)
     ) describedBy "The colour to render the mob tracers in" subOf mobs visibleWhen { distance.value != Distance.COLOUR }
 
-    private val players = Setting("Players", true) describedBy "Draws lines to players"
+    private val players = Setting(
+        "Players",
+        true
+    ) describedBy "Draws lines to players"
 
     private val playerColour = Setting(
         "Colour",
         Color(255, 255, 255, 180)
     ) describedBy "The colour to render the player tracers in" subOf players visibleWhen { distance.value != Distance.COLOUR }
 
-    private val crystals = Setting("Crystals", true) describedBy "Draws lines to ender crystals"
+    private val crystals = Setting(
+        "Crystals",
+        true
+    ) describedBy "Draws lines to ender crystals"
 
     private val crystalColour = Setting(
         "Colour",

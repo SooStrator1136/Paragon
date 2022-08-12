@@ -21,10 +21,22 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid source blocks") {
 
-    private val range = Setting("Range", 20F, 5F, 50F, 1F) describedBy "Range to search in"
+    private val range = Setting(
+        "Range",
+        20F,
+        5F,
+        50F,
+        1F
+    ) describedBy "Range to search in"
 
-    private val lavaColor = Setting("Lava color", Color.RED.integrateAlpha(75F))
-    private val waterColor = Setting("Water color", Color.BLUE.integrateAlpha(75F))
+    private val lavaColor = Setting(
+        "Lava color",
+        Color.RED.integrateAlpha(75F)
+    ) describedBy "Color with which lava will be highlighted"
+    private val waterColor = Setting(
+        "Water color",
+        Color.BLUE.integrateAlpha(75F)
+    ) describedBy "Color with which water will be highlighted"
 
     //Might fuck up performance 🤷
     private val sources: MutableList<BlockPos> = CopyOnWriteArrayList()

@@ -21,24 +21,35 @@ import java.util.concurrent.CopyOnWriteArrayList
 object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a length of time") {
 
     // General
-    private val mode = Setting<Mode?>("Mode", Mode.PACKETS_QUEUED)
-        .setDescription("When to send queued packets")
+    private val mode = Setting(
+        "Mode",
+        Mode.PACKETS_QUEUED
+    ) describedBy "When to send queued packets"
 
     // Packet queue flush settings
-    private val queueLength = Setting("QueueLength", 50.0, 1.0, 1000.0, 1.0)
-        .setDescription("The size of the queue to start sending packets")
-        .setParentSetting(mode)
-        .setVisibility { mode.value == Mode.PACKETS_QUEUED }
+    private val queueLength = Setting(
+        "QueueLength",
+        50.0,
+        1.0,
+        1000.0,
+        1.0
+    ) describedBy "The size of the queue to start sending packets" subOf mode visibleWhen { mode.value == Mode.PACKETS_QUEUED }
 
-    private var delay = Setting("Delay", 4.0, 0.1, 10.0, 0.1)
-        .setDescription("The delay between sending packets in seconds")
-        .setParentSetting(mode)
-        .setVisibility { mode.value == Mode.DELAY }
+    private var delay = Setting(
+        "Delay",
+        4.0,
+        0.1,
+        10.0,
+        0.1
+    ) describedBy "The delay between sending packets in seconds" subOf mode visibleWhen { mode.value == Mode.DELAY }
 
-    private val distance = Setting("Distance", 10.0, 1.0, 100.0, 0.1)
-        .setDescription("The distance to the fake player to start sending packets")
-        .setParentSetting(mode)
-        .setVisibility { mode.value == Mode.DISTANCE }
+    private val distance = Setting(
+        "Distance",
+        10.0,
+        1.0,
+        100.0,
+        0.1
+    ) describedBy "The distance to the fake player to start sending packets" subOf mode visibleWhen { mode.value == Mode.DISTANCE }
 
     // Using CopyOnWriteArrayList to avoid ConcurrentModificationException
     private val packetQueue: MutableList<CPacketPlayer> = CopyOnWriteArrayList()

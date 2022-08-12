@@ -17,18 +17,25 @@ import me.wolfsurge.cerauno.listener.Listener
  */
 object Notifier : Module("Notifier", Category.MISC, "Notifies you when events happen") {
 
-    private val moduleEnabled = Setting("ModuleToggle", false)
-        .setDescription("Notifies you when you toggle a module")
+    private val moduleEnabled = Setting(
+        "ModuleToggle",
+        false
+    ) describedBy "Notifies you when you toggle a module"
 
-    private val pop = Setting("Pop", true)
-        .setDescription("Notifies you when a player pops a totem")
+    private val pop = Setting(
+        "Pop",
+        true
+    ) describedBy "Notifies you when a player pops a totem"
 
-    private val death = Setting("Death", true)
-        .setDescription("Notifies you when a player dies")
+    private val death = Setting(
+        "Death",
+        true
+    ) describedBy "Notifies you when a player dies"
 
-    private val noPops = Setting("NoPops", true)
-        .setDescription("Notifies you even if the player hasn't popped any totems")
-        .setParentSetting(death)
+    private val noPops = Setting(
+        "NoPops",
+        true
+    ) describedBy "Notifies you even if the player hasn't popped any totems" subOf death
 
     @Listener
     fun onModuleToggle(moduleToggleEvent: ModuleToggleEvent) {

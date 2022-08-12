@@ -22,52 +22,76 @@ import kotlin.math.sqrt
 
 object Trajectories : Module("Trajectories", Category.RENDER, "Shows where projectiles will land") {
 
-    private val line = Setting("Line", true)
-        .setDescription("Render a line to the projectile's destination")
+    private val line = Setting(
+        "Line",
+        true
+    ) describedBy "Render a line to the projectile's destination"
 
-    private val lineColour = Setting("LineColour", Color(185, 17, 255))
-        .setDescription("The colour of the line")
-        .setParentSetting(line)
+    private val lineColour = Setting(
+        "LineColour",
+        Color(185, 17, 255)
+    ) describedBy "The colour of the line" subOf line
 
-    private val lineWidth = Setting("LineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
-        .setDescription("The width of the line")
-        .setParentSetting(line)
+    private val lineWidth = Setting(
+        "LineWidth",
+        1.0f,
+        0.1f,
+        3.0f,
+        0.1f
+    ) describedBy "The width of the line" subOf line
 
-    private val box = Setting("Box", true)
-        .setDescription("Render a box at the projectile's destination")
+    private val box = Setting(
+        "Box",
+        true
+    ) describedBy "Render a box at the projectile's destination"
 
-    private val fill = Setting("Fill", true)
-        .setDescription("Fill the box at the end of the line")
-        .setParentSetting(box)
+    private val fill = Setting(
+        "Fill",
+        true
+    ) describedBy "Fill the box at the end of the line" subOf box
 
-    private val outline = Setting("Outline", true)
-        .setDescription("Outline the box at the end of the line")
-        .setParentSetting(box)
+    private val outline = Setting(
+        "Outline",
+        true
+    ) describedBy "Outline the box at the end of the line" subOf box
 
-    private val outlineWidth = Setting("OutlineWidth", 1.0f, 0.1f, 3.0f, 0.1f)
-        .setDescription("The width of the outline")
-        .setParentSetting(box)
-        .setVisibility(outline::value)
+    private val outlineWidth = Setting(
+        "OutlineWidth",
+        1.0f,
+        0.1f,
+        3.0f,
+        0.1f
+    ) describedBy "The width of the outline" subOf box visibleWhen outline::value
 
-    private val boxColour = Setting("BoxColour", Color(185, 17, 255, 130))
-        .setDescription("The colour of the box at the end of the line")
-        .setParentSetting(box)
-        .setVisibility { fill.value || outline.value }
+    private val boxColour = Setting(
+        "BoxColour",
+        Color(185, 17, 255, 130)
+    ) describedBy "The colour of the box at the end of the line" subOf box visibleWhen { fill.value || outline.value }
 
-    private val bow = Setting("Bow", true)
-        .setDescription("Draw the trajectory of the bow")
+    private val bow = Setting(
+        "Bow",
+        true
+    ) describedBy "Draw the trajectory of the bow"
 
-    private val snowball = Setting("Snowball", true)
-        .setDescription("Draw the trajectory of snowballs")
+    private val snowball = Setting(
+        "Snowball",
+        true
+    ) describedBy "Draw the trajectory of snowballs"
 
-    private val egg = Setting("Egg", true)
-        .setDescription("Draw the trajectory of eggs")
+    private val egg = Setting(
+        "Egg",
+        true
+    ) describedBy "Draw the trajectory of eggs"
 
-    private val exp = Setting("EXP", true)
-        .setDescription("Draw the trajectory of EXP bottles")
+    private val exp = Setting(
+        "EXP",
+        true
+    ) describedBy "Draw the trajectory of EXP bottles"
 
-    private val potion = Setting("Potion", true)
-        .setDescription("Draw the trajectory of splash potions")
+    private val potion = Setting(
+        "Potion",
+        true
+    ) describedBy "Draw the trajectory of splash potions"
 
     override fun onRender3D() {
         if (nullCheck()) {

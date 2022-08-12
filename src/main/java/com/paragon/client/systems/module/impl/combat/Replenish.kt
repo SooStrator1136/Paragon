@@ -14,11 +14,18 @@ import net.minecraft.network.play.client.CPacketEntityAction
  */
 object Replenish : Module("Replenish", Category.COMBAT, "Automatically refills items in your hotbar") {
 
-    var inventorySpoof = Setting("InventorySpoof", true)
-        .setDescription("Spoofs opening your inventory")
+    private val inventorySpoof = Setting(
+        "InventorySpoof",
+        true
+    ) describedBy "Spoofs opening your inventory"
 
-    var percent = Setting("Percent", 50f, 1f, 100f, 1f)
-        .setDescription("The point at which to refill")
+    private val percent = Setting(
+        "Percent",
+        50f,
+        1f,
+        100f,
+        1f
+    ) describedBy "The point at which to refill"
 
     override fun onTick() {
         if (nullCheck() || minecraft.player.ticksExisted < 20 || minecraft.player.isDead) {
@@ -48,7 +55,7 @@ object Replenish : Module("Replenish", Category.COMBAT, "Automatically refills i
         }
     }
 
-    fun mergeStack(current: Int, stack: ItemStack) {
+    private fun mergeStack(current: Int, stack: ItemStack) {
         var replaceSlot = -1
 
         // Loop through items in inventory

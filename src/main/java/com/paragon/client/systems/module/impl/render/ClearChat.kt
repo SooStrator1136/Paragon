@@ -13,8 +13,10 @@ import java.awt.Color
  */
 object ClearChat : Module("ClearChat", Category.RENDER, "Removes the chat background") {
 
-    private val colour = Setting("Colour", Color(0, 0, 0, 0))
-        .setDescription("The colour of the chat background")
+    private val colour = Setting(
+        "Colour",
+        Color(0, 0, 0, 0)
+    ) describedBy "The colour of the chat background"
 
     @Listener
     fun onRenderChatBackground(event: RenderChatEvent) {

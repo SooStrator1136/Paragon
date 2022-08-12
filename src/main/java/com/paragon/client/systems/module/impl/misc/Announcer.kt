@@ -17,17 +17,28 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 object Announcer : Module("Announcer", Category.MISC, "Announces events to the chat") {
 
     // Event settings
-    private val chatTimer = Setting("Delay", 5.0, 1.0, 60.0, 1.0)
-        .setDescription("The amount of time in seconds between each chat message")
+    private val chatTimer = Setting(
+        "Delay",
+        5.0,
+        1.0,
+        60.0,
+        1.0
+    ) describedBy "The amount of time in seconds between each chat message"
 
-    private val breakBlocks = Setting("BreakBlocks", true)
-        .setDescription("Announce when a block is broken")
+    private val breakBlocks = Setting(
+        "BreakBlocks",
+        true
+    ) describedBy "Announce when a block is broken"
 
-    private val playerJoin = Setting("PlayerJoin", true)
-        .setDescription("Announce when players join the server")
+    private val playerJoin = Setting(
+        "PlayerJoin",
+        true
+    ) describedBy "Announce when players join the server"
 
-    private val playerLeave = Setting("PlayerLeave", true)
-        .setDescription("Announce when players leave the server")
+    private val playerLeave = Setting(
+        "PlayerLeave",
+        true
+    ) describedBy "Announce when players leave the server"
 
     // Timer to determine when we should send the message
     private val timer = Timer()

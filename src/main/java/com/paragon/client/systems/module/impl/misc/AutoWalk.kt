@@ -13,8 +13,10 @@ import net.minecraft.client.settings.KeyBinding
  */
 object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk") {
 
-    private val direction = Setting("Direction", Direction.FORWARD)
-        .setDescription("The direction to walk in")
+    private val direction = Setting(
+        "Direction",
+        Direction.FORWARD
+    ) describedBy "The direction to walk in"
 
     override fun onDisable() {
         if (minecraft.anyNull) {

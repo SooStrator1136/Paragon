@@ -13,8 +13,10 @@ import java.awt.Color
  */
 object HitColour : Module("HitColour", Category.RENDER, "Change the colour entities are rendered in when hit") {
 
-    private val colour = Setting("Colour", Color(185, 17, 255, 85))
-        .setDescription("The highlight colour")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255, 85)
+    ) describedBy "The highlight colour"
 
     @Listener
     fun onEntityHighlight(event: EntityHighlightOnHitEvent) {

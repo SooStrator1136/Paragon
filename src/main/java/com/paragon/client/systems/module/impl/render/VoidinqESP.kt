@@ -20,7 +20,13 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes in the world") {
 
-    private val range = Setting("Range", 5f, 0f, 50f, 1f) describedBy "The range to check for holes"
+    private val range = Setting(
+        "Range",
+        5f,
+        0f,
+        50f,
+        1f
+    ) describedBy "The range to check for holes"
 
     // Render settings
     private val fill = Setting("Fill", true) describedBy "Fill the holes ;)" //💀
@@ -51,7 +57,10 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
         0.01f
     ) describedBy "How tall the outline is" subOf outline
 
-    private val glow = Setting("Gradient", true) describedBy "Renders a glow effect above the box"
+    private val glow = Setting(
+        "Gradient",
+        true
+    ) describedBy "Renders a glow effect above the box"
 
     private val glowHeight = Setting(
         "Height",
@@ -61,7 +70,10 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
         0.01f
     ) describedBy "How tall the glow is" subOf glow
 
-    private val colour = Setting("Colour", Color(200, 0, 0, 150)) describedBy "The highlight colour"
+    private val colour = Setting(
+        "Colour",
+        Color(200, 0, 0, 150)
+    ) describedBy "The highlight colour"
 
     private val holes: MutableList<BlockPos> = CopyOnWriteArrayList()
 

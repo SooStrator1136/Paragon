@@ -22,19 +22,32 @@ import java.awt.Color
 object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that are currently being broken") {
 
     // Render settings
-    private val renderMode = Setting("RenderMode", RenderMode.BOTH)
-        .setDescription("How to render the highlight")
+    private val renderMode = Setting(
+        "RenderMode",
+        RenderMode.BOTH
+    ) describedBy "How to render the highlight"
 
-    private val lineWidth = Setting("LineWidth", 1.0f, 0.1f, 3f, 0.1f)
-        .setDescription("The width of the outline")
-        .setVisibility { renderMode.value != RenderMode.FILL }
+    private val lineWidth = Setting(
+        "LineWidth",
+        1.0f,
+        0.1f,
+        3f,
+        0.1f
+    ) describedBy "The width of the outline" visibleWhen { renderMode.value != RenderMode.FILL }
 
     // Other settings
-    private val range = Setting("Range", 20f, 1f, 50f, 1f)
-        .setDescription("The maximum distance a highlighted block can be")
+    private val range = Setting(
+        "Range",
+        20f,
+        1f,
+        50f,
+        1f
+    ) describedBy "The maximum distance a highlighted block can be"
 
-    private val percent = Setting("Percent", true)
-        .setDescription("Show the percentage of how much the block has been broken")
+    private val percent = Setting(
+        "Percent",
+        true
+    ) describedBy "Show the percentage of how much the block has been broken"
 
     override fun onRender3D() {
         // Iterate through all blocks being broken

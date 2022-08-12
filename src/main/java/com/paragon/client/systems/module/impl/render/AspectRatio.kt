@@ -12,8 +12,13 @@ import me.wolfsurge.cerauno.listener.Listener
  */
 object AspectRatio : Module("AspectRatio", Category.RENDER, "Changes the aspect ratio of the game") {
 
-    private val ratio = Setting("Ratio", 1f, 0.5f, 10f, 0.01f)
-        .setDescription("The ratio of the screen")
+    private val ratio = Setting(
+        "Ratio",
+        1f,
+        0.5f,
+        10f,
+        0.01f
+    ) describedBy "The ratio of the screen"
 
     @Listener
     fun onAspectRatioEvent(event: AspectEvent) {

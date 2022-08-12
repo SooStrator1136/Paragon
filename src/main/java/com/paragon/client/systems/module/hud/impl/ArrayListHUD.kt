@@ -21,17 +21,28 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on screen") {
 
-    val animationSpeed = Setting("Animation", 200f, 0f, 1000f, 10f)
-        .setDescription("The speed of the animation")
+    val animationSpeed = Setting(
+        "Animation",
+        200f,
+        0f,
+        1000f,
+        10f
+    ) describedBy "The speed of the animation"
 
-    private val arrayListColour = Setting("Colour", ArrayListColour.RAINBOW_WAVE)
-        .setDescription("What colour to render the modules in")
+    private val arrayListColour = Setting(
+        "Colour",
+        ArrayListColour.RAINBOW_WAVE
+    ) describedBy "What colour to render the modules in"
 
-    val easing = Setting("Easing", Easing.EXPO_IN_OUT)
-        .setDescription("The easing type of the animation")
+    val easing = Setting(
+        "Easing",
+        Easing.EXPO_IN_OUT
+    ) describedBy "The easing type of the animation"
 
-    private val background = Setting("Background", Background.Normal)
-        .setDescription("Render a background behind the text")
+    private val background = Setting(
+        "Background",
+        Background.Normal
+    ) describedBy "Render a background behind the text"
 
     private var corner = Corner.TOP_LEFT
 
@@ -68,7 +79,7 @@ object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on scr
 
         modules = modules.toSortedMap(compareBy<Module?> { modules[it] }.reversed())
 
-        val scissorWidth: Double = modules.firstNotNullOf { it.value }.toDouble()
+        val scissorWidth = modules.firstNotNullOf { it.value }.toDouble()
         
         when (corner) {
             Corner.TOP_LEFT -> {

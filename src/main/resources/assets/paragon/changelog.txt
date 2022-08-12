@@ -17,3 +17,5 @@ Added SourceESP
 Added PhaseESP
 Added Graphs
 Added AntiHunger
+Added WebAura
+Added Alerts

@@ -12,11 +12,15 @@ import java.awt.Color
  */
 object CustomText : HUDModule("CustomText", "Display custom text of your choice!") {
 
-    private val text = Setting("Text", "Paragon on top!")
-        .setDescription("The text to display")
+    private val text = Setting(
+        "Text",
+        "Paragon on top!"
+    ) describedBy "The text to display"
 
-    private val textColour = Setting("TextColour", Color.WHITE)
-        .setDescription("The colour of the text")
+    private val textColour = Setting(
+        "TextColour",
+        Color.WHITE
+    ) describedBy "The colour of the text"
 
     override fun render() {
         FontUtil.drawStringWithShadow(text.value, x, y, textColour.value.rgb)

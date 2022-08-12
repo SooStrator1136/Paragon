@@ -10,11 +10,21 @@ import com.paragon.api.util.anyNull
  */
 object RotationLock : Module("RotationLock", Category.MISC, "Locks your rotation") {
 
-    private val yaw = Setting("Yaw", 0f, -180f, 180f, 1f)
-        .setDescription("The yaw to lock to")
+    private val yaw = Setting(
+        "Yaw",
+        0f,
+        -180f,
+        180f,
+        1f
+    ) describedBy "The yaw to lock to"
 
-    private val pitch = Setting("Pitch", 0f, -180f, 180f, 1f)
-        .setDescription("The pitch to lock to")
+    private val pitch = Setting(
+        "Pitch",
+        0f,
+        -180f,
+        180f,
+        1f
+    ) describedBy "The pitch to lock to"
 
     override fun onTick() {
         if (minecraft.anyNull) {

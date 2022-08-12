@@ -36,23 +36,50 @@ import java.awt.Color
 @SideOnly(Side.CLIENT)
 object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage blocks in the world") {
 
-    private val chests = Setting("Chests", true) describedBy "Highlight chests"
+    private val chests = Setting(
+        "Chests",
+        true
+    ) describedBy "Highlight chests"
 
-    private val shulkers = Setting("Shulkers", true) describedBy "Highlight shulker boxes"
+    private val shulkers = Setting(
+        "Shulkers",
+        true
+    ) describedBy "Highlight shulker boxes"
 
-    private val enderChests = Setting("EnderChests", true) describedBy "Highlight Ender Chests"
+    private val enderChests = Setting(
+        "EnderChests",
+        true
+    ) describedBy "Highlight Ender Chests"
 
     // Render settings
-    private val mode = Setting("Mode", Mode.SHADER) describedBy "How to render the entities"
+    private val mode = Setting(
+        "Mode",
+        Mode.SHADER
+    ) describedBy "How to render the entities"
 
-    private val lineWidth = Setting("LineWidth", 1f, 0.1f, 8f, 0.1f) describedBy "How thick to render the outlines"
+    private val lineWidth = Setting(
+        "LineWidth",
+        1f,
+        0.1f,
+        8f,
+        0.1f
+    ) describedBy "How thick to render the outlines"
 
     // Outline shader
-    private val outline = Setting("Outline", true) describedBy "Outline the fill" subOf mode visibleWhen { mode.value == Mode.SHADER }
+    private val outline = Setting(
+        "Outline",
+        true
+    ) describedBy "Outline the fill" subOf mode visibleWhen { mode.value == Mode.SHADER }
 
-    private val fill = Setting("Fill", true) describedBy "Fill the outline" subOf mode visibleWhen { mode.value == Mode.SHADER }
+    private val fill = Setting(
+        "Fill",
+        true
+    ) describedBy "Fill the outline" subOf mode visibleWhen { mode.value == Mode.SHADER }
 
-    private val colour = Setting("Colour", Color(185, 17, 255)) describedBy "The colour to highlight items in"
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255)
+    ) describedBy "The colour to highlight items in"
 
     // Shaders
     private val outlineShader = OutlineShader()

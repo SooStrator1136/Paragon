@@ -17,15 +17,23 @@ import java.awt.Color
  */
 object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights the block you are looking at") {
 
-    private val renderMode = Setting("RenderMode", RenderMode.BOTH)
-        .setDescription("How to highlight the block")
+    private val renderMode = Setting(
+        "RenderMode",
+        RenderMode.BOTH
+    ) describedBy "How to highlight the block"
 
-    private val lineWidth = Setting("LineWidth", 1f, 0.1f, 1.5f, 0.1f)
-        .setDescription("The width of the outline")
-        .setVisibility { renderMode.value != RenderMode.FILL }
+    private val lineWidth = Setting(
+        "LineWidth",
+        1f,
+        0.1f,
+        1.5f,
+        0.1f
+    ) describedBy "The width of the outline" visibleWhen { renderMode.value != RenderMode.FILL }
 
-    private val colour = Setting("Colour", Color(185, 19, 211))
-        .setDescription("What colour to render the block")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 19, 211)
+    ) describedBy ("What colour to render the block")
 
     @Listener
     fun onBlockHighlight(event: BlockHighlightEvent) {

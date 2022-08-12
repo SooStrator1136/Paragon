@@ -45,9 +45,7 @@ public final class InventoryUtil implements Wrapper {
 
     public static int getItemInHotbar(final Item itemIn) {
         for (int i = 0; i < 9; i++) {
-            final Item itemInInv = mc.player.inventory.getStackInSlot(i).getItem();
-
-            if (itemInInv == itemIn) {
+            if (mc.player.inventory.getStackInSlot(i).getItem() == itemIn) {
                 return i;
             }
         }

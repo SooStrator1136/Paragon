@@ -12,8 +12,13 @@ import com.paragon.asm.mixins.accessor.ITimer
  */
 object TimerModule : Module("Timer", Category.MISC, "Modifies how long each tick takes") {
 
-    private val timer = Setting("TimerSpeed", 1.25f, 0.01f, 4f, 0.01f)
-        .setDescription("How much to multiply the timer speed by")
+    private val timer = Setting(
+        "TimerSpeed",
+        1.25f,
+        0.01f,
+        4f,
+        0.01f
+    ) describedBy "How much to multiply the timer speed by"
 
     override fun onDisable() {
         ((minecraft as IMinecraft).timer as ITimer).tickLength = 50f

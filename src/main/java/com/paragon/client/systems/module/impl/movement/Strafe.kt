@@ -18,20 +18,45 @@ import kotlin.math.max
  */
 object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement speed") {
 
-    private val timerSpeed = Setting("TimerSpeed", 1.09f, 1.01f, 2f, 0.01f)
-        .setDescription("How fast the game's timer will tick at")
+    private val timerSpeed = Setting(
+        "TimerSpeed",
+        1.09f,
+        1.01f,
+        2f,
+        0.01f
+    ) describedBy "How fast the game's timer will tick at"
 
-    private val airSpeed = Setting("AirSpeed", 1.05f, 1f, 2f, 0.01f)
-        .setDescription("How fast the game's timer will tick at when you're in the air")
+    private val airSpeed = Setting(
+        "AirSpeed",
+        1.05f,
+        1f,
+        2f,
+        0.01f
+    ) describedBy "How fast the game's timer will tick at when you're in the air"
 
-    private val speedFactor = Setting("SpeedFactor", 1.25f, 1f, 2f, 0.01f)
-        .setDescription("How much to multiply the speed by")
+    private val speedFactor = Setting(
+        "SpeedFactor",
+        1.25f,
+        1f,
+        2f,
+        0.01f
+    ) describedBy "How much to multiply the speed by"
 
-    private val airFriction = Setting("AirFriction", 0.5f, 0.1f, 1f, 0.1f)
-        .setDescription("How much friction to apply whilst in the air")
+    private val airFriction = Setting(
+        "AirFriction",
+        0.5f,
+        0.1f,
+        1f,
+        0.1f
+    ) describedBy "How much friction to apply whilst in the air"
 
-    private val delay = Setting("Delay", 250.0, 0.0, 1000.0, 1.0)
-        .setDescription("How long to wait before increasing the speed")
+    private val delay = Setting(
+        "Delay",
+        250.0,
+        0.0,
+        1000.0,
+        1.0
+    ) describedBy "How long to wait before increasing the speed"
 
     private var state: State = State.INCREASE
     private var speed: Double = 0.0
@@ -104,7 +129,9 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
         }
     }
 
-    private fun applySpeed(): Boolean = !minecraft.player.isInLava && !minecraft.player.isInWater && !minecraft.player.isOnLadder
+    private fun applySpeed(): Boolean {
+        return !minecraft.player.isInLava && !minecraft.player.isInWater && !minecraft.player.isOnLadder
+    }
 
     private fun setTimerSpeed(input: Float) {
         ((minecraft as IMinecraft).timer as ITimer).tickLength = 50f / input

@@ -23,16 +23,39 @@ import java.awt.Color
  */
 object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
 
-    private val scale = Setting("Size", 1.0, 0.5, 5.0, 0.1) describedBy "The size of the PotionHUD"
+    private val scale = Setting(
+        "Size",
+        1.0,
+        0.5,
+        5.0,
+        0.1
+    ) describedBy "The size of the PotionHUD"
 
     private val mode = Setting("Mode", Mode.INVENTORY)
 
-    private val rainbowSpeed = Setting("Rainbow speed", 20F, 5F, 50F, 2.5F) visibleWhen { mode.value == Mode.PYRO }
-    private val showBg = Setting("Background", true) visibleWhen { mode.value == Mode.PYRO }
-    private val syncTextColor = Setting("Sync text", false) visibleWhen { mode.value == Mode.PYRO }
+    private val rainbowSpeed = Setting(
+        "Rainbow speed",
+        20F,
+        5F,
+        50F,
+        2.5F
+    ) visibleWhen { mode.value == Mode.PYRO }
+    private val showBg = Setting(
+        "Background",
+        true
+    ) visibleWhen { mode.value == Mode.PYRO }
+    private val syncTextColor = Setting(
+        "Sync text",
+        false
+    ) visibleWhen { mode.value == Mode.PYRO }
 
-    private val offset = Setting("Offset", 0F, 0F, 10F, 1F)
-        .setDescription("The offset between the effects")
+    private val offset = Setting(
+        "Offset",
+        0F,
+        0F,
+        10F,
+        1F
+    ) describedBy "The offset between the effects"
 
     override fun render() {
         val activeEffects = minecraft.player.activePotionEffects

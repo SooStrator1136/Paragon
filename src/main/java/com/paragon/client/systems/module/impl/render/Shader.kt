@@ -32,68 +32,104 @@ import java.awt.Color
 @SideOnly(Side.CLIENT)
 object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities and storages") {
 
-    private val passive = Setting("Passive", true)
-        .setDescription("Apply shader to passive entities")
+    private val passive = Setting(
+        "Passive",
+        true
+    ) describedBy "Apply shader to passive entities"
 
-    private val mobs = Setting("Mobs", true)
-        .setDescription("Apply shader to hostile entities")
+    private val mobs = Setting(
+        "Mobs",
+        true
+    ) describedBy "Apply shader to hostile entities"
 
-    private val players = Setting("Players", true)
-        .setDescription("Apply shader to player entities")
+    private val players = Setting(
+        "Players",
+        true
+    ) describedBy "Apply shader to player entities"
 
-    private val crystals = Setting("Crystals", true)
-        .setDescription("Apply shader to crystals")
+    private val crystals = Setting(
+        "Crystals",
+        true
+    ) describedBy "Apply shader to crystals"
 
-    private val items = Setting("Items", true)
-        .setDescription("Apply shader to items")
+    private val items = Setting(
+        "Items",
+        true
+    ) describedBy "Apply shader to items"
 
-    private val chests = Setting("Chests", true)
-        .setDescription("Apply shader to chests")
+    private val chests = Setting(
+        "Chests",
+        true
+    ) describedBy "Apply shader to chests"
 
-    private val shulkers = Setting("Shulkers", true)
-        .setDescription("Apply shader to shulkers")
+    private val shulkers = Setting(
+        "Shulkers",
+        true
+    ) describedBy "Apply shader to shulkers"
 
-    private val enderChests = Setting("Ender Chests", true)
-        .setDescription("Apply shader to ender chests")
+    private val enderChests = Setting(
+        "Ender Chests",
+        true
+    ) describedBy "Apply shader to ender chests"
 
-    private val shaderType = Setting("FragmentShader", FragmentShader.DIAMONDS)
-        .setDescription("The shader to use")
+    private val shaderType = Setting(
+        "FragmentShader",
+        FragmentShader.DIAMONDS
+    ) describedBy "The shader to use"
 
     // Diamonds
-    private val diamondSpacing = Setting("Spacing", 4f, 1f, 16f, 0.5f)
-        .setDescription("The spacing between diamonds")
-        .setParentSetting(shaderType)
-        .setVisibility { shaderType.value == FragmentShader.DIAMONDS }
+    private val diamondSpacing = Setting(
+        "Spacing",
+        4f,
+        1f,
+        16f,
+        0.5f
+    ) describedBy "The spacing between diamonds" subOf shaderType visibleWhen { shaderType.value == FragmentShader.DIAMONDS }
 
-    private val diamondSize = Setting("Size", 1f, 0.1f, 10f, 0.1f)
-        .setDescription("The size of the diamonds")
-        .setParentSetting(shaderType)
-        .setVisibility { shaderType.value == FragmentShader.DIAMONDS }
+    private val diamondSize = Setting(
+        "Size",
+        1f,
+        0.1f,
+        10f,
+        0.1f
+    ) describedBy "The size of the diamonds" subOf shaderType visibleWhen { shaderType.value == FragmentShader.DIAMONDS }
 
     // Outline
-    private val outlineWidth = Setting("Width", 1f, 1f, 5f, 0.5f)
-        .setParentSetting(shaderType)
-        .setVisibility { shaderType.value == FragmentShader.OUTLINE }
+    private val outlineWidth = Setting(
+        "Width",
+        1f,
+        1f,
+        5f,
+        0.5f
+    ) subOf shaderType visibleWhen { shaderType.value == FragmentShader.OUTLINE }
 
-    private val outlineFill = Setting("Fill", true)
-        .setDescription("Fill the outline")
-        .setParentSetting(shaderType)
-        .setVisibility { shaderType.value == FragmentShader.OUTLINE }
+    private val outlineFill = Setting(
+        "Fill",
+        true
+    ) describedBy "Fill the outline" subOf shaderType visibleWhen { shaderType.value == FragmentShader.OUTLINE }
 
     // Diagonal
-    private val diagonalSpacing = Setting("Spacing", 4f, 1f, 16f, 0.5f)
-        .setDescription("The spacing between lines")
-        .setParentSetting(shaderType)
-        .setVisibility { shaderType.value == FragmentShader.DIAGONAL }
+    private val diagonalSpacing = Setting(
+        "Spacing",
+        4f,
+        1f,
+        16f,
+        0.5f
+    ) describedBy "The spacing between lines" subOf shaderType visibleWhen { shaderType.value == FragmentShader.DIAGONAL }
 
-    private val diagonalWidth = Setting("Width", 1f, 1f, 16f, 0.5f)
-        .setDescription("The width of the lines")
-        .setParentSetting(shaderType)
-        .setVisibility { shaderType.value == FragmentShader.DIAGONAL }
+    private val diagonalWidth = Setting(
+        "Width",
+        1f,
+        1f,
+        16f,
+        0.5f
+    ) describedBy "The width of the lines" subOf shaderType visibleWhen { shaderType.value == FragmentShader.DIAGONAL }
 
     // Colour
-    private val colour = Setting("Colour", Color(185, 17, 255))
-        .setDescription("The colour of the shader")
+    private val colour = Setting(
+        "Colour",
+        Color(185, 17, 255)
+    ) describedBy "The colour of the shader"
 
     private val outlineShader = OutlineShader()
     private val diagonalShader = DiagonalShader()

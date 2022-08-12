@@ -17,8 +17,13 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message when you kill an opponent") {
 
-    private val maximumRange = Setting("MaxRange", 10.0, 1.0, 20.0, 0.1)
-        .setDescription("The furthest distance from the player to target")
+    private val maximumRange = Setting(
+        "MaxRange",
+        10.0,
+        1.0,
+        20.0,
+        0.1
+    ) describedBy "The furthest distance from the player to target"
 
     @JvmStatic
     fun addTarget(name: String?) {

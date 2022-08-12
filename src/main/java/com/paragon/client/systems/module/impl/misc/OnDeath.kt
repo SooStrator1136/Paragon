@@ -14,11 +14,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
  */
 object OnDeath : Module("OnDeath", Category.MISC, "Do certain actions when you die") {
 
-    private val printCoords = Setting("PrintCoords", true)
-        .setDescription("Prints your death coordinates in chat (client-side only)")
+    private val printCoords = Setting(
+        "PrintCoords",
+        true
+    ) describedBy "Prints your death coordinates in chat (client-side only)"
 
-    private val respawn = Setting("Respawn", true)
-        .setDescription("Respawns you after death")
+    private val respawn = Setting(
+        "Respawn",
+        true
+    ) describedBy "Respawns you after death"
 
     @SubscribeEvent
     fun onLivingDeath(event: LivingDeathEvent) {

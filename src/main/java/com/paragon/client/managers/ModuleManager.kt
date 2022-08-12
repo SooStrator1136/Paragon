@@ -2,6 +2,9 @@ package com.paragon.client.managers
 
 import com.paragon.api.module.Module
 import com.paragon.client.systems.module.hud.impl.*
+import com.paragon.client.systems.module.hud.impl.graphs.GraphFPS
+import com.paragon.client.systems.module.hud.impl.graphs.GraphPing
+import com.paragon.client.systems.module.hud.impl.graphs.GraphSpeed
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.ClientFont
 import com.paragon.client.systems.module.impl.client.Colours
@@ -35,6 +38,7 @@ class ModuleManager {
             Offhand,
             Replenish,
             Surround(),
+            WebAura,
 
             // Movement
             AntiVoidinq,
@@ -80,6 +84,7 @@ class ModuleManager {
             Xray,
 
             // Misc
+            Alert,
             Announcer,
             AntiHunger,
             AutoEZ,
@@ -124,7 +129,9 @@ class ModuleManager {
             CustomText,
             Direction,
             FPS,
-            Graphs,
+            GraphFPS,
+            GraphPing,
+            GraphSpeed,
             HUD,
             HUDEditor,
             Inventory(),

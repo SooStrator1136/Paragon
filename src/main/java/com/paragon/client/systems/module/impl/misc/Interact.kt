@@ -22,37 +22,50 @@ import net.minecraft.util.EnumFacing
  */
 object Interact : Module("Interact", Category.MISC, "Changes the way you interact") {
 
-    private val liquids = Setting("Liquids", false)
-        .setDescription("Allows you to interact with liquids like normal blocks")
+    private val liquids = Setting(
+        "Liquids",
+        false
+    ) describedBy "Allows you to interact with liquids like normal blocks"
 
-    private val buildHeight = Setting("BuildHeight", true)
-        .setDescription("Lets you place blocks at Y 255")
+    private val buildHeight = Setting(
+        "BuildHeight",
+        true
+    ) describedBy "Lets you place blocks at Y 255"
 
-    private val noTrace = Setting("NoTrace", false)
-        .setDescription("Cancel raytracing entities")
+    private val noTrace = Setting(
+        "NoTrace",
+        false
+    ) describedBy "Cancel raytracing entities"
 
-    private val pickaxe = Setting("Pickaxe", true)
-        .setDescription("Ignores entities when you are holding a pickaxe")
-        .setParentSetting(noTrace)
+    private val pickaxe = Setting(
+        "Pickaxe",
+        true
+    ) describedBy "Ignores entities when you are holding a pickaxe" subOf noTrace
 
-    private val blocks = Setting("Blocks", false)
-        .setDescription("Ignores entities when you are holding blocks")
-        .setParentSetting(noTrace)
+    private val blocks = Setting(
+        "Blocks",
+        false
+    ) describedBy "Ignores entities when you are holding blocks" subOf noTrace
 
-    private val crystals = Setting("Crystals", true)
-        .setDescription("Ignores entities when you are holding crystals")
-        .setParentSetting(noTrace)
+    private val crystals = Setting(
+        "Crystals",
+        true
+    ) describedBy "Ignores entities when you are holding crystals" subOf noTrace
 
-    private val noSwing = Setting("NoSwing", false)
-        .setDescription("Cancels the swing animation")
+    private val noSwing = Setting(
+        "NoSwing",
+        false
+    ) describedBy "Cancels the swing animation"
 
-    private val mode = Setting("Mode", Mode.PACKET_CANCEL)
-        .setDescription("How to not swing")
-        .setParentSetting(noSwing)
+    private val mode = Setting(
+        "Mode",
+        Mode.PACKET_CANCEL
+    ) describedBy "How to not swing" subOf noSwing
 
-    private val others = Setting("Others", true)
-        .setDescription("Whether to cancel other players' animations")
-        .setParentSetting(noSwing)
+    private val others = Setting(
+        "Others",
+        true
+    ) describedBy "Whether to cancel other players' animations" subOf noSwing
 
     @Listener
     fun onLiquidInteract(event: LiquidInteractEvent) {

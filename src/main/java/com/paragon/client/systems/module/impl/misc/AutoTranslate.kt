@@ -25,23 +25,30 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
  */
 object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically translates incoming/outgoing messages") {
 
-    private val incoming = Setting("Incoming", true)
-        .setDescription("Automatically translate incoming messages")
+    private val incoming = Setting(
+        "Incoming",
+        true
+    ) describedBy "Automatically translate incoming messages"
 
-    private val suffix = Setting("Mark Translation", true)
-        .setDescription("Suffix translated messages with \"[Translated]\"")
-        .setVisibility { incoming.value }
+    private val suffix = Setting(
+        "Mark Translation",
+        true
+    ) describedBy "Suffix translated messages with \"[Translated]\"" visibleWhen { incoming.value }
 
-    private val incomingLang = Setting("In Lang", "English")
-        .setDescription("Language to translate incoming messages to")
-        .setVisibility { incoming.value }
+    private val incomingLang = Setting(
+        "In Lang",
+        "English"
+    ) describedBy "Language to translate incoming messages to" visibleWhen { incoming.value }
 
-    private val outgoing = Setting("Outgoing", false)
-        .setDescription("Automatically translate outgoing messages")
+    private val outgoing = Setting(
+        "Outgoing",
+        false
+    ) describedBy "Automatically translate outgoing messages"
 
-    private val outgoingLang = Setting("Out Lang", "English")
-        .setDescription("Language to translate outgoing messages to")
-        .setVisibility { outgoing.value }
+    private val outgoingLang = Setting(
+        "Out Lang",
+        "English"
+    ) describedBy "Language to translate outgoing messages to" visibleWhen { outgoing.value }
 
     private val translator = Translator()
 

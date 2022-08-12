@@ -1,6 +1,7 @@
 package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
+import com.paragon.client.managers.rotation.Rotate;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -43,6 +44,14 @@ public final class RotationUtil implements Wrapper {
                                 vec3d.subtract(mc.player.getPositionEyes(1)).z)));
 
         return new Vec2f(MathHelper.wrapDegrees(yaw), MathHelper.wrapDegrees(pitch));
+    }
+
+    public static void rotate(final Vec2f rotationVec, final Rotate mode) {
+        if (mode == Rotate.NONE) {
+            return;
+        }
+
+        rotate(rotationVec, mode == Rotate.PACKET);
     }
 
     public static void rotate(final Vec2f rotationVec, final boolean packet) {

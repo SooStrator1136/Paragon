@@ -18,12 +18,18 @@ import org.lwjgl.input.Keyboard
  */
 object InventoryWalk : Module("InventoryWalk", Category.MOVEMENT, "Lets you walk around in your inventory") {
 
-    private val rotate = Setting("Rotate", true)
-        .setDescription("If you can use the arrow keys to rotate in your inventory")
+    private val rotate = Setting(
+        "Rotate",
+        true
+    ) describedBy "If you can use the arrow keys to rotate in your inventory"
 
-    private val rotateSpeed = Setting("Speed", 5f, 1f, 45f, 1f)
-        .setDescription("How fast to rotate")
-        .setParentSetting(rotate)
+    private val rotateSpeed = Setting(
+        "Speed",
+        5f,
+        1f,
+        45f,
+        1f
+    ) describedBy "How fast to rotate" subOf rotate
 
     private val bindings = arrayOf(
         minecraft.gameSettings.keyBindForward,

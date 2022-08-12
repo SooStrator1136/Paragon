@@ -18,22 +18,33 @@ import java.util.*
  */
 object FastUse : Module("FastUse", Category.MISC, "Allows you to use items quicker than you would be able to in vanilla") {
 
-    private val xp = Setting("XP", true)
-        .setDescription("Fast use XP bottles")
+    private val xp = Setting(
+        "XP",
+        true
+    ) describedBy "Fast use XP bottles"
 
-    private val rotate = Setting("Rotate", true)
-        .setDescription("Rotate your player when using XP bottles")
-        .setParentSetting(xp)
+    private val rotate = Setting(
+        "Rotate",
+        true
+    ) describedBy "Rotate your player when using XP bottles" subOf xp
 
-    private val crystals = Setting("Crystals", true)
-        .setDescription("Place crystals fast")
+    private val crystals = Setting(
+        "Crystals",
+        true
+    ) describedBy "Place crystals fast"
 
-    private val randomPause = Setting("RandomPause", true)
-        .setDescription("Randomly pauses to try and prevent you from being kicked")
+    private val randomPause = Setting(
+        "RandomPause",
+        true
+    ) describedBy "Randomly pauses to try and prevent you from being kicked"
 
-    private val randomChance = Setting("Chance", 50f, 2f, 100f, 1f)
-        .setDescription("The chance to pause")
-        .setParentSetting(randomPause)
+    private val randomChance = Setting(
+        "Chance",
+        50f,
+        2f,
+        100f,
+        1f
+    ) describedBy "The chance to pause" subOf randomPause
 
     private val random = Random()
 

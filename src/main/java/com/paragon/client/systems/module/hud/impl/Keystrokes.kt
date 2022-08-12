@@ -44,7 +44,10 @@ object Keystrokes : HUDModule("Keystrokes", "Keystrokes duh?") {
     private val animationEasing = Setting("Easing", Easing.LINEAR)
 
     //Coloring
-    private val backgroundColor = Setting("Background", Color(0, 0, 0, 35))
+    private val backgroundColor = Setting(
+        "Background",
+        Color(0, 0, 0, 35)
+    ) describedBy "Color of the background"
     private val circleColor = Setting(
         "Fill color",
         Colours.mainColour.value

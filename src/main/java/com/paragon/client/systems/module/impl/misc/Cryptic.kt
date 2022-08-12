@@ -16,11 +16,15 @@ import kotlin.random.Random
  */
 object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts messages that can only be seen by other Paragon users") {
 
-    private val requirePrefix = Setting("RequirePrefix", true)
-        .setDescription("Require a prefix ('crypt <message>') to be used before the message")
+    private val requirePrefix = Setting(
+        "RequirePrefix",
+        true
+    ) describedBy "Require a prefix ('crypt <message>') to be used before the message"
 
-    private val cancel = Setting("Cancel", false)
-        .setDescription("Cancel showing the original chat message")
+    private val cancel = Setting(
+        "Cancel",
+        false
+    ) describedBy "Cancel showing the original chat message"
 
     const val alpha = "abcdefghijklmnopqrstuvwxyz"
     private val suffixes: Array<String> = arrayOf(

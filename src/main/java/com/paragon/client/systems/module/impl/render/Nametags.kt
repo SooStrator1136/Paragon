@@ -39,39 +39,62 @@ import kotlin.math.roundToInt
 object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above players") {
 
     // Render settings
-    private val health = Setting("Health", true)
-        .setDescription("Render the player's health")
+    private val health = Setting(
+        "Health",
+        true
+    ) describedBy "Render the player's health"
 
-    private val ping = Setting("Ping", true)
-        .setDescription("Render the player's ping")
+    private val ping = Setting(
+        "Ping",
+        true
+    ) describedBy "Render the player's ping"
 
-    private val pops = Setting("Pops", true)
-        .setDescription("Render the player's totem pop count")
+    private val pops = Setting(
+        "Pops",
+        true
+    ) describedBy "Render the player's totem pop count"
 
-    private val armour = Setting("Armour", true)
-        .setDescription("Render the player's armour")
+    private val armour = Setting(
+        "Armour",
+        true
+    ) describedBy "Render the player's armour"
 
-    private val armourDurability = Setting("Durability", true)
-        .setDescription("Render the player's armour durability")
-        .setParentSetting(armour)
+    private val armourDurability = Setting(
+        "Durability",
+        true
+    ) describedBy "Render the player's armour durability" subOf armour
 
     // Scaling
-    private val scaleFactor = Setting("Scale", 0.2f, 0.1f, 1f, 0.1f)
-        .setDescription("The scale of the nametag")
+    private val scaleFactor = Setting(
+        "Scale",
+        0.2f,
+        0.1f,
+        1f,
+        0.1f
+    ) describedBy "The scale of the nametag"
 
-    private val distanceScale = Setting("DistanceScale", true)
-        .setDescription("Scale the nametag based on your distance from the player")
+    private val distanceScale = Setting(
+        "DistanceScale",
+        true
+    ) describedBy "Scale the nametag based on your distance from the player"
 
-    private val outline = Setting("Outline", true)
-        .setDescription("Render the nametag outline")
+    private val outline = Setting(
+        "Outline",
+        true
+    ) describedBy "Render the nametag outline"
 
-    private val outlineWidth = Setting("Width", 0.5f, 0.1f, 2f, 0.01f)
-        .setDescription("The width of the outline")
-        .setParentSetting(outline)
+    private val outlineWidth = Setting(
+        "Width",
+        0.5f,
+        0.1f,
+        2f,
+        0.01f
+    ) describedBy "The width of the outline" subOf outline
 
-    private val outlineColour = Setting("Colour", Color(185, 17, 255))
-        .setDescription("The colour of the outline")
-        .setParentSetting(outline)
+    private val outlineColour = Setting(
+        "Colour",
+        Color(185, 17, 255)
+    ) describedBy "The colour of the outline" subOf outline
 
     override fun onRender3D() {
         // Prevent null pointer exceptions

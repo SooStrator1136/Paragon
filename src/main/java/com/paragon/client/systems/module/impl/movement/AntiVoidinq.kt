@@ -17,8 +17,10 @@ import java.awt.Color
  */
 object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes for you") {
 
-    private val mode = Setting("Mode", Mode.MOTION)
-        .setDescription("How to prevent falling through void holes")
+    private val mode = Setting(
+        "Mode",
+        Mode.MOTION
+    ) describedBy "How to prevent falling through void holes"
 
     private var renderPosition: BlockPos? = null
 

@@ -12,11 +12,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
  */
 object ChatModifications : Module("ChatModifications", Category.MISC, "Changes the way you send messages") {
 
-    private val coloured = Setting("Coloured", false)
-        .setDescription("Adds a '>' before the message")
+    private val coloured = Setting(
+        "Coloured",
+        false
+    ) describedBy "Adds a '>' before the message"
 
-    private val suffix = Setting("Suffix", true)
-        .setDescription("Adds a Paragon suffix to the end of the message")
+    private val suffix = Setting(
+        "Suffix",
+        true
+    ) describedBy "Adds a Paragon suffix to the end of the message"
 
     @SubscribeEvent
     fun onChat(event: ClientChatEvent) {

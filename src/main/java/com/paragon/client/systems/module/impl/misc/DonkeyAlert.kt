@@ -21,20 +21,37 @@ import java.util.*
  */
 object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find donkeys and other rideable entities easier") {
 
-    private val donkeyAlert = Setting("Donkeys", true)
-        .setDescription("Alert for donkeys")
-    private val llamaAlert = Setting("Llamas", true)
-        .setDescription("Alert for llamas")
-    private val horseAlert = Setting("Horses", true)
-        .setDescription("Alert for horses")
-    private val muleAlert = Setting("Mules", true)
-        .setDescription("Alert for mules")
+    private val donkeyAlert = Setting(
+        "Donkeys",
+        true
+    ) describedBy "Alert for Donkeys"
+    private val llamaAlert = Setting(
+        "Llamas",
+        true
+    ) describedBy "Alert for Llamas"
+    private val horseAlert = Setting(
+        "Horses", true
+    ) describedBy "Alert for Horses"
+    private val muleAlert = Setting(
+        "Mules",
+        true
+    ) describedBy "Alert for Mules"
 
-    private val alertMode = Setting("Alert", AlertType.MESSAGE)
-    private val multiAlert = Setting("MultiAlert", false)
-        .setDescription("Alert multiple times for the same animal")
-    private val alertDelay = Setting("Delay", 200F, 0F, 5000F, 250F)
-        .setDescription("The delay between alerts")
+    private val alertMode = Setting(
+        "Alert",
+        AlertType.MESSAGE
+    )
+    private val multiAlert = Setting(
+        "MultiAlert",
+        false
+    ) describedBy "Alert multiple times for the same animal"
+    private val alertDelay = Setting(
+        "Delay",
+        200F,
+        0F,
+        5000F,
+        250F
+    ) describedBy "The delay between alerts"
 
     private val addedEntities: MutableList<Entity> = ArrayList(3)
     private val founds: Queue<Found> = LinkedList()

@@ -21,14 +21,23 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 object PhaseESP : Module("PhaseESP", Category.RENDER, "Highlights phased players") {
 
-    private val range = Setting("Range", 20F, 5F, 50F, 1F) describedBy "Range in which to look for phasing players"
+    private val range = Setting(
+        "Range",
+        20F,
+        5F,
+        50F,
+        1F
+    ) describedBy "Range in which to look for phasing players"
 
     private val phaseColor = Setting(
         "Color",
         Color.ORANGE.integrateAlpha(100F)
     ) describedBy "Color of the phase indicator"
 
-    private val self = Setting("Self", false) describedBy "Highlight yourself when phasing"
+    private val self = Setting(
+        "Self",
+        false
+    ) describedBy "Highlight yourself when phasing"
 
     //Ikik but blocking is even worse (I actually tested)
     private val phased: MutableList<EntityPlayer> = CopyOnWriteArrayList()

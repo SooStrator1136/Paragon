@@ -140,4 +140,13 @@ object BlockUtil : Wrapper {
         return null
     }
 
+    @JvmStatic
+    fun isHole(pos: BlockPos) = !arrayOf(
+        pos.down(),
+        pos.north(),
+        pos.east(),
+        pos.south(),
+        pos.west()
+    ).any { getBlockAtPos(it) == Blocks.AIR }
+
 }

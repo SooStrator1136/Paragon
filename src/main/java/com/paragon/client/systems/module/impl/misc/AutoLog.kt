@@ -14,14 +14,23 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 object AutoLog : Module("AutoLog", Category.MISC, "Automatically logs you out when you reach a certain health") {
 
-    private val logMode = Setting("LogMode", DisconnectMode.DISCONNECT)
-        .setDescription("How to log you out of the server")
+    private val logMode = Setting(
+        "LogMode",
+        DisconnectMode.DISCONNECT
+    ) describedBy "How to log you out of the server"
 
-    private val health = Setting("Health", 6f, 1f, 20f, 1f)
-        .setDescription("The health to log you out at")
+    private val health = Setting(
+        "Health",
+        6f,
+        1f,
+        20f,
+        1f
+    ) describedBy "The health to log you out at"
 
-    private val autoDisable = Setting("AutoDisable", true)
-        .setDescription("Disables the module after logging you out")
+    private val autoDisable = Setting(
+        "AutoDisable",
+        true
+    ) describedBy "Disables the module after logging you out"
 
     override fun onTick() {
         if (minecraft.anyNull) {

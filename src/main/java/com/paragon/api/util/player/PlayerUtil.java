@@ -1,12 +1,17 @@
 package com.paragon.api.util.player;
 
 import com.paragon.api.util.Wrapper;
+import com.paragon.api.util.world.BlockUtil;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 
 public final class PlayerUtil implements Wrapper {
 
@@ -145,6 +150,19 @@ public final class PlayerUtil implements Wrapper {
 
     public static double getBaseMoveSpeed() {
         return 0.2873 * (mc.player.isPotionActive(MobEffects.SPEED) ? 1 + (0.2 * (mc.player.getActivePotionEffect(MobEffects.SPEED).getAmplifier() + 1)) : 1);
+    }
+
+    @Nullable
+    public static BlockPos getBlockUnder(final Entity player) {
+        BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
+        Block blockAtPos = BlockUtil.getBlockAtPos(pos);
+
+        while (pos.getY() > -2 && blockAtPos == Blocks.AIR) {
+            pos = pos.down();
+            blockAtPos = BlockUtil.getBlockAtPos(pos);
+        }
+
+        return pos.getY() < 0 ? null : pos;
     }
 
 }
