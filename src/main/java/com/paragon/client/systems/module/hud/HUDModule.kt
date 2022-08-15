@@ -15,10 +15,11 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 abstract class HUDModule(name: String, description: String) : Module(name, Category.HUD, description) {
 
-    var x = 50F
-    var y = 50F
     open var width = 50F
     open var height = 50F
+
+    var x = 50F
+    var y = 50F
     private var lastX = 0F
     private var lastY = 0F
     var isDragging = false

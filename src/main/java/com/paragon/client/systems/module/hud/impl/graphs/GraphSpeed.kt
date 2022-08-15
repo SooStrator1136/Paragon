@@ -22,7 +22,7 @@ object GraphSpeed : HUDModule("SpeedGraph", "Graph showing your speed") {
         0.1
     ) describedBy "Size of the graph"
 
-    private val background = Setting("Background", Background.ALL)
+    private val background = Setting("Background", Graph.Background.ALL)
 
     private val backgroundColor = Setting(
         "BackgroundColor",

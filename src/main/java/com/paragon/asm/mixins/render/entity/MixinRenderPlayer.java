@@ -16,7 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RenderPlayer.class)
 public class MixinRenderPlayer {
 
-    @Shadow @Final private boolean smallArms;
+    @Shadow
+    @Final
+    private boolean smallArms;
 
     @Inject(method = "renderEntityName(Lnet/minecraft/entity/Entity;DDDLjava/lang/String;D)V", at = @At("HEAD"), cancellable = true)
     public void onRenderEntityName(Entity par1, double par2, double par3, double par4, String par5, double par6, CallbackInfo ci) {

@@ -88,4 +88,5 @@ public final class Watermark extends HUDModule {
             return height;
         }
     }
+
 }

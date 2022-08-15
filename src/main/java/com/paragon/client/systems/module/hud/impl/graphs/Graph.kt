@@ -122,4 +122,8 @@ class Graph(
         points[points.size - 1] = MathsUtil.getPercent(value, highestVal)
     }
 
+    enum class Background {
+        NONE, ALL, SIMPLE
+    }
+
 }

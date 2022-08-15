@@ -10,7 +10,6 @@ import net.minecraft.util.math.Vec3d
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * @author Surge
@@ -77,10 +76,10 @@ object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behin
         positions.add(pos)
 
         // Update positions
-        positions.forEach(Consumer { obj: Position -> obj.update() })
+        positions.forEach { it.update() }
 
         // Remove old positions
-        positions.removeIf { p: Position -> !p.isAlive && !infinite.value }
+        positions.removeIf { !it.isAlive && !infinite.value }
     }
 
     override fun onRender3D() {

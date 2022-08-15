@@ -94,6 +94,7 @@ object EntityUtil : Wrapper {
      * @param maximumRange The maximum range they are allowed in
      * @return If the player is too far away from us
      */
+    @JvmStatic
     fun Entity.isTooFarAwayFromSelf(maximumRange: Double): Boolean {
         return this.getDistance(minecraft.player) > maximumRange
     }
@@ -121,7 +122,9 @@ object EntityUtil : Wrapper {
         return if (this is EntityIronGolem) { (this as EntityLivingBase).revengeTarget == null } else this is EntityAgeable || this is EntityAmbientCreature || this is EntitySquid
     }
 
+    @JvmStatic
     fun getEntityHealth(entityLivingBase: EntityLivingBase): Float {
         return entityLivingBase.health + entityLivingBase.absorptionAmount
     }
+
 }

@@ -12,8 +12,10 @@ import com.paragon.api.setting.Setting
 @IgnoredByNotifications
 object DiscordRPC : Module("DiscordRPC", Category.CLIENT, "Changes your Discord presence to reflect the client's current state") {
 
-    val showServer = Setting("Show Server", true)
-        .setDescription("Show the servers ip in the RPC")
+    val showServer = Setting(
+        "Show Server",
+        true
+    ) describedBy "Show the servers ip in the RPC"
 
     override fun onEnable() {
         Paragon.INSTANCE.presenceManager.startRPC()
