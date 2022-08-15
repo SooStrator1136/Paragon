@@ -7,7 +7,6 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil.drawBoundingBox
 import com.paragon.api.util.render.RenderUtil.drawFilledBox
-import com.paragon.api.util.world.BlockUtil.getBlockBox
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.util.math.RayTraceResult
 import java.awt.Color
@@ -42,8 +41,17 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
 
     override fun onRender3D() {
         if (minecraft.objectMouseOver != null && minecraft.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
-            // Get bounding box
-            val bb = getBlockBox(minecraft.objectMouseOver.blockPos)
+            val bp = minecraft.objectMouseOver.blockPos
+
+            // Get bounding box (yoinked from RenderGlobal)
+            val bb = minecraft.world.getBlockState(bp)
+                .getSelectedBoundingBox(minecraft.world, bp)
+                .grow(0.0020000000949949026)
+                .offset(
+                    -minecraft.renderManager.viewerPosX,
+                    -minecraft.renderManager.viewerPosY,
+                    -minecraft.renderManager.viewerPosZ
+                )
 
             // Draw fill
             if (renderMode.value != RenderMode.OUTLINE) {

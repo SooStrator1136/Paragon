@@ -22,7 +22,7 @@ object CombatInfo : HUDModule("CombatInfo", "Shows what combat modules are enabl
             Colours.mainColour.value.rgb
         )
         drawStringWithShadow(
-            "CA " + if (AutoCrystal.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled",
+            "CA " + if (AutoCrystal.INSTANCE.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled",
             x,
             y + FontUtil.getHeight(),
             Colours.mainColour.value.rgb

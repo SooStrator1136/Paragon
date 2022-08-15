@@ -43,7 +43,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
     private val timer = Timer()
     private val toRemove = ArrayDeque<BlockPos>()
 
-    override fun onTick() { //TODO use coroutine for blocks
+    override fun onTick() {
         if (minecraft.anyNull) {
             return
         }

@@ -48,7 +48,8 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     @Shadow
     private boolean autoJumpEnabled;
 
-    @Shadow public abstract void move(MoverType type, double x, double y, double z);
+    @Shadow
+    public abstract void move(MoverType type, double x, double y, double z);
 
     public MixinEntityPlayerSP() {
         super(null, null);
