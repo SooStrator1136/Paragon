@@ -7,7 +7,6 @@ import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.systems.module.impl.combat.Aura
 import com.paragon.client.systems.module.impl.combat.AutoCrystal
-import com.paragon.client.systems.module.impl.combat.AutoCrystalRewrite
 import net.minecraft.util.text.TextFormatting
 
 /**
@@ -23,21 +22,15 @@ object CombatInfo : HUDModule("CombatInfo", "Shows what combat modules are enabl
             Colours.mainColour.value.rgb
         )
         drawStringWithShadow(
-            "CA " + if (AutoCrystal.INSTANCE.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled",
+            "CA " + if (AutoCrystal.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled",
             x,
             y + FontUtil.getHeight(),
-            Colours.mainColour.value.rgb
-        )
-        drawStringWithShadow(
-            "ACR " + if (AutoCrystalRewrite.INSTANCE.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled",
-            x,
-            y + FontUtil.getHeight() * 2,
             Colours.mainColour.value.rgb
         )
     }
 
     override var width = 10F
-        get() = getStringWidth("ACR Disabled")
+        get() = getStringWidth("AC Disabled")
 
     override var height = 20F
         get() = FontUtil.getHeight() * 3

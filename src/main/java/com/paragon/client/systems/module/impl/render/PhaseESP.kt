@@ -8,6 +8,7 @@ import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
+import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.minecraft.entity.player.EntityPlayer
@@ -58,13 +59,13 @@ object PhaseESP : Module("PhaseESP", Category.RENDER, "Highlights phased players
                         }
 
                         !phased.contains(it)
-                                && BlockUtil.getBlockAtPos(BlockPos(it.posX, it.posY, it.posZ)) != Blocks.AIR
+                                && BlockPos(it.posX, it.posY, it.posZ).getBlockAtPos() != Blocks.AIR
                                 && it.getDistance(minecraft.player) <= range.value
                     })
 
                     phased.removeIf {
                         it.getDistance(minecraft.player) > range.value
-                                || BlockUtil.getBlockAtPos(BlockPos(it.posX, it.posY, it.posZ)) == Blocks.AIR
+                                || BlockPos(it.posX, it.posY, it.posZ).getBlockAtPos() == Blocks.AIR
                                 || it.uniqueID == minecraft.player.uniqueID && !self.value
                     }
                 }

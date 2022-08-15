@@ -7,6 +7,7 @@ import com.paragon.api.setting.Bind.Device
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
+import com.paragon.api.util.combat.CrystalUtil.getDamageToEntity
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.player.InventoryUtil
 import com.paragon.api.util.world.BlockUtil
@@ -196,10 +197,8 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         if (crystal.value) {
             var deadlyCrystals = 0
 
-            minecraft.world.loadedEntityList.stream()
-                .filter { entity -> entity is EntityEnderCrystal && entity.getDistance(minecraft.player) <= 6 }
-                .forEach { entity ->
-                    if (AutoCrystalRewrite.INSTANCE.calculateDamage(Vec3d(entity.posX, entity.posY, entity.posZ), minecraft.player) > EntityUtil.getEntityHealth(minecraft.player)) {
+            minecraft.world.loadedEntityList.stream().filter { entity -> entity.getDistance(minecraft.player) <= 6 }.forEach { entity ->
+                    if (entity is EntityEnderCrystal && entity.getDamageToEntity(minecraft.player) > EntityUtil.getEntityHealth(minecraft.player)) {
                         deadlyCrystals++
                     }
                 }

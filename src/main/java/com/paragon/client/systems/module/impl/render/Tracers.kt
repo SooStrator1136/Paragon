@@ -4,6 +4,9 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.entity.EntityUtil
+import com.paragon.api.util.entity.EntityUtil.isEntityAllowed
+import com.paragon.api.util.entity.EntityUtil.isMonster
+import com.paragon.api.util.entity.EntityUtil.isPassive
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import net.minecraft.entity.Entity
@@ -72,13 +75,7 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
     @SubscribeEvent
     fun onRenderWorld(event: RenderWorldLastEvent?) {
         minecraft.world.loadedEntityList.forEach(Consumer { entity: Entity ->
-            if (EntityUtil.isEntityAllowed(
-                    entity,
-                    players.value,
-                    mobs.value,
-                    passive.value
-                ) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value
-            ) {
+            if (entity.isEntityAllowed(players.value, mobs.value, passive.value) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value) {
                 RenderUtil.drawTracer(entity, lineWidth.value, getColourByEntity(entity))
             }
         })
@@ -93,9 +90,9 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
     private fun getColourByEntity(entityIn: Entity): Color {
         var colour = passiveColour.value
 
-        if (EntityUtil.isPassive(entityIn)) {
+        if (entityIn.isPassive()) {
             colour = passiveColour.value
-        } else if (EntityUtil.isMonster(entityIn)) {
+        } else if (entityIn.isMonster()) {
             colour = mobColour.value
         } else if (entityIn is EntityPlayer) {
             colour = playerColour.value

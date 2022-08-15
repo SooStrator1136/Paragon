@@ -1,17 +1,16 @@
 package com.paragon.client.ui.configuration.paragon.setting
 
+import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.paragon.module.ModuleElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.BooleanElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.ColourElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.EnumElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.SliderElement
+import com.paragon.client.ui.configuration.paragon.setting.impl.*
 import com.paragon.client.ui.configuration.shared.RawElement
 import com.paragon.client.ui.util.Click
+import com.sun.org.apache.xpath.internal.operations.Bool
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import java.awt.Color
@@ -34,6 +33,8 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
                 is Number -> subElements.add(SliderElement(it as Setting<Number>, module, x, y, width, height))
                 is Enum<*> -> subElements.add(EnumElement(it as Setting<Enum<*>>, module, x, y, width, height))
                 is Color -> subElements.add(ColourElement(it as Setting<Color>, module, x, y, width, height))
+                is Bind -> subElements.add(SettingElement(it as Setting<Bind>, module, x, y, width, height))
+                is Setting<*> -> subElements.add(StringElement(it as Setting<String>, module, x, y, width, height))
             }
         }
     }
@@ -41,7 +42,7 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         hover.state = isHovered(mouseX, mouseY)
 
-        if (setting.subsettings.size > 0) {
+        if (subElements.any { it.setting.isVisible() }) {
             RenderUtil.drawRect(x + width - 7, y, 7f, height, Color(37, 42, 51, 100).rgb)
 
             // lel
@@ -52,13 +53,16 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
 
         if (expanded.getAnimationFactor() > 0) {
             var offset = y + height
+
             subElements.forEach {
-                it.x = x
-                it.y = offset
+                if (it.setting.isVisible()) {
+                    it.x = x
+                    it.y = offset
 
-                it.draw(mouseX, mouseY, mouseDelta)
+                    it.draw(mouseX, mouseY, mouseDelta)
 
-                offset += it.getAbsoluteHeight()
+                    offset += it.getAbsoluteHeight()
+                }
             }
 
             RenderUtil.drawRect(x + 1, y + height, 1f, offset - y - height, Colours.mainColour.value.rgb)
@@ -74,7 +78,9 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
 
         if (expanded.state) {
             subElements.forEach {
-                it.mouseClicked(mouseX, mouseY, click)
+                if (it.setting.isVisible()) {
+                    it.mouseClicked(mouseX, mouseY, click)
+                }
             }
         }
     }
@@ -84,7 +90,9 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
 
         if (expanded.state) {
             subElements.forEach {
-                it.mouseReleased(mouseX, mouseY, click)
+                if (it.setting.isVisible()) {
+                    it.mouseReleased(mouseX, mouseY, click)
+                }
             }
         }
     }
@@ -94,13 +102,15 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
 
         if (expanded.state) {
             subElements.forEach {
-                it.keyTyped(character, keyCode)
+                if (it.setting.isVisible()) {
+                    it.keyTyped(character, keyCode)
+                }
             }
         }
     }
 
     open fun getAbsoluteHeight(): Float {
-        return height + (subElements.sumOf { it.getAbsoluteHeight().toDouble() } * expanded.getAnimationFactor()).toFloat()
+        return height + (subElements.filter { it.setting.isVisible() }.sumOf { it.getAbsoluteHeight().toDouble() } * expanded.getAnimationFactor()).toFloat()
     }
 
     override fun isHovered(mouseX: Float, mouseY: Float): Boolean {

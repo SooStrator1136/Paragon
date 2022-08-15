@@ -60,7 +60,7 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
             val blockPos = progress.position
 
             // Don't care about air
-            if (getBlockAtPos(blockPos) === Blocks.AIR) {
+            if (blockPos.getBlockAtPos() === Blocks.AIR) {
                 return@forEach
             }
 

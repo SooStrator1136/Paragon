@@ -49,7 +49,7 @@ object BlockUtil : Wrapper {
      * @return The block
      */
     @JvmStatic
-    fun getBlockAtPos(pos: BlockPos): Block? = minecraft.world.getBlockState(pos).block
+    fun BlockPos.getBlockAtPos(): Block? = minecraft.world.getBlockState(this).block
 
     /**
      * Gets the bounding box of a block
@@ -111,19 +111,18 @@ object BlockUtil : Wrapper {
      */
     @JvmStatic
     fun isSafeHole(pos: BlockPos, obbyBedrock: Boolean): Boolean {
-        if (getBlockAtPos(pos)?.isReplaceable(minecraft.world, pos)?.not() == true) { //This is chinese on another level and not tested 📈
+        if (pos.getBlockAtPos()?.isReplaceable(minecraft.world, pos)?.not() == true) { //This is chinese on another level and not tested 📈
             return false
         }
+
         for (facing in EnumFacing.values()) {
             if (facing == EnumFacing.UP) {
                 continue
             }
-            val block = getBlockAtPos(pos.offset(facing))
-            if (block === Blocks.AIR || block !== Blocks.OBSIDIAN && block !== Blocks.BEDROCK && obbyBedrock || block!!.isReplaceable(
-                    minecraft.world,
-                    pos.offset(facing)
-                )
-            ) {
+
+            val block = pos.offset(facing).getBlockAtPos()
+
+            if (block === Blocks.AIR || block !== Blocks.OBSIDIAN && block !== Blocks.BEDROCK && obbyBedrock || block!!.isReplaceable(minecraft.world, pos.offset(facing))) {
                 return false
             }
         }
@@ -147,6 +146,6 @@ object BlockUtil : Wrapper {
         pos.east(),
         pos.south(),
         pos.west()
-    ).any { getBlockAtPos(it) == Blocks.AIR }
+    ).any { pos.getBlockAtPos() == Blocks.AIR }
 
 }

@@ -8,6 +8,7 @@ import com.paragon.api.util.player.InventoryUtil
 import com.paragon.api.util.player.PlayerUtil
 import com.paragon.api.util.player.RotationUtil
 import com.paragon.api.util.world.BlockUtil
+import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.asm.mixins.accessor.IEntity
 import com.paragon.client.managers.rotation.Rotate
 import net.minecraft.entity.player.EntityPlayer
@@ -61,7 +62,7 @@ object WebAura : Module("WebAura", Category.COMBAT, "Spiderman on drugs wtf") {
         when (mode.value) {
             TargetMode.SELF -> {
                 val playerBlock = BlockPos(minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ)
-                if ((onlyHole.value && !BlockUtil.isHole(playerBlock)) || BlockUtil.getBlockAtPos(playerBlock) != Blocks.AIR) {
+                if ((onlyHole.value && !BlockUtil.isHole(playerBlock)) || playerBlock.getBlockAtPos() != Blocks.AIR) {
                     return
                 }
 

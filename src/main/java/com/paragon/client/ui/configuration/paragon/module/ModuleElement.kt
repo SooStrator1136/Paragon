@@ -1,9 +1,8 @@
 package com.paragon.client.ui.configuration.paragon.module
 
-import com.paragon.Paragon
 import com.paragon.api.module.Module
+import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ColourUtil
 import com.paragon.api.util.render.ColourUtil.fade
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
@@ -12,17 +11,13 @@ import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.paragon.panel.CategoryPanel
 import com.paragon.client.ui.configuration.paragon.setting.SettingElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.BooleanElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.ColourElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.EnumElement
-import com.paragon.client.ui.configuration.paragon.setting.impl.SliderElement
+import com.paragon.client.ui.configuration.paragon.setting.impl.*
 import com.paragon.client.ui.configuration.shared.RawElement
 import com.paragon.client.ui.util.Click
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.util.math.MathHelper
 import java.awt.Color
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -44,6 +39,8 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
                 is Number -> subElements.add(SliderElement(it as Setting<Number>, this, x, y, width, height))
                 is Enum<*> -> subElements.add(EnumElement(it as Setting<Enum<*>>, this, x, y, width, height))
                 is Color -> subElements.add(ColourElement(it as Setting<Color>, this, x, y, width, height))
+                is Bind -> subElements.add(BindElement(it as Setting<Bind>, this, x, y, width, height))
+                is String -> subElements.add(StringElement(it as Setting<String>, this, x, y, width, height))
             }
         }
     }
@@ -52,7 +49,6 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
         hover.state = isHovered(mouseX, mouseY)
         enabled.state = module.isEnabled
 
-        //Color(53, 53, 74).fade(Color(64, 64, 92), hover.getAnimationFactor()).rgb
         RenderUtil.drawRect(x, y, width, height, Color(53, 53, 74).fade(Color(64, 64, 92), hover.getAnimationFactor()).rgb)
 
         RenderUtil.scaleTo(x + 5, y + 7, 0f, 0.6, 0.6, 0.6) {
@@ -76,12 +72,14 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
             var offset = y + height
 
             subElements.forEach {
-                it.x = x
-                it.y = offset
+                if (it.setting.isVisible()) {
+                    it.x = x
+                    it.y = offset
 
-                it.draw(mouseX, mouseY, mouseDelta)
+                    it.draw(mouseX, mouseY, mouseDelta)
 
-                offset += it.getAbsoluteHeight()
+                    offset += it.getAbsoluteHeight()
+                }
             }
 
             RenderUtil.drawRect(x, y + height, 1f, offset - y - height, Colours.mainColour.value.rgb)
@@ -90,7 +88,9 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, click: Click) {
         subElements.forEach {
-            it.mouseClicked(mouseX, mouseY, click)
+            if (it.setting.isVisible()) {
+                it.mouseClicked(mouseX, mouseY, click)
+            }
         }
 
         if (isHovered(mouseX, mouseY)) {
@@ -106,18 +106,22 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
 
     override fun mouseReleased(mouseX: Float, mouseY: Float, click: Click) {
         subElements.forEach {
-            it.mouseReleased(mouseX, mouseY, click)
+            if (it.setting.isVisible()) {
+                it.mouseReleased(mouseX, mouseY, click)
+            }
         }
     }
 
     override fun keyTyped(character: Char, keyCode: Int) {
         subElements.forEach {
-            it.keyTyped(character, keyCode)
+            if (it.setting.isVisible()) {
+                it.keyTyped(character, keyCode)
+            }
         }
     }
 
     fun getAbsoluteHeight(): Float {
-        return height + subElements.sumOf { it.getAbsoluteHeight().toDouble() }.toFloat() * expanded.getAnimationFactor().toFloat()
+        return height + subElements.filter { it.setting.isVisible() }.sumOf { it.getAbsoluteHeight().toDouble() }.toFloat() * expanded.getAnimationFactor().toFloat()
     }
 
     override fun isHovered(mouseX: Float, mouseY: Float): Boolean {

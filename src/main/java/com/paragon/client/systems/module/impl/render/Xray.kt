@@ -61,19 +61,19 @@ object Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids thr
 
     @Listener
     fun onRenderBlockModel(event: RenderBlockModelEvent) {
-        event.returnValue = !visibleBlocks.contains(getBlockAtPos(event.pos))
+        event.returnValue = !visibleBlocks.contains(event.pos.getBlockAtPos())
         event.cancel()
     }
 
     @Listener
     fun onRenderSmooth(event: RenderBlockSmoothEvent) {
-        event.returnValue = !visibleBlocks.contains(getBlockAtPos(event.pos))
+        event.returnValue = !visibleBlocks.contains(event.pos.getBlockAtPos())
         event.cancel()
     }
 
     @Listener
     fun onSideRenderBlock(event: SideRenderBlockEvent) {
-        event.returnValue = visibleBlocks.contains(getBlockAtPos(event.pos))
+        event.returnValue = visibleBlocks.contains(event.pos.getBlockAtPos())
         event.cancel()
     }
 

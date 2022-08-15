@@ -224,22 +224,19 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
      * @return Whether the hole is mixed or not
      */
     private fun isHoleMixed(pos: BlockPos): Boolean {
-        return (getBlockAtPos(pos.north()) === Blocks.OBSIDIAN || getBlockAtPos(pos.north()) === Blocks.BEDROCK) &&
-                (getBlockAtPos(pos.west()) === Blocks.OBSIDIAN || getBlockAtPos(pos.west()) === Blocks.BEDROCK) &&
-                (getBlockAtPos(pos.east()) === Blocks.OBSIDIAN || getBlockAtPos(pos.east()) === Blocks.BEDROCK) &&
-                (getBlockAtPos(pos.south()) === Blocks.OBSIDIAN || getBlockAtPos(pos.south()) === Blocks.BEDROCK) && getBlockAtPos(
-            pos
-        ) === Blocks.AIR && getBlockAtPos(pos.up()) === Blocks.AIR && getBlockAtPos(
-            pos.up().up()
-        ) === Blocks.AIR && getBlockAtPos(pos.down()) !== Blocks.AIR
+        return (pos.north().getBlockAtPos() === Blocks.OBSIDIAN || pos.north().getBlockAtPos() === Blocks.BEDROCK) &&
+                (pos.west().getBlockAtPos() === Blocks.OBSIDIAN || pos.west().getBlockAtPos() === Blocks.BEDROCK) &&
+                (pos.east().getBlockAtPos() === Blocks.OBSIDIAN || pos.east().getBlockAtPos() === Blocks.BEDROCK) &&
+                (pos.south().getBlockAtPos() === Blocks.OBSIDIAN || pos.south().getBlockAtPos() === Blocks.BEDROCK) &&
+                pos.getBlockAtPos() === Blocks.AIR &&
+                pos.up().getBlockAtPos() === Blocks.AIR &&
+                pos.up().up().getBlockAtPos() === Blocks.AIR &&
+                pos.down().getBlockAtPos() !== Blocks.AIR
     }
 
     private fun isSurroundedByBlock(pos: BlockPos, blockCheck: Block): Boolean {
-        return getBlockAtPos(pos) === Blocks.AIR && getBlockAtPos(pos.north()) === blockCheck && getBlockAtPos(pos.south()) === blockCheck && getBlockAtPos(
-            pos.east()
-        ) === blockCheck && getBlockAtPos(pos.west()) === blockCheck && getBlockAtPos(pos.up()) === Blocks.AIR && getBlockAtPos(
-            pos.up().up()
-        ) === Blocks.AIR && getBlockAtPos(pos.down()) !== Blocks.AIR
+        return pos.getBlockAtPos() === Blocks.AIR && pos.north().getBlockAtPos() === blockCheck && pos.south().getBlockAtPos() === blockCheck && pos.east().getBlockAtPos() === blockCheck &&
+                pos.west().getBlockAtPos() === blockCheck && pos.up().getBlockAtPos() === Blocks.AIR && pos.up().up().getBlockAtPos() === Blocks.AIR && pos.getBlockAtPos() !== Blocks.AIR
     }
 
     enum class HoleType {

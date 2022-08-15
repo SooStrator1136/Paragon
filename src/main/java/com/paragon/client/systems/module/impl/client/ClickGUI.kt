@@ -21,110 +21,50 @@ import org.lwjgl.input.Keyboard
 object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Bind(Keyboard.KEY_RSHIFT, Bind.Device.KEYBOARD)) {
 
     @JvmStatic
-    val style: Setting<Style> = Setting(
-        "Style",
-        Style.WINDOWS_98
-    ) describedBy "The style of the ClickGUI"
+    val style: Setting<Style> = Setting("Style", Style.WINDOWS_98) describedBy "The style of the ClickGUI"
 
     // Windows settings
     @JvmStatic
-    val gradient = Setting(
-        "Gradient",
-        true
-    ) describedBy "Whether the windows should have a gradient" subOf style visibleWhen { style.value == Style.WINDOWS_98 }
+    val gradient = Setting("Gradient", true) describedBy "Whether the windows should have a gradient" subOf style visibleWhen { style.value == Style.WINDOWS_98 }
 
     // ZeroDay settings
     @JvmStatic
-    val gradientBackground = Setting(
-        "GradientBackground",
-        true
-    ) describedBy "Whether or not to draw the gradient in the background" subOf style visibleWhen { style.value == Style.ZERODAY }
+    val gradientBackground = Setting("GradientBackground", true) describedBy "Whether or not to draw the gradient in the background" subOf style visibleWhen { style.value == Style.ZERODAY }
 
     @JvmStatic
-    val icon = Setting(
-        "Icon",
-        Icon.BACKGROUND
-    ) describedBy "How to draw the icon" subOf style visibleWhen { style.value == Style.ZERODAY }
+    val icon = Setting("Icon", Icon.BACKGROUND) describedBy "How to draw the icon" subOf style visibleWhen { style.value == Style.ZERODAY || style.value == Style.PARAGON }
 
     @JvmStatic
-    val radius = Setting(
-        "Radius",
-        1f,
-        1f,
-        15f,
-        1f
-    ) describedBy "The radius of the panel's corners" subOf style visibleWhen { style.value == Style.ZERODAY }
+    val radius = Setting("Radius", 1f, 1f, 15f, 1f) describedBy "The radius of the panel's corners" subOf style visibleWhen { style.value == Style.ZERODAY || style.value == Style.OLD }
 
     // Shared settings
     @JvmStatic
-    val animationSpeed = Setting(
-        "AnimationSpeed",
-        200f,
-        0f,
-        1000f,
-        10f
-    ) describedBy "How fast animations are" visibleWhen { style.value != Style.SIMPLE }
+    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f) describedBy "How fast animations are" visibleWhen { style.value != Style.SIMPLE }
 
     @JvmStatic
-    val easing = Setting(
-        "Easing",
-        Easing.EXPO_IN_OUT
-    ) describedBy "The easing type of the animation" visibleWhen { style.value != Style.SIMPLE }
+    val easing = Setting("Easing", Easing.EXPO_IN_OUT) describedBy "The easing of the animations" visibleWhen { style.value != Style.SIMPLE }
 
     @JvmStatic
-    val darkenBackground = Setting(
-        "DarkenBackground",
-        true
-    ) describedBy "Darkens the background whilst in the GUI"
+    val darkenBackground = Setting("DarkenBackground", true) describedBy "Whether or not to darken the background"
 
     @JvmStatic
-    val pause = Setting(
-        "Pause Game",
-        false
-    ) describedBy "Pause the game whilst in the GUI"
+    val pause = Setting("Pause Game", false) describedBy "Pause the game whilst in the GUI"
 
     @JvmStatic
-    val tooltips = Setting(
-        "Tooltips",
-        true
-    ) describedBy "Render tooltips on the taskbar"
+    val tooltips = Setting("Tooltips", true) describedBy "Render tooltips on the taskbar"
 
     @JvmStatic
-    val scrollSpeed: Setting<Float> = Setting(
-        "ScrollSpeed",
-        10f,
-        5f,
-        30f,
-        1f
-    ) describedBy "How fast to scroll" subOf style visibleWhen { style.value == Style.OLD }
+    val scrollSpeed = Setting("ScrollSpeed", 10f, 5f, 30f, 1f) describedBy "How fast to scroll" subOf style visibleWhen { style.value == Style.OLD }
 
     @JvmStatic
-    val panelHeaderSeparator = Setting(
-        "HeaderSeparator",
-        true
-    ) describedBy "Draw a separator between the header and the module buttons" subOf style visibleWhen { style.value == Style.OLD }
+    val panelHeaderSeparator = Setting("HeaderSeparator", true) describedBy "Draw a separator between the header and the module buttons" subOf style visibleWhen { style.value == Style.OLD }
 
     @JvmStatic
-    val cornerRadius = Setting(
-        "CornerRadius",
-        1f,
-        1f,
-        7f,
-        1f
-    ) describedBy "The radius of the corners" subOf style visibleWhen { style.value == Style.OLD }
+    val cornerRadius = Setting("CornerRadius", 1f, 1f, 7f, 1f) describedBy "The radius of the corners" subOf style visibleWhen { style.value == Style.OLD }
 
-    val blur = Setting(
-        "Blur",
-        true
-    ) describedBy "Blur the backgrounds of windows"
+    val blur = Setting("Blur", true) describedBy "Whether the windows have a blur"
 
-    val intensity = Setting(
-        "Intensity",
-        10f,
-        1f,
-        20f,
-        1f
-    ) describedBy "The intensity of the blur" subOf blur
+    val intensity = Setting("Intensity", 10f, 1f, 20f, 1f) describedBy "The intensity of the blur" subOf blur
 
 
     fun getGUI(): GuiImplementation = when (style.value) {

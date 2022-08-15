@@ -1,3 +1,5 @@
+Changelog for version 1.0.0 Pre 4
+
 Readded tooltips to taskbar
 Added Discord themed GUI
 Added held item size command ($size)
@@ -17,5 +19,6 @@ Added SourceESP
 Added PhaseESP
 Added Graphs
 Added AntiHunger
+Added new GUI
 Added WebAura
 Added Alerts

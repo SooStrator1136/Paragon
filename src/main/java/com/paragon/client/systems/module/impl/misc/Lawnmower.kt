@@ -8,6 +8,7 @@ import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
 import com.paragon.api.util.player.RotationUtil
 import com.paragon.api.util.world.BlockUtil
+import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.client.managers.rotation.Rotate
 import com.paragon.client.managers.rotation.Rotation
 import com.paragon.client.managers.rotation.RotationPriority
@@ -48,7 +49,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
         }
 
         toRemove.addAll(BlockUtil.getSphere(range.value, true).filter {
-            lawnBlocks.contains(BlockUtil.getBlockAtPos(it)) && !toRemove.contains(it)
+            lawnBlocks.contains(it.getBlockAtPos()) && !toRemove.contains(it)
         })
 
         toRemove.filter {

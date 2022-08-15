@@ -8,6 +8,7 @@ import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
+import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.minecraft.block.BlockLiquid
@@ -53,12 +54,12 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
                 lastJob = launch {
                     sources.addAll(BlockUtil.getSphere(range.value, true).filter {
                         !sources.contains(it)
-                                && BlockUtil.getBlockAtPos(it) is BlockLiquid
+                                && it.getBlockAtPos() is BlockLiquid
                                 && minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) == 0
                     })
 
                     sources.removeIf {
-                        BlockUtil.getBlockAtPos(it) !is BlockLiquid
+                        it.getBlockAtPos() !is BlockLiquid
                                 || minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) != 0
                                 || it.getDistance(
                             minecraft.player.posX.toInt(),
@@ -75,7 +76,7 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
         sources.forEach {
             RenderUtil.drawFilledBox(
                 BlockUtil.getBlockBox(it),
-                if (BlockUtil.getBlockAtPos(it) == Blocks.WATER) waterColor.value else lavaColor.value
+                if (it.getBlockAtPos() == Blocks.WATER) waterColor.value else lavaColor.value
             )
         }
     }

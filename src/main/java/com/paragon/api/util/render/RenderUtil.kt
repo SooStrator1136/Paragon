@@ -110,6 +110,36 @@ object RenderUtil : Wrapper {
         GlStateManager.enableTexture2D()
         GlStateManager.popMatrix() */
 
+        /* glEnable(GL_BLEND)
+        glDisable(GL_TEXTURE_2D)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glShadeModel(GL_SMOOTH)
+        glBegin(GL_QUADS)
+
+        glColor4f(
+            (leftColour shr 16 and 0xFF) / 255.0f,
+            (leftColour shr 8 and 0xFF) / 255.0f,
+            (leftColour and 0xFF) / 255.0f,
+            (leftColour shr 24 and 0xFF) / 255.0f
+        )
+
+        glVertex2f(x, y)
+        glVertex2f(x, y + height)
+
+        glColor4f(
+            (rightColour shr 16 and 0xFF) / 255.0f,
+            (rightColour shr 8 and 0xFF) / 255.0f,
+            (rightColour and 0xFF) / 255.0f,
+            (rightColour shr 24 and 0xFF) / 255.0f
+        )
+
+        glVertex2f(x + width, y + height)
+        glVertex2f(x + width, y)
+        glEnd()
+        glShadeModel(GL_FLAT)
+        glEnable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND) */
+
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
