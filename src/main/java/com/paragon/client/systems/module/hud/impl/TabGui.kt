@@ -42,22 +42,30 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
 
     private val keyTimer = Timer()
 
-    private val catWidth = FontUtil.getStringWidth(Category.values().maxWith(
+    private var catWidth = FontUtil.getStringWidth(Category.values().maxWith(
         Comparator.comparingDouble { FontUtil.getStringWidth(it.Name).toDouble() }
     ).Name) + 4F
+
     private val catHeight: Float
         get() = ((FontUtil.getHeight() + 1F) * Category.values().size) - 1F
+
     private val moduleWidth: Float
         get() = if (shownModules == null || focusedModule == null) 0F else FontUtil.getStringWidth(
             shownModules!!.maxWith(
                 Comparator.comparingDouble { FontUtil.getStringWidth(it.name).toDouble() }
             ).name
         ) + 4F
+
     private val moduleHeight: Float
         get() = ((FontUtil.getHeight() + 1F) * if (shownModules == null || focusedModule == null) 0 else shownModules!!.size) - 1
 
     //Chinese asf, probably will never clean up though lel
     override fun render() {
+        // Gotta update this
+        catWidth = FontUtil.getStringWidth(Category.values().maxWith(
+            Comparator.comparingDouble { FontUtil.getStringWidth(it.Name).toDouble() }
+        ).Name) + 4F
+
         when (style.value) {
             ClickGUI.Style.ZERODAY -> {
                 RenderUtil.drawRoundedRect(
@@ -168,6 +176,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                     catHeight,
                     Color(100, 100, 100, 100).rgb
                 )
+
                 RenderUtil.drawRect(
                     x,
                     y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory)),

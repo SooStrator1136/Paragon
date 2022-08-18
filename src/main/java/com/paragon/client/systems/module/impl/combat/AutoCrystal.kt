@@ -98,6 +98,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             backgroundThread {
                 if (lastJob == null || lastJob!!.isCompleted) {
                     lastJob = launch {
+                        if (timing.value == Timing.SEQUENTIAL)
                         targetCrystal = findCrystal()
                         placePosition = findPlacement()
                     }
@@ -132,7 +133,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         val crystalSet = TreeMap<Crystal, Float>()
 
         getTargetList().forEach { possibleTarget ->
-            minecraft.world.loadedEntityList.stream().filter { !it.isTooFarAwayFromSelf(explodeRange.value) }.forEach { entityCrystal ->
+            minecraft.world.loadedEntityList.filter { it != null && !it.isTooFarAwayFromSelf(explodeRange.value) }.forEach { entityCrystal ->
                 // just for smart casting
                 if (entityCrystal is EntityEnderCrystal) {
                     val currentCrystal = Crystal(entityCrystal, entityCrystal.getDamageToEntity(possibleTarget!!))
