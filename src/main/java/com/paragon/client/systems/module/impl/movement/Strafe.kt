@@ -81,51 +81,50 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
         }
 
         // Don't apply speed if we're in a liquid or on a ladder
-        if (!applySpeed()) {
-            return
-        }
+        if (applySpeed()) {
 
-        // Make sure we are moving
-        if (PlayerUtil.isMoving() && !PlayerUtil.isInLiquid() && !minecraft.player.isOverWater) {
-            // Check on ground state and whether the delay has passed
-            if (minecraft.player.onGround && timer.hasMSPassed(delay.value)) {
-                // Increase timer speed
-                setTimerSpeed(timerSpeed.value)
+            // Make sure we are moving
+            if (PlayerUtil.isMoving()) {
+                // Check on ground state and whether the delay has passed
+                if (minecraft.player.onGround && timer.hasMSPassed(delay.value)) {
+                    // Increase timer speed
+                    setTimerSpeed(timerSpeed.value)
 
-                // Simulate a jump, but with 0.41 instead of 0.42 as it seems to bypass better?
-                event.y = ((0.41f).toFloat().also { minecraft.player.motionY = it.toDouble() }).toDouble()
+                    // Simulate a jump, but with 0.41 instead of 0.42 as it seems to bypass better?
+                    event.y = ((0.41f).toFloat().also { minecraft.player.motionY = it.toDouble() }).toDouble()
 
-                // Set speed
-                speed = PlayerUtil.getBaseMoveSpeed() * speedFactor.value.toDouble()
-
-                // Set state
-                state = State.SLOW
-
-                // Reset timer
-                timer.reset()
-            } else {
-                // Set timer speed to the air speed
-                setTimerSpeed(airSpeed.value)
-
-                // Check state or horizontal collision state
-                if (state == State.SLOW || minecraft.player.collidedHorizontally) {
-                    // Decrease speed
-                    speed -= airFriction.value * PlayerUtil.getBaseMoveSpeed()
+                    // Set speed
+                    speed = PlayerUtil.getBaseMoveSpeed() * speedFactor.value.toDouble()
 
                     // Set state
-                    state = State.INCREASE
+                    state = State.SLOW
+
+                    // Reset timer
+                    timer.reset()
+                } else {
+                    // Set timer speed to the air speed
+                    setTimerSpeed(airSpeed.value)
+
+                    // Check state or horizontal collision state
+                    if (state == State.SLOW || minecraft.player.collidedHorizontally) {
+                        // Decrease speed
+                        speed -= airFriction.value * PlayerUtil.getBaseMoveSpeed()
+
+                        // Set state
+                        state = State.INCREASE
+                    }
                 }
+
+                // Get the greatest possible speed
+                speed = max(speed, PlayerUtil.getBaseMoveSpeed())
+
+                // Get vector of forward position
+                val forward: Vec3d = PlayerUtil.forward(speed)
+
+                // Override X and Y
+                event.x = forward.x
+                event.z = forward.z
             }
-
-            // Get the greatest possible speed
-            speed = max(speed, PlayerUtil.getBaseMoveSpeed())
-
-            // Get vector of forward position
-            val forward: Vec3d = PlayerUtil.forward(speed)
-
-            // Override X and Y
-            event.x = forward.x
-            event.z = forward.z
         }
     }
 

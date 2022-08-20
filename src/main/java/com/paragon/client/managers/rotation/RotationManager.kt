@@ -24,7 +24,7 @@ class RotationManager : Wrapper {
     private var packetYaw = -1f
     private var packetPitch = -1f
 
-    private var serverRotation = Vec2f(-1f, -1f)
+    var serverRotation = Vec2f(-1f, -1f)
 
     init {
         MinecraftForge.EVENT_BUS.register(this)

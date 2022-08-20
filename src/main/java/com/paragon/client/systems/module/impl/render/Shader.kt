@@ -281,7 +281,7 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
         }
     }
 
-    override fun getData(): String = " " + StringUtil.getFormattedText(shaderType.value)
+    override fun getData(): String = StringUtil.getFormattedText(shaderType.value)
 
     enum class FragmentShader {
         /**

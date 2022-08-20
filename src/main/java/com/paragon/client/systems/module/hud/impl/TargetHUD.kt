@@ -13,6 +13,7 @@ import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.hud.HUDEditorGUI
 import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.combat.Aura
+import com.paragon.client.systems.module.impl.combat.AutoCrystal
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.entity.Entity
@@ -53,7 +54,7 @@ object TargetHUD : HUDModule("TargetHUD", "") {
         if (target == null || clearTimer.hasMSPassed(clearDelay.value)) {
             val possibleTargets = arrayOf(
                 if (Aura.INSTANCE.isEnabled) Aura.INSTANCE.lastTarget else null,
-                //if (AutoCrystal.INSTANCE.isEnabled) AutoCrystal.lastTarget else null TODO just for now since no new autocrystal
+                if (AutoCrystal.isEnabled) AutoCrystal.lastTarget else null
             )
 
             val newTarget = possibleTargets.anyIndexed { it != null }
