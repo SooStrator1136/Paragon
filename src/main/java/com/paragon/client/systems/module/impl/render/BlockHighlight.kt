@@ -5,9 +5,12 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
-import com.paragon.api.util.render.RenderUtil.drawBoundingBox
-import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
+import com.paragon.api.util.world.BlockUtil
+import com.paragon.client.systems.module.impl.movement.AntiVoidinq
 import me.wolfsurge.cerauno.listener.Listener
+import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.RayTraceResult
 import java.awt.Color
 
@@ -18,7 +21,7 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
 
     private val renderMode = Setting(
         "RenderMode",
-        RenderMode.BOTH
+        BoxRenderMode.BOTH
     ) describedBy "How to highlight the block"
 
     private val lineWidth = Setting(
@@ -27,7 +30,7 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
         0.1f,
         1.5f,
         0.1f
-    ) describedBy "The width of the outline" visibleWhen { renderMode.value != RenderMode.FILL }
+    ) describedBy "The width of the outline" visibleWhen { renderMode.value != BoxRenderMode.FILL }
 
     private val colour = Setting(
         "Colour",
@@ -47,39 +50,38 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
             val bb = minecraft.world.getBlockState(bp)
                 .getSelectedBoundingBox(minecraft.world, bp)
                 .grow(0.0020000000949949026)
-                .offset(
-                    -minecraft.renderManager.viewerPosX,
-                    -minecraft.renderManager.viewerPosY,
-                    -minecraft.renderManager.viewerPosZ
-                )
+                .offset(-minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ)
 
-            // Draw fill
-            if (renderMode.value != RenderMode.OUTLINE) {
-                drawFilledBox(bb, colour.value.integrateAlpha(180f))
-            }
+            /* RenderBuilder()
+                .boundingBox(bb)
+                .inner(colour.value)
+                .outer(colour.value.integrateAlpha(255f))
+                .type(renderMode.value)
 
-            // Draw outline
-            if (renderMode.value != RenderMode.FILL) {
-                drawBoundingBox(bb, lineWidth.value, colour.value)
-            }
+                .start()
+
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(lineWidth.value)
+
+                .build(true) */
+
+            RenderBuilder()
+                .boundingBox(bb)
+                .inner(colour.value)
+                .outer(colour.value.integrateAlpha(255f))
+                .type(renderMode.value)
+
+                .start()
+
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(lineWidth.value)
+
+                .build(false)
         }
-    }
-
-    enum class RenderMode {
-        /**
-         * Fill the block
-         */
-        FILL,
-
-        /**
-         * Outline the block
-         */
-        OUTLINE,
-
-        /**
-         * Fill and outline the block
-         */
-        BOTH
     }
 
 }

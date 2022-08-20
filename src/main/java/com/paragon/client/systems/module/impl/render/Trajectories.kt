@@ -6,8 +6,8 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.ColourUtil.setColour
-import com.paragon.api.util.render.RenderUtil.drawBoundingBox
-import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.asm.mixins.accessor.IMinecraft
 import com.paragon.asm.mixins.accessor.IRenderManager
 import net.minecraft.item.*
@@ -222,12 +222,35 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
 
                 // Draw filled box
                 if (fill.value) {
-                    drawFilledBox(bb, boxColour.value)
+                    RenderBuilder()
+                        .boundingBox(bb)
+                        .inner(boxColour.value)
+                        .type(BoxRenderMode.FILL)
+
+                        .start()
+
+                        .blend(true)
+                        .depth(true)
+                        .texture(true)
+
+                        .build(false)
                 }
 
                 // Draw outline box
                 if (outline.value) {
-                    drawBoundingBox(bb, outlineWidth.value, boxColour.value.integrateAlpha(255f))
+                    RenderBuilder()
+                        .boundingBox(bb)
+                        .outer(boxColour.value.integrateAlpha(255f))
+                        .type(BoxRenderMode.OUTLINE)
+
+                        .start()
+
+                        .blend(true)
+                        .depth(true)
+                        .texture(true)
+                        .lineWidth(lineWidth.value)
+
+                        .build(false)
                 }
             }
         }

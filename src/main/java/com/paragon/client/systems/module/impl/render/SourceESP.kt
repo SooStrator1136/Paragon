@@ -6,6 +6,8 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
@@ -74,10 +76,20 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
 
     override fun onRender3D() {
         sources.forEach {
-            RenderUtil.drawFilledBox(
-                BlockUtil.getBlockBox(it),
-                if (it.getBlockAtPos() == Blocks.WATER) waterColor.value else lavaColor.value
-            )
+            RenderBuilder()
+                .boundingBox(BlockUtil.getBlockBox(it))
+                .inner(if (it.getBlockAtPos() == Blocks.WATER) waterColor.value else lavaColor.value)
+                .outer(if (it.getBlockAtPos() == Blocks.WATER) waterColor.value.integrateAlpha(255f) else lavaColor.value.integrateAlpha(255f))
+                .type(BoxRenderMode.BOTH)
+
+                .start()
+
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(1f)
+
+                .build(false)
         }
     }
 

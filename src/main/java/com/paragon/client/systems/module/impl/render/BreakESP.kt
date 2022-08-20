@@ -3,9 +3,10 @@ package com.paragon.client.systems.module.impl.render
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.RenderUtil.drawBoundingBox
-import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil.drawNametagText
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.api.util.world.BlockUtil.getBlockBox
 import com.paragon.asm.mixins.accessor.IRenderGlobal
@@ -24,7 +25,7 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
     // Render settings
     private val renderMode = Setting(
         "RenderMode",
-        RenderMode.BOTH
+        BoxRenderMode.BOTH
     ) describedBy "How to render the highlight"
 
     private val lineWidth = Setting(
@@ -33,7 +34,7 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
         0.1f,
         3f,
         0.1f
-    ) describedBy "The width of the outline" visibleWhen { renderMode.value != RenderMode.FILL }
+    ) describedBy "The width of the outline" visibleWhen { renderMode.value != BoxRenderMode.FILL }
 
     // Other settings
     private val range = Setting(
@@ -93,22 +94,21 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
 
             // The colour factor (for a transition between red and green (looks cool))
             val colour = damage * 255 / 8
-            when (renderMode.value) {
-                RenderMode.FILL -> drawFilledBox(highlightBB, Color(255 - colour, colour, 0, 150))
 
-                RenderMode.OUTLINE -> drawBoundingBox(
-                    highlightBB,
-                    lineWidth.value,
-                    Color(255 - colour, colour, 0, 255)
-                )
+            RenderBuilder()
+                .boundingBox(highlightBB)
+                .inner(Color(255 - colour, colour, 0, 150))
+                .outer(Color(255 - colour, colour, 0, 255))
+                .type(renderMode.value)
 
-                RenderMode.BOTH -> {
-                    drawFilledBox(highlightBB, Color(255 - colour, colour, 0, 150))
-                    drawBoundingBox(highlightBB, lineWidth.value, Color(255 - colour, colour, 0, 255))
-                }
+                .start()
 
-                else -> {}
-            }
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(lineWidth.value)
+
+                .build(false)
 
             // Draw the percentage
             if (percent.value) {
@@ -123,28 +123,6 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
                 )
             }
         }
-    }
-
-    enum class RenderMode {
-        /**
-         * Fill the block
-         */
-        FILL,
-
-        /**
-         * Outline the block
-         */
-        OUTLINE,
-
-        /**
-         * Fill and outline the block
-         */
-        BOTH,
-
-        /**
-         * No render
-         */
-        NONE
     }
 
 }

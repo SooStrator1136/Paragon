@@ -6,6 +6,8 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.api.util.world.BlockUtil.getBlockBox
@@ -175,33 +177,38 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
     override fun onRender3D() {
         holes.forEach {
             val blockBB = getBlockBox(it.holePosition)
+
             if (fill.value) {
-                RenderUtil.drawFilledBox(
-                    AxisAlignedBB(
-                        blockBB.minX,
-                        blockBB.minY,
-                        blockBB.minZ,
-                        blockBB.maxX,
-                        blockBB.minY + fillHeight.value,
-                        blockBB.maxZ
-                    ),
-                    it.holeColour,
-                )
+                RenderBuilder()
+                    .boundingBox(AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + fillHeight.value, blockBB.maxZ))
+                    .inner(it.holeColour)
+                    .type(BoxRenderMode.FILL)
+
+                    .start()
+
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
+
+                    .build(false)
             }
+
             if (outline.value) {
-                RenderUtil.drawBoundingBox(
-                    AxisAlignedBB(
-                        blockBB.minX,
-                        blockBB.minY,
-                        blockBB.minZ,
-                        blockBB.maxX,
-                        blockBB.minY + outlineHeight.value,
-                        blockBB.maxZ
-                    ),
-                    outlineWidth.value,
-                    it.holeColour.integrateAlpha(255f)
-                )
+                RenderBuilder()
+                    .boundingBox(AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + outlineHeight.value, blockBB.maxZ))
+                    .outer(it.holeColour.integrateAlpha(255f))
+                    .type(BoxRenderMode.OUTLINE)
+
+                    .start()
+
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
+                    .lineWidth(outlineWidth.value)
+
+                    .build(false)
             }
+
             if (glow.value) {
                 RenderUtil.drawGradientBox(
                     AxisAlignedBB(

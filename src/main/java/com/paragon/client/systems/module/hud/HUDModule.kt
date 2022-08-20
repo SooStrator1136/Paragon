@@ -37,13 +37,19 @@ abstract class HUDModule(name: String, description: String) : Module(name, Categ
             val sr = ScaledResolution(minecraft)
             val newX = MathHelper.clamp(mouseX - lastX, 1f, screenWidth)
             val newY = MathHelper.clamp(mouseY - lastY, 1f, screenHeight)
+
+            println(sr.scaleFactor)
+
             x = newX
             y = newY
+
             val centerX = newX + width / 2f
             val centerY = newY + height / 2f
+
             if (centerX > sr.scaledWidth / 2f - 5 && centerX < sr.scaledWidth / 2f + 5) {
                 x = sr.scaledWidth / 2f - width / 2f
             }
+
             if (centerY > sr.scaledHeight / 2f - 5 && centerY < sr.scaledHeight / 2f + 5) {
                 y = sr.scaledHeight / 2f - height / 2f
             }

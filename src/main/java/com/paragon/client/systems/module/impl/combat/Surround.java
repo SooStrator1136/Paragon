@@ -8,6 +8,8 @@ import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.builder.BoxRenderMode;
+import com.paragon.api.util.render.builder.RenderBuilder;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.managers.rotation.Rotate;
 import net.minecraft.entity.Entity;
@@ -276,9 +278,19 @@ public class Surround extends Module {
         // We want to render
         if (render.getValue()) {
             renderBlocks.forEach((pos, facing) -> {
-                // Render highlight
-                RenderUtil.drawFilledBox(BlockUtil.getBlockBox(pos), renderColour.getValue());
-                RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(pos), 1, ColourUtil.integrateAlpha(renderColour.getValue(), 255));
+                new RenderBuilder()
+                        .boundingBox(BlockUtil.getBlockBox(pos))
+                        .outer(ColourUtil.integrateAlpha(renderColour.getValue(), 255f))
+                        .type(BoxRenderMode.BOTH)
+
+                        .start()
+
+                        .blend(true)
+                        .depth(true)
+                        .texture(true)
+                        .lineWidth(1f)
+
+                        .build(false);
             });
         }
     }

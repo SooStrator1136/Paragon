@@ -10,9 +10,10 @@ import com.paragon.api.util.render.OutlineUtil.renderFour
 import com.paragon.api.util.render.OutlineUtil.renderOne
 import com.paragon.api.util.render.OutlineUtil.renderThree
 import com.paragon.api.util.render.OutlineUtil.renderTwo
-import com.paragon.api.util.render.RenderUtil.drawBoundingBox
-import com.paragon.api.util.render.RenderUtil.drawFilledBox
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.string.StringUtil
+import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockBox
 import com.paragon.asm.mixins.accessor.IEntityRenderer
 import com.paragon.client.shader.shaders.OutlineShader
@@ -25,6 +26,7 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityChest
 import net.minecraft.tileentity.TileEntityEnderChest
 import net.minecraft.tileentity.TileEntityShulkerBox
+import net.minecraft.util.math.BlockPos
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.relauncher.Side
@@ -92,17 +94,21 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
         if (mode.value == Mode.BOX) {
             minecraft.world.loadedTileEntityList.forEach {
                 if (isStorageValid(it)) {
-                    if (fill.value) {
-                        drawFilledBox(getBlockBox(it.pos), colour.value)
-                    }
+                    RenderBuilder()
+                        .boundingBox(getBlockBox(it.pos))
+                        .inner(colour.value)
+                        .outer(colour.value.integrateAlpha(255f))
+                        .type(BoxRenderMode.BOTH)
 
-                    if (outline.value) {
-                        drawBoundingBox(
-                            getBlockBox(it.pos),
-                            lineWidth.value,
-                            colour.value.integrateAlpha(255f)
-                        )
-                    }
+                        .start()
+
+                        .blend(true)
+                        .depth(true)
+                        .texture(true)
+                        .lineWidth(lineWidth.value)
+
+                        .build(false)
+
                 }
             }
         }

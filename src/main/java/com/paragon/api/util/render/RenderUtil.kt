@@ -73,73 +73,6 @@ object RenderUtil : Wrapper {
     }
 
     fun drawHorizontalGradientRect(x: Float, y: Float, width: Float, height: Float, leftColour: Int, rightColour: Int) {
-        /* val left = Color(leftColour)
-        val right = Color(rightColour)
-        val lA = left.alpha / 255.0f
-        val lG = left.green / 255.0f
-        val lB = left.blue / 255.0f
-        val lR = left.red / 255.0f
-        val rA = right.alpha / 255.0f
-        val rG = right.green / 255.0f
-        val rB = right.blue / 255.0f
-        val rR = right.red / 255.0f
-
-        GlStateManager.pushMatrix()
-        GlStateManager.disableTexture2D()
-        GlStateManager.enableBlend()
-        GlStateManager.disableAlpha()
-        GlStateManager.tryBlendFuncSeparate(
-            GlStateManager.SourceFactor.SRC_ALPHA,
-            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-            GlStateManager.SourceFactor.ONE,
-            GlStateManager.DestFactor.ZERO
-        )
-        GlStateManager.shadeModel(7425)
-        val tessellator = Tessellator.getInstance()
-        val bufferbuilder = tessellator.buffer
-
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
-        bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(rR, rG, rB, rA).endVertex()
-        bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(lR, lG, lB, lA).endVertex()
-        bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(lR, lG, lB, lA).endVertex()
-        bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(rR, rG, rB, rA).endVertex()
-        tessellator.draw()
-
-        GlStateManager.shadeModel(7424)
-        GlStateManager.enableAlpha()
-        GlStateManager.enableTexture2D()
-        GlStateManager.popMatrix() */
-
-        /* glEnable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glShadeModel(GL_SMOOTH)
-        glBegin(GL_QUADS)
-
-        glColor4f(
-            (leftColour shr 16 and 0xFF) / 255.0f,
-            (leftColour shr 8 and 0xFF) / 255.0f,
-            (leftColour and 0xFF) / 255.0f,
-            (leftColour shr 24 and 0xFF) / 255.0f
-        )
-
-        glVertex2f(x, y)
-        glVertex2f(x, y + height)
-
-        glColor4f(
-            (rightColour shr 16 and 0xFF) / 255.0f,
-            (rightColour shr 8 and 0xFF) / 255.0f,
-            (rightColour and 0xFF) / 255.0f,
-            (rightColour shr 24 and 0xFF) / 255.0f
-        )
-
-        glVertex2f(x + width, y + height)
-        glVertex2f(x + width, y)
-        glEnd()
-        glShadeModel(GL_FLAT)
-        glEnable(GL_TEXTURE_2D)
-        glDisable(GL_BLEND) */
-
         glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -629,61 +562,6 @@ object RenderUtil : Wrapper {
         )
     }
 
-    /**
-     * Draws a bounding box around an AABB
-     *
-     * @param axisAlignedBB The AABB
-     * @param lineThickness The line width
-     * @param colour        The colour of the outline
-     */
-    @JvmStatic
-    fun drawBoundingBox(axisAlignedBB: AxisAlignedBB, lineThickness: Float, colour: Color) {
-        glBlendFunc(770, 771)
-        glEnable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
-        glDisable(GL_DEPTH_TEST)
-        glDepthMask(false)
-        glLineWidth(lineThickness)
-        RenderGlobal.drawSelectionBoundingBox(
-            axisAlignedBB,
-            colour.red / 255f,
-            colour.green / 255f,
-            colour.blue / 255f,
-            colour.alpha / 255f
-        )
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
-        glDepthMask(true)
-        glDisable(GL_BLEND)
-    }
-
-    /**
-     * Draws a filled box around an AABB
-     *
-     * @param axisAlignedBB The AABB
-     * @param colour        The colour of the outline
-     */
-    @JvmStatic
-    fun drawFilledBox(axisAlignedBB: AxisAlignedBB, colour: Color) {
-        glBlendFunc(770, 771)
-        glEnable(GL_BLEND)
-        glLineWidth(1f)
-        glDisable(GL_TEXTURE_2D)
-        glDisable(GL_DEPTH_TEST)
-        glDepthMask(false)
-        RenderGlobal.renderFilledBox(
-            axisAlignedBB,
-            colour.red / 255f,
-            colour.green / 255f,
-            colour.blue / 255f,
-            colour.alpha / 255f
-        )
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
-        glDepthMask(true)
-        glDisable(GL_BLEND)
-    }
-
     fun drawGradientBox(axisAlignedBB: AxisAlignedBB, top: Color, bottom: Color) {
         glBlendFunc(770, 771)
         glEnable(GL_BLEND)
@@ -694,28 +572,35 @@ object RenderUtil : Wrapper {
         glDepthMask(false)
         glColor4d(0.0, 0.0, 1.0, 0.5)
         glPushMatrix()
+
         GlStateManager.enableBlend()
         GlStateManager.enableDepth()
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE)
         GlStateManager.disableTexture2D()
         GlStateManager.depthMask(false)
+
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
         GlStateManager.disableCull()
         GlStateManager.disableAlpha()
         GlStateManager.shadeModel(GL_SMOOTH)
+
         bufferBuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
         addGradientBoxVertices(bufferBuilder, axisAlignedBB, bottom, top)
         tessellator.draw()
+
         GlStateManager.enableCull()
         GlStateManager.enableAlpha()
         GlStateManager.shadeModel(GL_FLAT)
+
         glDisable(GL_LINE_SMOOTH)
         GlStateManager.depthMask(true)
         GlStateManager.enableDepth()
         GlStateManager.enableTexture2D()
         GlStateManager.disableBlend()
         GlStateManager.popMatrix()
+
         glEnable(GL_TEXTURE_2D)
         glEnable(GL_DEPTH_TEST)
         glDepthMask(true)

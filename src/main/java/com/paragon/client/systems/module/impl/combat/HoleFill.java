@@ -7,7 +7,10 @@ import com.paragon.api.setting.Setting;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
+import com.paragon.api.util.render.ColourUtil;
 import com.paragon.api.util.render.RenderUtil;
+import com.paragon.api.util.render.builder.BoxRenderMode;
+import com.paragon.api.util.render.builder.RenderBuilder;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.managers.rotation.Rotate;
 import com.paragon.client.managers.rotation.Rotation;
@@ -54,7 +57,7 @@ public final class HoleFill extends Module {
     public static final Setting<Boolean> render = new Setting<>("Render", true)
             .setDescription("Render the placement");
 
-    private static final Setting<Render> renderMode = new Setting<>("Mode", Render.BOTH)
+    private static final Setting<BoxRenderMode> renderMode = new Setting<>("Mode", BoxRenderMode.BOTH)
             .setDescription("How to render placement")
             .setParentSetting(render);
 
@@ -167,34 +170,21 @@ public final class HoleFill extends Module {
         // Render highlights
         if (render.getValue()) {
             positions.forEach((block, facing) -> {
-                // Render fill
-                if (renderMode.getValue().equals(Render.FILL) || renderMode.getValue().equals(Render.BOTH)) {
-                    RenderUtil.drawFilledBox(BlockUtil.getBlockBox(block), renderColour.getValue());
-                }
+                new RenderBuilder()
+                        .boundingBox(BlockUtil.getBlockBox(block))
+                        .outer(ColourUtil.integrateAlpha(renderColour.getValue(), 255f))
+                        .type(renderMode.getValue())
 
-                // Render outline
-                if (renderMode.getValue().equals(Render.OUTLINE) || renderMode.getValue().equals(Render.BOTH)) {
-                    RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(block), renderOutlineWidth.getValue(), renderOutlineColour.getValue());
-                }
+                        .start()
+
+                        .blend(true)
+                        .depth(true)
+                        .texture(true)
+                        .lineWidth(renderOutlineWidth.getValue())
+
+                        .build(false);
             });
         }
-    }
-
-    public enum Render {
-        /**
-         * Render outline
-         */
-        OUTLINE,
-
-        /**
-         * Render fill
-         */
-        FILL,
-
-        /**
-         * Render both
-         */
-        BOTH
     }
 
 }

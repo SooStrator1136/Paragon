@@ -5,6 +5,8 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.world.BlockUtil
 import me.wolfsurge.cerauno.listener.Listener
 import net.minecraft.network.play.client.CPacketPlayer
@@ -56,7 +58,20 @@ object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes
 
     override fun onRender3D() {
         if (renderPosition != null) {
-            RenderUtil.drawFilledBox(BlockUtil.getBlockBox(renderPosition ?: return), Color(200, 0, 0, 150))
+            RenderBuilder()
+                .boundingBox(BlockUtil.getBlockBox(renderPosition ?: return))
+                .inner(Color(200, 0, 0, 150))
+                .outer(Color(200, 0, 0, 255))
+                .type(BoxRenderMode.BOTH)
+
+                .start()
+
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(1f)
+
+                .build(false)
         }
     }
 

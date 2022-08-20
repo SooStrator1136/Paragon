@@ -6,9 +6,12 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
+import com.paragon.client.systems.module.impl.movement.AntiVoidinq
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.minecraft.entity.player.EntityPlayer
@@ -75,10 +78,20 @@ object PhaseESP : Module("PhaseESP", Category.RENDER, "Highlights phased players
 
     override fun onRender3D() {
         phased.forEach {
-            RenderUtil.drawFilledBox(
-                BlockUtil.getBlockBox(BlockPos(it.posX, it.posY, it.posZ)),
-                phaseColor.value
-            )
+            RenderBuilder()
+                .boundingBox(BlockUtil.getBlockBox(BlockPos(it.posX, it.posY, it.posZ)))
+                .inner(phaseColor.value)
+                .outer(phaseColor.value.integrateAlpha(255f))
+                .type(BoxRenderMode.BOTH)
+
+                .start()
+
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(1f)
+
+                .build(false)
         }
     }
 

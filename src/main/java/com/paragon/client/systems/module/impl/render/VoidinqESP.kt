@@ -6,6 +6,8 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
 import kotlinx.coroutines.Job
@@ -110,7 +112,19 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
                     blockBB.minY + fillHeight.value,
                     blockBB.maxZ
                 )
-                RenderUtil.drawFilledBox(fillBB, colour.value)
+
+                RenderBuilder()
+                    .boundingBox(fillBB)
+                    .inner(colour.value)
+                    .type(BoxRenderMode.FILL)
+
+                    .start()
+
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
+
+                    .build(false)
             }
 
             if (outline.value) {
@@ -122,11 +136,20 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
                     blockBB.minY + outlineHeight.value,
                     blockBB.maxZ
                 )
-                RenderUtil.drawBoundingBox(
-                    outlineBB,
-                    outlineWidth.value,
-                    colour.value.integrateAlpha(255f)
-                )
+
+                RenderBuilder()
+                    .boundingBox(outlineBB)
+                    .outer(colour.value.integrateAlpha(255f))
+                    .type(BoxRenderMode.OUTLINE)
+
+                    .start()
+
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
+                    .lineWidth(outlineWidth.value)
+
+                    .build(false)
             }
 
             if (glow.value) {

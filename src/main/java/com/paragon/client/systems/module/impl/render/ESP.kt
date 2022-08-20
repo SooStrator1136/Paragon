@@ -8,12 +8,14 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.entity.EntityUtil
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.OutlineUtil.renderFive
 import com.paragon.api.util.render.OutlineUtil.renderFour
 import com.paragon.api.util.render.OutlineUtil.renderOne
 import com.paragon.api.util.render.OutlineUtil.renderThree
 import com.paragon.api.util.render.OutlineUtil.renderTwo
-import com.paragon.api.util.render.RenderUtil.drawBoundingBox
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.string.StringUtil
 import com.paragon.asm.mixins.accessor.IEntityRenderer
 import com.paragon.asm.mixins.accessor.IRenderGlobal
@@ -78,13 +80,18 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
         Mode.SHADER
     ) describedBy "How to render the entities"
 
+    private val boxMode = Setting(
+        "Box",
+        BoxRenderMode.BOTH
+    ) describedBy "How to render the box" subOf mode visibleWhen { mode.value == Mode.BOX }
+
     private val lineWidth = Setting(
         "LineWidth",
         1f,
         0.1f,
         3f,
         0.1f
-    ) describedBy "How thick to render the outlines"
+    ) describedBy "How thick to render the outlines" visibleWhen { mode.value == Mode.BOX && (boxMode.value == BoxRenderMode.OUTLINE || boxMode.value == BoxRenderMode.BOTH) || mode.value != Mode.BOX }
 
     // Outline shader
     private val outline = Setting(
@@ -249,7 +256,21 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
      */
     private fun espEntity(entityIn: Entity) {
         if (mode.value == Mode.BOX) {
-            drawBoundingBox(EntityUtil.getEntityBox(entityIn), lineWidth.value, colour.value)
+            RenderBuilder()
+                .boundingBox(EntityUtil.getEntityBox(entityIn))
+                .inner(colour.value)
+                .outer(colour.value.integrateAlpha(255f))
+                .type(boxMode.value)
+
+                .start()
+
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .lineWidth(lineWidth.value)
+
+                .build(false)
+
         } else if (mode.value == Mode.GLOW) {
             entityIn.isGlowing = true
         }

@@ -1,5 +1,6 @@
 package com.paragon.client.systems.module.impl.combat
 
+import com.paragon.Paragon
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
@@ -11,14 +12,13 @@ import com.paragon.api.util.entity.EntityUtil.isEntityAllowed
 import com.paragon.api.util.entity.EntityUtil.isTooFarAwayFromSelf
 import com.paragon.api.util.player.InventoryUtil
 import com.paragon.api.util.player.RotationUtil
-import com.paragon.api.util.render.RenderUtil
-import com.paragon.api.util.system.backgroundThread
+import com.paragon.api.util.render.ColourUtil.integrateAlpha
+import com.paragon.api.util.render.builder.BoxRenderMode
+import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP
 import com.paragon.client.managers.rotation.Rotate
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.item.EntityEnderCrystal
@@ -93,6 +93,13 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     /*************************** RENDERING **************************/
 
     private val render = Setting("Render", true) describedBy "Whether to render highlights"
+    private val renderPlacement = Setting("Placement", BoxRenderMode.BOTH) describedBy "Highlight the placement position" subOf render
+    private val renderPlacementColour = Setting("PlacementColour", Color(185, 17, 255, 150)) describedBy "The colour of the placement highlight" subOf render visibleWhen { renderPlacement.value != BoxRenderMode.NONE }
+    private val renderPlacementOutline = Setting("PlacementOutline", 1f, 0.1f, 3f, 0.1f) describedBy "The width of the outline" subOf render visibleWhen { renderPlacement.value == BoxRenderMode.OUTLINE || renderPlacement.value == BoxRenderMode.BOTH }
+
+    private val renderCrystal = Setting("Crystal", BoxRenderMode.BOTH) describedBy "Highlight the target crystal" subOf render
+    private val renderCrystalColour = Setting("CrystalColour", Color(185, 17, 255, 150)) describedBy "The colour of the crystal highlight" subOf render visibleWhen { renderCrystal.value != BoxRenderMode.NONE }
+    private val renderCrystalOutline = Setting("CrystalOutline", 1f, 0.1f, 3f, 0.1f) describedBy "The width of the outline" subOf render visibleWhen { renderCrystal.value == BoxRenderMode.OUTLINE || renderCrystal.value == BoxRenderMode.BOTH }
 
     // TODO: Threading
 
@@ -115,13 +122,8 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             return
         }
 
-        if (targetCrystal == null) {
-            targetCrystal = findCrystal()
-        }
-
-        if (placePosition == null) {
-            placePosition = findPlacement()
-        }
+        targetCrystal = findCrystal()
+        placePosition = findPlacement()
 
         placeFoundPosition()
         explodeFoundCrystal()
@@ -130,11 +132,37 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     override fun onRender3D() {
         if (render.value) {
             if (targetCrystal != null) {
-                RenderUtil.drawBoundingBox(EntityUtil.getEntityBox(targetCrystal!!.crystal), 1f, Color.RED)
+                RenderBuilder()
+                    .inner(renderCrystalColour.value)
+                    .outer(renderCrystalColour.value.integrateAlpha(255f))
+                    .type(renderCrystal.value)
+                    .boundingBox(targetCrystal!!.crystal.renderBoundingBox)
+
+                    .start()
+
+                    .lineWidth(renderCrystalOutline.value)
+                    .blend(true)
+                    .texture(true)
+                    .depth(true)
+
+                    .build(true)
             }
             
             if (placePosition != null) {
-                RenderUtil.drawBoundingBox(BlockUtil.getBlockBox(placePosition!!.position), 1f, Color.GREEN)
+                RenderBuilder()
+                    .inner(renderPlacementColour.value)
+                    .outer(renderPlacementColour.value.integrateAlpha(255f))
+                    .type(renderPlacement.value)
+                    .boundingBox(BlockUtil.getBlockBox(placePosition!!.position))
+
+                    .start()
+
+                    .lineWidth(renderPlacementOutline.value)
+                    .blend(true)
+                    .texture(true)
+                    .depth(true)
+
+                    .build(false)
             }
         }
     }
@@ -266,8 +294,6 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                 minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world, placePosition!!.position, EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player), Vec3d(0.0, 0.0, 0.0), hand)
             }
 
-            placePosition = null
-
             state = 0
         }
 
@@ -293,8 +319,6 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             } else {
                 minecraft.playerController.attackEntity(minecraft.player, targetCrystal!!.crystal)
             }
-
-            targetCrystal = null
 
             state = 1
         }
@@ -341,37 +365,8 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     }
 
     private fun rotate(vec: Vec2f): Boolean {
-        /* var calculatedAngle = vec.x - Paragon.INSTANCE.rotationManager.serverRotation.x
-
-        if (calculatedAngle > 180) {
-            calculatedAngle = RotationUtil.normalizeAngle(calculatedAngle)
-        }
-
-        return if (abs(calculatedAngle) > maxYaw.value) {
-            calculatedAngle = RotationUtil.normalizeAngle(Paragon.INSTANCE.rotationManager.serverRotation.x + 55 * if (vec.x > 0) 1 else -1)
-
-            when (rotate.value) {
-                Rotate.PACKET -> {
-                    minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(calculatedAngle, vec.y, minecraft.player.onGround))
-                }
-
-                Rotate.LEGIT -> {
-                    minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(calculatedAngle, vec.y, minecraft.player.onGround))
-
-                    minecraft.player.rotationYaw = calculatedAngle
-                    minecraft.player.rotationYawHead = calculatedAngle
-                    minecraft.player.rotationPitch = calculatedAngle
-                }
-
-                else -> {}
-            }
-
-            false
-        } else {
-            true
-        } */
-
-        val yaw = calculateAngle(minecraft.player.rotationYaw, vec.x)
+        // We use the server rotation as it lets us place when using packet rotate
+        val yaw = calculateAngle(Paragon.INSTANCE.rotationManager.serverRotation.x, vec.x)
 
         when (rotate.value) {
             Rotate.PACKET -> {
