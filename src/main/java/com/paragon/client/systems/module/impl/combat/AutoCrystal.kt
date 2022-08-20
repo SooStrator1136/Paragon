@@ -26,6 +26,7 @@ import net.minecraft.init.Blocks
 import net.minecraft.init.Items
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
+import net.minecraft.network.play.client.CPacketUseEntity
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.AxisAlignedBB
@@ -35,6 +36,7 @@ import net.minecraft.util.math.Vec3d
 import java.awt.Color
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 
@@ -59,13 +61,13 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     /*************************** PLACING ***************************/
 
     private val place = Setting("Place", true) describedBy "Whether to place crystals"
+    private val placeDelay = Setting("Delay", 1.0, 0.0, 10.0, 1.0) describedBy "The delay between placing crystals (in ticks)" subOf place
     private val placeCheck = Setting("Check", PlaceCheck.HOLDING) describedBy "How to check if you want to place crystals" subOf place
-    private val placeRange = Setting("Range", 6.0, 1.0, 15.0, 0.1) describedBy "The maximum range to place" subOf place
-    private val placeWallRange = Setting("WallRange", 10.0, 1.0, 15.0, 0.1) describedBy "The maximum range to place through walls" subOf place
-    private val placeAntiSuicide = Setting("AntiSuicide", true) describedBy "Prevent killing yourself with crystals" subOf place
+    private val placeRange = Setting("Range", 6.0, 1.0, 6.0, 0.1) describedBy "The maximum range to place" subOf place
+    private val placeWallRange = Setting("WallRange", 4.0, 1.0, 6.0, 0.1) describedBy "The maximum range to place through walls" subOf place
+    private val placeAntiSuicide = Setting("AntiSuicide", true) describedBy "Prevent killing or popping yourself when placing crystals" subOf place
     private val placeMin = Setting("Minimum", 4.0, 0.0, 36.0, 1.0) describedBy "The minimum amount of crystal damage to do" subOf place
     private val placeMax = Setting("Local", 10.0, 0.0, 36.0, 1.0) describedBy "The maximum amount of crystal damage to do to yourself" subOf place
-    private val placeDelay = Setting("Delay", 1.0, 0.0, 10.0, 1.0) describedBy "The delay between placing crystals (in ticks)" subOf place
     private val placeRaytrace = Setting("Raytrace", true) describedBy "Whether to raytrace check each possible place position" subOf place
     private val placeWait = Setting("Wait", true) describedBy "Wait until you have rotated to the place position" subOf place
     private val placePacket = Setting("Packet", true) describedBy "Whether to send packets to place crystals" subOf place
@@ -73,7 +75,15 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     /*************************** EXPLODING *************************/
 
     private val explode = Setting("Explode", true) describedBy "Whether to explode ender crystals"
-    private val explodeRange = Setting("Range", 6.0, 1.0, 7.0, 0.1) describedBy "The maximum range to explode crystals" subOf explode
+    private val explodeDelay = Setting("Delay", 1.0, 0.0, 10.0, 1.0) describedBy "The delay between exploding crystals (in ticks)" subOf explode
+    private val explodeRange = Setting("Range", 6.0, 1.0, 6.0, 0.1) describedBy "The maximum range to explode crystals" subOf explode
+    private val explodeWallRange = Setting("WallRange", 4.0, 1.0, 6.0, 0.1) describedBy "The maximum range to explode crystals through walls" subOf explode
+    private val explodeAntiSuicide = Setting("AntiSuicide", true) describedBy "Prevent killing or popping yourself when exploding crystals" subOf explode
+    private val explodeMin = Setting("Minimum", 4.0, 0.0, 36.0, 1.0) describedBy "The minimum amount of crystal damage to do" subOf explode
+    private val explodeMax = Setting("Local", 10.0, 0.0, 36.0, 1.0) describedBy "The maximum amount of crystal damage to do to yourself" subOf explode
+    private val explodeCrystalTicks = Setting("CrystalTicks", 1.0, 0.0, 5.0, 1.0) describedBy "The minimum amount of ticks a crystal has to have existed for before considering valid" subOf explode
+    private val explodeWait = Setting("Wait", true) describedBy "Wait until you have rotated to the crystal position" subOf explode
+    private val explodePacket = Setting("Packet", true) describedBy "Whether to send packets to explode crystals" subOf explode
 
     /*************************** ROTATE ***************************/
 
@@ -84,13 +94,12 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
     private val render = Setting("Render", true) describedBy "Whether to render highlights"
 
-    /*************************** MISC *******************************/
-
-    private val threaded = Setting("Threaded", true) describedBy "Whether to search for positions and crystals in a seperate thread"
+    // TODO: Threading
 
     private var targetCrystal: Crystal? = null
     private var placePosition: CrystalPosition? = null
-    private var lastJob: Job? = null
+
+    private var explodeTimer = 0
     private var placeTimer = 0
 
     var lastTarget: EntityLivingBase? = null
@@ -106,17 +115,11 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             return
         }
 
-        if (threaded.value) {
-            backgroundThread {
-                if (lastJob == null || lastJob!!.isCompleted) {
-                    lastJob = launch {
-                        targetCrystal = findCrystal()
-                        placePosition = findPlacement()
-                    }
-                }
-            }
-        } else {
+        if (targetCrystal == null) {
             targetCrystal = findCrystal()
+        }
+
+        if (placePosition == null) {
             placePosition = findPlacement()
         }
 
@@ -137,36 +140,41 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     }
 
     private fun findCrystal(): Crystal? {
-        if (!explode.value || timing.value == Timing.SEQUENTIAL && state != 0) {
+        if (!explode.value) {
             return null
         }
 
-        val crystalMap = TreeMap<Crystal, Float>()
+        val crystals = ArrayList<Crystal>()
+        val crystalEntities = minecraft.world.loadedEntityList.filter { it != null && it is EntityEnderCrystal && (it.getDistance(minecraft.player) <= explodeRange.value && canSeePos(it.position) || it.getDistance(minecraft.player) <= explodeWallRange.value && !canSeePos(it.position)) && it.getDamageToEntity(minecraft.player) <= explodeMax.value } as List<EntityEnderCrystal>
 
-        getTargetList().forEach { possibleTarget ->
-            minecraft.world.loadedEntityList.filter { it != null && !it.isTooFarAwayFromSelf(explodeRange.value) }.forEach { entityCrystal ->
-                // just for smart casting
-                if (entityCrystal is EntityEnderCrystal) {
-                    val currentCrystal = Crystal(entityCrystal, entityCrystal.getDamageToEntity(possibleTarget!!), possibleTarget)
+        getTargetList().forEach targets@ { target ->
+            crystalEntities.forEach crystals@ { crystalEntity ->
+                val crystal = Crystal(crystalEntity, crystalEntity.getDamageToEntity(target!!), target)
+                val local = crystal.crystal.getDamageToEntity(minecraft.player)
 
-                    if (crystalMap.any { it.key.crystal == entityCrystal }) {
-                        val crystal = crystalMap.entries.stream().filter { it.key.crystal == entityCrystal }.findFirst().get()
+                if (crystal.damage < explodeMin.value || local > explodeMax.value || local > minecraft.player.health && explodeAntiSuicide.value || crystal.crystal.ticksExisted < explodeCrystalTicks.value) {
+                    return@crystals
+                }
 
-                        if (currentCrystal.damage > crystal.key.damage) {
-                            crystalMap[currentCrystal] = crystal.key.damage
+                if (crystals.any { it.crystal.entityId == crystal.crystal.entityId }) {
+                    crystals.replaceAll {
+                        if (it.crystal.entityId == crystal.crystal.entityId && crystal.damage > it.damage) {
+                            crystal
+                        } else {
+                            it
                         }
                     }
+                } else {
+                    crystals.add(crystal)
                 }
             }
         }
 
-        if (crystalMap.isEmpty()) {
+        if (crystals.isEmpty()) {
             return null
         }
 
-        lastTarget = crystalMap.lastEntry().key.target
-
-        return crystalMap.lastKey()
+        return crystals.sortedBy { it.damage }[0]
     }
 
     private fun findPlacement(): CrystalPosition? {
@@ -178,7 +186,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
         BlockUtil.getSphere(7f, true).forEach { blockPos ->
             if (canPlaceCrystal(blockPos)) {
-                if (minecraft.player.positionVector.distanceTo(Vec3d(blockPos)) > placeRange.value && canSeePos(blockPos)) {
+                if (minecraft.player.positionVector.distanceTo(Vec3d(blockPos)) > placeRange.value) {
                     return@forEach
                 }
 
@@ -248,11 +256,17 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                 hand = EnumHand.OFF_HAND
             }
 
+            if (placePosition == null) {
+                return
+            }
+
             if (placePacket.value) {
                 minecraft.player.connection.sendPacket(CPacketPlayerTryUseItemOnBlock(placePosition!!.position, EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player), hand, 0f, 0f, 0f))
             } else {
                 minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world, placePosition!!.position, EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player), Vec3d(0.0, 0.0, 0.0), hand)
             }
+
+            placePosition = null
 
             state = 0
         }
@@ -266,7 +280,26 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     }
 
     private fun explodeFoundCrystal() {
-        state = 1
+        if (targetCrystal == null || explodeTimer < explodeDelay.value) {
+            explodeTimer++
+            state = 1
+
+            return
+        }
+
+        if ((rotate(RotationUtil.getRotationToVec3d(targetCrystal!!.crystal.positionVector)) || !explodeWait.value) && targetCrystal != null) {
+            if (explodePacket.value) {
+                minecraft.player.connection.sendPacket(CPacketUseEntity(targetCrystal!!.crystal))
+            } else {
+                minecraft.playerController.attackEntity(minecraft.player, targetCrystal!!.crystal)
+            }
+
+            targetCrystal = null
+
+            state = 1
+        }
+
+        explodeTimer = 0
     }
 
     private fun getTargetList(): CopyOnWriteArrayList<EntityLivingBase?> {
