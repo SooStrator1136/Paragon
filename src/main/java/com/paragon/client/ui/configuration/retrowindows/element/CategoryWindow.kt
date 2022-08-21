@@ -11,6 +11,8 @@ import com.paragon.client.ui.configuration.shared.Panel
 import com.paragon.client.ui.util.Click
 import me.surge.animation.Animation
 import net.minecraft.util.math.MathHelper
+import org.lwjgl.opengl.GL11.GL_BLEND
+import org.lwjgl.opengl.GL11.glEnable
 import java.awt.Color
 
 /**

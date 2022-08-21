@@ -69,7 +69,7 @@ class FontRenderer(font: Font) : Wrapper {
 
         GlStateManager.translate(x.toDouble(), y.toDouble(), 0.0)
         GlStateManager.enableAlpha()
-        GlStateManager.enableBlend()
+        glEnable(GL_BLEND)
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
         GlStateManager.enableTexture2D()
         glEnable(GL_LINE_SMOOTH)
@@ -135,7 +135,7 @@ class FontRenderer(font: Font) : Wrapper {
         }
 
         glDisable(GL_LINE_SMOOTH)
-        GlStateManager.disableBlend()
+        glDisable(GL_BLEND)
         GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
 
         return (x + getStringWidth(text).toFloat()).toInt()
