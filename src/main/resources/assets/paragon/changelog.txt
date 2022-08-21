@@ -22,3 +22,4 @@ Added AntiHunger
 Added new GUI
 Added WebAura
 Added Alerts
+Removed the GUI FPS limit
