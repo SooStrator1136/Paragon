@@ -21,10 +21,10 @@ class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, 
 
     override fun drawButton(mc: Minecraft, mouseX: Int, mouseY: Int, partialTicks: Float) {
         if (visible) {
+            hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height
             animation.state = hovered
 
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
-            hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height
 
             GlStateManager.enableBlend()
 
