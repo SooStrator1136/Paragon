@@ -2,6 +2,8 @@
 
 package com.paragon.client.ui.configuration.discord.settings.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil.getPercent
 import com.paragon.api.util.calculations.MathsUtil.getPercentOf
@@ -192,6 +194,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             ),
             BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
         )
+        Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         return if (setting.value is Float) toReturn.toFloat() else toReturn
     }
 

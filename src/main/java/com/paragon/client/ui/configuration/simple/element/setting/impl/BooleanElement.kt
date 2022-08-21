@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.simple.element.setting.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
@@ -43,6 +45,7 @@ class BooleanElement(setting: Setting<Boolean>, x: Float, y: Float, width: Float
 
         if (isHovered(mouseX, mouseY) && click == Click.LEFT) {
             setting.setValue(!setting.value)
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
 

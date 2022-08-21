@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.retrowindows.element.setting.elements
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
@@ -82,11 +84,13 @@ class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y
             if (keyCode == Keyboard.KEY_BACK) {
                 if (setting.value.isNotEmpty()) {
                     setting.setValue(setting.value.substring(0, setting.value.length - 1))
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 }
             } else if (keyCode == Keyboard.KEY_RETURN) {
                 listening.state = false
             } else if (ChatAllowedCharacters.isAllowedCharacter(character)) {
                 setting.setValue(setting.value + character)
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
             }
         }
     }

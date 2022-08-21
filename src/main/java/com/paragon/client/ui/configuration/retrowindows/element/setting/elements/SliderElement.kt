@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.retrowindows.element.setting.elements
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.RenderUtil
@@ -58,6 +60,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             if (dragging) {
                 if (diff == 0f) {
                     setting.setValue(setting.min ?: 0)
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / maxWidth * (max - min) + min).toDouble(), 2).toFloat()
                     val precision = 1 / setting.incrementation!!.toFloat()
@@ -68,6 +71,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
                             BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
                         ).toFloat()
                     )
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 }
             }
         } else if (setting.value is Double) {
@@ -96,6 +100,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             if (dragging) {
                 if (diff == 0.0) {
                     setting.setValue(setting.min ?: 0)
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble(diff / maxWidth * (max - min) + min, 2)
                     val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
@@ -105,6 +110,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
                     setting.setValue(
                         MathsUtil.roundDouble(newValue, BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale())
                     )
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 }
             }
         }

@@ -1,12 +1,13 @@
 package com.paragon.client.ui.configuration.paragon.setting.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil.fade
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
-import com.paragon.api.util.string.StringUtil
 import com.paragon.client.ui.configuration.paragon.module.ModuleElement
 import com.paragon.client.ui.configuration.paragon.setting.SettingElement
 import com.paragon.client.ui.util.Click
@@ -59,6 +60,7 @@ class BindElement(setting: Setting<Bind>, module: ModuleElement, x: Float, y: Fl
 
             setting.value.buttonCode = click.button
             setting.value.device = Bind.Device.MOUSE
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
 
@@ -70,6 +72,7 @@ class BindElement(setting: Setting<Bind>, module: ModuleElement, x: Float, y: Fl
 
             setting.value.buttonCode = if (keyCode == Keyboard.KEY_DELETE || keyCode == Keyboard.KEY_BACK) 0 else keyCode
             setting.value.device = Bind.Device.KEYBOARD
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
 

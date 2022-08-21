@@ -20,10 +20,3 @@ build
 # other
 eclipse
 run
-
-#Mentally disabled okay?
-config
-crash-reports
-logs
-paragon
-saves

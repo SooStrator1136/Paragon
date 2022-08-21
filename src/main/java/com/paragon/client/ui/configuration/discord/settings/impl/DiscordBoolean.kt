@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.discord.settings.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.font.FontUtil
 
@@ -43,6 +45,7 @@ class DiscordBoolean(private val setting: Setting<Boolean>) : DiscordSetting(set
         }
         if (stateRect.contains(mouseX, mouseY)) {
             setting.setValue(!setting.value)
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
 

@@ -89,6 +89,7 @@ class ModuleManager {
             AutoEZ,
             AutoLog,
             AutoTranslate,
+            BookBot,
 
             AutoWalk,
             Blink,

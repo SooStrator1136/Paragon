@@ -1,18 +1,20 @@
 package com.paragon.client.ui.configuration.zeroday.element.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
+import com.paragon.api.setting.Bind;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.api.util.string.StringUtil;
-import com.paragon.api.setting.Bind;
-import com.paragon.api.setting.Setting;
-import me.surge.animation.Animation;
-import me.surge.animation.Easing;
-import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
+import com.paragon.client.ui.util.Click;
+import me.surge.animation.Animation;
+import me.surge.animation.Easing;
 import net.minecraft.util.math.MathHelper;
 
-import java.awt.Color;
+import java.awt.*;
 
 @SuppressWarnings("unchecked")
 public final class EnumElement extends Element {
@@ -88,6 +90,7 @@ public final class EnumElement extends Element {
         if (setting.isVisible()) {
             if (isHovered(mouseX, mouseY) && getParent().isElementVisible(this) && click.equals(Click.LEFT)) {
                 setting.setValue(setting.getNextMode());
+                Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
             }
 
             super.mouseClicked(mouseX, mouseY, click);

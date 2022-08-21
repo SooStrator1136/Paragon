@@ -1,19 +1,21 @@
 package com.paragon.client.ui.configuration.zeroday.element.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.font.FontUtil;
-import me.surge.animation.Animation;
-import me.surge.animation.Easing;
-import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
+import com.paragon.client.ui.util.Click;
+import me.surge.animation.Animation;
+import me.surge.animation.Easing;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Color;
+import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -73,9 +75,7 @@ public class StringElement extends Element {
             glPopMatrix();
 
             super.render(mouseX, mouseY, dWheel);
-        }
-
-        else {
+        } else {
             focused = false;
         }
     }
@@ -107,11 +107,13 @@ public class StringElement extends Element {
                 if (keyCode == Keyboard.KEY_BACK) {
                     if (getSetting().getValue().length() > 0) {
                         getSetting().setValue(getSetting().getValue().substring(0, getSetting().getValue().length() - 1));
+                        Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
                     }
                 } else if (keyCode == Keyboard.KEY_RETURN) {
                     focused = false;
                 } else if (ChatAllowedCharacters.isAllowedCharacter(keyChar)) {
                     getSetting().setValue(getSetting().getValue() + keyChar);
+                    Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
                 }
             }
 

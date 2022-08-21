@@ -65,7 +65,13 @@ class ColourElement(setting: Setting<Color>, x: Float, y: Float, width: Float, h
         setting.rainbowSpeed = rainbowSpeedSetting.value.toFloat()
         setting.isSync = syncSetting.value
 
-        RenderUtil.drawRect(x, y, width, height, setting.value.integrateAlpha(if (hovered) 205f else setting.value.alpha.toFloat()).rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            width,
+            height,
+            setting.value.integrateAlpha(if (hovered) 205f else setting.value.alpha.toFloat()).rgb
+        )
 
         glScalef(0.85f, 0.85f, 0.85f).let {
             val factor = 1 / 0.85f

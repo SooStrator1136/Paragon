@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.paragon.setting.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil.fade
 import com.paragon.api.util.render.RenderUtil
@@ -43,6 +45,7 @@ class EnumElement(setting: Setting<Enum<*>>, module: ModuleElement, x: Float, y:
 
         if (click == Click.LEFT && hover.state) {
             setting.setValue(setting.nextMode)
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
 

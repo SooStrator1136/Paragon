@@ -1,19 +1,21 @@
 package com.paragon.client.ui.configuration.zeroday.element.setting;
 
+import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
+import com.paragon.api.setting.Bind;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.setting.Bind;
 import com.paragon.api.util.render.font.FontUtil;
-import me.surge.animation.Animation;
-import me.surge.animation.Easing;
-import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
+import com.paragon.client.ui.util.Click;
+import me.surge.animation.Animation;
+import me.surge.animation.Easing;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Color;
+import java.awt.*;
 
 @SuppressWarnings("unchecked")
 public final class SliderElement extends Element {
@@ -79,6 +81,7 @@ public final class SliderElement extends Element {
                 if (dragging) {
                     if (diff == 0) {
                         setting.setValue(setting.getMin());
+                        Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
                     } else {
                         float newValue = (float) MathsUtil.roundDouble(((diff / maxWidth) * (max - min) + min), 2);
 
@@ -86,6 +89,7 @@ public final class SliderElement extends Element {
                         newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
 
                         setting.setValue(newValue);
+                        Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
                     }
                 }
             } else if (setting.getValue() instanceof Double) {
@@ -104,6 +108,7 @@ public final class SliderElement extends Element {
                 if (dragging) {
                     if (diff == 0) {
                         setting.setValue(setting.getMin());
+                        Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
                     } else {
                         double newValue = MathsUtil.roundDouble(((diff / maxWidth) * (max - min) + min), 2);
 
@@ -111,6 +116,7 @@ public final class SliderElement extends Element {
                         newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision;
 
                         setting.setValue(newValue);
+                        Paragon.INSTANCE.getEventBus().post(new SettingUpdateEvent(this.setting));
                     }
                 }
             }

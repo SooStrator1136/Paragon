@@ -36,7 +36,6 @@ import net.minecraft.util.math.Vec3d
 import java.awt.Color
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 
@@ -84,6 +83,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     private val explodeCrystalTicks = Setting("CrystalTicks", 1.0, 0.0, 5.0, 1.0) describedBy "The minimum amount of ticks a crystal has to have existed for before considering valid" subOf explode
     private val explodeWait = Setting("Wait", true) describedBy "Wait until you have rotated to the crystal position" subOf explode
     private val explodePacket = Setting("Packet", true) describedBy "Whether to send packets to explode crystals" subOf explode
+    private val setDead = Setting("SetDead", true) describedBy "Set the crystal dead after trying to explode it" subOf explode
 
     /*************************** ROTATE ***************************/
 
@@ -147,7 +147,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
                     .build(true)
             }
-            
+
             if (placePosition != null) {
                 RenderBuilder()
                     .inner(renderPlacementColour.value)
@@ -173,10 +173,15 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         }
 
         val crystals = ArrayList<Crystal>()
-        val crystalEntities = minecraft.world.loadedEntityList.filter { it != null && it is EntityEnderCrystal && (it.getDistance(minecraft.player) <= explodeRange.value && canSeePos(it.position) || it.getDistance(minecraft.player) <= explodeWallRange.value && !canSeePos(it.position)) && it.getDamageToEntity(minecraft.player) <= explodeMax.value } as List<EntityEnderCrystal>
+        val crystalEntities = minecraft.world.loadedEntityList.filter {
+            it != null && it is EntityEnderCrystal
+                    && (it.getDistance(minecraft.player) <= explodeRange.value && canSeePos(it.position)
+                    || it.getDistance(minecraft.player) <= explodeWallRange.value
+                    && !canSeePos(it.position)) && it.getDamageToEntity(minecraft.player) <= explodeMax.value
+        } as List<EntityEnderCrystal>
 
-        getTargetList().forEach targets@ { target ->
-            crystalEntities.forEach crystals@ { crystalEntity ->
+        getTargetList().forEach targets@{ target ->
+            crystalEntities.forEach crystals@{ crystalEntity ->
                 val crystal = Crystal(crystalEntity, crystalEntity.getDamageToEntity(target!!), target)
                 val local = crystal.crystal.getDamageToEntity(minecraft.player)
 
@@ -216,9 +221,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             if (canPlaceCrystal(blockPos)) {
                 if (minecraft.player.positionVector.distanceTo(Vec3d(blockPos)) > placeRange.value) {
                     return@forEach
-                }
-
-                else if (minecraft.player.positionVector.distanceTo(Vec3d(blockPos)) > placeWallRange.value && !canSeePos(blockPos)) {
+                } else if (minecraft.player.positionVector.distanceTo(Vec3d(blockPos)) > placeWallRange.value && !canSeePos(blockPos)) {
                     return@forEach
                 }
 
@@ -289,9 +292,25 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             }
 
             if (placePacket.value) {
-                minecraft.player.connection.sendPacket(CPacketPlayerTryUseItemOnBlock(placePosition!!.position, EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player), hand, 0f, 0f, 0f))
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayerTryUseItemOnBlock(
+                        placePosition!!.position,
+                        EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player),
+                        hand,
+                        0f,
+                        0f,
+                        0f
+                    )
+                )
             } else {
-                minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world, placePosition!!.position, EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player), Vec3d(0.0, 0.0, 0.0), hand)
+                minecraft.playerController.processRightClickBlock(
+                    minecraft.player,
+                    minecraft.world,
+                    placePosition!!.position,
+                    EnumFacing.getDirectionFromEntityLiving(placePosition!!.position, minecraft.player),
+                    Vec3d(0.0, 0.0, 0.0),
+                    hand
+                )
             }
 
             state = 0
@@ -323,13 +342,22 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             state = 1
         }
 
+        if (setDead.value) {
+            targetCrystal!!.crystal.setDead()
+            minecraft.world.removeEntityFromWorld(targetCrystal!!.crystal.entityId)
+        }
+
         explodeTimer = 0
     }
 
-    private fun getTargetList(): CopyOnWriteArrayList<EntityLivingBase?> {
+    private fun getTargetList(): MutableList<EntityLivingBase?> {
         val loaded = CopyOnWriteArrayList(minecraft.world.loadedEntityList)
 
-        loaded.removeIf { it !is EntityLivingBase || it == minecraft.player || it.isDead || it.isTooFarAwayFromSelf(targetRange.value) || !it.isEntityAllowed(targetPlayers.value, targetMobs.value, targetPassives.value) }
+        loaded.removeIf {
+            it !is EntityLivingBase || it == minecraft.player
+                    || it.isDead || it.isTooFarAwayFromSelf(targetRange.value)
+                    || !it.isEntityAllowed(targetPlayers.value, targetMobs.value, targetPassives.value)
+        }
 
         return loaded as CopyOnWriteArrayList<EntityLivingBase?>
     }
@@ -345,7 +373,17 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             return false
         }
 
-        minecraft.world.getEntitiesWithinAABB(Entity::class.java, AxisAlignedBB(increase.x.toDouble(), increase.y.toDouble(), increase.z.toDouble(), increase.x.toDouble() + 1, increase.y.toDouble() + 1, increase.z.toDouble() + 1)).forEach { entity ->
+        minecraft.world.getEntitiesWithinAABB(
+            Entity::class.java,
+            AxisAlignedBB(
+                increase.x.toDouble(),
+                increase.y.toDouble(),
+                increase.z.toDouble(),
+                increase.x.toDouble() + 1,
+                increase.y.toDouble() + 1,
+                increase.z.toDouble() + 1
+            )
+        ).forEach { entity ->
             if (entity.isDead) {
                 return@forEach
             }

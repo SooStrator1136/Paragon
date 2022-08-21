@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.discord.settings.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.string.StringUtil
@@ -76,6 +78,7 @@ class DiscordEnum(private val setting: Setting<Enum<*>>) : DiscordSetting(settin
 
             if (rect.contains(mouseX, mouseY)) {
                 setting.setValue(options[i])
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 return
             }
         }

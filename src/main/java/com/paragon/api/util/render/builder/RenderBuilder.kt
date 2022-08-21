@@ -13,17 +13,17 @@ import java.awt.Color
  */
 class RenderBuilder : Wrapper {
 
-    private var depth: Boolean = false
-    private var blend: Boolean = false
-    private var texture: Boolean = false
-    private var alpha: Boolean = false
+    private var depth = false
+    private var blend = false
+    private var texture = false
+    private var alpha = false
 
-    private var boundingBox: AxisAlignedBB = AxisAlignedBB(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    private var boundingBox = AxisAlignedBB(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
-    private var renderMode: BoxRenderMode = BoxRenderMode.BOTH
+    private var renderMode = BoxRenderMode.BOTH
 
-    private var innerColour: Color = Color(0, 0, 0)
-    private var outerColour: Color = Color(0, 0, 0)
+    private var innerColour = Color.BLACK
+    private var outerColour = Color.BLACK
 
     fun start(): RenderBuilder {
         glPushMatrix()
@@ -36,24 +36,31 @@ class RenderBuilder : Wrapper {
 
     fun build(offset: Boolean) {
         if (offset) {
-            boundingBox = boundingBox.offset(-minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ)
+            boundingBox = boundingBox.offset(
+                -minecraft.renderManager.viewerPosX,
+                -minecraft.renderManager.viewerPosY,
+                -minecraft.renderManager.viewerPosZ
+            )
         }
 
-        when (renderMode) {
-            BoxRenderMode.FILL -> {
-                RenderGlobal.renderFilledBox(boundingBox, innerColour.red / 255f, innerColour.green / 255f, innerColour.blue / 255f, innerColour.alpha / 255f)
-            }
+        if (renderMode == BoxRenderMode.FILL || renderMode == BoxRenderMode.BOTH) {
+            RenderGlobal.renderFilledBox(
+                boundingBox,
+                innerColour.red / 255f,
+                innerColour.green / 255f,
+                innerColour.blue / 255f,
+                innerColour.alpha / 255f
+            )
+        }
 
-            BoxRenderMode.OUTLINE -> {
-                RenderGlobal.drawSelectionBoundingBox(boundingBox, outerColour.red / 255f, outerColour.green / 255f, outerColour.blue / 255f, outerColour.alpha / 255f)
-            }
-
-            BoxRenderMode.BOTH -> {
-                RenderGlobal.renderFilledBox(boundingBox, innerColour.red / 255f, innerColour.green / 255f, innerColour.blue / 255f, innerColour.alpha / 255f)
-                RenderGlobal.drawSelectionBoundingBox(boundingBox, outerColour.red / 255f, outerColour.green / 255f, outerColour.blue / 255f, outerColour.alpha / 255f)
-            }
-
-            BoxRenderMode.NONE -> {}
+        if (renderMode == BoxRenderMode.OUTLINE || renderMode == BoxRenderMode.BOTH) {
+            RenderGlobal.drawSelectionBoundingBox(
+                boundingBox,
+                outerColour.red / 255f,
+                outerColour.green / 255f,
+                outerColour.blue / 255f,
+                outerColour.alpha / 255f
+            )
         }
 
         if (depth) {

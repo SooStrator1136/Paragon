@@ -6,6 +6,8 @@ import net.minecraft.util.Timer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+import java.io.File;
+
 @Mixin(Minecraft.class)
 public interface IMinecraft {
 
@@ -20,5 +22,8 @@ public interface IMinecraft {
 
     @Accessor("session")
     void setSession(Session newSession);
+
+    @Accessor("fileAssets")
+    File getFileAssets();
 
 }

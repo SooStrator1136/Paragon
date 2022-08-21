@@ -135,7 +135,7 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
 
         // Refresh holes list
         backgroundThread {
-            if (lastJob == null || lastJob!!.isCompleted) {
+            if (lastJob == null || lastJob!!.isCompleted) { //TODO fix flickering
                 lastJob = launch {
                     holes.removeIf {
                         !(isSurroundedByBlock(it.holePosition, Blocks.OBSIDIAN) && obsidian.value) ||

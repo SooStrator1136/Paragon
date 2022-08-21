@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.simple.element.setting.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
@@ -55,6 +57,7 @@ class BindElement(setting: Setting<Bind>, x: Float, y: Float, width: Float, heig
 
         if (listening) {
             setting.setValue(Bind(click.button, Bind.Device.MOUSE))
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
             listening = false
         }
     }
@@ -72,10 +75,12 @@ class BindElement(setting: Setting<Bind>, x: Float, y: Float, width: Float, heig
 
             if (keyCode == Keyboard.KEY_DELETE || keyCode == Keyboard.KEY_BACK) {
                 setting.setValue(Bind(0, Bind.Device.KEYBOARD))
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 return
             }
 
             setting.setValue(Bind(keyCode, Bind.Device.KEYBOARD))
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
 

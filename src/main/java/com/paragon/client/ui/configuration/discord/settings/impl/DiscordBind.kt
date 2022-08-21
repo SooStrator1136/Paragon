@@ -1,6 +1,7 @@
 package com.paragon.client.ui.configuration.discord.settings.impl
 
 import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.font.FontUtil
@@ -41,6 +42,7 @@ class DiscordBind(private val setting: Setting<Bind>) : DiscordSetting(setting) 
             listening = !listening
         } else if (listening) {
             setting.setValue(Bind(button, Bind.Device.MOUSE))
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
             listening = false
         }
     }
@@ -56,11 +58,13 @@ class DiscordBind(private val setting: Setting<Bind>) : DiscordSetting(setting) 
 
             Keyboard.KEY_DELETE, Keyboard.KEY_BACK -> {
                 setting.setValue(Bind(0, Bind.Device.KEYBOARD))
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 false
             }
 
             else -> {
                 setting.setValue(Bind(keyCode, Bind.Device.KEYBOARD))
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 false
             }
         }

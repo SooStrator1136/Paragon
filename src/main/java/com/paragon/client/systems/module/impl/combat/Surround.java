@@ -1,17 +1,18 @@
 package com.paragon.client.systems.module.impl.combat;
 
 import com.paragon.Paragon;
+import com.paragon.api.event.client.SettingUpdateEvent;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
 import com.paragon.api.setting.Setting;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.builder.BoxRenderMode;
 import com.paragon.api.util.render.builder.RenderBuilder;
 import com.paragon.api.util.world.BlockUtil;
 import com.paragon.client.managers.rotation.Rotate;
+import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -32,13 +33,15 @@ import java.util.Map;
  * @since 08/05/2022
  */
 @SideOnly(Side.CLIENT)
-public class Surround extends Module {
+public final class Surround extends Module {
 
     public static Surround INSTANCE;
 
     // General settings
     private static final Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
             .setDescription("When to automatically disable the module");
+
+    private static final Setting<Boolean> threaded = new Setting<>("Threaded", false);
 
     private static final Setting<Double> blocksPerTick = new Setting<>("BlocksPerTick", 4D, 1D, 10D, 1D)
             .setDescription("The maximum amount of blocks to be placed per tick");
@@ -67,6 +70,8 @@ public class Surround extends Module {
 
     // Map of blocks to render
     private Map<BlockPos, EnumFacing> renderBlocks = new HashMap<>();
+
+    private Thread placingThread = null;
 
     public Surround() {
         super("Surround", Category.COMBAT, "Places obsidian around you to protect you from crystals");
@@ -102,10 +107,20 @@ public class Surround extends Module {
                 break;
         }
 
+        if (threaded.getValue()) {
+            this.placingThread = new Thread(new Placer());
+            this.placingThread.start();
+        }
     }
 
     @Override
     public void onTick() {
+        if (!threaded.getValue()) {
+            doSurround();
+        }
+    }
+
+    void doSurround() {
         if (nullCheck()) {
             return;
         }
@@ -318,6 +333,30 @@ public class Surround extends Module {
                 BlockUtil.getBlockAtPos(pos.south()) != Blocks.AIR ||
                 BlockUtil.getBlockAtPos(pos.east()) != Blocks.AIR ||
                 BlockUtil.getBlockAtPos(pos.west()) != Blocks.AIR;
+    }
+
+    @Listener
+    public void onSettingChange(final SettingUpdateEvent event) {
+        if (event.getSetting() == threaded && threaded.getValue()) {
+            this.placingThread = new Thread(new Placer());
+            this.placingThread.start();
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        this.placingThread = null;
+    }
+
+    final class Placer implements Runnable {
+
+        @Override
+        public void run() {
+            do {
+                Surround.this.doSurround();
+            } while (threaded.getValue() && Surround.this.isEnabled());
+        }
+
     }
 
     public enum Disable {

@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.simple.element.setting.impl
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
@@ -44,11 +46,13 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
             if (dragging) {
                 if (diff == 0f) {
                     setting.setValue(setting.min ?: 0)
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / width * (max - min) + min).toDouble(), 2).toFloat()
                     val precision = 1 / setting.incrementation!!.toFloat()
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
                     setting.setValue(newValue)
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 }
             }
         } else if (setting.value is Double) {
@@ -67,6 +71,7 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
             if (dragging) {
                 if (diff == 0.0) {
                     setting.setValue(setting.min ?: 0)
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble(diff / width * (max - min) + min, 2)
                     val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
@@ -74,6 +79,7 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
 
                     setting.setValue(newValue)
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 }
             }
         }

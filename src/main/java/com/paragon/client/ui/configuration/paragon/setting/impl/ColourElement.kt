@@ -11,7 +11,6 @@ import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.paragon.module.ModuleElement
 import com.paragon.client.ui.configuration.paragon.setting.SettingElement
-import com.paragon.client.ui.configuration.retrowindows.element.setting.elements.SliderElement
 import com.paragon.client.ui.util.Click
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
@@ -30,6 +29,8 @@ import kotlin.math.round
  * @since 06/08/2022
  */
 class ColourElement(setting: Setting<Color>, module: ModuleElement, x: Float, y: Float, width: Float, height: Float) : SettingElement<Color>(setting, module, x, y, width, height) {
+
+    //TODO add SettingUpdateEvent
 
     private val hue = HueSlider(x, y + 100, width, 9f)
     private val alpha = AlphaSlider(x, y + 110, width, 9f)

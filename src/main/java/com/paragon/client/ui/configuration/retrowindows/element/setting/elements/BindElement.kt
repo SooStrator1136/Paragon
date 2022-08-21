@@ -1,6 +1,7 @@
 package com.paragon.client.ui.configuration.retrowindows.element.setting.elements
 
 import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
@@ -76,6 +77,7 @@ class BindElement(parent: ModuleElement, setting: Setting<Bind>, x: Float, y: Fl
                 expanded.state = !expanded.state
             } else if (listening.state) {
                 setting.setValue(Bind(click.button, Bind.Device.MOUSE))
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 listening.state = false
             }
         }
@@ -91,12 +93,14 @@ class BindElement(parent: ModuleElement, setting: Setting<Bind>, x: Float, y: Fl
 
                 Keyboard.KEY_DELETE, Keyboard.KEY_BACK -> {
                     setting.setValue(Bind(0, Bind.Device.KEYBOARD))
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
 
                     listening.state = false
                 }
 
                 else -> {
                     setting.setValue(Bind(keyCode, Bind.Device.KEYBOARD))
+                    Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
 
                     listening.state = false
                 }

@@ -1,5 +1,7 @@
 package com.paragon.client.ui.configuration.retrowindows.element.setting.elements
 
+import com.paragon.Paragon
+import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
@@ -64,6 +66,7 @@ class EnumElement(parent: ModuleElement, setting: Setting<Enum<*>>, x: Float, y:
         if (isHovered(mouseX, mouseY) && y in parent.parent.y + parent.parent.height..parent.parent.y + parent.parent.height + parent.parent.scissorHeight) {
             if (click == Click.LEFT) {
                 setting.setValue(setting.nextMode)
+                Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
             } else if (click == Click.RIGHT) {
                 expanded.state = !expanded.state
             }

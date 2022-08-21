@@ -7,7 +7,6 @@ import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.event.world.entity.EntityRemoveFromWorldEvent;
 import com.paragon.api.util.Wrapper;
 import me.wolfsurge.cerauno.listener.Listener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.SPacketEntityStatus;
 import net.minecraftforge.common.MinecraftForge;
