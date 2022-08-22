@@ -42,7 +42,7 @@ object Fullbright : Module("Fullbright", Category.RENDER, "Changes your brightne
         }
 
         when (mode.value) {
-            Mode.GAMMA -> minecraft.gameSettings.gammaSetting = 50000f // Increase gamma
+            Mode.GAMMA -> minecraft.gameSettings.gammaSetting = 50000f // Increase gamma //why is this so fucking high - xello
             Mode.EFFECT -> {
                 // Apply night vision
                 if (!minecraft.player.isPotionActive(MobEffects.NIGHT_VISION)) {

@@ -53,7 +53,7 @@ public class Aura extends Module {
             .setDescription("Attack passives");
 
     // Main settings
-    public static Setting<Float> range = new Setting<>("Range", 5f, 0f, 5f, 0.1f)
+    public static Setting<Float> range = new Setting<>("Range", 5f, 0f, 12f, 0.1f)
             .setDescription("The range to attack");
 
     public static Setting<Double> delay = new Setting<>("Delay", 700D, 0D, 2000D, 1D)

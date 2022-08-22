@@ -12,9 +12,9 @@ object ReverseStep : Module("ReverseStep", Category.MOVEMENT, "Moves you down wh
         minecraft?.player?.let { player ->
             // Check that we want to fall
             if (player.onGround && !player.isInWater && !player.isInLava && !player.isOnLadder && !minecraft.gameSettings.keyBindJump.isKeyDown) {
-                minecraft.player.motionY = -10.0
+                minecraft.player.motionY = -1.0 //shouldnt be 10
             }
         }
     }
-
+//i dont like java this shit is pure aids
 }
