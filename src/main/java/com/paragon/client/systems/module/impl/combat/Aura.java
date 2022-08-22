@@ -1,5 +1,4 @@
 package com.paragon.client.systems.module.impl.combat;
-
 import com.paragon.Paragon;
 import com.paragon.api.module.Category;
 import com.paragon.api.module.Module;
