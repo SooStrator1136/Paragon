@@ -34,8 +34,8 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
             // Set values
             val diff = min(width, max(0f, mouseX - x))
 
-            val min = setting.min?.toFloat() ?: 0F
-            val max = setting.max?.toFloat() ?: 0F
+            val min = setting.min.toFloat()
+            val max = setting.max.toFloat()
 
             renderWidth = (width * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -45,11 +45,11 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
 
             if (dragging) {
                 if (diff == 0f) {
-                    setting.setValue(setting.min ?: 0)
+                    setting.setValue(setting.min)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / width * (max - min) + min).toDouble(), 2).toFloat()
-                    val precision = 1 / setting.incrementation!!.toFloat()
+                    val precision = 1 / setting.incrementation.toFloat()
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
                     setting.setValue(newValue)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
@@ -59,8 +59,8 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
             // Set values
             val diff = min(width, max(0f, mouseX - x)).toDouble()
 
-            val min = setting.min?.toDouble() ?: 0.0
-            val max = setting.max?.toDouble() ?: 0.0
+            val min = setting.min.toDouble()
+            val max = setting.max.toDouble()
 
             renderWidth = (width * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -70,11 +70,11 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
 
             if (dragging) {
                 if (diff == 0.0) {
-                    setting.setValue(setting.min ?: 0)
+                    setting.setValue(setting.min)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble(diff / width * (max - min) + min, 2)
-                    val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
+                    val precision = (1 / setting.incrementation.toFloat()).toDouble()
 
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
 
@@ -88,7 +88,13 @@ class SliderElement(setting: Setting<Number>, x: Float, y: Float, width: Float, 
             RenderUtil.drawRect(x + renderWidth, y, width - renderWidth, height, Color(200, 200, 200, 150).rgb)
         }
 
-        RenderUtil.drawRect(x, y, renderWidth, height, Colours.mainColour.value.integrateAlpha(if (hovered) 205f else 150f).rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            renderWidth,
+            height,
+            Colours.mainColour.value.integrateAlpha(if (hovered) 205f else 150f).rgb
+        )
 
         glScalef(0.85f, 0.85f, 0.85f).let {
             val factor = 1 / 0.85f

@@ -24,8 +24,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -42,17 +40,17 @@ public class Aura extends Module {
     public static Aura INSTANCE;
 
     // How to sort the targets
-    public static Setting<Sort> sort = new Setting<>("Sort", Sort.DISTANCE)
+    public static Setting<Sort> sort = new Setting<>("Sort", Sort.DISTANCE, null, null, null)
             .setDescription("How to sort the targets");
 
     // Filters
-    public static Setting<Boolean> players = new Setting<>("Players", true)
+    public static Setting<Boolean> players = new Setting<>("Players", true, null, null, null)
             .setDescription("Attack players");
 
-    public static Setting<Boolean> mobs = new Setting<>("Mobs", true)
+    public static Setting<Boolean> mobs = new Setting<>("Mobs", true, null, null, null)
             .setDescription("Attack mobs");
 
-    public static Setting<Boolean> passives = new Setting<>("Passives", true)
+    public static Setting<Boolean> passives = new Setting<>("Passives", true, null, null, null)
             .setDescription("Attack passives");
 
     // Main settings
@@ -62,19 +60,19 @@ public class Aura extends Module {
     public static Setting<Double> delay = new Setting<>("Delay", 700D, 0D, 2000D, 1D)
             .setDescription("The delay between attacking in milliseconds");
 
-    public static Setting<When> when = new Setting<>("When", When.HOLDING)
+    public static Setting<When> when = new Setting<>("When", When.HOLDING, null, null, null)
             .setDescription("When to attack");
 
-    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET)
+    public static Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.PACKET, null, null, null)
             .setDescription("How to rotate to the target");
 
-    public static Setting<Boolean> rotateBack = new Setting<>("RotateBack", true)
+    public static Setting<Boolean> rotateBack = new Setting<>("RotateBack", true, null, null, null)
             .setDescription("Rotate back to your original rotation").setParentSetting(rotate);
 
-    public static Setting<Where> where = new Setting<>("Where", Where.BODY)
+    public static Setting<Where> where = new Setting<>("Where", Where.BODY, Where.BODY, Where.BODY, Where.BODY)
             .setDescription("Where to attack");
 
-    public static Setting<Boolean> packetAttack = new Setting<>("Packet", false)
+    public static Setting<Boolean> packetAttack = new Setting<>("Packet", false, null, null, null)
             .setDescription("Attack with a packet");
 
     public EntityLivingBase getLastTarget() {

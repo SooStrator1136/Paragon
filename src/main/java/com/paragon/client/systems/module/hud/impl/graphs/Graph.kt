@@ -8,17 +8,16 @@ import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.geom.Rectangle2D
-import java.util.function.Supplier
 
 /**
  * @author SooStrator1136
  */
 class Graph(
     private val name: String,
-    private val backgroundColor: Supplier<Color>,
-    private val borderColor: Supplier<Color>,
-    private val graphColor: Supplier<Color>,
-    private val backgroundMode: Supplier<Background>
+    private val backgroundColor: () -> Color,
+    private val borderColor: () -> Color,
+    private val graphColor: () -> Color,
+    private val backgroundMode: () -> Background
 ) {
 
     private val graphRect = Rectangle2D.Float()
@@ -31,7 +30,7 @@ class Graph(
     fun render() {
         graphRect.setRect(bounds.x, bounds.y, bounds.width, bounds.height - FontUtil.getHeight() - 3F)
 
-        val background = backgroundMode.get()
+        val background = backgroundMode()
 
         //Basic background & border
         run {
@@ -41,7 +40,7 @@ class Graph(
                     bounds.y,
                     bounds.width,
                     bounds.height,
-                    backgroundColor.get().rgb
+                    backgroundColor().rgb
                 )
             }
             if (background == Background.ALL) {
@@ -51,7 +50,7 @@ class Graph(
                     bounds.width,
                     bounds.height,
                     1F,
-                    borderColor.get().rgb
+                    borderColor().rgb
                 )
             }
 
@@ -68,7 +67,7 @@ class Graph(
                     bounds.y + bounds.height - (FontUtil.getHeight() + 3F),
                     bounds.width,
                     1F,
-                    borderColor.get().rgb
+                    borderColor().rgb
                 )
             }
         }
@@ -82,7 +81,7 @@ class Graph(
             GL11.glLineWidth(1f)
 
             GL11.glBegin(GL11.GL_LINE_STRIP)
-            ColourUtil.setColour(graphColor.get().rgb)
+            ColourUtil.setColour(graphColor().rgb)
             points.forEachIndexed { i, percentage ->
                 GL11.glVertex2f(
                     graphRect.x + i,

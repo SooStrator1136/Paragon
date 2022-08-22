@@ -2,8 +2,8 @@ package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.event.world.PlayerCollideWithBlockEvent;
-import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
 import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Blocks;
@@ -21,16 +21,16 @@ public class NoSlow extends Module {
 
     public static NoSlow INSTANCE;
 
-    public static Setting<Boolean> soulSand = new Setting<>("SoulSand", true)
+    public static Setting<Boolean> soulSand = new Setting<>("SoulSand", true, null, null, null)
             .setDescription("Stop soul sand from slowing you down");
 
-    public static Setting<Boolean> slime = new Setting<>("Slime", true)
+    public static Setting<Boolean> slime = new Setting<>("Slime", true, null, null, null)
             .setDescription("Stop slime blocks from slowing you down");
 
-    public static Setting<Boolean> items = new Setting<>("Items", true)
+    public static Setting<Boolean> items = new Setting<>("Items", true, null, null, null)
             .setDescription("Stop items from slowing you down");
 
-    public static Setting<Boolean> ncpStrict = new Setting<>("NCPStrict", false)
+    public static Setting<Boolean> ncpStrict = new Setting<>("NCPStrict", false, null, null, null)
             .setDescription("If to bypass NCP strict checks");
 
     private boolean sneakState = false;

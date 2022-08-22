@@ -5,12 +5,12 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
-import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.system.backgroundThread
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
+import com.paragon.api.util.world.BlockUtil.isSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.minecraft.block.BlockLiquid
@@ -31,6 +31,11 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
         50F,
         1F
     ) describedBy "Range to search in"
+
+    private val onlyTop = Setting(
+        "OnlyTop",
+        true
+    )
 
     private val lavaColor = Setting(
         "Lava color",
@@ -55,14 +60,15 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
             if (lastJob == null || lastJob!!.isCompleted) {
                 lastJob = launch {
                     sources.addAll(BlockUtil.getSphere(range.value, true).filter {
-                        !sources.contains(it)
-                                && it.getBlockAtPos() is BlockLiquid
-                                && minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) == 0
+                        !sources.contains(it) && it.isSource()
                     })
 
                     sources.removeIf {
-                        it.getBlockAtPos() !is BlockLiquid
-                                || minecraft.world.getBlockState(it).getValue(BlockLiquid.LEVEL) != 0
+                        if (onlyTop.value && !isTopSource(it)) {
+                            return@removeIf true
+                        }
+
+                        return@removeIf !it.isSource()
                                 || it.getDistance(
                             minecraft.player.posX.toInt(),
                             minecraft.player.posY.toInt(),
@@ -73,6 +79,8 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
             }
         }
     }
+
+    private fun isTopSource(pos: BlockPos) = pos.up().getBlockAtPos() !is BlockLiquid
 
     override fun onRender3D() {
         sources.forEach {

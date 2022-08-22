@@ -2,6 +2,7 @@ package com.paragon.api.util.world
 
 import com.paragon.api.util.Wrapper
 import net.minecraft.block.Block
+import net.minecraft.block.BlockLiquid
 import net.minecraft.init.Blocks
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.AxisAlignedBB
@@ -147,5 +148,9 @@ object BlockUtil : Wrapper {
         pos.south(),
         pos.west()
     ).any { pos.getBlockAtPos() == Blocks.AIR }
+
+    fun BlockPos.isSource(): Boolean {
+        return this.getBlockAtPos() is BlockLiquid && minecraft.world.getBlockState(this).getValue(BlockLiquid.LEVEL) == 0
+    }
 
 }

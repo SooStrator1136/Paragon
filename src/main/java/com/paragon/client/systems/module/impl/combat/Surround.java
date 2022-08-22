@@ -38,40 +38,40 @@ public final class Surround extends Module {
     public static Surround INSTANCE;
 
     // General settings
-    private static final Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER)
+    private static final Setting<Disable> disable = new Setting<>("Disable", Disable.NEVER, null, null, null)
             .setDescription("When to automatically disable the module");
 
-    private static final Setting<Boolean> threaded = new Setting<>("Threaded", false);
+    private static final Setting<Boolean> threaded = new Setting<>("Threaded", false, null, null, null);
 
     private static final Setting<Double> blocksPerTick = new Setting<>("BlocksPerTick", 4D, 1D, 10D, 1D)
             .setDescription("The maximum amount of blocks to be placed per tick");
 
-    private static final Setting<Center> center = new Setting<>("Center", Center.MOTION)
+    private static final Setting<Center> center = new Setting<>("Center", Center.MOTION, null, null, null)
             .setDescription("Center the player on the block when enabled");
 
-    public static final Setting<Air> air = new Setting<>("Air", Air.SUPPORT)
+    public static final Setting<Air> air = new Setting<>("Air", Air.SUPPORT, null, null, null)
             .setDescription("Place blocks beneath where we are placing");
 
     // Rotate settings
-    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
+    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT, null, null, null)
             .setDescription("How to rotate the player");
 
-    private static final Setting<Boolean> rotateBack = new Setting<>("RotateBack", true)
+    private static final Setting<Boolean> rotateBack = new Setting<>("RotateBack", true, null, null, null)
             .setDescription("Rotate the player back to their original rotation")
             .setParentSetting(rotate);
 
     // Render
-    public static final Setting<Boolean> render = new Setting<>("Render", true)
+    public static final Setting<Boolean> render = new Setting<>("Render", true, null, null, null)
             .setDescription("Render a highlight on the positions we need to place blocks at");
 
-    private static final Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255, 130))
+    private static final Setting<Color> renderColour = new Setting<>("Colour", new Color(185, 17, 255, 130), null, null, null)
             .setDescription("The colour of the highlight")
             .setParentSetting(render);
 
     // Map of blocks to render
     private Map<BlockPos, EnumFacing> renderBlocks = new HashMap<>();
 
-    private Thread placingThread = null;
+    private Thread placingThread;
 
     public Surround() {
         super("Surround", Category.COMBAT, "Places obsidian around you to protect you from crystals");

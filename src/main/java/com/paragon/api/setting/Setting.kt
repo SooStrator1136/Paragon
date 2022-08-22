@@ -6,19 +6,15 @@ import com.paragon.client.systems.module.impl.client.Colours
 import java.awt.Color
 import java.util.function.Supplier
 
-class Setting<T> {
+class Setting<T>(val name: String, value: T, val min: T = value, val max: T = value, val incrementation: T = value) {
 
     val subsettings = ArrayList<Setting<*>>()
-
-    // Name and description of setting
-    var name: String
-        private set
 
     var description = ""
         private set
 
     // Value of the setting
-    var value: T
+    var value: T = value
         private set
         get() {
             if (field is Color) {
@@ -35,16 +31,6 @@ class Setting<T> {
 
             return field
         }
-
-    // For numeric settings
-    var min: T? = null
-        private set
-
-    var max: T? = null
-        private set
-
-    var incrementation: T? = null
-        private set
 
     // For mode settings
     var index = -1
@@ -67,20 +53,10 @@ class Setting<T> {
     // GUI Visibility
     private var isVisible = Supplier { true }
 
-    constructor(name: String, value: T) {
-        this.name = name
-        this.value = value
+    init {
         if (value is Color) {
             alpha = (value as Color).alpha.toFloat()
         }
-    }
-
-    constructor(name: String, value: T, min: T, max: T, incrementation: T) {
-        this.name = name
-        this.value = value
-        this.min = min
-        this.max = max
-        this.incrementation = incrementation
     }
 
     /**
@@ -114,33 +90,6 @@ class Setting<T> {
      */
     fun setValueRaw(value: T) {
         this.value = value
-    }
-
-    /**
-     * Sets the minimum value of the setting.
-     *
-     * @param min the minimum value of the setting.
-     */
-    fun setMin(min: T) {
-        this.min = min
-    }
-
-    /**
-     * Sets the maximum value of the setting.
-     *
-     * @param max the maximum value of the setting.
-     */
-    fun setMax(max: T) {
-        this.max = max
-    }
-
-    /**
-     * Sets the incrementation of the setting.
-     *
-     * @param incrementation the incrementation of the setting.
-     */
-    fun setIncrementation(incrementation: T) {
-        this.incrementation = incrementation
     }
 
     /**

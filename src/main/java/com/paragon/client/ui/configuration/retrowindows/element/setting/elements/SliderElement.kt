@@ -40,8 +40,8 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 2)))
 
-            val min = setting.min?.toFloat() ?: 0F
-            val max = setting.max?.toFloat() ?: 0F
+            val min = setting.min.toFloat()
+            val max = setting.max.toFloat()
 
             val rWidth = (maxWidth * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -59,16 +59,16 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
 
             if (dragging) {
                 if (diff == 0f) {
-                    setting.setValue(setting.min ?: 0)
+                    setting.setValue(setting.min)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / maxWidth * (max - min) + min).toDouble(), 2).toFloat()
-                    val precision = 1 / setting.incrementation!!.toFloat()
+                    val precision = 1 / setting.incrementation.toFloat()
                     newValue = (round(max(min, min(max, newValue)) * precision) / precision)
                     setting.setValue(
                         MathsUtil.roundDouble(
                             newValue.toDouble(),
-                            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+                            BigDecimal.valueOf(setting.incrementation.toDouble()).scale()
                         ).toFloat()
                     )
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
@@ -78,8 +78,8 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 2))).toDouble()
 
-            val min = setting.min?.toDouble() ?: 0.0
-            val max = setting.max?.toDouble() ?: 0.0
+            val min = setting.min.toDouble()
+            val max = setting.max.toDouble()
 
             val rWidth = (maxWidth * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -99,23 +99,31 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
 
             if (dragging) {
                 if (diff == 0.0) {
-                    setting.setValue(setting.min ?: 0)
+                    setting.setValue(setting.min)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble(diff / maxWidth * (max - min) + min, 2)
-                    val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
+                    val precision = (1 / setting.incrementation.toFloat()).toDouble()
 
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
 
                     setting.setValue(
-                        MathsUtil.roundDouble(newValue, BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale())
+                        MathsUtil.roundDouble(newValue, BigDecimal.valueOf(setting.incrementation.toDouble()).scale())
                     )
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 }
             }
         }
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, renderWidth, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(
+            x + 2,
+            y + 2,
+            renderWidth,
+            height - 4,
+            Colours.mainColour.value.rgb,
+            if (ClickGUI.gradient.value) Colours.mainColour.value.brighter()
+                .brighter().rgb else Colours.mainColour.value.rgb
+        )
 
         glScalef(0.8f, 0.8f, 0.8f)
 
@@ -124,16 +132,30 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
 
         val valueX: Float = (x + width - FontUtil.getStringWidth(setting.value.toString()) * 0.8f - 5) * scaleFactor
 
-        FontUtil.drawStringWithShadow(setting.value.toString(), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb)
+        FontUtil.drawStringWithShadow(
+            setting.value.toString(),
+            valueX,
+            (y + 5f) * scaleFactor,
+            Color(190, 190, 190).rgb
+        )
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
 
         if (expanded.getAnimationFactor() > 0) {
             var yOffset = 0f
 
-            val scissorY: Double = MathHelper.clamp(y + height, parent.parent.y + parent.parent.height, ((parent.parent.y + parent.parent.scissorHeight) - getSubSettingHeight() * expanded.getAnimationFactor().toFloat()) + height).toDouble()
+            val scissorY = MathHelper.clamp(
+                y + height,
+                parent.parent.y + parent.parent.height,
+                ((parent.parent.y + parent.parent.scissorHeight) - getSubSettingHeight() * expanded.getAnimationFactor()
+                    .toFloat()) + height
+            ).toDouble()
 
-            val scissorHeight: Double = MathHelper.clamp(getSubSettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble())
+            val scissorHeight = MathHelper.clamp(
+                getSubSettingHeight().toDouble() * expanded.getAnimationFactor(),
+                0.0,
+                parent.parent.scissorHeight.toDouble()
+            )
 
             RenderUtil.pushScissor(x.toDouble(), scissorY, width.toDouble(), scissorHeight)
 

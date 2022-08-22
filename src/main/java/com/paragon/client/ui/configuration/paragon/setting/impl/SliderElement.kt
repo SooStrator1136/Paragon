@@ -28,15 +28,31 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
     var dragging = false
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
-        RenderUtil.drawRect(x, y, width, height, Color(53, 53, 74).fade(Color(64, 64, 92), hover.getAnimationFactor()).rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            width,
+            height,
+            Color(53, 53, 74).fade(Color(64, 64, 92), hover.getAnimationFactor()).rgb
+        )
 
         RenderUtil.scaleTo(x + 5, y + 7, 0f, 0.5, 0.5, 0.5) {
             val valueX = x + width * 2 - FontUtil.getStringWidth(setting.value.toString()) - 24
 
-            FontUtil.drawStringWithShadow(setting.value.toString(), valueX, y + 1, Color.GRAY.brighter().fade(Color.GRAY.brighter().brighter(), hover.getAnimationFactor()).rgb)
+            FontUtil.drawStringWithShadow(
+                setting.value.toString(),
+                valueX,
+                y + 1,
+                Color.GRAY.brighter().fade(Color.GRAY.brighter().brighter(), hover.getAnimationFactor()).rgb
+            )
 
             if (hover.getAnimationFactor() > 0.5) {
-                FontUtil.drawStringWithShadow("${setting.value} / ${setting.max}", x + 5, y + 7 + (6 * hover.getAnimationFactor()).toFloat(), Color.GRAY.rgb)
+                FontUtil.drawStringWithShadow(
+                    "${setting.value} / ${setting.max}",
+                    x + 5,
+                    y + 7 + (6 * hover.getAnimationFactor()).toFloat(),
+                    Color.GRAY.rgb
+                )
             }
         }
 
@@ -51,8 +67,8 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 4)))
 
-            val min = setting.min?.toFloat() ?: 0F
-            val max = setting.max?.toFloat() ?: 0F
+            val min = setting.min.toFloat()
+            val max = setting.max.toFloat()
 
             renderWidth = (maxWidth * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -62,17 +78,17 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
 
             if (dragging) {
                 if (diff == 0f) {
-                    setting.setValue(setting.min ?: 0)
+                    setting.setValue(setting.min)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble((diff / maxWidth * (max - min) + min).toDouble(), 2).toFloat()
-                    val precision = 1 / setting.incrementation!!.toFloat()
+                    val precision = 1 / setting.incrementation.toFloat()
                     newValue = (round(max(min, min(max, newValue)) * precision) / precision)
 
                     setting.setValue(
                         MathsUtil.roundDouble(
                             newValue.toDouble(),
-                            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+                            BigDecimal.valueOf(setting.incrementation.toDouble()).scale()
                         ).toFloat()
                     )
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
@@ -82,8 +98,8 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
             // Set values
             val diff = min(maxWidth, max(0f, mouseX - (x + 4))).toDouble()
 
-            val min = setting.min?.toDouble() ?: 0.0
-            val max = setting.max?.toDouble() ?: 0.0
+            val min = setting.min.toDouble()
+            val max = setting.max.toDouble()
 
             renderWidth = (maxWidth * (setting.value.toDouble() - min) / (max - min)).toFloat()
 
@@ -93,18 +109,18 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
 
             if (dragging) {
                 if (diff == 0.0) {
-                    setting.setValue(setting.min ?: 0)
+                    setting.setValue(setting.min)
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 } else {
                     var newValue = MathsUtil.roundDouble(diff / maxWidth * (max - min) + min, 2)
-                    val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
+                    val precision = (1 / setting.incrementation.toFloat()).toDouble()
 
                     newValue = round(max(min, min(max, newValue)) * precision) / precision
 
                     setting.setValue(
                         MathsUtil.roundDouble(
                             newValue,
-                            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+                            BigDecimal.valueOf(setting.incrementation.toDouble()).scale()
                         )
                     )
                     Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))

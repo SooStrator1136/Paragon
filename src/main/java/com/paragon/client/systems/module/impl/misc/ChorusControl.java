@@ -22,8 +22,8 @@ import java.util.Collection;
  */
 public final class ChorusControl extends Module {
 
-    private final Setting<Boolean> cPacketPlayer = new Setting<>("CPacketPlayer", true);
-    private final Setting<Boolean> packetPlayerPosLook = new Setting<>("SPacketPlayerPosLook", true);
+    private final Setting<Boolean> cPacketPlayer = new Setting<>("CPacketPlayer", true, null, null, null);
+    private final Setting<Boolean> packetPlayerPosLook = new Setting<>("SPacketPlayerPosLook", true, null, null, null);
 
     private final Collection<CPacketPlayer> packets = new ArrayList<>(10);
     private final Collection<CPacketConfirmTeleport> teleportPackets = new ArrayList<>(2);

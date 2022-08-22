@@ -16,7 +16,7 @@ public final class Watermark extends HUDModule {
 
     public static Watermark INSTANCE;
 
-    private static Setting<Display> display = new Setting<>("Display", Display.TEXT)
+    private static Setting<Display> display = new Setting<>("Display", Display.TEXT, null, null, null)
             .setDescription("The type of watermark to display");
 
     private static Setting<Double> scaleFac = new Setting<>("Size", 1.0, 0.1, 2.0, 0.05)

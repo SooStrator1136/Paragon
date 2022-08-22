@@ -15,7 +15,7 @@ public class BowRelease extends Module {
 
     public static BowRelease INSTANCE;
 
-    public static Setting<Release> release = new Setting<>("Release", Release.TICKS)
+    public static Setting<Release> release = new Setting<>("Release", Release.TICKS, null, null, null)
             .setDescription("When to release the bow");
 
     public static Setting<Float> releasePower = new Setting<>("Power", 3.1f, 0.1f, 4.0f, 0.1f)

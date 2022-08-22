@@ -2,6 +2,7 @@ package com.paragon.client.managers
 
 import com.paragon.api.module.Module
 import com.paragon.client.systems.module.hud.impl.*
+import com.paragon.client.systems.module.hud.impl.graphs.GraphCPS
 import com.paragon.client.systems.module.hud.impl.graphs.GraphFPS
 import com.paragon.client.systems.module.hud.impl.graphs.GraphPing
 import com.paragon.client.systems.module.hud.impl.graphs.GraphSpeed
@@ -129,6 +130,7 @@ class ModuleManager {
             CustomText,
             Direction,
             FPS,
+            GraphCPS,
             GraphFPS,
             GraphPing,
             GraphSpeed,

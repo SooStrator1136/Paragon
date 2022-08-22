@@ -17,7 +17,7 @@ public class Armour extends HUDModule {
 
     public static Armour INSTANCE;
 
-    private static final Setting<Boolean> waterOffset = new Setting<>("Water Offset", true)
+    private static final Setting<Boolean> waterOffset = new Setting<>("Water Offset", true, null, null, null)
             .describedBy("Position higher when you are underwater");
 
     public Armour() {

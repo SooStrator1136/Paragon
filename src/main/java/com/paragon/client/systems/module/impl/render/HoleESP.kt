@@ -180,7 +180,16 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
 
             if (fill.value) {
                 RenderBuilder()
-                    .boundingBox(AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + fillHeight.value, blockBB.maxZ))
+                    .boundingBox(
+                        AxisAlignedBB(
+                            blockBB.minX,
+                            blockBB.minY,
+                            blockBB.minZ,
+                            blockBB.maxX,
+                            blockBB.minY + fillHeight.value,
+                            blockBB.maxZ
+                        )
+                    )
                     .inner(it.holeColour)
                     .type(BoxRenderMode.FILL)
 

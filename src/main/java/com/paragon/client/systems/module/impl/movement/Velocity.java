@@ -2,11 +2,11 @@ package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.network.PacketEvent;
 import com.paragon.api.event.world.entity.EntityPushEvent;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import com.paragon.asm.mixins.accessor.ISPacketEntityVelocity;
 import com.paragon.asm.mixins.accessor.ISPacketExplosion;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.network.play.server.SPacketExplosion;
@@ -18,10 +18,10 @@ public class Velocity extends Module {
 
     public static Velocity INSTANCE;
 
-    public static Setting<Boolean> velocityPacket = new Setting<>("VelocityPacket", true)
+    public static Setting<Boolean> velocityPacket = new Setting<>("VelocityPacket", true, null, null, null)
             .setDescription("Cancels or modifies the velocity packet");
 
-    public static Setting<Boolean> explosions = new Setting<>("Explosions", true)
+    public static Setting<Boolean> explosions = new Setting<>("Explosions", true, null, null, null)
             .setDescription("Cancels or modifies the explosion knockback");
 
     public static Setting<Float> horizontal = new Setting<>("Horizontal", 0f, 0f, 100f, 1f)
@@ -30,7 +30,7 @@ public class Velocity extends Module {
     public static Setting<Float> vertical = new Setting<>("Vertical", 0f, 0f, 100f, 1f)
             .setDescription("The vertical modifier");
 
-    public static Setting<Boolean> noPush = new Setting<>("NoPush", true)
+    public static Setting<Boolean> noPush = new Setting<>("NoPush", true, null, null, null)
             .setDescription("Prevents the player from being pushed by entities");
 
     public Velocity() {

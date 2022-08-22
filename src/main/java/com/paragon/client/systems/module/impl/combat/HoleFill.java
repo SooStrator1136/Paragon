@@ -8,7 +8,6 @@ import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.api.util.player.PlayerUtil;
 import com.paragon.api.util.player.RotationUtil;
 import com.paragon.api.util.render.ColourUtil;
-import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.builder.BoxRenderMode;
 import com.paragon.api.util.render.builder.RenderBuilder;
 import com.paragon.api.util.world.BlockUtil;
@@ -36,7 +35,7 @@ public final class HoleFill extends Module {
     private static final Setting<Float> range = new Setting<>("Range", 5.0f, 0.0f, 6.0f, 0.1f)
             .setDescription("The maximum range to fill a hole");
 
-    private static final Setting<Boolean> obsidianBedrock = new Setting<>("Obsidian Bedrock", true)
+    private static final Setting<Boolean> obsidianBedrock = new Setting<>("Obsidian Bedrock", true, null, null, null)
             .setDescription("Only fill holes that are surrounded by obsidian or bedrock");
 
     private static final Setting<Float> blocksPerTick = new Setting<>("Blocks Per Tick", 1.0f, 1.0f, 10.0f, 1.0f)
@@ -46,18 +45,18 @@ public final class HoleFill extends Module {
             .setDescription("The amount of ticks to wait before filling the next holes");
 
     // Rotate settings
-    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT)
+    public static final Setting<Rotate> rotate = new Setting<>("Rotate", Rotate.LEGIT, Rotate.LEGIT, Rotate.LEGIT, Rotate.LEGIT)
             .setDescription("How to rotate the player");
 
-    private static final Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true)
+    private static final Setting<Boolean> rotateBack = new Setting<>("Rotate Back", true, null, null, null)
             .setDescription("Rotate the player back to their original rotation")
             .setParentSetting(rotate);
 
     // Render settings
-    public static final Setting<Boolean> render = new Setting<>("Render", true)
+    public static final Setting<Boolean> render = new Setting<>("Render", true, null, null, null)
             .setDescription("Render the placement");
 
-    private static final Setting<BoxRenderMode> renderMode = new Setting<>("Mode", BoxRenderMode.BOTH)
+    private static final Setting<BoxRenderMode> renderMode = new Setting<>("Mode", BoxRenderMode.BOTH, null, null, null)
             .setDescription("How to render placement")
             .setParentSetting(render);
 
@@ -65,11 +64,11 @@ public final class HoleFill extends Module {
             .setDescription("The width of the lines")
             .setParentSetting(render);
 
-    private static final Setting<Color> renderColour = new Setting<>("Fill Colour", new Color(185, 19, 255, 130))
+    private static final Setting<Color> renderColour = new Setting<>("Fill Colour", new Color(185, 19, 255, 130), null, null, null)
             .setDescription("The colour of the fill")
             .setParentSetting(render);
 
-    private static final Setting<Color> renderOutlineColour = new Setting<>("Outline Colour", new Color(185, 19, 255))
+    private static final Setting<Color> renderOutlineColour = new Setting<>("Outline Colour", new Color(185, 19, 255), null, null, null)
             .setParentSetting(render);
 
     private final Map<BlockPos, EnumFacing> positions = new HashMap<>(5);

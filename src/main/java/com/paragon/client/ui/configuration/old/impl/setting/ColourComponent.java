@@ -50,7 +50,7 @@ public class ColourComponent extends SettingComponent<Color> {
         this.alpha = new Setting<>("Alpha", (float) setting.getValue().getAlpha(), 0f, 255f, 1f)
                 .setDescription("The alpha of the colour");
 
-        this.rainbow = new Setting<>("Rainbow", setting.isRainbow())
+        this.rainbow = new Setting<>("Rainbow", setting.isRainbow(), setting.isRainbow(), setting.isRainbow(), setting.isRainbow())
                 .setDescription("Whether the colour is a rainbow");
 
         this.rainbowSpeed = new Setting<>("Rainbow Speed", setting.getRainbowSpeed(), 0.1f, 10f, 0.1f)
@@ -59,7 +59,7 @@ public class ColourComponent extends SettingComponent<Color> {
         this.rainbowSaturation = new Setting<>("Rainbow Saturation", setting.getRainbowSaturation(), 0f, 100f, 1f)
                 .setDescription("The saturation of the rainbow");
 
-        this.sync = new Setting<>("Sync", setting.isSync())
+        this.sync = new Setting<>("Sync", setting.isSync(), setting.isSync(), setting.isSync(), setting.isSync())
                 .setDescription("Whether the colour is synced to the client's main colour");
 
         List<Setting<?>> settings = new ArrayList<>();

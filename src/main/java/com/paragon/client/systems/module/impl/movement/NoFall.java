@@ -1,12 +1,12 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.network.PacketEvent;
+import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.player.InventoryUtil;
 import com.paragon.asm.mixins.accessor.ICPacketPlayer;
 import com.paragon.asm.mixins.accessor.IPlayerControllerMP;
-import com.paragon.api.module.Module;
-import com.paragon.api.module.Category;
-import com.paragon.api.setting.Setting;
 import me.wolfsurge.cerauno.listener.Listener;
 import net.minecraft.init.Items;
 import net.minecraft.network.play.client.CPacketPlayer;
@@ -20,14 +20,14 @@ public class NoFall extends Module {
 
     public static NoFall INSTANCE;
 
-    public static Setting<Mode> mode = new Setting<>("Mode", Mode.VANILLA)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.VANILLA, null, null, null)
             .setDescription("How to prevent fall damage");
 
-    public static Setting<Boolean> spoofFall = new Setting<>("SpoofFall", false)
+    public static Setting<Boolean> spoofFall = new Setting<>("SpoofFall", false, null, null, null)
             .setDescription("Spoof fall distance")
             .setVisibility(() -> mode.getValue().equals(Mode.RUBBERBAND));
 
-    public static Setting<Boolean> ignoreElytra = new Setting<>("IgnoreElytra", true)
+    public static Setting<Boolean> ignoreElytra = new Setting<>("IgnoreElytra", true, null, null, null)
             .setDescription("Don't attempt to place a water bucket when flying with an elytra")
             .setVisibility(() -> mode.getValue().equals(Mode.BUCKET));
 

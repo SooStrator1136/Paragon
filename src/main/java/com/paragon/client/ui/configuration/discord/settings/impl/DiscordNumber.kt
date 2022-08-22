@@ -41,8 +41,8 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             getStringWidth("${setting.max}/${setting.max}")
         ),
         max(
-            getStringWidth((setting.max!! - setting.incrementation!!).toString() + "/${setting.max}"),
-            getStringWidth((setting.min!! + setting.incrementation!!).toString() + "/${setting.max}")
+            getStringWidth((setting.max - setting.incrementation).toString() + "/${setting.max}"),
+            getStringWidth((setting.min + setting.incrementation).toString() + "/${setting.max}")
         )
     )
 
@@ -154,8 +154,8 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
                 sliderBounds.y.toDouble(),
                 getPercentOf(
                     getPercent(
-                        (setting.value - setting.min!!).toDouble(),
-                        (setting.max!! - setting.min!!).toDouble()
+                        (setting.value - setting.min).toDouble(),
+                        (setting.max - setting.min).toDouble()
                     ), sliderBounds.width - 1.0
                 ),
                 sliderBounds.height.toDouble(),
@@ -183,16 +183,16 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
     private fun getNewValue(mouseX: Int): Number {
         val toReturn = roundDouble( //TODO fix??
             roundToIncrementation(
-                setting.incrementation!!.toDouble(),
+                setting.incrementation.toDouble(),
                 getPercentOf(
                     getPercent(
                         (mouseX - sliderBounds.x).toDouble(),
                         sliderBounds.width - 1.0
                     ),
-                    (setting.max!! - setting.min!!).toDouble(),
+                    (setting.max - setting.min).toDouble(),
                 )
             ),
-            BigDecimal.valueOf(setting.incrementation!!.toDouble()).scale()
+            BigDecimal.valueOf(setting.incrementation.toDouble()).scale()
         )
         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         return if (setting.value is Float) toReturn.toFloat() else toReturn

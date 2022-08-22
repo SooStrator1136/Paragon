@@ -1,10 +1,10 @@
 package com.paragon.client.systems.module.impl.movement;
 
 import com.paragon.api.event.player.StepEvent;
-import com.paragon.api.util.string.StringUtil;
-import com.paragon.api.module.Module;
 import com.paragon.api.module.Category;
+import com.paragon.api.module.Module;
 import com.paragon.api.setting.Setting;
+import com.paragon.api.util.string.StringUtil;
 import com.paragon.asm.mixins.accessor.IMinecraft;
 import com.paragon.asm.mixins.accessor.ITimer;
 import me.wolfsurge.cerauno.listener.Listener;
@@ -36,7 +36,7 @@ public class Step extends Module {
     public static Step INSTANCE;
 
     // Step mode
-    public static Setting<Mode> mode = new Setting<>("Mode", Mode.NCP)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.NCP, null, null, null)
             .setDescription("What mode to use");
 
     // Vanilla step height
@@ -44,7 +44,7 @@ public class Step extends Module {
             .setDescription("How high to step up")
             .setVisibility(() -> mode.getValue().equals(Mode.VANILLA));
 
-    public static Setting<Boolean> useTimer = new Setting<>("UseTimer", true)
+    public static Setting<Boolean> useTimer = new Setting<>("UseTimer", true, null, null, null)
             .setDescription("If to use timer to prevent the MORE_PACKETS flag on NCP")
             .setVisibility(() -> mode.getValue().equals(Mode.NCP));
 

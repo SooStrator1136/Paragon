@@ -14,10 +14,10 @@ public class Notifications extends HUDModule {
 
     public static Notifications INSTANCE;
 
-    private static final Setting<RenderType> renderType = new Setting<>("Render Type", RenderType.DISPLAY)
+    private static final Setting<RenderType> renderType = new Setting<>("Render Type", RenderType.DISPLAY, null, null, null)
             .setDescription("The way to render the notifications");
 
-    private static final Setting<Direction> direction = new Setting<>("Direction", Direction.DOWN)
+    private static final Setting<Direction> direction = new Setting<>("Direction", Direction.DOWN, null, null, null)
             .setDescription("The vertical direction of the notifications");
 
     private static final Setting<Float> limit = new Setting<>("Limit", 3f, 1f, 20f, 1f)

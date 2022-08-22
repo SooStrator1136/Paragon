@@ -19,7 +19,7 @@ public class ElytraFlight extends Module {
     public static ElytraFlight INSTANCE;
 
     // Mode for elytra flight
-    public static Setting<Mode> mode = new Setting<>("Mode", Mode.CONTROL)
+    public static Setting<Mode> mode = new Setting<>("Mode", Mode.CONTROL, null, null, null)
             .setDescription("The mode to use");
 
     // Strict settings
@@ -33,7 +33,7 @@ public class ElytraFlight extends Module {
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
-    public static Setting<Boolean> lockPitch = new Setting<>("LockPitch", true)
+    public static Setting<Boolean> lockPitch = new Setting<>("LockPitch", true, null, null, null)
             .setDescription("Lock your pitch when you are not ascending or descending")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
@@ -44,7 +44,7 @@ public class ElytraFlight extends Module {
             .setVisibility(() -> mode.getValue().equals(Mode.STRICT));
 
     // Boost settings
-    public static Setting<Boolean> cancelMotion = new Setting<>("CancelMotion", false)
+    public static Setting<Boolean> cancelMotion = new Setting<>("CancelMotion", false, null, null, null)
             .setDescription("Stop motion when not moving")
             .setParentSetting(mode)
             .setVisibility(() -> mode.getValue().equals(Mode.BOOST));
@@ -65,7 +65,7 @@ public class ElytraFlight extends Module {
             .setDescription("How fast to fall");
 
     // Takeoff settings
-    public static Setting<Boolean> takeOff = new Setting<>("Takeoff", false)
+    public static Setting<Boolean> takeOff = new Setting<>("Takeoff", false, null, null, null)
             .setDescription("Automatically take off when you enable the module");
 
     public static Setting<Float> takeOffTimer = new Setting<>("Timer", 0.2f, 0.1f, 1f, 0.1f)

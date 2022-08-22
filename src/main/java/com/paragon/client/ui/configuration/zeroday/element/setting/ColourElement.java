@@ -1,13 +1,13 @@
 package com.paragon.client.ui.configuration.zeroday.element.setting;
 
+import com.paragon.api.setting.Setting;
 import com.paragon.api.util.calculations.MathsUtil;
 import com.paragon.api.util.render.RenderUtil;
 import com.paragon.api.util.render.font.FontUtil;
 import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.api.setting.Setting;
-import com.paragon.client.ui.util.Click;
 import com.paragon.client.ui.configuration.zeroday.element.Element;
 import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement;
+import com.paragon.client.ui.util.Click;
 import me.surge.animation.Animation;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public final class ColourElement extends Element {
     private final Setting<Float> alpha = new Setting<>("Alpha", 0f, 0f, 255f, 1f)
             .setDescription("The alpha of the colour");
 
-    private final Setting<Boolean> rainbow = new Setting<>("Rainbow", false)
+    private final Setting<Boolean> rainbow = new Setting<>("Rainbow", false, false, false, false)
             .setDescription("Whether the colour is a rainbow");
 
     private final Setting<Float> rainbowSpeed = new Setting<>("Speed", 4f, 0f, 10f, 0.1f)
@@ -43,7 +43,7 @@ public final class ColourElement extends Element {
     private final Setting<Float> rainbowSaturation = new Setting<>("Saturation", 100f, 0f, 100f, 1f)
             .setDescription("The saturation of the rainbow");
 
-    private final Setting<Boolean> sync = new Setting<>("Sync", false)
+    private final Setting<Boolean> sync = new Setting<>("Sync", false, false, false, false)
             .setDescription("Whether the colour is synced with the client's colour");
 
     private Color finalColour;
