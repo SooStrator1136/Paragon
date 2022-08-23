@@ -33,15 +33,15 @@ Surge <br>
 TeleTofu
 
 ## Developers
-Bush <br>
 SooStrator <br>
-Gentleman <br>
-Master7720 (kinda)
+Gentleman
 
 ## Other Contributors
 Doogie13 <br>
 Sxmurai / Aesthetical <br>
-EBSmash
+EBSmash <br>
+Bush <br>
+Master7720
 
 ## Other Credits
 Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Surge wrote it
