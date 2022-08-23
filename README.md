@@ -7,7 +7,7 @@
 
 # Paragon
 A 1.12.2 Anarchy Client. Still in development.
-Download the client from the latest commit [Here](https://nightly.link/Wolfsurge/Paragon/workflows/build/master/Package.zip)
+Download the client from the latest commit [here](https://nightly.link/Wolfsurge/Paragon/workflows/build/master/Package.zip)
 
 # FAQ
 <details>
@@ -61,8 +61,6 @@ Linux/Mac (or any other based UNIX/UNIX-LIKE OS):
 Fork the repository and push your changes to the fork. Then, create a pull request to this repository and it will be reviewed.
 
 Try and follow the code style found in the rest of the client, such as using `lowerCamelCase` and not letting `{`s have their own lines.
-
-Both Kotlin and Java are allowed (Kotlin preferred)
 
 # Using the Custom Font
 A directory is created in the Paragon config folder (/.minecraft/paragon), called "font". Here, upon first opening the client, two files will be present.
