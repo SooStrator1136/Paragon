@@ -1,206 +1,139 @@
-package com.paragon.client.ui.configuration.old.impl;
+package com.paragon.client.ui.configuration.old.impl
 
-import com.paragon.Paragon;
-import com.paragon.api.module.Category;
-import com.paragon.api.module.Module;
-
-import com.paragon.api.util.render.RenderUtil;
-import com.paragon.api.util.render.font.FontUtil;
-import com.paragon.client.systems.module.impl.client.ClickGUI;
-import com.paragon.client.systems.module.impl.client.ClientFont;
-import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.ui.configuration.old.OldPanelGUI;
-import com.paragon.client.ui.configuration.old.impl.module.ModuleButton;
-import me.surge.animation.Animation;
-
-import java.awt.*;
-import java.util.ArrayList;
+import com.paragon.Paragon
+import com.paragon.api.module.Category
+import com.paragon.api.module.Module
+import com.paragon.api.util.render.RenderUtil.drawRect
+import com.paragon.api.util.render.RenderUtil.drawRoundedRect
+import com.paragon.api.util.render.RenderUtil.popScissor
+import com.paragon.api.util.render.RenderUtil.pushScissor
+import com.paragon.api.util.render.font.FontUtil.renderCenteredString
+import com.paragon.client.systems.module.impl.client.ClickGUI.animationSpeed
+import com.paragon.client.systems.module.impl.client.ClickGUI.cornerRadius
+import com.paragon.client.systems.module.impl.client.ClickGUI.easing
+import com.paragon.client.systems.module.impl.client.ClickGUI.panelHeaderSeparator
+import com.paragon.client.systems.module.impl.client.ClientFont
+import com.paragon.client.systems.module.impl.client.Colours
+import com.paragon.client.ui.configuration.old.OldPanelGUI.Companion.isInside
+import com.paragon.client.ui.configuration.old.impl.module.ModuleButton
+import me.surge.animation.Animation
+import java.awt.Color
+import java.util.function.Consumer
 
 /**
  * @author Wolfsurge
  */
-public class Panel {
+class Panel(var x: Float, var y: Float, val width: Float, private val barHeight: Float, val category: Category) {
 
-    private final float width;
-    private final float barHeight;
-    // The panel's category
-    private final Category category;
     // List of module buttons
-    private final ArrayList<ModuleButton> moduleButtons = new ArrayList<>();
+    private val moduleButtons = ArrayList<ModuleButton>()
+
     // Opening / Closing animation
-    private final Animation animation;
-    // X, Y, Width, and Bar Height
-    private float x;
-    private float y;
+    private val animation: Animation
+
     // Variables
-    private boolean dragging = false;
-    private float lastX, lastY;
+    private var dragging = false
+    private var lastX = 0f
+    private var lastY = 0f
 
-    public Panel(float x, float y, float width, float barHeight, Category category) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.barHeight = barHeight;
-        this.category = category;
-
-        float offset = getY() + barHeight;
+    init {
+        var offset = y + barHeight
 
         // Add a new module button for each module in the category
-        for (Module module : Paragon.INSTANCE.getModuleManager().getModulesThroughPredicate(module -> module.getCategory().equals(getCategory()))) {
-            moduleButtons.add(new ModuleButton(this, module, offset, 13));
+        for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { module: Module -> module.category == this.category }) {
+            moduleButtons.add(ModuleButton(this, module, offset, 13f))
 
             // Increase offset
-            offset += 13;
+            offset += 13f
         }
 
-        animation = new Animation(ClickGUI.getAnimationSpeed()::getValue, true, ClickGUI.getEasing()::getValue);
+        animation = Animation(animationSpeed::value, true, easing::value)
     }
 
-    public void renderPanel(int mouseX, int mouseY) {
+    fun renderPanel(mouseX: Int, mouseY: Int) {
         // Set X and Y
         if (dragging) {
-            this.x = mouseX - lastX;
-            this.y = mouseY - lastY;
+            x = mouseX - lastX
+            y = mouseY - lastY
         }
 
-        float height = 0;
-        for (ModuleButton moduleButton : moduleButtons) {
-            height += moduleButton.getAbsoluteHeight();
+        var height = 0f
+
+        for (moduleButton in moduleButtons) {
+            height += moduleButton.absoluteHeight
         }
 
         // Header
-        RenderUtil.drawRoundedRect(getX(), getY(), getWidth(), barHeight, ClickGUI.getCornerRadius().getValue(), ClickGUI.getCornerRadius().getValue(), 1, 1, isMouseOverHeader(mouseX, mouseY) ? new Color(28, 28, 28).getRGB() : new Color(23, 23, 23).darker().getRGB());
-        FontUtil.renderCenteredString(getCategory().getName(), getX() + (getWidth() / 2f), getY() + (barHeight / 2f) + (ClientFont.INSTANCE.isEnabled() ? 2 : 0.5f), -1, true);
+        drawRoundedRect(x.toDouble(), y.toDouble(), width.toDouble(), barHeight.toDouble(), cornerRadius.value.toDouble(), cornerRadius.value.toDouble(), 1.0, 1.0, if (isMouseOverHeader(mouseX, mouseY)) Color(28, 28, 28).rgb else Color(23, 23, 23).darker().rgb)
+        renderCenteredString(this.category.Name, x + width / 2f, y + barHeight / 2f + if (ClientFont.isEnabled) 2f else 0.5f, -1, true)
+        refreshOffsets()
 
-        refreshOffsets();
+        pushScissor((x - 0.5f).toDouble(), y.toDouble(), (width + 1).toDouble(), barHeight + height * animation.getAnimationFactor() + 0.5f)
 
-        RenderUtil.pushScissor(getX() - 0.5f, getY(), getWidth() + 1, barHeight + (height * animation.getAnimationFactor()) + 0.5f);
-
-        if (isExpanded()) {
+        if (isExpanded) {
             // Draw modules
-            moduleButtons.forEach(moduleButton -> {
-                moduleButton.renderModuleButton(mouseX, mouseY);
-            });
+            moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.renderModuleButton(mouseX, mouseY) })
         }
 
-        RenderUtil.popScissor();
+        popScissor()
 
-        RenderUtil.drawRect(getX(), (float) (getY() + barHeight + (height * animation.getAnimationFactor())), getWidth(), 2, new Color(23, 23, 23).darker().getRGB());
+        drawRect(x, (y + barHeight + height * animation.getAnimationFactor()).toFloat(), width, 2f, Color(23, 23, 23).darker().rgb)
 
-        if (ClickGUI.getPanelHeaderSeparator().getValue()) {
-            RenderUtil.drawRect(getX(), getY() + barHeight - 1, getWidth(), 1, Colours.mainColour.getValue().getRGB());
+        if (panelHeaderSeparator.value) {
+            drawRect(x, y + barHeight - 1, width, 1f, Colours.mainColour.value.rgb)
         }
     }
 
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         // Drag the frame if we have clicked on the header
         if (isMouseOverHeader(mouseX, mouseY) && mouseButton == 0) {
-            this.lastX = mouseX - getX();
-            this.lastY = mouseY - getY();
-
-            dragging = true;
+            lastX = mouseX - x
+            lastY = mouseY - y
+            dragging = true
         }
 
         // Toggle the open state if we right-click on the header
         if (isMouseOverHeader(mouseX, mouseY) && mouseButton == 1) {
-            animation.setState(!isExpanded());
+            animation.state = !isExpanded
         }
 
         // Call the mouseClicked event for each module button if the panel is open
-        if (isExpanded()) {
-            moduleButtons.forEach(moduleButton -> {
-                moduleButton.mouseClicked(mouseX, mouseY, mouseButton);
-            });
+        if (isExpanded) {
+            moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.mouseClicked(mouseX, mouseY, mouseButton) })
         }
     }
 
-    public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+    fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {
         if (mouseButton == 0) {
             // Make sure we aren't dragging
-            dragging = false;
+            dragging = false
         }
 
         // Mouse released.
-        moduleButtons.forEach(moduleButton -> {
-            moduleButton.mouseReleased(mouseX, mouseY, mouseButton);
-        });
+        moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.mouseReleased(mouseX, mouseY, mouseButton) })
     }
 
-    public void keyTyped(char keyTyped, int keyCode) {
-        if (isExpanded()) {
-            moduleButtons.forEach(moduleButton -> {
-                moduleButton.keyTyped(keyTyped, keyCode);
-            });
+    fun keyTyped(keyTyped: Char, keyCode: Int) {
+        if (isExpanded) {
+            moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.keyTyped(keyTyped, keyCode) })
         }
     }
 
-    public boolean isMouseOverHeader(int mouseX, int mouseY) {
-        return OldPanelGUI.isInside(getX(), getY(), getX() + getWidth(), getY() + barHeight, mouseX, mouseY);
+    fun isMouseOverHeader(mouseX: Int, mouseY: Int): Boolean {
+        return isInside(x, y, x + width, y + barHeight, mouseX, mouseY)
     }
 
     /**
      * Sets all the module offsets
      */
-    public void refreshOffsets() {
-        float y = getY() + barHeight;
-
-        for (ModuleButton moduleButton : moduleButtons) {
-            moduleButton.offset = y;
-            y += moduleButton.getAbsoluteHeight() * animation.getAnimationFactor();
+    fun refreshOffsets() {
+        var y = y + barHeight
+        for (moduleButton in moduleButtons) {
+            moduleButton.offset = y
+            y += (moduleButton.absoluteHeight * animation.getAnimationFactor()).toFloat()
         }
     }
 
-    /**
-     * Gets the X
-     *
-     * @return The X
-     */
-    public float getX() {
-        return x;
-    }
-
-    /**
-     * Gets the Y
-     *
-     * @return The Y
-     */
-    public float getY() {
-        return y;
-    }
-
-    /**
-     * Sets the Y
-     *
-     * @param newY The new Y
-     */
-    public void setY(float newY) {
-        this.y = newY;
-    }
-
-    /**
-     * Gets the width
-     *
-     * @return The width
-     */
-    public float getWidth() {
-        return width;
-    }
-
-    /**
-     * Gets the category
-     *
-     * @return The category
-     */
-    public Category getCategory() {
-        return category;
-    }
-
-    /**
-     * Gets whether the animation is expanding / expanded
-     *
-     * @return If the panel is expanded
-     */
-    public boolean isExpanded() {
-        return animation.getAnimationFactor() > 0;
-    }
+    val isExpanded: Boolean
+        get() = animation.getAnimationFactor() > 0
 }

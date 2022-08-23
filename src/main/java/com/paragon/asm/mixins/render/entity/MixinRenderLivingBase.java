@@ -4,7 +4,6 @@ import com.paragon.Paragon;
 import com.paragon.api.event.render.entity.EntityHighlightOnHitEvent;
 import com.paragon.api.event.render.entity.RenderEntityEvent;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;

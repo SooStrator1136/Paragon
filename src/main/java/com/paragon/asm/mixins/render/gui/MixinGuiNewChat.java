@@ -2,7 +2,6 @@ package com.paragon.asm.mixins.render.gui;
 
 import com.paragon.Paragon;
 import com.paragon.api.event.render.gui.RenderChatEvent;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiNewChat;
 import org.spongepowered.asm.mixin.Mixin;

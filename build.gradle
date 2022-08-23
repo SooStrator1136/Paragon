@@ -44,7 +44,6 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'fml.coreMods.load', 'com.paragon.asm.MixinLoader'
-            // property 'mixin.env.disableRefMap', 'true'
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -109,7 +108,7 @@ idea {
 task prepareAssets(type: Copy) {
     group = 'build'
     from project.file('src/main/resources')
-    into project.file('build/classes/java/main')
+    into project.file('build/classes/kotlin/main')
 }
 
 jar {
@@ -127,6 +126,11 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
+}
+
+// Kotlin plugin doesn't seem to automatically do this (at least for me)
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
 }
 
 classes.dependsOn(prepareAssets)

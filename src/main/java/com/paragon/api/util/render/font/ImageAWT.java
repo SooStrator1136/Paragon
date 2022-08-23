@@ -1,10 +1,12 @@
 package com.paragon.api.util.render.font;
 
 import com.paragon.api.util.Wrapper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -22,7 +24,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 @SuppressWarnings("unused")
 @SideOnly(value = Side.CLIENT)
-public final class ImageAWT implements Wrapper {
+public class ImageAWT implements Wrapper {
 
     private static final List<ImageAWT> activeFontRenderers = new ArrayList<>();
     private static int gcTicks = 0;
@@ -99,9 +101,9 @@ public final class ImageAWT implements Wrapper {
             if (Character.getNumericValue(ch) >= charLocations.length) {
                 GL11.glEnd();
                 scale(4.0, 4.0, 4.0);
-                mc.fontRenderer.drawString(String.valueOf(ch), (float) currX * 0.25f + 1.0f, 2.0f, color, false);
+                getMinecraft().fontRenderer.drawString(String.valueOf(ch), (float) currX * 0.25f + 1.0f, 2.0f, color, false);
 
-                currX += (double) mc.fontRenderer.getStringWidth(String.valueOf(ch)) * 4.0;
+                currX += (double) getMinecraft().fontRenderer.getStringWidth(String.valueOf(ch)) * 4.0;
 
                 scale(0.25, 0.25, 0.25);
                 bindTexture(textureID);
@@ -233,7 +235,7 @@ public final class ImageAWT implements Wrapper {
             int index = ch < charLocations.length ? ch : 3;
 
             if (charLocations.length <= index || (fontChar = charLocations[index]) == null) {
-                width += mc.fontRenderer.getStringWidth(String.valueOf(ch)) / 4.0;
+                width += getMinecraft().fontRenderer.getStringWidth(String.valueOf(ch)) / 4.0;
                 continue;
             }
 
@@ -245,6 +247,17 @@ public final class ImageAWT implements Wrapper {
 
     public Font getFont() {
         return font;
+    }
+
+    @NotNull
+    @Override
+    public Minecraft getMinecraft() {
+        return Minecraft.getMinecraft();
+    }
+
+    @Override
+    public boolean isHovered(float x, float y, float width, float height, int mouseX, int mouseY) {
+        return false;
     }
 
     private static class CharLocation {
