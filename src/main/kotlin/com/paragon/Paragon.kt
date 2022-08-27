@@ -29,8 +29,6 @@ class Paragon {
 
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent?) {
-        logger = LogManager.getLogger("Paragon")
-
         if (ForgeVersion.buildVersion < 2860) {
             JOptionPane.showMessageDialog(null, "Forge version is too old. Paragon requires Forge to be at least build 2860.", "Outdated Forge!", JOptionPane.ERROR_MESSAGE)
             Desktop.getDesktop().browse(
@@ -110,8 +108,6 @@ class Paragon {
         configurationGUI = ConfigurationGUI()
         logger.info("Configuration GUI Initialised")
 
-        logger.info("Blur shader Initialised")
-
         logger.info("Paragon $modVersion Initialised Successfully")
     }
 
@@ -128,7 +124,7 @@ class Paragon {
     val eventBus = EventBus()
 
     // Client stuff
-    lateinit var logger: Logger
+    var logger: Logger = LogManager.getLogger("paragon")
         private set
 
     val presenceManager = DiscordPresenceManager()

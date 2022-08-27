@@ -9,7 +9,7 @@ import com.paragon.api.util.player.PlayerUtil
 import com.paragon.api.util.player.RotationUtil
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
-import com.paragon.asm.mixins.accessor.IEntity
+import com.paragon.mixins.accessor.IEntity
 import com.paragon.client.managers.rotation.Rotate
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks

@@ -182,6 +182,15 @@ object SettingsBar : IRenderable {
 
     }
 
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
+        shownSettings.forEach {
+            if (shouldShow(it.dSetting)) {
+                it.onRelease(mouseX, mouseY, button)
+            }
+        }
+    }
+
+
     override fun onKey(keyCode: Int) {
         shownSettings.forEach {
             if (shouldShow(it.dSetting)) {

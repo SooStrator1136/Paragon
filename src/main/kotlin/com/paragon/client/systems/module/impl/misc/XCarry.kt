@@ -3,7 +3,7 @@ package com.paragon.client.systems.module.impl.misc
 import com.paragon.api.event.network.PacketEvent.PreSend
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
-import com.paragon.asm.mixins.accessor.ICPacketCloseWindow
+import com.paragon.mixins.accessor.ICPacketCloseWindow
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketCloseWindow
 

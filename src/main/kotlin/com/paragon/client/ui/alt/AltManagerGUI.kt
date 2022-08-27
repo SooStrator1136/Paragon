@@ -7,7 +7,7 @@ import com.paragon.api.util.render.RenderUtil.popScissor
 import com.paragon.api.util.render.RenderUtil.pushScissor
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.api.util.render.font.FontUtil.renderCenteredString
-import com.paragon.asm.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.client.managers.alt.Alt
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton

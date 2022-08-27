@@ -112,7 +112,7 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
                     else {
                         var newValue = roundDouble(diff / maxWidth * (max - min) + min, 2)
                         val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
-                        newValue = Math.round(Math.max(min, Math.min(max, newValue)) * precision) / precision
+                        newValue = (max(min, min(max, newValue)) * precision).roundToInt() / precision
                         setting.setValue(newValue)
                         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                     }
@@ -132,8 +132,8 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
             }
 
             val scissorY = MathHelper.clamp(
-                y, parent!!.y + 22, parent!!.y + MathHelper.clamp( // Scissor comedy
-                    parent!!.scissorHeight + 8, 0f, 358f
+                y, parent.y + 22, parent.y + MathHelper.clamp( // Scissor comedy
+                    parent.scissorHeight + 8, 0f, 358f
                 )
             )
 
@@ -148,7 +148,7 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, click: Click) {
         if (setting.isVisible()) {
-            if (isHovered(mouseX, mouseY) && parent!!.isElementVisible(this) && click == Click.LEFT) {
+            if (isHovered(mouseX, mouseY) && parent.isElementVisible(this) && click == Click.LEFT) {
                 isDragging = true
             }
             super.mouseClicked(mouseX, mouseY, click)

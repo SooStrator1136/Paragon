@@ -9,8 +9,8 @@ import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.ColourUtil.setColour
 import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
-import com.paragon.asm.mixins.accessor.IMinecraft
-import com.paragon.asm.mixins.accessor.IRenderManager
+import com.paragon.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.IRenderManager
 import net.minecraft.item.*
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.MathHelper

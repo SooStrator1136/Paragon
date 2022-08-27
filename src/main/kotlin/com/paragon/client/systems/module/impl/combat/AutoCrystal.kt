@@ -17,7 +17,7 @@ import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
-import com.paragon.asm.mixins.accessor.IPlayerControllerMP
+import com.paragon.mixins.accessor.IPlayerControllerMP
 import com.paragon.client.managers.rotation.Rotate
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase

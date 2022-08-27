@@ -84,6 +84,10 @@ class DiscordEnum(private val setting: Setting<Enum<*>>) : DiscordSetting(settin
         }
     }
 
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
+
+    }
+
     override fun onKey(keyCode: Int) {}
 
 }

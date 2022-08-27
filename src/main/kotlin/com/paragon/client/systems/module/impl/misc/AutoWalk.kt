@@ -4,7 +4,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
-import com.paragon.asm.mixins.accessor.IKeyBinding
+import com.paragon.mixins.accessor.IKeyBinding
 import net.minecraft.client.settings.KeyBinding
 
 /**

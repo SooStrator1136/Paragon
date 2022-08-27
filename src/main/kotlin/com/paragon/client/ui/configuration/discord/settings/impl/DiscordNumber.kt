@@ -5,6 +5,7 @@ package com.paragon.client.ui.configuration.discord.settings.impl
 import com.paragon.Paragon
 import com.paragon.api.event.client.SettingUpdateEvent
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.calculations.MathsUtil.getPercent
 import com.paragon.api.util.calculations.MathsUtil.getPercentOf
 import com.paragon.api.util.calculations.MathsUtil.roundDouble
@@ -18,10 +19,13 @@ import com.paragon.api.util.render.font.FontUtil.getStringWidth
 import com.paragon.client.ui.configuration.discord.GuiDiscord
 import com.paragon.client.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.client.ui.util.Click
+import net.minecraft.util.math.MathHelper
 import org.lwjgl.input.Mouse
 import org.lwjgl.util.Rectangle
 import java.math.BigDecimal
 import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
 import kotlin.random.Random
 
 /**
@@ -59,6 +63,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             (bounds.width * 0.75).toInt(),
             (FontUtil.getHeight() * 7).toInt()
         )
+
         val lowerMediaRect = Rectangle(
             bounds.x + 5,
             (mediaRect.y + (FontUtil.getHeight() * 4)).toInt(),
@@ -152,12 +157,15 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             RenderUtil.drawRoundedRect(
                 sliderBounds.x.toDouble(),
                 sliderBounds.y.toDouble(),
-                getPercentOf(
+
+                // prevent funky rounded rect
+                MathHelper.clamp(getPercentOf(
                     getPercent(
                         (setting.value - setting.min).toDouble(),
                         (setting.max - setting.min).toDouble()
                     ), sliderBounds.width - 1.0
-                ),
+                ), 2.0, sliderBounds.width.toDouble() - 1.0),
+
                 sliderBounds.height.toDouble(),
                 2.0,
                 2.0,
@@ -167,7 +175,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             )
         }
 
-        if (Mouse.isButtonDown(Click.LEFT.button) && sliderBounds.contains(mouseX, mouseY)) {
+        if (dragging) {
             setting.setValue(getNewValue(mouseX))
         }
     }
@@ -177,23 +185,40 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             return
         }
 
-        setting.setValue(getNewValue(mouseX))
+        dragging = true
+    }
+
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
+        dragging = false
     }
 
     private fun getNewValue(mouseX: Int): Number {
-        val toReturn = roundDouble( //TODO fix??
+        // hacky fix (not good)
+        var toReturn: Number = roundDouble(
             roundToIncrementation(
                 setting.incrementation.toDouble(),
+
                 getPercentOf(
                     getPercent(
-                        (mouseX - sliderBounds.x).toDouble(),
-                        sliderBounds.width - 1.0
+                        ((mouseX + 7) - sliderBounds.x).toDouble(), sliderBounds.width.toDouble()
                     ),
+
                     (setting.max - setting.min).toDouble(),
                 )
             ),
             BigDecimal.valueOf(setting.incrementation.toDouble()).scale()
         )
+
+        if (mouseX <= sliderBounds.x) {
+            toReturn = setting.min
+        }
+
+        if (mouseX >= sliderBounds.x + sliderBounds.width) {
+            toReturn = setting.max
+        }
+
+        toReturn = MathHelper.clamp(toReturn.toDouble(), setting.min.toDouble(), setting.max.toDouble())
+
         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         return if (setting.value is Float) toReturn.toFloat() else toReturn
     }

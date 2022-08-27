@@ -10,8 +10,8 @@ import com.paragon.api.util.player.PlayerUtil.move
 import com.paragon.api.util.player.PlayerUtil.propel
 import com.paragon.api.util.player.PlayerUtil.stopMotion
 import com.paragon.api.util.string.StringUtil.getFormattedText
-import com.paragon.asm.mixins.accessor.IMinecraft
-import com.paragon.asm.mixins.accessor.ITimer
+import com.paragon.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.ITimer
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketEntityAction
 

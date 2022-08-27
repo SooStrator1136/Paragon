@@ -4,8 +4,8 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.api.util.render.font.FontUtil.getStringWidth
-import com.paragon.asm.mixins.accessor.IMinecraft
-import com.paragon.asm.mixins.accessor.ITimer
+import com.paragon.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.ITimer
 import com.paragon.client.systems.module.hud.HUDModule
 import com.paragon.client.systems.module.impl.client.Colours
 import net.minecraft.util.text.TextFormatting

@@ -15,7 +15,7 @@ import com.paragon.api.util.render.RenderUtil.drawRect
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.api.util.render.font.FontUtil.getHeight
 import com.paragon.api.util.render.font.FontUtil.getStringWidth
-import com.paragon.asm.mixins.accessor.IRenderManager
+import com.paragon.mixins.accessor.IRenderManager
 import com.paragon.bus.listener.Listener
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper

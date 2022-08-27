@@ -1,59 +1,58 @@
 package com.paragon.client.systems.module.impl.combat
 
 import com.paragon.Paragon
-import com.paragon.api.event.client.SettingUpdateEvent
+import com.paragon.api.event.network.PacketEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
-import com.paragon.api.util.player.InventoryUtil.getHotbarBlockSlot
-import com.paragon.api.util.player.RotationUtil.getRotationToBlockPos
+import com.paragon.api.util.player.InventoryUtil
+import com.paragon.api.util.player.PlacementUtil
+import com.paragon.api.util.player.RotationUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
-import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
+import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
-import com.paragon.api.util.world.BlockUtil.getBlockBox
 import com.paragon.bus.listener.Listener
+import com.paragon.client.managers.notifications.Notification
+import com.paragon.client.managers.notifications.NotificationType
 import com.paragon.client.managers.rotation.Rotate
-import net.minecraft.entity.Entity
+import com.paragon.client.managers.rotation.Rotation
+import com.paragon.client.managers.rotation.RotationPriority
 import net.minecraft.init.Blocks
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayer
+import net.minecraft.network.play.server.SPacketBlockChange
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
-import net.minecraft.util.math.*
-import net.minecraft.util.text.TextFormatting
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec2f
+import net.minecraft.util.math.Vec3d
 import java.awt.Color
+import kotlin.math.floor
 
 /**
  * @author Surge
- * @since 08/05/2022
- *
- * @todo Rewrite this
+ * @since 23/08/2022
  */
-@SideOnly(Side.CLIENT)
-object Surround : Module("Surround", Category.COMBAT, "Places obsidian around you to protect you from crystals") {
+object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds you with obsidian") {
 
-    // General settings
-    private val disable = Setting("Disable", Disable.NEVER, null, null, null) describedBy "When to automatically disable the module"
-    private val threaded = Setting("Threaded", false, null, null, null)
-    private val blocksPerTick = Setting("BlocksPerTick", 4.0, 1.0, 10.0, 1.0) describedBy "The maximum amount of blocks to be placed per tick"
-    private val center = Setting("Center", Center.MOTION, null, null, null) describedBy "Center the player on the block when enabled"
-    private val air = Setting("Air", Air.SUPPORT, null, null, null) describedBy "Place blocks beneath where we are placing"
+    private val performOn = Setting("PerformOn", PerformOn.PACKET) describedBy "When to perform"
+    private val disable = Setting("Disable", Disable.OFF_GROUND) describedBy "When to automatically disable the module"
+    private val center = Setting("Center", Center.MOTION) describedBy "How to center the player to the center of the block"
+    private val blocksPerTick = Setting("BlocksPerTick", 4.0, 1.0, 8.0, 1.0) describedBy "The limit to how many blocks can be placed in a tick"
+    private val airPlace = Setting("AirPlace", AirPlace.SUPPORT) describedBy "How to interact with air blocks"
+    private val floor = Setting("Floor", true) describedBy "Allows you to place on the floor"
 
-    // Rotate settings
-    private val rotate = Setting("Rotate", Rotate.LEGIT, null, null, null) describedBy "How to rotate the player"
-    private val rotateBack = Setting("RotateBack", true, null, null, null) describedBy "Rotate the player back to their original rotation" subOf rotate
+    private val rotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate"
+    private val reset = Setting("Reset", true) describedBy "Reset your rotation after placing" visibleWhen { rotate.value == Rotate.LEGIT }
 
-    // Render
-    private val render = Setting("Render", true, null, null, null) describedBy "Render a highlight on the positions we need to place blocks at"
-    private val renderColour = Setting("Colour", Color(185, 17, 255, 130), null, null, null) describedBy "The colour of the highlight" subOf render
+    private val render = Setting("Render", true) describedBy "Render a highlight on the positions we need to place blocks at"
+    private val renderColour = Setting("Colour", Color(185, 17, 255, 130)) describedBy "The colour of the highlight" subOf render
 
-    // Map of blocks to render
-    private var renderBlocks: Map<BlockPos, EnumFacing> = HashMap()
-    private var placingThread: Thread? = null
+    private val surroundPositions = arrayListOf<BlockPos>()
+    private var enablePositions = arrayListOf<BlockPos>()
 
     override fun onEnable() {
         if (minecraft.anyNull) {
@@ -61,7 +60,7 @@ object Surround : Module("Surround", Category.COMBAT, "Places obsidian around yo
         }
 
         // No obsidian to place
-        if (getHotbarBlockSlot(Blocks.OBSIDIAN) == -1) {
+        if (InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN) == -1) {
             return
         }
 
@@ -83,281 +82,239 @@ object Surround : Module("Surround", Category.COMBAT, "Places obsidian around yo
             else -> {}
         }
 
-        if (threaded.value!!) {
-            placingThread = Thread(Placer())
-            placingThread!!.start()
-        }
+        surroundPositions.clear()
+        enablePositions.clear()
+
+        enablePositions = getBlocks()
     }
 
     override fun onTick() {
-        if (!threaded.value!!) {
-            doSurround()
-        }
-    }
-
-    fun doSurround() {
         if (minecraft.anyNull) {
             return
         }
 
-        // Check we are in air
-        if (disable.value == Disable.AIR && !minecraft.player.onGround) {
+        surroundPositions.removeIf { isNotReplaceable(it) || !BlockUtil.getSphere(1f, false).contains(it) }
+
+        if (surroundPositions.isEmpty() && enablePositions.isEmpty() && disable.value == Disable.FINISHED) {
+            Paragon.INSTANCE.notificationManager.addNotification(Notification("Surround Finished, Disabling!", NotificationType.INFO))
             toggle()
-            return
         }
 
-        // We don't have obsidian in our hotbar
-        if (getHotbarBlockSlot(Blocks.OBSIDIAN) == -1) {
-            Paragon.INSTANCE.commandManager.sendClientMessage(TextFormatting.RED.toString() + "No obsidian available, Surround disabled!", false)
+        if (!minecraft.player.onGround && disable.value == Disable.OFF_GROUND) {
+            Paragon.INSTANCE.notificationManager.addNotification(Notification("Player is no longer on ground, disabling!", NotificationType.INFO))
             toggle()
-            return
         }
 
-        // Blocks we need to place
-        val blocks: MutableMap<BlockPos, EnumFacing> = HashMap()
+        if (enablePositions.isNotEmpty()) {
+            val placePositions = ArrayList<BlockPos>()
 
-        // The player's position
-        val playerPos = BlockPos(MathHelper.floor(minecraft.player.posX), MathHelper.floor(minecraft.player.posY), MathHelper.floor(minecraft.player.posZ))
-        for (x in -1..1) {
-            // Our X position
-            if (x == 0) {
-                continue
+            var i = 0
+            for (pos in enablePositions) {
+                i++
+
+                placePositions.add(pos)
             }
 
-            // Get position
-            var pos = playerPos.add(x, 0, 0)
-
-            // Check if we need to support the block
-            if (canPlaceBlock(pos.down()) && air.value == Air.SUPPORT) {
-                // Get offset
-                for (facing in EnumFacing.values()) {
-                    // Make sure we can place on offset
-                    if (pos.down().offset(facing).getBlockAtPos() !== Blocks.AIR) {
-                        // Add block
-                        blocks[pos.down()] = facing
-                        break
-                    }
-                }
+            for (pos in placePositions) {
+                placeOnPosition(pos)
             }
 
-            // We can place the block or we are supporting it
-            if (canPlaceBlock(pos) || air.value == Air.SUPPORT && canPlaceBlock(pos.down())) {
-                // Get offset
-                for (facing in EnumFacing.values()) {
-                    // Make sure we can place on offset
-                    if (pos.offset(facing).getBlockAtPos() !== Blocks.AIR) {
-                        // Add block
-                        blocks[pos] = facing
-                        break
-                    }
-                }
-            }
-            for (z in -1..1) {
-                // Our Z position
-                if (z == 0) {
-                    continue
-                }
-
-                // Get position
-                pos = playerPos.add(0, 0, z)
-
-                // Check if we need to support the block
-                if (canPlaceBlock(pos.down()) && air.value == Air.SUPPORT) {
-                    // Get offset
-                    for (facing in EnumFacing.values()) {
-                        // Make sure we can place on offset
-                        if (pos.down().offset(facing).getBlockAtPos() !== Blocks.AIR) {
-                            // Add block
-                            blocks[pos.down()] = facing
-                            break
-                        }
-                    }
-                }
-
-                // We can place the block or we are supporting it
-                if (canPlaceBlock(pos) || air.value == Air.SUPPORT && canPlaceBlock(pos.down())) {
-                    // Get offset
-                    for (facing in EnumFacing.values()) {
-                        // Make sure we can place on offset
-                        if (pos.offset(facing).getBlockAtPos() !== Blocks.AIR) {
-                            // Add block
-                            blocks[pos] = facing
-                            break
-                        }
-                    }
-                }
-            }
+            enablePositions.removeAll(enablePositions.toSet())
         }
+    }
 
-        // Set render blocks
-        renderBlocks = blocks
+    @Listener
+    fun onPacketReceived(event: PacketEvent.PreReceive) {
+        if (event.packet is SPacketBlockChange) {
+            if (event.packet.blockPosition.getBlockAtPos().isReplaceable(minecraft.world, event.packet.blockPosition) && isSurroundPosition(event.packet.blockPosition)) {
+                if (performOn.value == PerformOn.PACKET) {
+                    val pos = event.packet.blockPosition
+                    val sub = if (airPlace.value == AirPlace.SUPPORT && pos.down().getBlockAtPos().isReplaceable(minecraft.world, pos.down())) pos.down() else null
+                    
+                    if (sub != null) {
+                        placeOnPosition(sub)
+                    }
 
-        // Get our original rotation
-        val originalRotation = Vec2f(minecraft.player.rotationYaw, minecraft.player.rotationPitch)
-
-        // Place blocks until either:
-        // A. We run out of blocks
-        // B. We have placed the maximum amount of blocks for this tick
-        var i = 0.0
-        while (i < blocksPerTick.value && i < blocks.size) {
-
-            // Get position
-            val pos = blocks.keys.toTypedArray()[i.toInt()]
-
-            // Get facing
-            val facing = blocks[pos]
-
-            // Get rotation
-            val rotation = getRotationToBlockPos(pos, 0.5)
-
-            // Rotate to position
-            if (rotate.value == Rotate.LEGIT) {
-                minecraft.player.rotationYaw = rotation.x
-                minecraft.player.rotationPitch = rotation.y
-                minecraft.player.rotationYawHead = rotation.x
+                    placeOnPosition(pos)
+                }
             }
-
-            else if (rotate.value == Rotate.PACKET) {
-                minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(rotation.x, rotation.y, minecraft.player.onGround))
-            }
-
-            // Get current item
-            val slot: Int = minecraft.player.inventory.currentItem
-
-            // Slot to switch to
-            val obsidianSlot = getHotbarBlockSlot(Blocks.OBSIDIAN)
-            if (obsidianSlot != -1) {
-                // Switch
-                minecraft.player.inventory.currentItem = obsidianSlot
-
-                // Make the server think we are crouching, so we can place on interactable blocks (e.g. chests, furnaces, etc.)
-                minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_SNEAKING))
-
-                // Place block
-                minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world, pos.offset(facing), facing!!.opposite, Vec3d(pos), EnumHand.MAIN_HAND)
-
-                // Swing hand
-                minecraft.player.swingArm(EnumHand.MAIN_HAND)
-
-                // Stop crouching
-                minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.STOP_SNEAKING))
-            }
-
-            // Reset slot to our original slot
-            minecraft.player.inventory.currentItem = slot
-            i += 1.0
-        }
-
-        // Rotate back
-        if (rotateBack.value!!) {
-            if (rotate.value == Rotate.LEGIT) {
-                minecraft.player.rotationYaw = originalRotation.x
-                minecraft.player.rotationPitch = originalRotation.y
-                minecraft.player.rotationYawHead = originalRotation.x
-            }
-
-            else if (rotate.value == Rotate.PACKET) {
-                minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(originalRotation.x, originalRotation.y, minecraft.player.onGround))
-            }
-        }
-
-        // Toggle if we have placed all the blocks
-        if (renderBlocks.isEmpty() && disable.value == Disable.FINISHED) {
-            toggle()
         }
     }
 
     override fun onRender3D() {
-        // We want to render
-        if (render.value!!) {
-            renderBlocks.forEach { (pos: BlockPos?, facing: EnumFacing?) ->
-                RenderBuilder().boundingBox(getBlockBox(pos)).outer(renderColour.value!!.integrateAlpha(255f)).type(BoxRenderMode.BOTH).start().blend(true).depth(true).texture(true).lineWidth(1f).build(false)
+        enablePositions.forEach {
+            RenderBuilder()
+                .boundingBox(BlockUtil.getBlockBox(it))
+                .inner(renderColour.value)
+                .outer(renderColour.value.integrateAlpha(255f))
+
+                .start()
+
+                .blend(true)
+                .texture(true)
+                .depth(true)
+
+                .build(false)
+        }
+    }
+
+    private fun isSurroundPosition(pos: BlockPos): Boolean {
+        val playerPosition = minecraft.player.position
+
+        return (pos.x == playerPosition.x - 1 || pos.x == playerPosition.x + 1 || pos.z == playerPosition.z - 1 || pos.z == playerPosition.z + 1) && pos.y == playerPosition.y
+    }
+
+    private fun isNotReplaceable(pos: BlockPos): Boolean = !pos.getBlockAtPos().blockState.block.isReplaceable(minecraft.world, pos)
+
+    private fun getBlocks(origin: BlockPos): ArrayList<BlockPos> {
+        val blocks = arrayListOf<BlockPos>()
+
+        if (origin.down().getBlockAtPos().isReplaceable(minecraft.world, origin.down()) && airPlace.value == AirPlace.SUPPORT) {
+            blocks.add(origin.down().down())
+        }
+
+        blocks.add(origin.down())
+
+        return blocks
+    }
+
+    private fun getBlocks(): ArrayList<BlockPos> {
+        val blocks = ArrayList<BlockPos>()
+        val playerPos = BlockPos(floor(minecraft.player.posX), floor(minecraft.player.posY), floor(minecraft.player.posZ)).add(0, 1, 0)
+
+        blocks.addAll(getBlocks(playerPos.add(-1, 0, 0)))
+        blocks.addAll(getBlocks(playerPos.add(1, 0, 0)))
+        blocks.addAll(getBlocks(playerPos.add(0, 0, -1)))
+        blocks.addAll(getBlocks(playerPos.add(0, 0, 1)))
+
+        return blocks
+    }
+
+    private fun placeOnPosition(position: BlockPos) {
+        // Get current item
+        val slot: Int = minecraft.player.inventory.currentItem
+
+        // Slot to switch to
+        val obsidianSlot = InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN)
+
+        if (obsidianSlot != -1) {
+            val rotationValues = RotationUtil.getRotationToBlockPos(position, 0.5)
+
+            PlacementUtil.place(position, Rotation(rotationValues.x, rotationValues.y, rotate.value, RotationPriority.HIGH))
+
+            // Reset slot to our original slot
+            minecraft.player.inventory.currentItem = slot
+        }
+    }
+
+    private fun place(position: Position) {
+        val original = Vec2f(minecraft.player.rotationYaw, minecraft.player.rotationPitch)
+
+        // Get rotation
+        val rotation = RotationUtil.getRotationToBlockPos(position.blockPos, 0.5)
+
+        // Rotate to position
+        if (rotate.value == Rotate.LEGIT) {
+            minecraft.player.rotationYaw = rotation.x
+            minecraft.player.rotationPitch = rotation.y
+            minecraft.player.rotationYawHead = rotation.x
+        }
+
+        if (rotate.value != Rotate.NONE) {
+            minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(rotation.x, rotation.y, minecraft.player.onGround))
+        }
+
+        // Get current item
+        val slot: Int = minecraft.player.inventory.currentItem
+
+        // Slot to switch to
+        val obsidianSlot = InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN)
+
+        if (obsidianSlot != -1) {
+            minecraft.player.inventory.currentItem = obsidianSlot
+            minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_SNEAKING))
+
+            minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world, position.blockPos.offset(position.facing), position.facing.opposite, Vec3d(position.blockPos), EnumHand.MAIN_HAND)
+
+            minecraft.player.swingArm(EnumHand.MAIN_HAND)
+            minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.STOP_SNEAKING))
+        }
+
+        // Reset slot to our original slot
+        minecraft.player.inventory.currentItem = slot
+
+        if (rotate.value != Rotate.NONE && (rotate.value == Rotate.PACKET || reset.value)) {
+            if (rotate.value == Rotate.LEGIT) {
+                minecraft.player.rotationYaw = original.x
+                minecraft.player.rotationPitch = original.y
+                minecraft.player.rotationYawHead = original.x
             }
+
+            minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(original.x, original.y, minecraft.player.onGround))
         }
     }
 
-    private fun canPlaceBlock(pos: BlockPos): Boolean {
-        // Iterate through entities in the block above
-        for (entity in minecraft.world.getEntitiesWithinAABB(Entity::class.java, AxisAlignedBB(pos))) {
-            // If the entity is dead, continue
-            if (entity.isDead) {
-                continue
-            }
-            return false
-        }
+    data class Position(val blockPos: BlockPos, val facing: EnumFacing)
 
-        // Block is air
-        return if (pos.getBlockAtPos() !== Blocks.AIR && !pos.getBlockAtPos().isReplaceable(minecraft.world, pos)) {
-            false
-        }
+    enum class PerformOn {
+        /**
+         * Place when block is destroyed
+         */
+        PACKET,
 
-        else pos.down().getBlockAtPos() !== Blocks.AIR || pos.up().getBlockAtPos() !== Blocks.AIR || pos.north().getBlockAtPos() !== Blocks.AIR || pos.south().getBlockAtPos() !== Blocks.AIR || pos.east().getBlockAtPos() !== Blocks.AIR || pos.west().getBlockAtPos() !== Blocks.AIR
-
-        // There is a block we can place on
-    }
-
-    @Listener
-    fun onSettingChange(event: SettingUpdateEvent) {
-        if (event.setting == threaded && threaded.value!!) {
-            placingThread = Thread(Placer())
-            placingThread!!.start()
-        }
-    }
-
-    override fun onDisable() {
-        placingThread = null
-    }
-
-    internal class Placer : Runnable {
-        override fun run() {
-            do {
-                doSurround()
-            } while (threaded.value!! && isEnabled)
-        }
+        /**
+         * Place on tick
+         */
+        TICK
     }
 
     enum class Disable {
         /**
-         * Disable once all blocks have been placed
+         * Disable when finished
          */
         FINISHED,
 
         /**
-         * Never disable
+         * Disable when off ground
          */
-        NEVER,
+        OFF_GROUND,
 
         /**
-         * Disable when the player is in air
+         * Never disable
          */
-        AIR
+        NEVER
     }
 
     enum class Center {
         /**
-         * Move the player to the center
+         * Move the player to the center of the block
          */
         MOTION,
 
         /**
-         * Snap the player to the center
+         * Snap the player to the center of the block
          */
         SNAP,
 
         /**
-         * Don't center the player
+         * Do not center the player
          */
         OFF
     }
 
-    enum class Air {
+    enum class AirPlace {
         /**
-         * Place blocks below air blocks, so we can place on top of them
+         * Place below then on top
          */
         SUPPORT,
 
         /**
-         * Do not place on air blocks
+         * Place in air
+         */
+        AIR,
+
+        /**
+         * Do not place
          */
         IGNORE
     }

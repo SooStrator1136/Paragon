@@ -21,7 +21,7 @@ import org.lwjgl.input.Keyboard
 object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the client", Bind(Keyboard.KEY_RSHIFT, Bind.Device.KEYBOARD)) {
 
     @JvmStatic
-    val style: Setting<Style> = Setting("Style", Style.WINDOWS_98) describedBy "The style of the ClickGUI"
+    val style: Setting<Style> = Setting("Style", Style.PARAGON) describedBy "The style of the ClickGUI"
 
     // Windows settings
     @JvmStatic

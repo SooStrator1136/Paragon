@@ -69,6 +69,7 @@ class DiscordModule(val module: Module) : IRenderable {
     }
 
     override fun onClick(mouseX: Int, mouseY: Int, button: Int) {}
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {}
     override fun onKey(keyCode: Int) {}
 
 }

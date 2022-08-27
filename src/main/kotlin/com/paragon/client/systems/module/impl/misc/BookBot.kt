@@ -5,7 +5,7 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
-import com.paragon.asm.mixins.accessor.IPlayerControllerMP
+import com.paragon.mixins.accessor.IPlayerControllerMP
 import io.netty.buffer.Unpooled
 import net.minecraft.entity.player.InventoryPlayer
 import net.minecraft.item.ItemStack

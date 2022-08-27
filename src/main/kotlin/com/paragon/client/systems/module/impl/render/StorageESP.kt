@@ -14,7 +14,7 @@ import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.string.StringUtil
 import com.paragon.api.util.world.BlockUtil.getBlockBox
-import com.paragon.asm.mixins.accessor.IEntityRenderer
+import com.paragon.mixins.accessor.IEntityRenderer
 import com.paragon.bus.listener.Listener
 import com.paragon.client.shader.shaders.OutlineShader
 import net.minecraft.client.renderer.GlStateManager

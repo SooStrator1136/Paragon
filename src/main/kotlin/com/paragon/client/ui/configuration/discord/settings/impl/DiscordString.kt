@@ -54,6 +54,10 @@ class DiscordString(private val setting: Setting<String>) : DiscordSetting(setti
         }
     }
 
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
+
+    }
+
     override fun onKey(keyCode: Int) {
         if (!typing) {
             return

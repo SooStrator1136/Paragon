@@ -1,7 +1,7 @@
 package com.paragon.api.util.player
 
 import com.paragon.api.util.Wrapper
-import com.paragon.asm.mixins.accessor.IPlayerControllerMP
+import com.paragon.mixins.accessor.IPlayerControllerMP
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 import net.minecraft.item.ItemBlock

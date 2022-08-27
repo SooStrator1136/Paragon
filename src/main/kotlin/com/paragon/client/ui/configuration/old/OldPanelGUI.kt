@@ -45,10 +45,6 @@ class OldPanelGUI private constructor() : GuiImplementation() {
         // Reset tooltip
         tooltip = ""
 
-        // Make the background darker
-        if (darkenBackground.value) {
-            drawDefaultBackground()
-        }
         for (panel in panels) {
             panel.y = panel.y + mouseDelta / 100f * scrollSpeed.value
         }

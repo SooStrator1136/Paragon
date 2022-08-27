@@ -66,7 +66,11 @@ object GuiDiscord : GuiImplementation(), Wrapper {
         }
     }
 
-    override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {}
+    override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {
+        for (renderable in renderables) {
+            renderable.onRelease(mouseX, mouseY, mouseButton)
+        }
+    }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         for (renderable in renderables) {

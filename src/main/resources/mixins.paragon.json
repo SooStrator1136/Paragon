@@ -1,10 +1,9 @@
 {
   "required": true,
   "compatibilityLevel": "JAVA_8",
-  "package": "com.paragon.asm.mixins",
+  "package": "com.paragon.mixins",
   "refmap": "mixins.paragon.refmap.json",
   "client": [
-    "MixinMinecraft",
     "accessor.ICPacketCloseWindow",
     "accessor.ICPacketPlayer",
     "accessor.ICPacketUseEntity",
@@ -20,6 +19,7 @@
     "accessor.ISPacketExplosion",
     "accessor.ISPacketPlayerPosLook",
     "accessor.ITimer",
+    "MixinMinecraft",
     "entity.MixinEntity",
     "entity.MixinEntityLivingBase",
     "input.MixinKeyBinding",

@@ -6,7 +6,7 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.InventoryUtil
-import com.paragon.asm.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.bus.listener.Listener
 import net.minecraft.init.Items
 import net.minecraft.network.play.client.CPacketPlayer

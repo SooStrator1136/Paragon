@@ -1,7 +1,7 @@
 package com.paragon.api.util.render
 
 import com.paragon.api.util.Wrapper
-import com.paragon.asm.mixins.accessor.IShaderGroup
+import com.paragon.mixins.accessor.IShaderGroup
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper

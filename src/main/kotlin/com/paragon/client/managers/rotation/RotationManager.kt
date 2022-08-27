@@ -5,7 +5,7 @@ import com.paragon.api.event.network.PacketEvent.PreSend
 import com.paragon.api.util.Wrapper
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.RotationUtil
-import com.paragon.asm.mixins.accessor.ICPacketPlayer
+import com.paragon.mixins.accessor.ICPacketPlayer
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.math.Vec2f

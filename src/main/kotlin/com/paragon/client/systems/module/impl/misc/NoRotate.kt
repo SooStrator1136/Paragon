@@ -4,7 +4,7 @@ import com.paragon.api.event.network.PacketEvent.PreReceive
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.util.anyNull
-import com.paragon.asm.mixins.accessor.ISPacketPlayerPosLook
+import com.paragon.mixins.accessor.ISPacketPlayerPosLook
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.server.SPacketPlayerPosLook
 

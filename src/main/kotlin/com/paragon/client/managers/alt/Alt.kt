@@ -1,7 +1,7 @@
 package com.paragon.client.managers.alt
 
 import com.paragon.Paragon
-import com.paragon.asm.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.client.ui.alt.AltManagerGUI
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException
 import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator

@@ -7,8 +7,8 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.InventoryUtil.getItemInHotbar
 import com.paragon.api.util.player.InventoryUtil.switchToSlot
-import com.paragon.asm.mixins.accessor.ICPacketPlayer
-import com.paragon.asm.mixins.accessor.IPlayerControllerMP
+import com.paragon.mixins.accessor.ICPacketPlayer
+import com.paragon.mixins.accessor.IPlayerControllerMP
 import com.paragon.bus.listener.Listener
 import net.minecraft.init.Items
 import net.minecraft.network.play.client.CPacketPlayer

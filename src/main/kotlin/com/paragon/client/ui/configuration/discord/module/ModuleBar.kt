@@ -182,6 +182,8 @@ object ModuleBar : IRenderable {
         }
     }
 
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {}
+
     override fun onKey(keyCode: Int) {}
 
 }

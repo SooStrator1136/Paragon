@@ -8,7 +8,7 @@ import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.api.util.world.BlockUtil.getBlockBox
-import com.paragon.asm.mixins.accessor.IRenderGlobal
+import com.paragon.mixins.accessor.IRenderGlobal
 import net.minecraft.client.renderer.DestroyBlockProgress
 import net.minecraft.init.Blocks
 import net.minecraft.util.math.AxisAlignedBB

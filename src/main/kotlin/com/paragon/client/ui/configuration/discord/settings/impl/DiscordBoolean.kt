@@ -49,6 +49,10 @@ class DiscordBoolean(private val setting: Setting<Boolean>) : DiscordSetting(set
         }
     }
 
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
+
+    }
+
     override fun onKey(keyCode: Int) {}
 
 }

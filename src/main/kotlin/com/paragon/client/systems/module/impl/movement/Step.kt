@@ -6,8 +6,8 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.string.StringUtil.getFormattedText
-import com.paragon.asm.mixins.accessor.IMinecraft
-import com.paragon.asm.mixins.accessor.ITimer
+import com.paragon.mixins.accessor.IMinecraft
+import com.paragon.mixins.accessor.ITimer
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent

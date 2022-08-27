@@ -4,7 +4,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.string.StringUtil
-import com.paragon.asm.mixins.accessor.IEntityRenderer
+import com.paragon.mixins.accessor.IEntityRenderer
 import com.paragon.client.shader.shaders.*
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper

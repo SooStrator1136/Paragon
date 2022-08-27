@@ -5,7 +5,7 @@ import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
-import com.paragon.asm.mixins.accessor.ICPacketPlayer
+import com.paragon.mixins.accessor.ICPacketPlayer
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayer

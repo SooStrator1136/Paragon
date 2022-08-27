@@ -5,8 +5,8 @@ import com.paragon.api.event.world.entity.EntityPushEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.asm.mixins.accessor.ISPacketEntityVelocity
-import com.paragon.asm.mixins.accessor.ISPacketExplosion
+import com.paragon.mixins.accessor.ISPacketEntityVelocity
+import com.paragon.mixins.accessor.ISPacketExplosion
 import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.server.SPacketEntityVelocity
 import net.minecraft.network.play.server.SPacketExplosion
