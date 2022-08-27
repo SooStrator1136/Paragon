@@ -81,7 +81,7 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
 
         interactableHeight = (MathHelper.clamp(moduleHeight.toDouble(), 0.0, 240.0) * expand.getAnimationFactor()).toFloat()
 
-        RenderUtil.pushScissor(x.toDouble(), y + height.toDouble(), width.toDouble(), interactableHeight.toDouble())
+        RenderUtil.pushScissor(x.toDouble(), y + height.toDouble(), width.toDouble(), (MathHelper.clamp(moduleHeight.toDouble(), moduleHeight.toDouble(), 240.0) * expand.getAnimationFactor()))
 
         if (mouseDelta != 0 && mouseX in x..x + width && mouseY in y + height..y + height + 240f) {
             scroll += mouseDelta * 0.05f

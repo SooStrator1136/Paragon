@@ -46,7 +46,7 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
     private val passives = Setting("Passives", true, null, null, null) describedBy "Attack passives"
 
     // Main settings
-    private val range = Setting("Range", 5f, 0f, 12f, 0.1f) describedBy "The range to attack"
+    private val range = Setting("Range", 5f, 0f, 6f, 0.1f) describedBy "The range to attack"
     private val delay = Setting("Delay", 700.0, 0.0, 2000.0, 1.0) describedBy "The delay between attacking in milliseconds"
     private val performWhen = Setting("When", When.HOLDING, null, null, null) describedBy "When to attack"
     private val rotate = Setting("Rotate", Rotate.PACKET, null, null, null) describedBy "How to rotate to the target"

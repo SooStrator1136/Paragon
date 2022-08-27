@@ -113,7 +113,7 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
     }
 
     override fun isHovered(mouseX: Float, mouseY: Float): Boolean {
-        return super.isHovered(mouseX, mouseY) && mouseY > module.panel.y + module.panel.height && mouseY < module.panel.y + module.panel.height + module.panel.interactableHeight
+        return super.isHovered(mouseX, mouseY) && mouseY > module.panel.y + module.panel.height && mouseY < module.panel.y + module.panel.height + 240.0
     }
 
 }

@@ -25,7 +25,7 @@ class FontRenderer(font: Font) : Wrapper {
     }
 
     val height: Float
-        get() = defaultFont.height / 2F
+        get() = defaultFont.getHeight() / 2F
 
     val size: Int
         get() = defaultFont.font.size
@@ -136,7 +136,7 @@ class FontRenderer(font: Font) : Wrapper {
         }
 
         glDisable(GL_LINE_SMOOTH)
-        GlStateManager.disableBlend()
+        // GlStateManager.disableBlend()
         GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
 
         return (x + getStringWidth(text).toFloat()).toInt()

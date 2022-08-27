@@ -7,6 +7,7 @@ import com.paragon.api.util.calculations.MathsUtil
 import com.paragon.api.util.render.ColourUtil.fade
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
+import com.paragon.api.util.string.StringUtil
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.client.ui.configuration.paragon.module.ModuleElement
 import com.paragon.client.ui.configuration.paragon.setting.SettingElement
@@ -37,15 +38,6 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
         )
 
         RenderUtil.scaleTo(x + 5, y + 7, 0f, 0.5, 0.5, 0.5) {
-            val valueX = x + width * 2 - FontUtil.getStringWidth(setting.value.toString()) - 24
-
-            FontUtil.drawStringWithShadow(
-                setting.value.toString(),
-                valueX,
-                y + 1,
-                Color.GRAY.brighter().fade(Color.GRAY.brighter().brighter(), hover.getAnimationFactor()).rgb
-            )
-
             if (hover.getAnimationFactor() > 0.5) {
                 FontUtil.drawStringWithShadow(
                     "${setting.value} / ${setting.max}",
@@ -54,6 +46,19 @@ class SliderElement(setting: Setting<Number>, module: ModuleElement, x: Float, y
                     Color.GRAY.rgb
                 )
             }
+        }
+
+        RenderUtil.scaleTo(x + 5, y + 7, 0f, 0.7, 0.7, 0.7) {
+            val factor = 1 / 0.7f
+
+            val valueX = x + width * factor - FontUtil.getStringWidth(setting.value.toString()) - 12
+
+            FontUtil.drawStringWithShadow(
+                setting.value.toString(),
+                valueX,
+                y + 1,
+                Color.GRAY.brighter().fade(Color.GRAY.brighter().brighter(), hover.getAnimationFactor()).rgb
+            )
         }
 
         RenderUtil.scaleTo(x + 5, y + 5, 0f, 0.7, 0.7, 0.7) {

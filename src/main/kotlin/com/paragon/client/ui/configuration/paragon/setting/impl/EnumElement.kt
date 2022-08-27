@@ -27,7 +27,7 @@ class EnumElement(setting: Setting<Enum<*>>, module: ModuleElement, x: Float, y:
             }
         }
 
-        RenderUtil.scaleTo(x + width - FontUtil.getStringWidth(StringUtil.getFormattedText(setting.value)), y + 3, 0f, 0.7, 0.7, 0.7) {
+        RenderUtil.scaleTo(x + width - FontUtil.getStringWidth(StringUtil.getFormattedText(setting.value)), y + 5, 0f, 0.7, 0.7, 0.7) {
             val side: Float = (x + width - 9 - FontUtil.getStringWidth(StringUtil.getFormattedText(setting.value)) * 0.7f)
 
             FontUtil.drawStringWithShadow(StringUtil.getFormattedText(setting.value), side, y + 5, Color.GRAY.brighter().fade(Color.GRAY.brighter().brighter(), hover.getAnimationFactor()).rgb)

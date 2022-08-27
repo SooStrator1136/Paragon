@@ -21,14 +21,6 @@ object PlacementUtil : Wrapper {
 
     @JvmStatic
     fun place(pos: BlockPos, rotation: Rotation) {
-        /* val surroundingBlocks: List<BlockPos> = arrayListOf(
-            pos.add(-1, 0, 0),
-            pos.add(0, -1, 0),
-            pos.add(0, 0, -1),
-            pos.add(1, 0, 0),
-            pos.add(0, 1, 0),
-            pos.add(0, 0, 1)).filter { it.getVisibleSides().isNotEmpty() } */
-
         EnumFacing.values().forEach {
             val offset = pos.offset(it)
             val opposite = it.opposite

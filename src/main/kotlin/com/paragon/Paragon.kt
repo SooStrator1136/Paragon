@@ -31,9 +31,9 @@ class Paragon {
     fun preInit(event: FMLPreInitializationEvent?) {
         if (ForgeVersion.buildVersion < 2860) {
             JOptionPane.showMessageDialog(null, "Forge version is too old. Paragon requires Forge to be at least build 2860.", "Outdated Forge!", JOptionPane.ERROR_MESSAGE)
-            Desktop.getDesktop().browse(
-                URI("https://files.minecraftforge.net/net/minecraftforge/forge/index_1.12.2.html")
-            )
+
+            Desktop.getDesktop().browse(URI("https://files.minecraftforge.net/net/minecraftforge/forge/index_1.12.2.html"))
+
             Minecraft.getMinecraft().shutdown()
 
             // When trying to exit throws an exception lmao

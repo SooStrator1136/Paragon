@@ -124,7 +124,7 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
     }
 
     override fun isHovered(mouseX: Float, mouseY: Float): Boolean {
-        return super.isHovered(mouseX, mouseY) && mouseY > panel.y + panel.height && mouseY < panel.y + panel.height + panel.interactableHeight
+        return super.isHovered(mouseX, mouseY) && mouseY > panel.y + panel.height && mouseY < panel.y + panel.height + 240.0
     }
 
 }
