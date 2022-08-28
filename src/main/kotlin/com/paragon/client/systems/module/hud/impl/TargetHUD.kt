@@ -6,6 +6,7 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyIndexed
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
+import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.RenderUtil.scaleTo
@@ -17,6 +18,7 @@ import com.paragon.client.systems.module.impl.combat.AutoCrystal
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityLivingBase
 import java.awt.Color
 
 /**
@@ -107,12 +109,16 @@ object TargetHUD : HUDModule("TargetHUD", "") {
             Minecraft.getMinecraft().textureManager.bindTexture(minecraft.connection!!.getPlayerInfo(target!!.uniqueID).locationSkin)
             Gui.drawModalRectWithCustomSizedTexture(x.toInt() + 5, y.toInt() + 5, 28f, 28f, 28, 28, 225F, 225F)
 
-            val scaleFac = FontUtil.getStringWidth(target!!.name) / (18.0 * 4.0)
-            scaleTo(x + 38F, y + 10F + FontUtil.getHeight(), 1F, scaleFac, scaleFac, 1.0) {
+            scaleTo(x + 38F, y + 10F + FontUtil.getHeight(), 1F, 0.7, 0.7, 0.7) {
                 target!!.armorInventoryList.forEachIndexed { i, armor ->
-                    RenderUtil.renderItemStack(armor, x + 38F + (18F * i), y + 10F + FontUtil.getHeight(), true)
+                    RenderUtil.renderItemStack(armor, x + 38F + (18F * i), y + 16F + FontUtil.getHeight(), true)
                 }
             }
+
+            val healthFactor = (target!! as EntityLivingBase).health / (target as EntityLivingBase).maxHealth
+
+            RenderUtil.drawRoundedRect(x + 38.0, y + 16.0, 50.0, 7.0, 3.0, 3.0, 3.0, 3.0, Color(50, 50, 55).rgb)
+            RenderUtil.drawRoundedRect(x + 38.0, y + 16.0, 50.0 * healthFactor, 7.0, 3.0, 3.0, 3.0, 3.0, Color(255 - (255 * healthFactor).toInt(), (255 * healthFactor).toInt(), 0).rgb)
         }
     }
 
