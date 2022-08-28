@@ -28,20 +28,19 @@ Download the client from the latest commit [here](https://nightly.link/Wolfsurge
   > You can join the discord server (linked above) and use the appropriate channels
 </details>
 
-# Founders
+# Contributors
 Surge <br>
-TeleTofu
-
-## Developers
+Teletofu <br>
 SooStrator <br>
-Gentleman
-
-## Other Contributors
+Gentleman <br>
 Doogie13 <br>
 Sxmurai / Aesthetical <br>
 EBSmash <br>
 Bush <br>
-Master7720
+Master7720 <br>
+Chanakan55991 <br>
+Swp <br>
+Xello12121
 
 ## Other Credits
 Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Surge wrote it

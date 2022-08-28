@@ -1,8 +1,13 @@
 package com.paragon.client.managers
 
+import com.paragon.Paragon
+import com.paragon.api.util.system.backgroundThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
@@ -15,19 +20,28 @@ class CapeManager {
     fun getCape(username: String) = if (username.startsWith("Player")) Cape.BASED else capedPlayers[username]
 
     init {
-        try {
-            val reader = BufferedReader(InputStreamReader(URL("https://ParagonBot.wolfsurge.repl.co/capes").openStream()))
+        val connection: HttpURLConnection = URL("https://ParagonBot.wolfsurge.repl.co/capes").openConnection() as HttpURLConnection
+        connection.requestMethod = "HEAD"
 
-            var line: String?
-            while (reader.readLine().also { line = it } != null) {
-                val data = line!!.split(":".toRegex()).toTypedArray()
+        val responseCode: Int = connection.responseCode
 
-                capedPlayers[data[0]] = java.lang.Enum.valueOf(Cape::class.java, data[1].uppercase(Locale.getDefault()))
+        if (responseCode == 200) {
+            try {
+                val reader = BufferedReader(InputStreamReader(URL("https://ParagonBot.wolfsurge.repl.co/capes").openStream()))
+
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    val data = line!!.split(":".toRegex()).toTypedArray()
+
+                    capedPlayers[data[0]] = java.lang.Enum.valueOf(Cape::class.java, data[1].uppercase(Locale.getDefault()))
+                }
+
+                reader.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-
-            reader.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
+        } else {
+            Paragon.INSTANCE.logger.error("Couldn't fetch capes! Looks like the host is down.")
         }
     }
 

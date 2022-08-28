@@ -86,9 +86,11 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, click: Click) {
-        subElements.forEach {
-            if (it.setting.isVisible()) {
-                it.mouseClicked(mouseX, mouseY, click)
+        if (expanded.state) {
+            subElements.forEach {
+                if (it.setting.isVisible()) {
+                    it.mouseClicked(mouseX, mouseY, click)
+                }
             }
         }
 
@@ -104,17 +106,21 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
     }
 
     override fun mouseReleased(mouseX: Float, mouseY: Float, click: Click) {
-        subElements.forEach {
-            if (it.setting.isVisible()) {
-                it.mouseReleased(mouseX, mouseY, click)
+        if (expanded.state) {
+            subElements.forEach {
+                if (it.setting.isVisible()) {
+                    it.mouseReleased(mouseX, mouseY, click)
+                }
             }
         }
     }
 
     override fun keyTyped(character: Char, keyCode: Int) {
-        subElements.forEach {
-            if (it.setting.isVisible()) {
-                it.keyTyped(character, keyCode)
+        if (expanded.state) {
+            subElements.forEach {
+                if (it.setting.isVisible()) {
+                    it.keyTyped(character, keyCode)
+                }
             }
         }
     }
