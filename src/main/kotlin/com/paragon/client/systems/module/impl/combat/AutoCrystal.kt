@@ -17,13 +17,14 @@ import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
-import com.paragon.mixins.accessor.IPlayerControllerMP
 import com.paragon.client.managers.rotation.Rotate
+import com.paragon.mixins.accessor.IPlayerControllerMP
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Blocks
 import net.minecraft.init.Items
+import net.minecraft.network.play.client.CPacketAnimation
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
 import net.minecraft.network.play.client.CPacketUseEntity
@@ -302,6 +303,8 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                         0f
                     )
                 )
+
+                minecraft.player.connection.sendPacket(CPacketAnimation(hand))
             } else {
                 minecraft.playerController.processRightClickBlock(
                     minecraft.player,
@@ -335,6 +338,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         if ((rotate(RotationUtil.getRotationToVec3d(targetCrystal!!.crystal.positionVector)) || !explodeWait.value) && targetCrystal != null) {
             if (explodePacket.value) {
                 minecraft.player.connection.sendPacket(CPacketUseEntity(targetCrystal!!.crystal))
+                minecraft.player.connection.sendPacket(CPacketAnimation(EnumHand.MAIN_HAND))
             } else {
                 minecraft.playerController.attackEntity(minecraft.player, targetCrystal!!.crystal)
             }

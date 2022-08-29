@@ -20,15 +20,10 @@ import com.paragon.client.managers.rotation.Rotate
 import com.paragon.client.managers.rotation.Rotation
 import com.paragon.client.managers.rotation.RotationPriority
 import net.minecraft.init.Blocks
-import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.server.SPacketBlockChange
-import net.minecraft.util.EnumFacing
-import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
-import net.minecraft.util.math.Vec2f
-import net.minecraft.util.math.Vec3d
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.floor
@@ -63,7 +58,12 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
 
         // No obsidian to place
         if (InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN) == -1) {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("No obsidian in hotbar!", NotificationType.ERROR))
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification(
+                    "No obsidian in hotbar!",
+                    NotificationType.ERROR
+                )
+            )
             toggle()
             return
         }
@@ -77,10 +77,21 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
 
             Center.SNAP -> {
                 // Send movement packet
-                minecraft.player.connection.sendPacket(CPacketPlayer.Position(MathHelper.floor(minecraft.player.posX) + 0.5, minecraft.player.posY, MathHelper.floor(minecraft.player.posZ) + 0.5, minecraft.player.onGround))
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Position(
+                        MathHelper.floor(minecraft.player.posX) + 0.5,
+                        minecraft.player.posY,
+                        MathHelper.floor(minecraft.player.posZ) + 0.5,
+                        minecraft.player.onGround
+                    )
+                )
 
                 // Set position client-side
-                minecraft.player.setPosition(MathHelper.floor(minecraft.player.posX) + 0.5, minecraft.player.posY, MathHelper.floor(minecraft.player.posZ) + 0.5)
+                minecraft.player.setPosition(
+                    MathHelper.floor(minecraft.player.posX) + 0.5,
+                    minecraft.player.posY,
+                    MathHelper.floor(minecraft.player.posZ) + 0.5
+                )
             }
 
             else -> {}
@@ -101,27 +112,40 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
 
         // No obsidian to place
         if (InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN) == -1) {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("No obsidian in hotbar!", NotificationType.ERROR))
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification(
+                    "No obsidian in hotbar!",
+                    NotificationType.ERROR
+                )
+            )
             toggle()
             return
         }
 
         if (surroundPositions.isEmpty() && disable.value == Disable.FINISHED) {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("Surround Finished, Disabling!", NotificationType.INFO))
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification(
+                    "Surround Finished, Disabling!",
+                    NotificationType.INFO
+                )
+            )
             toggle()
             return
         }
 
         if (!minecraft.player.onGround && disable.value == Disable.OFF_GROUND) {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("Player is no longer on ground, disabling!", NotificationType.INFO))
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification(
+                    "Player is no longer on ground, disabling!",
+                    NotificationType.INFO
+                )
+            )
             toggle()
             return
         }
 
         // Refresh blocks on tick
-        if (performOn.value == PerformOn.TICK) {
-            surroundPositions = getBlocks()
-        }
+        surroundPositions = getBlocks()
 
         if (surroundPositions.isNotEmpty()) {
             // List of positions to place at
@@ -144,7 +168,11 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
 
     @Listener
     fun onPacketReceived(event: PacketEvent.PreReceive) {
-        if (event.packet is SPacketBlockChange && performOn.value == PerformOn.PACKET) {
+        if (performOn.value != PerformOn.PACKET) {
+            return
+        }
+
+        if (event.packet is SPacketBlockChange) {
             val pos = event.packet.blockPosition
 
             // It's a placeable position, and we haven't already attempted to place there
@@ -227,14 +255,17 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
         // Slot to switch to
         val obsidianSlot = InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN)
 
-        if (obsidianSlot != -1) {
+        if (obsidianSlot != -1 && !minecraft.world.loadedEntityList.any { it.entityBoundingBox.intersects(BlockUtil.getBlockBox(position)) }) {
             minecraft.player.inventory.currentItem = obsidianSlot
 
             // Get rotation yaw and pitch
             val rotationValues = RotationUtil.getRotationToBlockPos(position, 0.5)
 
             // Place
-            PlacementUtil.place(position, Rotation(rotationValues.x, rotationValues.y, rotate.value, RotationPriority.HIGH))
+            PlacementUtil.place(
+                position,
+                Rotation(rotationValues.x, rotationValues.y, rotate.value, RotationPriority.HIGH)
+            )
 
             // Reset slot to our original slot
             minecraft.player.inventory.currentItem = slot

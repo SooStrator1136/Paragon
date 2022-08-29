@@ -3,7 +3,6 @@ package com.paragon.api.util.player
 import com.paragon.api.util.Wrapper
 import com.paragon.client.managers.rotation.Rotate
 import com.paragon.client.managers.rotation.Rotation
-import com.paragon.client.systems.module.impl.combat.Surround
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.EnumFacing
@@ -11,7 +10,6 @@ import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
-import kotlin.math.min
 
 /**
  * @author Surge
@@ -20,7 +18,7 @@ import kotlin.math.min
 object PlacementUtil : Wrapper {
 
     @JvmStatic
-    fun place(pos: BlockPos, rotation: Rotation) {
+    fun place(pos: BlockPos, rotation: Rotation, hand: EnumHand = EnumHand.MAIN_HAND) {
         EnumFacing.values().forEach {
             val offset = pos.offset(it)
             val opposite = it.opposite
@@ -39,17 +37,40 @@ object PlacementUtil : Wrapper {
             }
 
             if (rotation.rotate != Rotate.NONE) {
-                minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(rotation.yaw, rotation.pitch, minecraft.player.onGround))
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Rotation(
+                        rotation.yaw,
+                        rotation.pitch,
+                        minecraft.player.onGround
+                    )
+                )
             }
 
             val vec = Vec3d(offset).add(Vec3d(0.5, 0.5, 0.5))
 
-            minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_SNEAKING))
+            minecraft.player.connection.sendPacket(
+                CPacketEntityAction(
+                    minecraft.player,
+                    CPacketEntityAction.Action.START_SNEAKING
+                )
+            )
 
-            minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world, offset, it.opposite, vec, EnumHand.MAIN_HAND)
+            minecraft.playerController.processRightClickBlock(
+                minecraft.player,
+                minecraft.world,
+                offset,
+                it.opposite,
+                vec,
+                hand
+            )
 
-            minecraft.player.swingArm(EnumHand.MAIN_HAND)
-            minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.STOP_SNEAKING))
+            minecraft.player.swingArm(hand)
+            minecraft.player.connection.sendPacket(
+                CPacketEntityAction(
+                    minecraft.player,
+                    CPacketEntityAction.Action.STOP_SNEAKING
+                )
+            )
 
             if (rotation.rotate != Rotate.NONE) {
                 if (rotation.rotate == Rotate.LEGIT) {
@@ -58,7 +79,13 @@ object PlacementUtil : Wrapper {
                     minecraft.player.rotationYawHead = original.x
                 }
 
-                minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(original.x, original.y, minecraft.player.onGround))
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Rotation(
+                        original.x,
+                        original.y,
+                        minecraft.player.onGround
+                    )
+                )
             }
 
             return

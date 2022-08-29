@@ -8,7 +8,8 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * @author SooStrator1136
@@ -153,5 +154,11 @@ object BlockUtil : Wrapper {
     fun BlockPos.isSource(): Boolean {
         return this.getBlockAtPos() is BlockLiquid && minecraft.world.getBlockState(this).getValue(BlockLiquid.LEVEL) == 0
     }
+
+    fun BlockPos.getDistanceToEyes() = sqrt(
+        (x - minecraft.player.posX).pow(2)
+                + (y - minecraft.player.posY + minecraft.player.getEyeHeight()).pow(2)
+                + (z - minecraft.player.posZ).pow(2)
+    )
 
 }

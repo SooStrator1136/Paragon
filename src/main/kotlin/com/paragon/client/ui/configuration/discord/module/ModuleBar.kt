@@ -18,7 +18,6 @@ import org.lwjgl.util.Rectangle
 import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
-import java.util.*
 
 /**
  * @author SooStrator1136
@@ -58,13 +57,9 @@ object ModuleBar : IRenderable {
             //Scroll logic
             if (GuiDiscord.D_WHEEL != 0 && shownModules.isNotEmpty() && rect.contains(mouseX, mouseY)) {
                 val lastRect = shownModules[shownModules.size - 1].rect
-                var maxOffset = Optional.of(
-                    (((lastRect.y + lastRect.height) - shownModules[0].rect.y) - rect.height) * -1
-                ).map { if (it > 0) 0 else it }.get()
-                if (maxOffset > 0) {
-                    maxOffset = 0
-                }
-                val newScrollOffset = (scrollOffset + (GuiDiscord.D_WHEEL / 7.5)).toInt()
+
+                val maxOffset = ((((lastRect.y + lastRect.height) - shownModules[0].rect.y) - rect.height) * -1).let { if (it > 0) 0 else it }
+                val newScrollOffset = scrollOffset + (GuiDiscord.D_WHEEL / 10)
                 if (GuiDiscord.D_WHEEL < 0) {
                     scrollOffset = if (newScrollOffset < maxOffset) maxOffset else newScrollOffset
                 } else if (scrollOffset < 0) {

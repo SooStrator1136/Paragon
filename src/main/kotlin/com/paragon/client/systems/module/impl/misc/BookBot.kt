@@ -19,7 +19,8 @@ import kotlin.random.Random
 
 
 /**
- * @author SooStrator1136, ForgeHax
+ * @author SooStrator1136
+ * @author ForgeHax
  */
 object BookBot : Module("BookBot", Category.MISC, "Writes books for you") {
 

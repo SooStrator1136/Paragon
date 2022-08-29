@@ -50,8 +50,15 @@ object RotationUtil : Wrapper {
     }
 
     fun rotate(rotationVec: Vec2f, packet: Boolean) {
+        minecraft.player.connection.sendPacket(
+            CPacketPlayer.Rotation(
+                rotationVec.x,
+                rotationVec.y,
+                minecraft.player.onGround
+            )
+        )
+
         if (packet) {
-            minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(rotationVec.x, rotationVec.y, minecraft.player.onGround))
             return
         }
 
