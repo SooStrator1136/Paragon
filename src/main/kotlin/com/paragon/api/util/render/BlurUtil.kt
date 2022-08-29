@@ -28,7 +28,12 @@ object BlurUtil : Wrapper {
     private fun checkScale(scaleFactor: Int, widthFactor: Int, heightFactor: Int) {
         if (lastScale != scaleFactor || lastScaleWidth != widthFactor || lastScaleHeight != heightFactor || framebuffer == null || blurShader == null) {
             try {
-                blurShader = ShaderGroup(minecraft.textureManager, minecraft.resourceManager, minecraft.framebuffer, ResourceLocation("shaders/post/blur.json"))
+                blurShader = ShaderGroup(
+                    minecraft.textureManager,
+                    minecraft.resourceManager,
+                    minecraft.framebuffer,
+                    ResourceLocation("shaders/post/blur.json")
+                )
                 blurShader!!.createBindFramebuffers(minecraft.displayWidth, minecraft.displayHeight)
                 framebuffer = (blurShader as IShaderGroup?)!!.mainFramebuffer
             } catch (exception: Exception) {
@@ -72,4 +77,5 @@ object BlurUtil : Wrapper {
             glScalef(currentScale.toFloat(), currentScale.toFloat(), 0f)
         }
     }
+
 }

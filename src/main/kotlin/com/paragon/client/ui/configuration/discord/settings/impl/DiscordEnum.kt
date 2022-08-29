@@ -78,16 +78,14 @@ class DiscordEnum(private val setting: Setting<Enum<*>>) : DiscordSetting(settin
 
             if (rect.contains(mouseX, mouseY)) {
                 setting.setValue(options[i])
+                setting.index = i
                 Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                 return
             }
         }
     }
 
-    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
-
-    }
-
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {}
     override fun onKey(keyCode: Int) {}
 
 }

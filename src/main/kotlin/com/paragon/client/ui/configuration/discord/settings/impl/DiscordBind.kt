@@ -47,10 +47,6 @@ class DiscordBind(private val setting: Setting<Bind>) : DiscordSetting(setting) 
         }
     }
 
-    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
-
-    }
-
     override fun onKey(keyCode: Int) {
         if (!listening) {
             return
@@ -73,5 +69,7 @@ class DiscordBind(private val setting: Setting<Bind>) : DiscordSetting(setting) 
             }
         }
     }
+
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {}
 
 }

@@ -7,8 +7,8 @@ import com.paragon.api.util.render.RenderUtil.popScissor
 import com.paragon.api.util.render.RenderUtil.pushScissor
 import com.paragon.api.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.api.util.render.font.FontUtil.renderCenteredString
-import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.client.managers.alt.Alt
+import com.paragon.mixins.accessor.IMinecraft
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiMainMenu
@@ -17,7 +17,6 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.text.TextFormatting
 import org.lwjgl.input.Mouse
 import java.io.IOException
-import java.util.function.Consumer
 
 class AltManagerGUI : GuiScreen(), Wrapper {
 
@@ -48,11 +47,16 @@ class AltManagerGUI : GuiScreen(), Wrapper {
 
         pushScissor(0.0, 150.0, width.toDouble(), 200.0)
 
-        altEntries.forEach(Consumer { altEntry: AltEntry? -> altEntry!!.drawAlt(mouseX, mouseY, width) })
+        altEntries.forEach { altEntry: AltEntry? -> altEntry!!.drawAlt(mouseX, mouseY, width) }
 
         popScissor()
 
-        drawStringWithShadow("Logged in as " + TextFormatting.GRAY + (Minecraft.getMinecraft() as IMinecraft).session.username, 5f, 30f, -1)
+        drawStringWithShadow(
+            "Logged in as " + TextFormatting.GRAY + (Minecraft.getMinecraft() as IMinecraft).session.username,
+            5f,
+            30f,
+            -1
+        )
 
         renderCenteredString("Paragon Alt Manager", width / 2f, 75f, -1, false)
         renderCenteredString(renderString, width / 2f, 100f, -1, false)
@@ -83,19 +87,18 @@ class AltManagerGUI : GuiScreen(), Wrapper {
 
     @Throws(IOException::class)
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        altEntries.forEach(Consumer { altEntry: AltEntry? ->
+        altEntries.forEach { altEntry: AltEntry? ->
             if (isHovered(0f, 150f, width.toFloat(), 350f, mouseX, mouseY)) {
                 if (isHovered(0f, altEntry!!.offset, width.toFloat(), altEntry.offset + 20, mouseX, mouseY)) {
                     if (selectedAltEntry == altEntry) {
                         renderString = "Logging in with the email: " + altEntry.alt.email
                         altEntry.clicked(mouseX, mouseY, width)
-                    }
-                    else {
+                    } else {
                         selectedAltEntry = altEntry
                     }
                 }
             }
-        })
+        }
 
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
@@ -119,4 +122,5 @@ class AltManagerGUI : GuiScreen(), Wrapper {
         var selectedAltEntry: AltEntry? = null
         var renderString = TextFormatting.GRAY.toString() + "Idle"
     }
+
 }

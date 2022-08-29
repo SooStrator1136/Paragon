@@ -1,7 +1,8 @@
 package com.paragon.api.util.string
 
 /**
- * @author Surge, SooStrator1136
+ * @author Surge
+ * @author SooStrator1136
  */
 object StringUtil {
 
@@ -30,16 +31,15 @@ object StringUtil {
         val result = StringBuilder(str.length)
         var lastDeliminatorPosition = 0
 
-        for (token in str.split(" ".toRegex()).toTypedArray()) {
+        for (token in str.split(" ")) {
             if (result.length - lastDeliminatorPosition + token.length > length) {
                 result.append(System.lineSeparator()).append(token)
                 lastDeliminatorPosition = result.length + 1
-            }
-
-            else {
+            } else {
                 result.append(if (result.isEmpty()) "" else " ").append(token)
             }
         }
+
         return result.toString()
     }
 

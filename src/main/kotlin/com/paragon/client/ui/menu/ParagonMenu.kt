@@ -147,6 +147,7 @@ class ParagonMenu : GuiScreen() {
                 mc.displayGuiScreen(GuiMainMenu())
             }
         }
+
         super.actionPerformed(button)
     }
 

@@ -54,10 +54,6 @@ class DiscordString(private val setting: Setting<String>) : DiscordSetting(setti
         }
     }
 
-    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {
-
-    }
-
     override fun onKey(keyCode: Int) {
         if (!typing) {
             return
@@ -77,5 +73,7 @@ class DiscordString(private val setting: Setting<String>) : DiscordSetting(setti
             Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
         }
     }
+
+    override fun onRelease(mouseX: Int, mouseY: Int, button: Int) {}
 
 }

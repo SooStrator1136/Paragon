@@ -47,7 +47,6 @@ object BlockUtil : Wrapper {
     /**
      * Gets the block at a position
      *
-     * @param pos The position
      * @return The block
      */
     @JvmStatic
@@ -114,7 +113,7 @@ object BlockUtil : Wrapper {
      */
     @JvmStatic
     fun isSafeHole(pos: BlockPos, obbyBedrock: Boolean): Boolean {
-        if (pos.getBlockAtPos()?.isReplaceable(minecraft.world, pos)?.not() == true) { //This is chinese on another level and not tested 📈
+        if (pos.getBlockAtPos().isReplaceable(minecraft.world, pos)?.not() == true) { //This is chinese on another level and not tested 📈
             return false
         }
 
@@ -151,14 +150,14 @@ object BlockUtil : Wrapper {
         pos.west()
     ).any { pos.getBlockAtPos() == Blocks.AIR }
 
-    fun BlockPos.isSource(): Boolean {
-        return this.getBlockAtPos() is BlockLiquid && minecraft.world.getBlockState(this).getValue(BlockLiquid.LEVEL) == 0
-    }
+    val BlockPos.isSource: Boolean
+        get() = this.getBlockAtPos() is BlockLiquid && minecraft.world.getBlockState(this).getValue(BlockLiquid.LEVEL) == 0
 
-    fun BlockPos.getDistanceToEyes() = sqrt(
-        (x - minecraft.player.posX).pow(2)
-                + (y - minecraft.player.posY + minecraft.player.getEyeHeight()).pow(2)
-                + (z - minecraft.player.posZ).pow(2)
-    )
+    val BlockPos.distanceToEyes: Double
+        get() = sqrt(
+            (x - minecraft.player.posX).pow(2)
+                    + (y - (minecraft.player.posY + minecraft.player.getEyeHeight())).pow(2)
+                    + (z - minecraft.player.posZ).pow(2)
+        )
 
 }

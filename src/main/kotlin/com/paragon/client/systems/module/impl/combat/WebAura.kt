@@ -9,8 +9,8 @@ import com.paragon.api.util.player.PlacementUtil
 import com.paragon.api.util.player.PlayerUtil
 import com.paragon.api.util.player.RotationUtil
 import com.paragon.api.util.world.BlockUtil
+import com.paragon.api.util.world.BlockUtil.distanceToEyes
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
-import com.paragon.api.util.world.BlockUtil.getDistanceToEyes
 import com.paragon.client.managers.rotation.Rotate
 import com.paragon.client.managers.rotation.Rotation
 import com.paragon.client.managers.rotation.RotationPriority
@@ -79,7 +79,7 @@ object WebAura : Module("WebAura", Category.COMBAT, "Spiderman on drugs wtf") {
                             && !(it as IEntity).isInWeb
                 }.mapNotNull {
                     val blockUnder = PlayerUtil.getBlockUnder(it)
-                    return@mapNotNull if (blockUnder == null || blockUnder.getDistanceToEyes() > range.value) {
+                    return@mapNotNull if (blockUnder == null || blockUnder.distanceToEyes > range.value) {
                         null
                     } else {
                         blockUnder
@@ -90,9 +90,7 @@ object WebAura : Module("WebAura", Category.COMBAT, "Spiderman on drugs wtf") {
                     }
                 }
 
-                val placePos = possibleTargets.minWith(Comparator.comparingDouble {
-                    it.getDistanceToEyes()
-                })
+                val placePos = possibleTargets.minWith(Comparator.comparingDouble { it.distanceToEyes })
 
                 val placeRotation = RotationUtil.getRotationToBlockPos(placePos, 0.5)
                 PlacementUtil.place(

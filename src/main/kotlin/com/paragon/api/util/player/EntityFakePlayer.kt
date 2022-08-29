@@ -14,6 +14,7 @@ class EntityFakePlayer(worldIn: World?) : EntityOtherPlayerMP(worldIn, Minecraft
     }
 
     fun despawn() {
-        minecraft.world.removeEntity(minecraft.world.getEntityByID(-Int.MAX_VALUE))
+        minecraft.world.removeEntity(minecraft.world.getEntityByID(-Int.MAX_VALUE)) //Why not just do minecraft.world.removeEntity(this) ?
     }
+
 }

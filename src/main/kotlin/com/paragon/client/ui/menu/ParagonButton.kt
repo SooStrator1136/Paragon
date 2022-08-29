@@ -1,6 +1,5 @@
 package com.paragon.client.ui.menu
 
-
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
@@ -23,12 +22,17 @@ class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, 
             animation.state = hovered
 
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
-
             GlStateManager.enableBlend()
-
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
-
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
+            GlStateManager.tryBlendFuncSeparate(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+            )
+            GlStateManager.blendFunc(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
+            )
 
             RenderUtil.drawRect(
                 x.toFloat(),
@@ -38,7 +42,13 @@ class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, 
                 if (hovered) -0x70000000 else -0x80000000
             )
 
-            RenderUtil.drawRect(x + (width / 2f - width / 2f * animation.getAnimationFactor().toFloat()), (y + height - 1).toFloat(), (width * animation.getAnimationFactor()).toFloat(), 1f, Colours.mainColour.value.rgb)
+            RenderUtil.drawRect(
+                x + (width / 2f - width / 2f * animation.getAnimationFactor().toFloat()),
+                (y + height - 1).toFloat(),
+                (width * animation.getAnimationFactor()).toFloat(),
+                1f,
+                Colours.mainColour.value.rgb
+            )
 
             mouseDragged(mc, mouseX, mouseY)
 

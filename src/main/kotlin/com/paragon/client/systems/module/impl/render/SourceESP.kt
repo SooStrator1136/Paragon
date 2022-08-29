@@ -60,7 +60,7 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
             if (lastJob == null || lastJob!!.isCompleted) {
                 lastJob = launch {
                     sources.addAll(BlockUtil.getSphere(range.value, true).filter {
-                        !sources.contains(it) && it.isSource()
+                        !sources.contains(it) && it.isSource
                     })
 
                     sources.removeIf {
@@ -68,7 +68,7 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
                             return@removeIf true
                         }
 
-                        return@removeIf !it.isSource()
+                        return@removeIf !it.isSource
                                 || it.getDistance(
                             minecraft.player.posX.toInt(),
                             minecraft.player.posY.toInt(),
@@ -87,7 +87,13 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
             RenderBuilder()
                 .boundingBox(BlockUtil.getBlockBox(it))
                 .inner(if (it.getBlockAtPos() == Blocks.WATER) waterColor.value else lavaColor.value)
-                .outer(if (it.getBlockAtPos() == Blocks.WATER) waterColor.value.integrateAlpha(255f) else lavaColor.value.integrateAlpha(255f))
+                .outer(
+                    if (it.getBlockAtPos() == Blocks.WATER) {
+                        waterColor.value.integrateAlpha(255f)
+                    } else {
+                        lavaColor.value.integrateAlpha(255f)
+                    }
+                )
                 .type(BoxRenderMode.BOTH)
 
                 .start()

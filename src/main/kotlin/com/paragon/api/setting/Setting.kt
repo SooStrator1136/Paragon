@@ -23,7 +23,13 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
                 }
 
                 if (isRainbow) {
-                    return Color(ColourUtil.getRainbow(rainbowSpeed, rainbowSaturation / 100, 0)).integrateAlpha(alpha) as T
+                    return Color(
+                        ColourUtil.getRainbow(
+                            rainbowSpeed,
+                            rainbowSaturation / 100,
+                            0
+                        )
+                    ).integrateAlpha(alpha) as T
                 }
 
                 return (field as Color).integrateAlpha(alpha) as T

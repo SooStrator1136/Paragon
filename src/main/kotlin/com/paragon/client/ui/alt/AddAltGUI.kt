@@ -11,6 +11,7 @@ import java.awt.Color
 import java.io.IOException
 
 class AddAltGUI : GuiScreen() {
+
     private var emailField: GuiTextField? = null
     private var passwordField: GuiTextField? = null
 
@@ -62,4 +63,5 @@ class AddAltGUI : GuiScreen() {
             1 -> mc.displayGuiScreen(AltManagerGUI())
         }
     }
+
 }

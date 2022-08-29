@@ -26,11 +26,12 @@ object ColourUtil {
      */
     @JvmStatic
     fun setColour(colourHex: Int) {
-        val alpha = (colourHex shr 24 and 0xFF) / 255.0f
-        val red = (colourHex shr 16 and 0xFF) / 255.0f
-        val green = (colourHex shr 8 and 0xFF) / 255.0f
-        val blue = (colourHex and 0xFF) / 255.0f
-        glColor4f(red, green, blue, alpha)
+        glColor4f(
+            (colourHex shr 16 and 0xFF) / 255F,
+            (colourHex shr 8 and 0xFF) / 255F,
+            (colourHex and 0xFF) / 255F,
+            (colourHex shr 24 and 0xFF) / 255F
+        )
     }
 
     /**
@@ -41,10 +42,12 @@ object ColourUtil {
      */
     @JvmStatic
     fun Color.integrateAlpha(alpha: Float): Color {
-        val red = this.red / 255f
-        val green = this.green / 255f
-        val blue = this.blue / 255f
-        return Color(red, green, blue, alpha / 255f)
+        return Color(
+            this.red / 255F,
+            this.green / 255F,
+            this.blue / 255F,
+            alpha / 255F
+        )
     }
 
     /**
@@ -53,10 +56,10 @@ object ColourUtil {
      */
     @JvmStatic
     fun Color.fade(secondary: Color, factor: Double): Color {
-        val redDiff: Int = secondary.red - this.red
-        val greenDiff: Int = secondary.green - this.green
-        val blueDiff: Int = secondary.blue - this.blue
-        val alphaDiff: Int = secondary.alpha - this.alpha
+        val redDiff = secondary.red - this.red
+        val greenDiff = secondary.green - this.green
+        val blueDiff = secondary.blue - this.blue
+        val alphaDiff = secondary.alpha - this.alpha
 
         val newRed = (this.red + redDiff * factor).toInt()
         val newGreen = (this.green + greenDiff * factor).toInt()
@@ -65,4 +68,5 @@ object ColourUtil {
 
         return Color(newRed, newGreen, newBlue, newAlpha)
     }
+
 }

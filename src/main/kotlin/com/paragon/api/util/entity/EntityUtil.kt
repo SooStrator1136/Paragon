@@ -18,6 +18,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.text.TextFormatting
 
 object EntityUtil : Wrapper {
+
     /**
      * Gets the interpolated position of a given entity
      *
@@ -90,7 +91,6 @@ object EntityUtil : Wrapper {
     /**
      * Checks if a player's distance from us is further than the given maximum range
      *
-     * @param entity       The player to check
      * @param maximumRange The maximum range they are allowed in
      * @return If the player is too far away from us
      */
@@ -119,7 +119,11 @@ object EntityUtil : Wrapper {
             return !this.isAngry
         }
 
-        return if (this is EntityIronGolem) { (this as EntityLivingBase).revengeTarget == null } else this is EntityAgeable || this is EntityAmbientCreature || this is EntitySquid
+        return if (this is EntityIronGolem) {
+            (this as EntityLivingBase).revengeTarget == null
+        } else {
+            this is EntityAgeable || this is EntityAmbientCreature || this is EntitySquid
+        }
     }
 
     @JvmStatic

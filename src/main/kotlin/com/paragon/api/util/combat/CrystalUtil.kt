@@ -82,4 +82,5 @@ object CrystalUtil : Wrapper {
 
         return max(damage, 0.0f)
     }
+
 }

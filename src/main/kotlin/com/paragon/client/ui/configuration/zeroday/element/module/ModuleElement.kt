@@ -13,9 +13,9 @@ import com.paragon.client.ui.util.Click
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import java.awt.Color
-import java.util.function.Consumer
 
 class ModuleElement(parent: CategoryPanel, module: Module, x: Float, y: Float, width: Float, height: Float) : Element(0, x, y, width, height) {
+
     val module: Module
     private val enabledAnimation = Animation({ 200f }, false) { Easing.LINEAR }
 
@@ -23,39 +23,47 @@ class ModuleElement(parent: CategoryPanel, module: Module, x: Float, y: Float, w
         this.parent = parent
         this.module = module
 
-        module.settings.forEach(Consumer { setting: Setting<*> ->
-            if (setting.value is Boolean) {
-                subElements.add(BooleanElement(1, setting as Setting<Boolean?>, this, x, y, width, height))
-            }
+        module.settings.forEach {
+            when (it.value) {
+                is Boolean -> subElements.add(BooleanElement(1, it as Setting<Boolean>, this, x, y, width, height))
 
-            else if (setting.value is Enum<*>) {
-                subElements.add(EnumElement(1, setting as Setting<Enum<*>?>, this, x, y, width, height))
+                is Enum<*> -> subElements.add(EnumElement(1, it as Setting<Enum<*>>, this, x, y, width, height))
+                is Number -> subElements.add(SliderElement(1, it as Setting<Number>, this, x, y, width, height))
+                is Bind -> subElements.add(BindElement(1, it as Setting<Bind>, this, x, y, width, height))
+                is Color -> subElements.add(ColourElement(1, it as Setting<Color>, this, x, y, width, height))
+                is String -> subElements.add(StringElement(1, it as Setting<String>, this, x, y, width, height))
             }
-
-            else if (setting.value is Number) {
-                subElements.add(SliderElement(1, setting as Setting<Number?>, this, x, y, width, height))
-            }
-
-            else if (setting.value is Bind) {
-                subElements.add(BindElement(1, setting as Setting<Bind?>, this, x, y, width, height))
-            }
-
-            else if (setting.value is Color) {
-                subElements.add(ColourElement(1, setting as Setting<Color>, this, x, y, width, height))
-            }
-
-            else if (setting.value is String) {
-                subElements.add(StringElement(1, setting as Setting<String?>, this, x, y, width, height))
-            }
-        })
+        }
     }
 
     override fun render(mouseX: Int, mouseY: Int, dWheel: Int) {
         enabledAnimation.state = module.isEnabled
         drawRect(x, y, width, getTotalHeight(), Color(40, 40, 45).rgb)
-        drawRect(x, y, width, height, Color((40 + 30 * hover.getAnimationFactor()).toInt(), (40 + 30 * hover.getAnimationFactor()).toInt(), (45 + 30 * hover.getAnimationFactor()).toInt()).rgb)
+        drawRect(
+            x,
+            y,
+            width,
+            height,
+            Color(
+                (40 + 30 * hover.getAnimationFactor()).toInt(),
+                (40 + 30 * hover.getAnimationFactor()).toInt(),
+                (45 + 30 * hover.getAnimationFactor()).toInt()
+            ).rgb
+        )
 
-        drawRect(x, y, (width * enabledAnimation.getAnimationFactor()).toFloat(), height, Color(Color.HSBtoRGB(parent!!.leftHue / 360, 1f, (0.75f + 0.25f * hover.getAnimationFactor()).toFloat())).rgb)
+        drawRect(
+            x,
+            y,
+            (width * enabledAnimation.getAnimationFactor()).toFloat(),
+            height,
+            Color(
+                Color.HSBtoRGB(
+                    parent!!.leftHue / 360,
+                    1f,
+                    (0.75f + 0.25f * hover.getAnimationFactor()).toFloat()
+                )
+            ).rgb
+        )
 
         val factor = (155 + 100 * enabledAnimation.getAnimationFactor()).toInt()
         val textColour = Color(factor, factor, factor)

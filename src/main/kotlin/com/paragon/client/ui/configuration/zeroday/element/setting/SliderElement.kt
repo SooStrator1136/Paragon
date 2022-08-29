@@ -18,18 +18,25 @@ import me.surge.animation.Easing
 import net.minecraft.util.math.MathHelper
 import org.lwjgl.input.Mouse
 import java.awt.Color
-import java.util.function.Consumer
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: ModuleElement, x: Float, y: Float, width: Float, height: Float) : Element(layer, x, y, width, height) {
+class SliderElement(
+    layer: Int,
+    setting: Setting<Number>,
+    moduleElement: ModuleElement,
+    x: Float,
+    y: Float,
+    width: Float,
+    height: Float
+) : Element(layer, x, y, width, height) {
 
     override var height: Float
         get() = if (setting.isVisible()) super.height else 0f
         set(value) {}
 
-    val setting: Setting<Number?>
+    val setting: Setting<Number>
     var isDragging = false
         private set
 
@@ -38,26 +45,81 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
     init {
         parent = moduleElement.parent
         this.setting = setting
-        setting.subsettings.forEach(Consumer { subsetting: Setting<*> ->
-            if (subsetting.value is Boolean) {
-                subElements.add(BooleanElement(layer + 1, (subsetting as Setting<Boolean?>), moduleElement, x, y, width, height))
+        setting.subsettings.forEach {
+            when (it.value) {
+                is Boolean -> subElements.add(
+                    BooleanElement(
+                        layer + 1,
+                        (it as Setting<Boolean>),
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Enum<*> -> subElements.add(
+                    EnumElement(
+                        layer + 1,
+                        (it as Setting<Enum<*>>),
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Number -> subElements.add(
+                    SliderElement(
+                        layer + 1,
+                        it as Setting<Number>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Bind -> subElements.add(
+                    BindElement(
+                        layer + 1,
+                        (it as Setting<Bind>),
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Color -> subElements.add(
+                    ColourElement(
+                        layer + 1,
+                        it as Setting<Color>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is String -> subElements.add(
+                    StringElement(
+                        layer + 1,
+                        it as Setting<String>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
             }
-            else if (subsetting.value is Enum<*>) {
-                subElements.add(EnumElement(layer + 1, (subsetting as Setting<Enum<*>?>), moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is Number) {
-                subElements.add(SliderElement(layer + 1, subsetting as Setting<Number?>, moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is Bind) {
-                subElements.add(BindElement(layer + 1, (subsetting as Setting<Bind?>), moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is Color) {
-                subElements.add(ColourElement(layer + 1, subsetting as Setting<Color>, moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is String) {
-                subElements.add(StringElement(layer + 1, subsetting as Setting<String?>, moduleElement, x, y, width, height))
-            }
-        })
+        }
     }
 
     override fun render(mouseX: Int, mouseY: Int, dWheel: Int) {
@@ -68,8 +130,8 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
                 // Set values
                 val diff = min(maxWidth, max(0f, mouseX - (x + layer)))
 
-                val min = setting.min!!.toFloat()
-                val max = setting.max!!.toFloat()
+                val min = setting.min.toFloat()
+                val max = setting.max.toFloat()
 
                 renderWidth = maxWidth * ((setting.value as Float) - min) / (max - min)
 
@@ -80,10 +142,9 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
                     if (diff == 0f) {
                         setting.setValue(setting.min)
                         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
-                    }
-                    else {
+                    } else {
                         var newValue = roundDouble((diff / maxWidth * (max - min) + min).toDouble(), 2).toFloat()
-                        val precision = 1 / setting.incrementation!!.toFloat()
+                        val precision = 1 / setting.incrementation.toFloat()
 
                         newValue = (max(min, min(max, newValue)) * precision).roundToInt() / precision
 
@@ -91,13 +152,12 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
                         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
                     }
                 }
-            }
-            else if (setting.value is Double) {
+            } else if (setting.value is Double) {
                 // Set values
                 val diff = min(maxWidth, max(0f, mouseX - (x + layer))).toDouble()
 
-                val min = setting.min!!.toDouble()
-                val max = setting.max!!.toDouble()
+                val min = setting.min.toDouble()
+                val max = setting.max.toDouble()
 
                 renderWidth = (maxWidth * ((setting.value as Double) - min) / (max - min)).toFloat()
 
@@ -108,10 +168,9 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
                     if (diff == 0.0) {
                         setting.setValue(setting.min)
                         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
-                    }
-                    else {
+                    } else {
                         var newValue = roundDouble(diff / maxWidth * (max - min) + min, 2)
-                        val precision = (1 / setting.incrementation!!.toFloat()).toDouble()
+                        val precision = (1 / setting.incrementation.toFloat()).toDouble()
                         newValue = (max(min, min(max, newValue)) * precision).roundToInt() / precision
                         setting.setValue(newValue)
                         Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(setting))
@@ -119,8 +178,24 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
                 }
             }
             drawRect(x, y, width, height, Color(40, 40, 45).rgb)
-            drawRect(x + layer, y, width - layer * 2, height, Color((40 + 30 * hover.getAnimationFactor()).toInt(), (40 + 30 * hover.getAnimationFactor()).toInt(), (45 + 30 * hover.getAnimationFactor()).toInt()).rgb)
-            drawRect(x + layer, y, renderWidth, height, Color.HSBtoRGB(parent.leftHue / 360, 1f, (0.5f + 0.25f * hover.getAnimationFactor()).toFloat()))
+            drawRect(
+                x + layer,
+                y,
+                width - layer * 2,
+                height,
+                Color(
+                    (40 + 30 * hover.getAnimationFactor()).toInt(),
+                    (40 + 30 * hover.getAnimationFactor()).toInt(),
+                    (45 + 30 * hover.getAnimationFactor()).toInt()
+                ).rgb
+            )
+            drawRect(
+                x + layer,
+                y,
+                renderWidth,
+                height,
+                Color.HSBtoRGB(parent.leftHue / 360, 1f, (0.5f + 0.25f * hover.getAnimationFactor()).toFloat())
+            )
             var x = x + layer * 2 + 5
             val totalWidth = width - layer * 2
             val maxTextWidth = totalWidth - getStringWidth(setting.value.toString()) - 5
@@ -138,10 +213,20 @@ class SliderElement(layer: Int, setting: Setting<Number?>, moduleElement: Module
             )
 
             val scissorHeight = height
-            pushScissor((x + layer * 2).toDouble(), scissorY.toDouble(), (totalWidth - (getStringWidth(setting.value.toString()) + 9)).toDouble(), scissorHeight.toDouble())
+            pushScissor(
+                (x + layer * 2).toDouble(),
+                scissorY.toDouble(),
+                (totalWidth - (getStringWidth(setting.value.toString()) + 9)).toDouble(),
+                scissorHeight.toDouble()
+            )
             drawStringWithShadow(setting.name, x, y + height / 2 - 3.5f, -0x1)
             popScissor()
-            drawStringWithShadow(setting.value.toString(), x + width - layer * 2 - getStringWidth(setting.value.toString()) - 3, y + height / 2 - 3.5f, -0x1)
+            drawStringWithShadow(
+                setting.value.toString(),
+                x + width - layer * 2 - getStringWidth(setting.value.toString()) - 3,
+                y + height / 2 - 3.5f,
+                -0x1
+            )
             super.render(mouseX, mouseY, dWheel)
         }
     }

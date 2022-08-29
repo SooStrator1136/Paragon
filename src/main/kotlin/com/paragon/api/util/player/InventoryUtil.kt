@@ -10,20 +10,19 @@ import net.minecraft.network.play.client.CPacketHeldItemChange
 import net.minecraft.util.EnumHand
 
 object InventoryUtil : Wrapper {
-    
+
     fun isHolding(item: Item): Boolean {
         return minecraft.player.heldItemMainhand.item == item || minecraft.player.heldItemOffhand.item == item
     }
 
-    fun isHolding(item: Item, hand: EnumHand?): Boolean {
+    fun isHolding(item: Item, hand: EnumHand): Boolean {
         return minecraft.player.getHeldItem(hand).item == item
     }
 
     fun getHandHolding(item: Item): EnumHand? {
         if (minecraft.player.heldItemMainhand.item === item) {
             return EnumHand.MAIN_HAND
-        }
-        else if (minecraft.player.heldItemOffhand.item === item) {
+        } else if (minecraft.player.heldItemOffhand.item === item) {
             return EnumHand.OFF_HAND
         }
         return null
@@ -63,8 +62,7 @@ object InventoryUtil : Wrapper {
         }
         if (silent) {
             minecraft.connection!!.sendPacket(CPacketHeldItemChange(getItemInHotbar(itemIn)))
-        }
-        else {
+        } else {
             minecraft.player.inventory.currentItem = getItemInHotbar(itemIn)
         }
         return true
@@ -76,8 +74,7 @@ object InventoryUtil : Wrapper {
             minecraft.player.connection.sendPacket(CPacketHeldItemChange(slot))
             // Sync item
             (minecraft.playerController as IPlayerControllerMP).hookSyncCurrentPlayItem()
-        }
-        else {
+        } else {
             minecraft.player.inventory.currentItem = slot
         }
     }
@@ -108,4 +105,5 @@ object InventoryUtil : Wrapper {
         }
         return slot
     }
+
 }

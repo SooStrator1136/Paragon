@@ -17,45 +17,118 @@ import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.util.math.MathHelper
 import java.awt.Color
-import java.util.function.Consumer
 
-class EnumElement(layer: Int, setting: Setting<Enum<*>?>, moduleElement: ModuleElement, x: Float, y: Float, width: Float, height: Float) : Element(layer, x, y, width, height) {
-    val setting: Setting<Enum<*>?>
+class EnumElement(
+    layer: Int,
+    setting: Setting<Enum<*>>,
+    moduleElement: ModuleElement,
+    x: Float,
+    y: Float,
+    width: Float,
+    height: Float
+) : Element(layer, x, y, width, height) {
+
+    val setting: Setting<Enum<*>>
     private val scrollAnimation = Animation({ 1250f }, false) { Easing.LINEAR }
 
     init {
         this.parent = moduleElement.parent
 
         this.setting = setting
-        setting.subsettings.forEach(Consumer { subsetting: Setting<*> ->
-            if (subsetting.value is Boolean) {
-                subElements.add(BooleanElement(layer + 1, (subsetting as Setting<Boolean?>), moduleElement, x, y, width, height))
+        setting.subsettings.forEach {
+            when (it.value) {
+                is Boolean -> subElements.add(
+                    BooleanElement(
+                        layer + 1,
+                        (it as Setting<Boolean>),
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Enum<*> -> subElements.add(
+                    EnumElement(
+                        layer + 1,
+                        it as Setting<Enum<*>>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Number -> subElements.add(
+                    SliderElement(
+                        layer + 1,
+                        it as Setting<Number>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Bind -> subElements.add(
+                    BindElement(
+                        layer + 1,
+                        (it as Setting<Bind>),
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is Color -> subElements.add(
+                    ColourElement(
+                        layer + 1,
+                        it as Setting<Color>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
+
+                is String -> subElements.add(
+                    StringElement(
+                        layer + 1,
+                        it as Setting<String>,
+                        moduleElement,
+                        x,
+                        y,
+                        width,
+                        height
+                    )
+                )
             }
-            else if (subsetting.value is Enum<*>) {
-                subElements.add(EnumElement(layer + 1, subsetting as Setting<Enum<*>?>, moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is Number) {
-                subElements.add(SliderElement(layer + 1, subsetting as Setting<Number?>, moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is Bind) {
-                subElements.add(BindElement(layer + 1, (subsetting as Setting<Bind?>), moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is Color) {
-                subElements.add(ColourElement(layer + 1, subsetting as Setting<Color>, moduleElement, x, y, width, height))
-            }
-            else if (subsetting.value is String) {
-                subElements.add(StringElement(layer + 1, subsetting as Setting<String?>, moduleElement, x, y, width, height))
-            }
-        })
+        }
     }
 
     override fun render(mouseX: Int, mouseY: Int, dWheel: Int) {
         if (setting.isVisible()) {
             drawRect(x, y, width, height, Color(40, 40, 45).rgb)
-            drawRect(x + layer, y, width - layer * 2, height, Color((40 + 30 * hover.getAnimationFactor()).toInt(), (40 + 30 * hover.getAnimationFactor()).toInt(), (45 + 30 * hover.getAnimationFactor()).toInt()).rgb)
+            drawRect(
+                x + layer,
+                y,
+                width - layer * 2,
+                height,
+                Color(
+                    (40 + 30 * hover.getAnimationFactor()).toInt(),
+                    (40 + 30 * hover.getAnimationFactor()).toInt(),
+                    (45 + 30 * hover.getAnimationFactor()).toInt()
+                ).rgb
+            )
             var x = x + layer * 2 + 5
             val totalWidth = width - layer * 2
-            val maxTextWidth = totalWidth - getStringWidth(getFormattedText(setting.value!!)) - 5
+            val maxTextWidth = totalWidth - getStringWidth(getFormattedText(setting.value)) - 5
             val visibleX = getStringWidth(setting.name) - maxTextWidth
             scrollAnimation.state = isHovered(mouseX, mouseY)
 
@@ -70,10 +143,20 @@ class EnumElement(layer: Int, setting: Setting<Enum<*>?>, moduleElement: ModuleE
             )
 
             val scissorHeight = height
-            pushScissor((x + layer * 2).toDouble(), scissorY.toDouble(), (totalWidth - (getStringWidth(getFormattedText(setting.value!!)) + 9)).toDouble(), scissorHeight.toDouble())
+            pushScissor(
+                (x + layer * 2).toDouble(),
+                scissorY.toDouble(),
+                (totalWidth - (getStringWidth(getFormattedText(setting.value)) + 9)).toDouble(),
+                scissorHeight.toDouble()
+            )
             drawStringWithShadow(setting.name, x, y + height / 2 - 3.5f, -0x1)
             popScissor()
-            drawStringWithShadow(getFormattedText(setting.value!!), x + width - layer * 2 - getStringWidth(getFormattedText(setting.value!!)) - (3f + if (subElements.isEmpty()) 0f else getStringWidth("...") + 3f), y + height / 2 - 3.5f, -0x1)
+            drawStringWithShadow(
+                getFormattedText(setting.value),
+                x + width - layer * 2 - getStringWidth(getFormattedText(setting.value)) - (3f + if (subElements.isEmpty()) 0f else getStringWidth("...") + 3f),
+                y + height / 2 - 3.5f,
+                -0x1
+            )
 
             if (subElements.isNotEmpty()) {
                 drawStringWithShadow("...", x + width - getStringWidth("...") - 5, y + 2f, -1)
@@ -116,4 +199,5 @@ class EnumElement(layer: Int, setting: Setting<Enum<*>?>, moduleElement: ModuleE
     override fun getTotalHeight(): Float {
         return if (setting.isVisible()) super.getTotalHeight() else 0f
     }
+
 }

@@ -29,7 +29,15 @@ import java.awt.Color
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Consumer
 
-class CategoryPanel(private val category: Category, x: Float, y: Float, width: Float, height: Float, private val barHeight: Float) : Panel(x, y, width, height) {
+class CategoryPanel(
+    private val category: Category,
+    x: Float,
+    y: Float,
+    width: Float,
+    height: Float,
+    private val barHeight: Float
+) : Panel(x, y, width, height) {
+
     private val elements: MutableList<Element> = ArrayList()
 
     var leftHue = 0f
@@ -117,9 +125,7 @@ class CategoryPanel(private val category: Category, x: Float, y: Float, width: F
         moduleHeight = height
         if (dWheel != 0 && isHovered(x, y + barHeight, width, moduleHeight, mouseX, mouseY)) {
             scrollFactor = (if (dWheel > 0) -2 else 2).toFloat()
-        }
-
-        else {
+        } else {
             if (scrollFactor != 0f) {
                 scrollFactor *= 0.9f
                 if (scrollFactor < 0.1 && scrollFactor > -0.1) {
@@ -133,9 +139,7 @@ class CategoryPanel(private val category: Category, x: Float, y: Float, width: F
         if (scrollFactor != 0f) {
             if (lastElement.y + lastElement.getTotalHeight() > y + barHeight + scissorHeight) {
                 elements.forEach(Consumer { element: Element -> element.y = element.y + scrollFactor })
-            }
-
-            else {
+            } else {
                 scrollFactor = 0f
                 for (element in elements) {
                     element.y = element.y + 1
@@ -193,12 +197,12 @@ class CategoryPanel(private val category: Category, x: Float, y: Float, width: F
                 lastX = mouseX - x
                 lastY = mouseY - y
                 dragging = true
-            }
-            else if (click == Click.RIGHT) {
+            } else if (click == Click.RIGHT) {
                 open = !open
                 expand.state = open
             }
         }
+
         if (open) {
             elements.forEach(Consumer { element: Element -> element.mouseClicked(mouseX, mouseY, click) })
         }
@@ -206,6 +210,7 @@ class CategoryPanel(private val category: Category, x: Float, y: Float, width: F
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, click: Click) {
         dragging = false
+
         if (open) {
             elements.forEach(Consumer { element: Element -> element.mouseReleased(mouseX, mouseY, click) })
         }
@@ -247,35 +252,36 @@ class CategoryPanel(private val category: Category, x: Float, y: Float, width: F
                             var description = ""
                             var visible = true
 
-                            if (subElement is BooleanElement) {
-                                val sElement = subElement
-                                description = sElement.setting.description
-                                hover = sElement.hover.getAnimationFactor()
-                                visible = sElement.setting.isVisible()
-                            }
-                            else if (subElement is SliderElement) {
-                                val sElement = subElement
-                                description = sElement.setting.description
-                                hover = sElement.hover.getAnimationFactor()
-                                visible = sElement.setting.isVisible()
-                            }
-                            else if (subElement is EnumElement) {
-                                val sElement = subElement
-                                description = sElement.setting.description
-                                hover = sElement.hover.getAnimationFactor()
-                                visible = sElement.setting.isVisible()
-                            }
-                            else if (subElement is ColourElement) {
-                                val sElement = subElement
-                                description = sElement.setting.description
-                                hover = sElement.hover.getAnimationFactor()
-                                visible = sElement.setting.isVisible()
-                            }
-                            else if (subElement is BindElement) {
-                                val sElement = subElement
-                                description = sElement.setting.description
-                                hover = sElement.hover.getAnimationFactor()
-                                visible = sElement.setting.isVisible()
+                            when (subElement) {
+                                is BooleanElement -> {
+                                    description = subElement.setting.description
+                                    hover = subElement.hover.getAnimationFactor()
+                                    visible = subElement.setting.isVisible()
+                                }
+
+                                is SliderElement -> {
+                                    description = subElement.setting.description
+                                    hover = subElement.hover.getAnimationFactor()
+                                    visible = subElement.setting.isVisible()
+                                }
+
+                                is EnumElement -> {
+                                    description = subElement.setting.description
+                                    hover = subElement.hover.getAnimationFactor()
+                                    visible = subElement.setting.isVisible()
+                                }
+
+                                is ColourElement -> {
+                                    description = subElement.setting.description
+                                    hover = subElement.hover.getAnimationFactor()
+                                    visible = subElement.setting.isVisible()
+                                }
+
+                                is BindElement -> {
+                                    description = subElement.setting.description
+                                    hover = subElement.hover.getAnimationFactor()
+                                    visible = subElement.setting.isVisible()
+                                }
                             }
 
                             if (hover > 0 && visible) {
@@ -287,35 +293,36 @@ class CategoryPanel(private val category: Category, x: Float, y: Float, width: F
                                 var subDesc = ""
                                 var subVisible = true
 
-                                if (subSubElement is BooleanElement) {
-                                    val ssElement = subSubElement
-                                    subDesc = ssElement.setting.description
-                                    subHover = ssElement.hover.getAnimationFactor()
-                                    subVisible = ssElement.setting.isVisible()
-                                }
-                                else if (subSubElement is SliderElement) {
-                                    val ssElement = subSubElement
-                                    subDesc = ssElement.setting.description
-                                    subHover = ssElement.hover.getAnimationFactor()
-                                    subVisible = ssElement.setting.isVisible()
-                                }
-                                else if (subSubElement is EnumElement) {
-                                    val ssElement = subSubElement
-                                    subDesc = ssElement.setting.description
-                                    subHover = ssElement.hover.getAnimationFactor()
-                                    subVisible = ssElement.setting.isVisible()
-                                }
-                                else if (subSubElement is ColourElement) {
-                                    val ssElement = subSubElement
-                                    subDesc = ssElement.setting.description
-                                    subHover = ssElement.hover.getAnimationFactor()
-                                    subVisible = ssElement.setting.isVisible()
-                                }
-                                else if (subSubElement is BindElement) {
-                                    val ssElement = subSubElement
-                                    subDesc = ssElement.setting.description
-                                    subHover = ssElement.hover.getAnimationFactor()
-                                    subVisible = ssElement.setting.isVisible()
+                                when (subSubElement) {
+                                    is BooleanElement -> {
+                                        subDesc = subSubElement.setting.description
+                                        subHover = subSubElement.hover.getAnimationFactor()
+                                        subVisible = subSubElement.setting.isVisible()
+                                    }
+
+                                    is SliderElement -> {
+                                        subDesc = subSubElement.setting.description
+                                        subHover = subSubElement.hover.getAnimationFactor()
+                                        subVisible = subSubElement.setting.isVisible()
+                                    }
+
+                                    is EnumElement -> {
+                                        subDesc = subSubElement.setting.description
+                                        subHover = subSubElement.hover.getAnimationFactor()
+                                        subVisible = subSubElement.setting.isVisible()
+                                    }
+
+                                    is ColourElement -> {
+                                        subDesc = subSubElement.setting.description
+                                        subHover = subSubElement.hover.getAnimationFactor()
+                                        subVisible = subSubElement.setting.isVisible()
+                                    }
+
+                                    is BindElement -> {
+                                        subDesc = subSubElement.setting.description
+                                        subHover = subSubElement.hover.getAnimationFactor()
+                                        subVisible = subSubElement.setting.isVisible()
+                                    }
                                 }
 
                                 if (subHover == 0.0 || !subVisible) {

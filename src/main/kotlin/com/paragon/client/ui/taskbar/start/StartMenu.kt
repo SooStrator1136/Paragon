@@ -91,10 +91,30 @@ object StartMenu : Wrapper {
             RenderUtil.popScissor()
         }
 
-        RenderUtil.drawRect(0f, scaledResolution.scaledHeight - MathHelper.clamp(228f * expandAnimation.getAnimationFactor().toFloat(), (26f * Paragon.INSTANCE.taskbar.expandAnimation.getAnimationFactor().toFloat()) + 2, 228f), 150f, 2f, Colours.mainColour.value.rgb)
+        RenderUtil.drawRect(
+            0f,
+            scaledResolution.scaledHeight - MathHelper.clamp(
+                228f * expandAnimation.getAnimationFactor().toFloat(),
+                (26f * Paragon.INSTANCE.taskbar.expandAnimation.getAnimationFactor().toFloat()) + 2,
+                228f
+            ),
+            150f,
+            2f,
+            Colours.mainColour.value.rgb
+        )
 
         RenderUtil.drawRect(x + 1, y + 1, width, height, Color(100, 100, 100).rgb)
-        RenderUtil.drawRect(x, y, width, height, Color(120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0)).rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            width,
+            height,
+            Color(
+                120 - (if (isHovered(mouseX, mouseY)) 10 else 0),
+                120 - (if (isHovered(mouseX, mouseY)) 10 else 0),
+                120 - (if (isHovered(mouseX, mouseY)) 10 else 0)
+            ).rgb
+        )
         FontUtil.drawStringWithShadow("Start", x + 22, y + 6, -1)
 
         minecraft.textureManager.bindTexture(ResourceLocation("paragon", "textures/logo.png"))

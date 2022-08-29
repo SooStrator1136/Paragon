@@ -10,6 +10,7 @@ import me.surge.animation.Easing
 import java.util.function.Consumer
 
 abstract class Element(val layer: Int, var x: Float, var y: Float, var width: Float, open var height: Float) : Wrapper {
+
     open var lastX: Float = 0f
     open var lastY: Float = 0f
 
@@ -38,9 +39,7 @@ abstract class Element(val layer: Int, var x: Float, var y: Float, var width: Fl
                 subElement.render(mouseX, mouseY, dWheel)
                 offset += subElement.getTotalHeight()
             }
-        }
-
-        else {
+        } else {
             for (subElement in subElements) {
                 subElement.hover.state = false
             }

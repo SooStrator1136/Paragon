@@ -89,12 +89,13 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
         backgroundThread {
             if (lastJob == null || lastJob!!.isCompleted) {
                 lastJob = launch {
-                    val toAdd = BlockUtil.getSphere(range.value, false).filter {
-                        it.y == 0 && minecraft.world.getBlockState(it).material.isReplaceable
-                    }
+                    holes.addAll(BlockUtil.getSphere(range.value, false).filter {
+                        it.y == 0 && minecraft.world.getBlockState(it).material.isReplaceable && !holes.contains(it)
+                    })
 
-                    holes.clear()
-                    holes.addAll(toAdd)
+                    holes.removeIf {
+                        it.y != 0 || !minecraft.world.getBlockState(it).material.isReplaceable
+                    }
                 }
             }
         }

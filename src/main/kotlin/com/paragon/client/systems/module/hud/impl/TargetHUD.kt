@@ -6,7 +6,6 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyIndexed
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
-import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.RenderUtil.scaleTo
@@ -118,7 +117,17 @@ object TargetHUD : HUDModule("TargetHUD", "") {
             val healthFactor = (target!! as EntityLivingBase).health / (target as EntityLivingBase).maxHealth
 
             RenderUtil.drawRoundedRect(x + 38.0, y + 16.0, 50.0, 7.0, 3.0, 3.0, 3.0, 3.0, Color(50, 50, 55).rgb)
-            RenderUtil.drawRoundedRect(x + 38.0, y + 16.0, 50.0 * healthFactor, 7.0, 3.0, 3.0, 3.0, 3.0, Color(255 - (255 * healthFactor).toInt(), (255 * healthFactor).toInt(), 0).rgb)
+            RenderUtil.drawRoundedRect(
+                x + 38.0,
+                y + 16.0,
+                50.0 * healthFactor,
+                7.0,
+                3.0,
+                3.0,
+                3.0,
+                3.0,
+                Color(255 - (255 * healthFactor).toInt(), (255 * healthFactor).toInt(), 0).rgb
+            )
         }
     }
 

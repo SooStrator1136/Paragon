@@ -21,8 +21,10 @@ class ConsoleGUI : GuiScreen() {
         if (ClickGUI.darkenBackground.value) {
             drawDefaultBackground()
         }
+
         Paragon.INSTANCE.console.draw(mouseX, mouseY)
         Paragon.INSTANCE.taskbar.draw(mouseX, mouseY)
+
         super.drawScreen(mouseX, mouseY, partialTicks)
     }
 
