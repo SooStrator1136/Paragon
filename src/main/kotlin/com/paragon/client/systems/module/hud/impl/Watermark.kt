@@ -15,12 +15,26 @@ object Watermark : HUDModule("Watermark", "Renders the client's name on screen")
 
     private val icon = ResourceLocation("paragon", "textures/paragon.png")
 
-    private val display = Setting("Display", Display.TEXT, null, null, null) describedBy "The type of watermark to display"
-    private val scaleFac = Setting("Size", 1.0, 0.1, 2.0, 0.05) describedBy "The scale of the image watermark" visibleWhen  { display.value == Display.IMAGE }
+    private val display = Setting(
+        "Display",
+        Display.TEXT
+    ) describedBy "The type of watermark to display"
+    private val scaleFac = Setting(
+        "Size",
+        1.0,
+        0.1,
+        2.0,
+        0.05
+    ) describedBy "The scale of the image watermark" visibleWhen { display.value == Display.IMAGE }
 
     override fun render() {
         when (display.value) {
-            Display.TEXT -> drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, x, y, Colours.mainColour.value.rgb)
+            Display.TEXT -> drawStringWithShadow(
+                "Paragon " + TextFormatting.GRAY + Paragon.modVersion,
+                x,
+                y,
+                Colours.mainColour.value.rgb
+            )
 
             Display.IMAGE -> {
                 minecraft.textureManager.bindTexture(icon)
@@ -32,20 +46,17 @@ object Watermark : HUDModule("Watermark", "Renders the client's name on screen")
                 }
             }
 
-            else -> {}
         }
     }
 
     override var width: Float
-        get() = display.value!!.width
-
+        get() = display.value.width
         set(width) {
             super.width = width
         }
 
     override var height: Float
-        get() = display.value!!.height
-
+        get() = display.value.height
         set(height) {
             super.height = height
         }
@@ -60,7 +71,6 @@ object Watermark : HUDModule("Watermark", "Renders the client's name on screen")
          * Watermark will be an image
          */
         IMAGE(160f, 25f);
-
     }
 
 }

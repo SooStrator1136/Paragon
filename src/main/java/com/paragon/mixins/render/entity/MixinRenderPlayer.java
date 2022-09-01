@@ -30,7 +30,7 @@ public class MixinRenderPlayer {
         }
     }
 
-    @Inject(method = "renderLeftArm", at = @At(value =  "FIELD", target = "Lnet/minecraft/client/model/ModelPlayer;swingProgress:F", opcode=181))
+    @Inject(method = "renderLeftArm", at = @At(value = "FIELD", target = "Lnet/minecraft/client/model/ModelPlayer;swingProgress:F", opcode = 181))
     public void renderLeftArmPre(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
         RenderArmEvent.LeftArmPre renderArmEvent = new RenderArmEvent.LeftArmPre(clientPlayer, this.smallArms);
         Paragon.INSTANCE.getEventBus().post(renderArmEvent);
@@ -42,7 +42,7 @@ public class MixinRenderPlayer {
         Paragon.INSTANCE.getEventBus().post(renderArmEvent);
     }
 
-    @Inject(method = "renderRightArm", at = @At(value =  "FIELD", target = "Lnet/minecraft/client/model/ModelPlayer;swingProgress:F", opcode=181))
+    @Inject(method = "renderRightArm", at = @At(value = "FIELD", target = "Lnet/minecraft/client/model/ModelPlayer;swingProgress:F", opcode = 181))
     public void renderRightArmPre(AbstractClientPlayer clientPlayer, CallbackInfo ci) {
         RenderArmEvent.RightArmPre renderArmEvent = new RenderArmEvent.RightArmPre(clientPlayer, this.smallArms);
         Paragon.INSTANCE.getEventBus().post(renderArmEvent);

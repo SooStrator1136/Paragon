@@ -80,7 +80,7 @@ object Alert : Module("Alert", Category.MISC, "Alerts you on certain things") {
         }
 
         if (performanceMode.value) {
-            if (lastJob == null || lastJob!!.isCompleted) {
+            if (lastJob == null || (lastJob ?: return).isCompleted) {
                 backgroundThread {
                     lastJob = launch {
                         doChecks()
@@ -120,12 +120,12 @@ object Alert : Module("Alert", Category.MISC, "Alerts you on certain things") {
 
                 it.armorInventoryList.forEachIndexed { i, stack ->
                     if ((100F - (1 - (stack.maxDamage - stack.itemDamage)) / stack.maxDamage * 100F) <= friendArmorThreshold.value) {
-                        if (!warnedFriendsArmor[it]!![i]) {
-                            warnedFriendsArmor[it]!![i] = true
+                        if (!(warnedFriendsArmor[it] ?: return@forEachIndexed)[i]) {
+                            (warnedFriendsArmor[it] ?: return@forEachIndexed)[i] = true
                             alert("${it.name} is about to loose a piece of armor!")
                         }
                     } else {
-                        warnedFriendsArmor[it]!![i] = false
+                        (warnedFriendsArmor[it] ?: return@forEachIndexed)[i] = false
                     }
                 }
             }
@@ -140,7 +140,7 @@ object Alert : Module("Alert", Category.MISC, "Alerts you on certain things") {
                 }
 
                 if (it.health <= friendHpThreshold.value) {
-                    if (!warnedFriendsHp[it]!!) {
+                    if (!(warnedFriendsHp[it] ?: return@forEach)) {
                         warnedFriendsHp[it] = true
                         alert("${it.name} has low hp!")
                     }

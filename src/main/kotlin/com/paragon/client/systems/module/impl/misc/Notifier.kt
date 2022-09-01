@@ -71,6 +71,7 @@ object Notifier : Module("Notifier", Category.MISC, "Notifies you when events ha
         if (!death.value || (!noPops.value && event.pops == 0)) {
             return
         }
+
         Paragon.INSTANCE.notificationManager.addNotification(
             Notification(
                 event.entityPlayer.name + " has died after popping " + event.pops + " totems!",

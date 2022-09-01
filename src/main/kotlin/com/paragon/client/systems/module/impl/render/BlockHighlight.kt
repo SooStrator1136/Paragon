@@ -47,7 +47,11 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
             val bb = minecraft.world.getBlockState(bp)
                 .getSelectedBoundingBox(minecraft.world, bp)
                 .grow(0.0020000000949949026)
-                .offset(-minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ)
+                .offset(
+                    -minecraft.renderManager.viewerPosX,
+                    -minecraft.renderManager.viewerPosY,
+                    -minecraft.renderManager.viewerPosZ
+                )
 
             /* RenderBuilder()
                 .boundingBox(bb)

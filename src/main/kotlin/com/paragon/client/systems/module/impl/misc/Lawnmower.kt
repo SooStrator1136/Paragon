@@ -30,7 +30,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
         0.1F
     ) describedBy "The range in which to remove lawn"
 
-    private val delay = Setting("Delay", 100.0, 0.0, 1000.0, 10.0)
+    private val delay = Setting("Delay", 50.0, 50.0, 1000.0, 50.0)
 
     private val rotateMode = Setting("Rotation", Rotate.NONE)
 
@@ -89,7 +89,7 @@ object Lawnmower : Module("Lawnmower", Category.MISC, "Removes grass and flowers
                 CPacketPlayerDigging(
                     CPacketPlayerDigging.Action.START_DESTROY_BLOCK,
                     blockPos,
-                    BlockUtil.getFacing(blockPos)
+                    BlockUtil.getFacing(blockPos) ?: return
                 )
             )
 

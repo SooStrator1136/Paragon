@@ -48,18 +48,14 @@ object PlayerUtil : Wrapper {
                 if (strafe >= 1) {
                     playerYaw += (if (forward > 0) -45 else 45).toFloat()
                     strafe = 0f
-                }
-
-                else if (strafe <= -1) {
+                } else if (strafe <= -1) {
                     playerYaw += (if (forward > 0) 45 else -45).toFloat()
                     strafe = 0f
                 }
 
                 if (forward > 0) {
                     forward = 1f
-                }
-
-                else if (forward < 0) {
+                } else if (forward < 0) {
                     forward = -1f
                 }
             }
@@ -87,9 +83,7 @@ object PlayerUtil : Wrapper {
         if (forwardInput != 0.0f) {
             if (strafeInput > 0.0f) {
                 playerYaw += (if (forwardInput > 0.0f) -45 else 45).toFloat()
-            }
-
-            else if (strafeInput < 0.0f) {
+            } else if (strafeInput < 0.0f) {
                 playerYaw += (if (forwardInput > 0.0f) 45 else -45).toFloat()
             }
 
@@ -97,9 +91,7 @@ object PlayerUtil : Wrapper {
 
             if (forwardInput > 0.0f) {
                 forwardInput = 1.0f
-            }
-
-            else if (forwardInput < 0.0f) {
+            } else if (forwardInput < 0.0f) {
                 forwardInput = -1.0f
             }
         }

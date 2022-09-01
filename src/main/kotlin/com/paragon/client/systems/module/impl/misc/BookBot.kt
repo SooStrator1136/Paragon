@@ -17,17 +17,13 @@ import net.minecraft.network.play.client.CPacketCustomPayload
 import net.minecraft.util.EnumHand
 import kotlin.random.Random
 
-
 /**
  * @author SooStrator1136
  * @author ForgeHax
  */
 object BookBot : Module("BookBot", Category.MISC, "Writes books for you") {
 
-    private val charset = Setting(
-        "Charset",
-        "abc"
-    ) describedBy ""
+    private val charset = Setting("Charset", "abc")
 
     private val pageAmount = Setting(
         "Pages",
@@ -105,9 +101,7 @@ object BookBot : Module("BookBot", Category.MISC, "Writes books for you") {
         minecraft.connection?.sendPacket(
             CPacketCustomPayload(
                 "MC|BSign",
-                PacketBuffer(Unpooled.buffer()).also {
-                    it.writeItemStack(stack)
-                }
+                PacketBuffer(Unpooled.buffer()).writeItemStack(stack)
             )
         )
     }
@@ -129,17 +123,14 @@ object BookBot : Module("BookBot", Category.MISC, "Writes books for you") {
      * @return the slot of an unwritten book in the hotbar
      */
     private fun getBook(): Pair<Int, ItemStack> {
-        var book = Pair(-1, ItemStack.EMPTY)
-
-        for (i in 0 until InventoryPlayer.getHotbarSize()) {
-            val stack: ItemStack? = minecraft.player.inventory.getStackInSlot(i)
+        repeat(InventoryPlayer.getHotbarSize()) {
+            val stack: ItemStack? = minecraft.player.inventory.getStackInSlot(it)
             if (stack != null && stack != ItemStack.EMPTY && stack.item is ItemWritableBook) {
-                book = Pair(i, stack)
-                break
+                return Pair(it, stack)
             }
         }
 
-        return book
+        return Pair(-1, ItemStack.EMPTY)
     }
 
 }

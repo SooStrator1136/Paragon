@@ -4,8 +4,8 @@ import com.paragon.api.event.network.PacketEvent.PreReceive
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.util.anyNull
-import com.paragon.mixins.accessor.ISPacketPlayerPosLook
 import com.paragon.bus.listener.Listener
+import com.paragon.mixins.accessor.ISPacketPlayerPosLook
 import net.minecraft.network.play.server.SPacketPlayerPosLook
 
 /**
@@ -15,15 +15,8 @@ object NoRotate : Module("NoRotate", Category.MISC, "Stops the server from rotat
 
     @Listener
     fun onPacketReceive(event: PreReceive) {
-        if (minecraft.anyNull) {
-            return
-        }
-
-        if (event.packet is SPacketPlayerPosLook) {
-            // Set packet yaw
+        if (!minecraft.anyNull && event.packet is SPacketPlayerPosLook) {
             (event.packet as ISPacketPlayerPosLook).setYaw(minecraft.player.rotationYaw)
-
-            // Set packet pitch
             (event.packet as ISPacketPlayerPosLook).setPitch(minecraft.player.rotationPitch)
         }
     }

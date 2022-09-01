@@ -39,8 +39,7 @@ object AutoLog : Module("AutoLog", Category.MISC, "Automatically logs you out wh
 
         if (minecraft.player.health <= health.value) {
             when (logMode.value) {
-                DisconnectMode.KICK ->                     // Set current item to an invalid number
-                    minecraft.player.inventory.currentItem = -1
+                DisconnectMode.KICK -> minecraft.player.inventory.currentItem = -1
 
                 DisconnectMode.DISCONNECT -> {
                     // Disconnect from server

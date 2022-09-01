@@ -70,6 +70,7 @@ class ModuleManager {
             Nametags,
             NoRender,
             PhaseESP,
+            PopChams,
             Shader,
             ShulkerViewer,
             SoundHighlight,
@@ -91,6 +92,7 @@ class ModuleManager {
             AutoTranslate,
             BookBot,
 
+            // MOVEMENT
             AutoWalk,
             Blink,
             ChatModifications,

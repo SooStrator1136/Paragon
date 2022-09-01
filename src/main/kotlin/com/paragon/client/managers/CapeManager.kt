@@ -1,46 +1,31 @@
 package com.paragon.client.managers
 
 import com.paragon.Paragon
-import com.paragon.api.util.system.backgroundThread
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import com.paragon.api.util.system.ResourceUtil
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class CapeManager {
 
     private val capedPlayers: MutableMap<String, Cape> = HashMap()
 
-    fun isCaped(username: String) = capedPlayers.containsKey(username) || username.startsWith("Player")
+    fun isCaped(username: String) = capedPlayers.containsKey(username)// || username.startsWith("Player")
 
-    fun getCape(username: String) = if (username.startsWith("Player")) Cape.BASED else capedPlayers[username]
+    fun getCape(username: String) = capedPlayers[username]
 
     init {
-        val connection: HttpURLConnection = URL("https://ParagonBot.wolfsurge.repl.co/capes").openConnection() as HttpURLConnection
-        connection.requestMethod = "HEAD"
-
-        val responseCode: Int = connection.responseCode
-
-        if (responseCode == 200) {
-            try {
-                val reader = BufferedReader(InputStreamReader(URL("https://ParagonBot.wolfsurge.repl.co/capes").openStream()))
-
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    val data = line!!.split(":".toRegex()).toTypedArray()
-
-                    capedPlayers[data[0]] = java.lang.Enum.valueOf(Cape::class.java, data[1].uppercase(Locale.getDefault()))
+        runCatching {
+            runBlocking {
+                String(
+                    ResourceUtil.client.get("https://ParagonBot.wolfsurge.repl.co/capes").readBytes()
+                ).split(System.lineSeparator()).forEach {
+                    val data = it.split(":")
+                    capedPlayers[data[0]] = Cape.valueOf(data[1].uppercase(Locale.getDefault()))
                 }
-
-                reader.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
-        } else {
+        }.onFailure {
             Paragon.INSTANCE.logger.error("Couldn't fetch capes! Looks like the host is down.")
         }
     }

@@ -58,13 +58,11 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
             return
         }
 
-        val language = getLanguage(incomingLang.value) ?: return
-
         event.isCanceled = true
 
         // Run translation on another thread
         backgroundThread {
-            translate(event.message.unformattedText, language) {
+            translate(event.message.unformattedText, getLanguage(incomingLang.value) ?: return@backgroundThread) {
                 // Send chat on main thread
                 mainThread {
                     val messageSuffix = if (suffix.value && sourceLanguage != targetLanguage)
@@ -81,12 +79,10 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
             return
         }
 
-        val language = getLanguage(outgoingLang.value) ?: return
-
         event.isCanceled = true
 
         backgroundThread {
-            translate(event.message, language) {
+            translate(event.message, getLanguage(outgoingLang.value) ?: return@backgroundThread) {
                 mainThread {
                     minecraft.player?.sendChatMessage(translatedText)
                 }
@@ -96,7 +92,12 @@ object AutoTranslate : Module("AutoTranslate", Category.MISC, "Automatically tra
 
     private suspend inline fun translate(text: String, language: Language, block: Translation.() -> Unit) {
         translator.translateCatching(text, language).onFailure {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("Could not process translation request. Disabling AutoTranslate", NotificationType.ERROR))
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification(
+                    "Could not process translation request. Disabling AutoTranslate",
+                    NotificationType.ERROR
+                )
+            )
             toggle()
         }.getOrNull()?.run(block)
     }

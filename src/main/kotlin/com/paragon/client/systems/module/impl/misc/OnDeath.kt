@@ -26,29 +26,27 @@ object OnDeath : Module("OnDeath", Category.MISC, "Do certain actions when you d
 
     @SubscribeEvent
     fun onLivingDeath(event: LivingDeathEvent) {
-        if (minecraft.anyNull) {
+        // Check that the entity that died has the same ID that the player does
+        if (minecraft.anyNull || event.entity.entityId != minecraft.player.entityId) {
             return
         }
 
-        // Check that the entity that died has the same ID that the player does
-        if (event.entity.entityId == minecraft.player.entityId) {
-            val entity = event.entity
-            if (printCoords.value) {
-                val pos = entity.position
+        val entity = event.entity
+        if (printCoords.value) {
+            val pos = entity.position
 
-                // Build the death coord string
-                val string = TextFormatting.RED.toString() + "You died at" +
+            // Display the client message
+            Paragon.INSTANCE.commandManager.sendClientMessage(
+                TextFormatting.RED.toString() + "You died at" +
                         TextFormatting.WHITE + " X " + TextFormatting.GRAY + pos.x +
                         TextFormatting.WHITE + " Y " + TextFormatting.GRAY + pos.y +
-                        TextFormatting.WHITE + " Z " + TextFormatting.GRAY + pos.z
+                        TextFormatting.WHITE + " Z " + TextFormatting.GRAY + pos.z, false
+            )
+        }
 
-                // Display the client message
-                Paragon.INSTANCE.commandManager.sendClientMessage(string, false)
-            }
-            if (respawn.value) {
-                // Respawn the player
-                minecraft.player.respawnPlayer()
-            }
+        if (respawn.value) {
+            // Respawn the player
+            minecraft.player.respawnPlayer()
         }
     }
 

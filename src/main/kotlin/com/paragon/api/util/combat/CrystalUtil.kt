@@ -46,7 +46,11 @@ object CrystalUtil : Wrapper {
         val damage = ((v * v + v) / 2f * 7f * doubleExplosionSize.toDouble() + 1f).toFloat()
         val diff = minecraft.world.difficulty.difficultyId.toFloat()
 
-        return getBlastReduction(entity, damage * if (diff == 0f) 0f else if (diff == 2f) 1f else if (diff == 1f) 0.5f else 1.5f, Explosion(minecraft.world, null, vec.x, vec.y, vec.z, 6f, false, true))
+        return getBlastReduction(
+            entity,
+            damage * if (diff == 0f) 0f else if (diff == 2f) 1f else if (diff == 1f) 0.5f else 1.5f,
+            Explosion(minecraft.world, null, vec.x, vec.y, vec.z, 6f, false, true)
+        )
     }
 
     /**
