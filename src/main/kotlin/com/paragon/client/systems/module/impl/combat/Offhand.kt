@@ -74,7 +74,7 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         0f,
         20f,
         1f
-    ) describedBy "The health value for when to switch to a totem" subOf safety visibleWhen health::value
+    ) describedBy "The health value for when to switch to a totem" subOf safety visibleWhen { health.value }
 
     private val falling = Setting(
         "Falling",

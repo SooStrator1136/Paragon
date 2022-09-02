@@ -15,9 +15,9 @@ import java.util.*
 open class Module(name: String, val category: Category, description: String) : Feature(name, description), Wrapper {
 
     // Whether the module is visible in the Array List or not
-    private val visible = Setting("Visible", true).setDescription("Whether the module is visible in the array list or not")
+    private val visible = Setting("Visible", true) describedBy "Whether the module is visible in the array list or not"
 
-    val bind = Setting("Bind", Bind(Keyboard.KEY_NONE, Bind.Device.KEYBOARD)).setDescription("The keybind of the module")
+    val bind = Setting("Bind", Bind(Keyboard.KEY_NONE, Bind.Device.KEYBOARD)) describedBy "The keybind of the module"
 
     // Whether the module is constantly enabled or not
     private val isConstant = javaClass.isAnnotationPresent(Constant::class.java)

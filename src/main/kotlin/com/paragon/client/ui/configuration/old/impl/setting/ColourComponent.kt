@@ -35,12 +35,12 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
 
     init {
         val hsbColour = Color.RGBtoHSB(setting.value.red, setting.value.green, setting.value.blue, null)
-        hue = Setting("Hue", (hsbColour[0] * 360f).toInt().toFloat(), 0f, 360f, 1f).setDescription("The hue of the colour")
-        alpha = Setting("Alpha", setting.value.alpha.toFloat(), 0f, 255f, 1f).setDescription("The alpha of the colour")
-        rainbow = Setting("Rainbow", setting.isRainbow, setting.isRainbow, setting.isRainbow, setting.isRainbow).setDescription("Whether the colour is a rainbow")
-        rainbowSpeed = Setting("Rainbow Speed", setting.rainbowSpeed, 0.1f, 10f, 0.1f).setDescription("The speed of the rainbow")
-        rainbowSaturation = Setting("Rainbow Saturation", setting.rainbowSaturation, 0f, 100f, 1f).setDescription("The saturation of the rainbow")
-        sync = Setting("Sync", setting.isSync, setting.isSync, setting.isSync, setting.isSync).setDescription("Whether the colour is synced to the client's main colour")
+        hue = Setting("Hue", (hsbColour[0] * 360f).toInt().toFloat(), 0f, 360f, 1f) describedBy "The hue of the colour"
+        alpha = Setting("Alpha", setting.value.alpha.toFloat(), 0f, 255f, 1f) describedBy "The alpha of the colour"
+        rainbow = Setting("Rainbow", setting.isRainbow, setting.isRainbow, setting.isRainbow, setting.isRainbow) describedBy "Whether the colour is a rainbow"
+        rainbowSpeed = Setting("Rainbow Speed", setting.rainbowSpeed, 0.1f, 10f, 0.1f) describedBy  "The speed of the rainbow"
+        rainbowSaturation = Setting("Rainbow Saturation", setting.rainbowSaturation, 0f, 100f, 1f) describedBy "The saturation of the rainbow"
+        sync = Setting("Sync", setting.isSync, setting.isSync, setting.isSync, setting.isSync) describedBy "Whether the colour is synced to the client's main colour"
         val settings: MutableList<Setting<*>> = ArrayList()
         settings.add(hue)
         settings.add(alpha)

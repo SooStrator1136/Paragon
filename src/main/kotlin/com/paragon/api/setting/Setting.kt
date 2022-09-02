@@ -71,7 +71,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param description the description of the setting.
      * @return this setting
      */
-    fun setDescription(description: String): Setting<T> {
+    private fun setDescription(description: String): Setting<T> {
         this.description = description
         return this
     }
@@ -104,7 +104,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param parentSetting the parent setting of the setting.
      * @return this setting
      */
-    fun setParentSetting(parentSetting: Setting<*>?): Setting<T> {
+    private fun setParentSetting(parentSetting: Setting<*>?): Setting<T> {
         this.parentSetting = parentSetting
         this.parentSetting!!.subsettings.add(this)
         return this
@@ -123,7 +123,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param isVisible the visibility of the setting.
      * @return this setting
      */
-    fun setVisibility(isVisible: Supplier<Boolean>): Setting<T> {
+    private fun setVisibility(isVisible: Supplier<Boolean>): Setting<T> {
         this.isVisible = isVisible
         return this
     }
@@ -151,9 +151,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
         }
 
     infix fun describedBy(description: String) = setDescription(description)
-
     infix fun visibleWhen(isVisible: Supplier<Boolean>) = setVisibility(isVisible)
-
     infix fun subOf(parent: Setting<*>?) = setParentSetting(parent)
 
 }
