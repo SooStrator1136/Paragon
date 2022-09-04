@@ -6,10 +6,10 @@ import com.paragon.api.util.Wrapper
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.Colours
-import com.paragon.client.ui.configuration.windows.impl.ChangelogWindow
-import com.paragon.client.ui.configuration.windows.impl.ConfigWindow
 import com.paragon.client.ui.console.ConsoleGUI
 import com.paragon.client.ui.util.Click
+import com.paragon.client.ui.windows.impl.ChangelogWindow
+import com.paragon.client.ui.windows.impl.ConfigWindow
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution

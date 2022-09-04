@@ -111,9 +111,16 @@ processResources {
 }
 
 task prepareAssets(type: Copy) {
-    group = 'build'
+    group = 'paragon'
+
     from project.file('src/main/resources')
     into project.file('build/classes/kotlin/main')
+}
+
+task buildApi(type: Jar) {
+    group = 'paragon'
+    archiveClassifier.set 'api'
+    from sourceSets.main.output
 }
 
 jar {

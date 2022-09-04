@@ -3,7 +3,7 @@ package com.paragon.client.ui.configuration
 import com.paragon.Paragon
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.ClickGUI.darkenBackground
-import com.paragon.client.ui.configuration.windows.Window
+import com.paragon.client.ui.windows.Window
 import com.paragon.client.ui.util.Click
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse

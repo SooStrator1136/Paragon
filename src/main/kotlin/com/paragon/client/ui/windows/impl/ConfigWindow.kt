@@ -1,4 +1,4 @@
-package com.paragon.client.ui.configuration.windows.impl
+package com.paragon.client.ui.windows.impl
 
 import com.paragon.Paragon
 import com.paragon.api.util.render.BlurUtil
@@ -7,7 +7,7 @@ import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.font.FontUtil
 import com.paragon.client.systems.module.impl.client.ClickGUI
 import com.paragon.client.systems.module.impl.client.Colours
-import com.paragon.client.ui.configuration.windows.Window
+import com.paragon.client.ui.windows.Window
 import com.paragon.client.ui.util.Click
 import me.surge.animation.Animation
 import me.surge.animation.Easing

@@ -12,6 +12,7 @@ import com.paragon.client.ui.configuration.retrowindows.Windows98
 import com.paragon.client.ui.configuration.zeroday.ZerodayGUI
 import com.paragon.client.ui.console.Console
 import com.paragon.client.ui.taskbar.Taskbar
+import com.paragon.plugin.PluginManager
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.Mod
@@ -84,6 +85,10 @@ class Paragon {
 
         commandManager = CommandManager()
         logger.info("Command Manager Initialised")
+
+        pluginManager = PluginManager()
+        pluginManager.onLoad()
+        logger.info("Plugins Loaded")
 
         // Load config
         storageManager.loadModules("current")
@@ -164,6 +169,9 @@ class Paragon {
         private set
 
     lateinit var capeManager: CapeManager
+        private set
+
+    lateinit var pluginManager: PluginManager
         private set
 
     // GUIs

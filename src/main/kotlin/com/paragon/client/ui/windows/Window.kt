@@ -1,4 +1,4 @@
-package com.paragon.client.ui.configuration.windows
+package com.paragon.client.ui.windows
 
 import com.paragon.Paragon
 

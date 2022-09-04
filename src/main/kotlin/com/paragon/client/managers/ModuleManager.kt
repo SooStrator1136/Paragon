@@ -18,16 +18,16 @@ import net.minecraftforge.common.MinecraftForge
 import java.util.*
 import java.util.function.Predicate
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
 
 class ModuleManager {
 
-    val modules: Array<Module>
+    val modules: ArrayList<Module>
 
     init {
         MinecraftForge.EVENT_BUS.register(this)
 
-        modules = arrayOf(
-
+        modules = arrayListOf(
             // Combat
             Aura,
             AutoCrystal,
@@ -149,13 +149,9 @@ class ModuleManager {
             Watermark
         )
 
-        // I'M SORRY :SOB:
-        // Kotlin objects do some funky bytecode stuff and the fields aren't initialized until after the
-        // ctr is called, but if you end up making the whole client kotlin this will be temp
-        // as there are clean ways to do settings using delegates like `val someNum by int("Num Setting", 0..50, 10)`
-        modules.forEach(Module::reflectSettings)
+        modules.forEach { it.reflectSettings() }
     }
 
-    fun getModulesThroughPredicate(predicate: Predicate<Module>): List<Module> = Arrays.stream(modules).filter(predicate).collect(Collectors.toList())
+    fun getModulesThroughPredicate(predicate: Predicate<Module>): List<Module> = modules.filter { predicate.test(it) }
 
 }

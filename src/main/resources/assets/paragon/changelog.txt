@@ -1,28 +1,3 @@
-Changelog for version 1.0.0 Pre 4
+Changelog for 1.1.0
 
-Readded tooltips to taskbar
-Added Discord themed GUI
-Added held item size command ($size)
-Added nearest 2b2t stronghold command ($nearest)
-Added watermark scale option
-Added old ClickGUI style
-Added Donkey Alert
-Fixed HUD module bounds
-Added sequential timing to AutoCrystalRewrite
-Added simple (Phobos style) GUI
-Added HandChams
-Added Lawnmower
-Added PotionEffects
-Added Keystrokes
-Added TargetHUD
-Added SourceESP
-Added PhaseESP
-Added Graphs
-Added AntiHunger
-Added new GUI
-Added WebAura
-Added Alerts
-Removed the GUI FPS limit
-Added BookBot
-Added PopChams
-Improved AutoCrystal
+Added Plugin System

@@ -19,7 +19,7 @@ class CommandManager : Wrapper {
     private val prefix = "$"
     var lastCommand = ""
 
-    val commands = arrayOf(
+    val commands = arrayListOf(
         ConfigCommand,
         HelpCommand,
         OpenFolderCommand,
