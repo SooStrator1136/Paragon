@@ -77,9 +77,10 @@ class ModuleElement(parent: CategoryPanel, module: Module, x: Float, y: Float, w
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, click: Click) {
-        if (isHovered(mouseX, mouseY) && parent!!.isElementVisible(this) && click == Click.LEFT) {
+        if (isHovered(mouseX, mouseY) && parent.isElementVisible(this) && click == Click.LEFT) {
             module.toggle()
         }
+
         super.mouseClicked(mouseX, mouseY, click)
     }
 

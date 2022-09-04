@@ -39,7 +39,9 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
     override fun draw(mouseX: Int, mouseY: Int, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
 
-        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (height - 208).toDouble()), 0.0).toFloat()
+        val changelogHeight = changelog.size * FontUtil.getHeight();
+
+        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (changelogHeight - height + grabbableHeight + 6).toDouble()), 0.0).toFloat()
 
         RenderUtil.drawRect(x, y, (width * openAnimation.getAnimationFactor()).toFloat(), (height * openAnimation.getAnimationFactor()).toFloat(), 0x90000000.toInt())
 

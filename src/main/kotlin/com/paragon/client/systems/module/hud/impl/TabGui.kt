@@ -352,7 +352,8 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                 }
             }
 
-            ClickGUI.Style.MOOSE -> {} //TODO
+            // TODO
+            // ClickGUI.Style.MOOSE -> {}
         }
 
         //The most chinese 😭 (I'll probably clean this up)

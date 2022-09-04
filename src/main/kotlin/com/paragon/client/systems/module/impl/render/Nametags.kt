@@ -152,11 +152,13 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             }
 
             if (ping.value && minecraft.connection != null) {
-                minecraft.connection!!.getPlayerInfo(player.uniqueID)
-                stringBuilder.append(" ")
-                    .append(getPingColour(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)).append(
-                        minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime
-                    )
+                if (player is EntityFakePlayer) {
+                    stringBuilder.append(" ").append(TextFormatting.GRAY).append(-1)
+                } else {
+                    minecraft.connection!!.getPlayerInfo(player.uniqueID)
+
+                    stringBuilder.append(" ").append(getPingColour(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)).append(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)
+                }
             }
 
             if (pops.value) {

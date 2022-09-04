@@ -5,6 +5,7 @@ import com.paragon.api.event.render.entity.RenderEntityEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
+import com.paragon.api.util.render.ColourUtil
 import com.paragon.bus.listener.Listener
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.mixins.accessor.IEntityPlayer
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import org.lwjgl.opengl.GL11.*
+import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -115,12 +117,14 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
             minecraft.renderManager.isRenderShadow = false
 
             glPushMatrix()
+
             //Positioning
             glTranslated(
                 (minecraft.renderManager.viewerPosX - it.entity.posX) * -1.0,
                 1.4 + ((minecraft.renderManager.viewerPosY - it.entity.posY) * -1.0),
                 (minecraft.renderManager.viewerPosZ - it.entity.posZ) * -1.0
             )
+
             if (move.value) {
                 glTranslated(
                     0.0,
@@ -128,6 +132,7 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
                     0.0
                 )
             }
+
             //Flipping and setting the correct rotation and scale
             glRotatef(180F, 1F, 0F, 0F)
             glRotatef(-it.netHeadYaw, 0F, 1F, 0F)
@@ -137,10 +142,26 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
 
             glPushMatrix()
             glPushAttrib(GL_ALL_ATTRIB_BITS)
+
+            val colour = Color(
+                outlineColor.value.red / 255F,
+                outlineColor.value.green / 255F,
+                outlineColor.value.blue / 255F,
+
+                if (fadeOut.value) {
+                    1.0 - animFac
+                } else {
+                    outlineColor.alpha / 255.0
+                }.toFloat()
+            )
+
+            glColor4f(colour.red / 255f, colour.green / 255f, colour.blue / 255f, colour.alpha / 255f)
+
             glPolygonMode(GL_FRONT_AND_BACK, if (renderStyle.value == Style.FILL) GL_FILL else GL_LINE)
             glDisable(GL_TEXTURE_2D)
             glEnable(GL_LINE_SMOOTH)
             glEnable(GL_BLEND)
+
             GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO)
             GlStateManager.glLineWidth(outlineWidth.value)
 
@@ -149,13 +170,8 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
 
             glDepthRange(0.1, 1.0)
             glDepthFunc(GL_GREATER)
-            val color = outlineColor.value
-            GlStateManager.color(
-                color.red / 255F,
-                color.green / 255F,
-                color.blue / 255F,
-                (1.0 - if (fadeOut.value) animFac else 0.0).toFloat()
-            )
+
+            glColor4f(colour.red / 255f, colour.green / 255f, colour.blue / 255f, colour.alpha / 255f)
 
             it.model.render(
                 it.entity,
@@ -166,16 +182,14 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
                 it.headPitch,
                 it.scale
             )
+
             glDepthFunc(GL_LESS)
             glDepthRange(0.0, 1.0)
             glEnable(GL_DEPTH_TEST)
             glDepthMask(false)
-            GlStateManager.color(
-                color.red / 255F,
-                color.green / 255F,
-                color.blue / 255F,
-                (1.1 - if (fadeOut.value) animFac else 0.0).toFloat()
-            )
+
+            glColor4f(colour.red / 255f, colour.green / 255f, colour.blue / 255f, colour.alpha / 255f)
+
             it.model.render(
                 it.entity,
                 it.limbSwing,

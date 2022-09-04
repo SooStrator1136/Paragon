@@ -177,7 +177,9 @@ class SliderElement(
                     }
                 }
             }
+
             drawRect(x, y, width, height, Color(40, 40, 45).rgb)
+
             drawRect(
                 x + layer,
                 y,
@@ -189,6 +191,7 @@ class SliderElement(
                     (45 + 30 * hover.getAnimationFactor()).toInt()
                 ).rgb
             )
+
             drawRect(
                 x + layer,
                 y,
@@ -196,37 +199,26 @@ class SliderElement(
                 height,
                 Color.HSBtoRGB(parent.leftHue / 360, 1f, (0.5f + 0.25f * hover.getAnimationFactor()).toFloat())
             )
-            var x = x + layer * 2 + 5
+
+            val x = x + layer * 2 + 5
             val totalWidth = width - layer * 2
-            val maxTextWidth = totalWidth - getStringWidth(setting.value.toString()) - 5
+            val maxTextWidth = totalWidth - getStringWidth(setting.value.toString()) - 12
             val visibleX = getStringWidth(setting.name) - maxTextWidth
             scrollAnimation.state = isHovered(mouseX, mouseY)
 
-            if (getStringWidth(setting.name) > maxTextWidth) {
-                x -= ((visibleX + 9) * scrollAnimation.getAnimationFactor()).toFloat()
-            }
+            pushScissor(x.toDouble(), MathHelper.clamp(y.toDouble(), parent.y + parent.height.toDouble(), 100000.0), maxTextWidth.toDouble(), ((parent.y + parent.height) + parent.scissorHeight) - y.toDouble())
 
-            val scissorY = MathHelper.clamp(
-                y, parent.y + 22, parent.y + MathHelper.clamp( // Scissor comedy
-                    parent.scissorHeight + 8, 0f, 358f
-                )
-            )
+            drawStringWithShadow(setting.name, x - if (getStringWidth(setting.name) > maxTextWidth) ((visibleX + 9) * scrollAnimation.getAnimationFactor()).toFloat() else 0f, y + height / 2 - 3.5f, -0x1)
 
-            val scissorHeight = height
-            pushScissor(
-                (x + layer * 2).toDouble(),
-                scissorY.toDouble(),
-                (totalWidth - (getStringWidth(setting.value.toString()) + 9)).toDouble(),
-                scissorHeight.toDouble()
-            )
-            drawStringWithShadow(setting.name, x, y + height / 2 - 3.5f, -0x1)
             popScissor()
+
             drawStringWithShadow(
                 setting.value.toString(),
-                x + width - layer * 2 - getStringWidth(setting.value.toString()) - 3,
+                (x + totalWidth) - getStringWidth(setting.value.toString()) - 10,
                 y + height / 2 - 3.5f,
                 -0x1
             )
+
             super.render(mouseX, mouseY, dWheel)
         }
     }

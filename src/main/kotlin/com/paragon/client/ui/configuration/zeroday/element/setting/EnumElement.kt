@@ -126,40 +126,28 @@ class EnumElement(
                     (45 + 30 * hover.getAnimationFactor()).toInt()
                 ).rgb
             )
-            var x = x + layer * 2 + 5
+
+            val x = x + layer * 2 + 5
             val totalWidth = width - layer * 2
-            val maxTextWidth = totalWidth - getStringWidth(getFormattedText(setting.value)) - 5
+            val maxTextWidth = totalWidth - getStringWidth(getFormattedText(setting.value)) - 18
             val visibleX = getStringWidth(setting.name) - maxTextWidth
             scrollAnimation.state = isHovered(mouseX, mouseY)
 
-            if (getStringWidth(setting.name) > maxTextWidth) {
-                x -= ((visibleX + 9) * scrollAnimation.getAnimationFactor()).toFloat()
-            }
+            pushScissor(x.toDouble(), MathHelper.clamp(y.toDouble(), parent.y + parent.height.toDouble(), 100000.0), maxTextWidth.toDouble(), ((parent.y + parent.height) + parent.scissorHeight) - y.toDouble())
 
-            val scissorY = MathHelper.clamp(
-                y, parent.y + 22, parent.y + MathHelper.clamp( // Scissor comedy
-                    parent.scissorHeight + 8, 0f, 358f
-                )
-            )
+            drawStringWithShadow(setting.name, x - if (getStringWidth(setting.name) > maxTextWidth) ((visibleX + 9) * scrollAnimation.getAnimationFactor()).toFloat() else 0f, y + height / 2 - 3.5f, -0x1)
 
-            val scissorHeight = height
-            pushScissor(
-                (x + layer * 2).toDouble(),
-                scissorY.toDouble(),
-                (totalWidth - (getStringWidth(getFormattedText(setting.value)) + 9)).toDouble(),
-                scissorHeight.toDouble()
-            )
-            drawStringWithShadow(setting.name, x, y + height / 2 - 3.5f, -0x1)
             popScissor()
+
             drawStringWithShadow(
                 getFormattedText(setting.value),
-                x + width - layer * 2 - getStringWidth(getFormattedText(setting.value)) - (3f + if (subElements.isEmpty()) 0f else getStringWidth("...") + 3f),
+                x + maxTextWidth,
                 y + height / 2 - 3.5f,
                 -0x1
             )
 
-            if (subElements.isNotEmpty()) {
-                drawStringWithShadow("...", x + width - getStringWidth("...") - 5, y + 2f, -1)
+            if (subElements.size > 2) {
+                drawStringWithShadow("...", x + totalWidth - getStringWidth("...") - 10, y + 2f, -1)
             }
 
             super.render(mouseX, mouseY, dWheel)

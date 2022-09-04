@@ -19,6 +19,7 @@ import com.paragon.client.ui.configuration.zeroday.element.module.ModuleElement
 import com.paragon.client.ui.configuration.zeroday.element.setting.*
 import com.paragon.client.ui.util.Click
 import me.surge.animation.Animation
+import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.text.TextFormatting
@@ -27,6 +28,7 @@ import org.lwjgl.opengl.GL11.glTranslated
 import java.awt.Color
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Consumer
+import kotlin.math.max
 
 class CategoryPanel(
     private val category: Category,
@@ -71,6 +73,7 @@ class CategoryPanel(
         if (dragging) {
             x = mouseX - lastX
             y = mouseY - lastY
+
             scrollFactor = (if (y < lastY) 0 else 1).toFloat()
         }
 
@@ -122,11 +125,15 @@ class CategoryPanel(
         }
 
         moduleHeight = height
+
         if (dWheel != 0 && isHovered(x, y + barHeight, width, moduleHeight, mouseX, mouseY)) {
-            scrollFactor = (if (dWheel > 0) -2 else 2).toFloat()
-        } else {
+            scrollFactor = if (dWheel > 0) (240 / Minecraft.getDebugFPS()) * 2f else -((240 / Minecraft.getDebugFPS()) * 2f)
+        }
+
+        else {
             if (scrollFactor != 0f) {
                 scrollFactor *= 0.9f
+
                 if (scrollFactor < 0.1 && scrollFactor > -0.1) {
                     scrollFactor = 0f
                 }
