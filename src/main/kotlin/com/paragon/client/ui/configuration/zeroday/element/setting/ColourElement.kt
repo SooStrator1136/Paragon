@@ -54,10 +54,10 @@ class ColourElement(layer: Int, setting: Setting<Color>, moduleElement: ModuleEl
         // I hate this btw
         for (setting1 in settings) {
             if (setting1.value is Boolean) {
-                subElements.add(BooleanElement(layer + 1, (setting1 as Setting<Boolean?>), moduleElement, x, y, width, height))
+                subElements.add(BooleanElement(layer + 1, (setting1 as Setting<Boolean>), moduleElement, x, y, width, height))
             }
             else if (setting1.value is Number) {
-                subElements.add(SliderElement(layer + 1, setting1 as Setting<Number?>, moduleElement, x, y, width, height))
+                subElements.add(SliderElement(layer + 1, setting1 as Setting<Number>, moduleElement, x, y, width, height))
             }
         }
         finalColour = setting.value

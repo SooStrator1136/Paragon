@@ -45,7 +45,6 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
     private val center = Setting("Center", Center.MOTION) describedBy "How to center the player to the center of the block"
     private val blocksPerTick = Setting("BlocksPerTick", 4.0, 1.0, 8.0, 1.0) describedBy "The limit to how many blocks can be placed in a tick"
     private val support = Setting("Support", true) describedBy "Support blocks by placing beneath them"
-    private val placeMethod = Setting("Method", PlacementUtil.PlaceMethod.PACKET) describedBy "How to place"
 
     private val rotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate"
 
@@ -238,7 +237,7 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
             val rotationValues = RotationUtil.getRotationToBlockPos(position, 0.5)
 
             // Place
-            PlacementUtil.place(position, Rotation(rotationValues.x, rotationValues.y, rotate.value, RotationPriority.HIGH), placeMethod.value)
+            PlacementUtil.place(position, Rotation(rotationValues.x, rotationValues.y, rotate.value, RotationPriority.HIGH))
 
             // Reset slot to our original slot
             minecraft.player.inventory.currentItem = slot

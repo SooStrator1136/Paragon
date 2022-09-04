@@ -150,6 +150,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                 stringBuilder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player))
                     .append(EntityUtil.getEntityHealth(player).roundToInt())
             }
+
             if (ping.value && minecraft.connection != null) {
                 minecraft.connection!!.getPlayerInfo(player.uniqueID)
                 stringBuilder.append(" ")
@@ -157,6 +158,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                         minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime
                     )
             }
+
             if (pops.value) {
                 stringBuilder.append(" ").append(TextFormatting.GOLD).append("-")
                     .append(if (player is EntityFakePlayer) 0 else Paragon.INSTANCE.popManager.getPops(player))

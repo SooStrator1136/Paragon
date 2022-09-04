@@ -17,6 +17,7 @@ import com.paragon.api.util.player.InventoryUtil.getItemInHotbar
 import com.paragon.api.util.player.InventoryUtil.isHolding
 import com.paragon.api.util.player.InventoryUtil.switchToSlot
 import com.paragon.api.util.player.PlayerUtil
+import com.paragon.api.util.player.RotationUtil
 import com.paragon.api.util.player.RotationUtil.getRotationToBlockPos
 import com.paragon.api.util.player.RotationUtil.getRotationToVec3d
 import com.paragon.api.util.render.RenderUtil.drawNametagText
@@ -50,6 +51,7 @@ import net.minecraft.util.*
 import net.minecraft.util.math.*
 import net.minecraft.world.Explosion
 import java.awt.Color
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 
@@ -79,9 +81,6 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     private val placeMax = Setting("Limit", true) describedBy "Limit the amount of times we can attempt to place on a position" subOf place
     private val placeMaxAmount = Setting("Amount", 3.0, 1.0, 10.0, 1.0) describedBy "The amount of times we can attempt to place on a position" subOf place visibleWhen { placeMax.value }
     private val placeDelay = Setting("Delay", 10.0, 0.0, 500.0, 1.0) describedBy "The delay between placing crystals" subOf place
-    private val placeRotate = Setting("Rotate", Rotate.PACKET) describedBy "Rotate to the position you are placing at" subOf place
-    private val placeYOffset = Setting("Offset", 0.75, 0.0, 1.25, 0.01) describedBy "The Y offset when rotating" subOf place visibleWhen { placeRotate.value != Rotate.NONE }
-    private val placeRotateBack = Setting("RotateBack", true) describedBy "Rotate back to your original rotation" subOf place visibleWhen { placeRotate.value != Rotate.NONE }
     private val placeRaytrace = Setting("Raytrace", true) describedBy "Checks if you can raytrace to the position" subOf place
     private val multiplace = Setting("Multiplace", false) describedBy "Place multiple crystals" subOf place
     private val placeMinDamage = Setting("MinDamage", 4f, 0f, 36f, 1f) describedBy "The minimum amount of damage to do to the target" subOf place
@@ -98,9 +97,6 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     private val explodeLimitMax = Setting("LimitValue", 5f, 1f, 10f, 1f) describedBy "When to start ignoring the crystals" subOf explode visibleWhen { explodeMax.value }
     private val explodeTicksExisted = Setting("TicksExisted", 0.0, 0.0, 5.0, 1.0) describedBy "Check the amount of ticks the crystal has existed before exploding" subOf explode
     private val explodeRaytrace = Setting("Raytrace", false) describedBy "Checks that you can raytrace to the crystal" subOf explode
-    private val explodeRotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate to the crystal" subOf explode
-    private val explodeYOffset = Setting("Offset", 0.25, 0.0, 1.5, 0.01) describedBy "The Y offset to rotate to the crystal" subOf explode visibleWhen { explodeRotate.value != Rotate.NONE }
-    private val explodeRotateBack = Setting("RotateBack", true) describedBy "Rotate back to your original rotation" subOf explode visibleWhen { explodeRotate.value != Rotate.NONE }
     private val antiWeakness = Setting("AntiWeakness", AntiWeakness.SWITCH) describedBy "If you have the weakness effect, you will still be able to explode crystals" subOf explode
     private val strictInventory = Setting("StrictInventory", true) describedBy "Fake opening your inventory when you switch" subOf explode visibleWhen { antiWeakness.value != AntiWeakness.OFF }
     private val packetExplode = Setting("Packet", false) describedBy "Explode crystals with a packet only" subOf explode
@@ -108,6 +104,10 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     private val explodeMinDamage = Setting("MinDamage", 4f, 0f, 36f, 1f) describedBy "The minimum amount of damage to do to the target" subOf explode visibleWhen { explodeFilter.value == ExplodeFilter.SMART || explodeFilter.value == ExplodeFilter.SELF_SMART }
     private val explodeMaxLocal = Setting("MaxLocal", 8f, 0f, 36f, 1f) subOf explode visibleWhen { explodeFilter.value == ExplodeFilter.SMART || explodeFilter.value == ExplodeFilter.SELF_SMART }
     private val explodeSync = Setting("Sync", SetDead.SOUND) describedBy "Sync crystal explosions" subOf explode
+
+    /******************************* MISC *******************************/
+    private val rotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate"
+    private val yawStep = Setting("YawStep", 45f, 1f, 180f, 1f) describedBy "The max yaw to step per tick" subOf rotate
 
     /******************************* OVERRIDING *******************************/
     private val override = Setting("Override", true) describedBy "Override minimum damage when certain things happen"
@@ -162,13 +162,16 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     // Map of block positions we have attempted to place on
     private val placeLimitMap: HashMap<BlockPos, Int> = HashMap()
 
+    // Whether we are overriding or not
+    private var overriding: Boolean = false
+
     override fun onTick() {
         if (minecraft.anyNull) {
             return
         }
 
         // Pause if we are supposed to
-        if (pause.value && (pauseHealth.value && EntityUtil.getEntityHealth(minecraft.player) <= pauseHealthValue.value || pauseEating.value && PlayerUtil.isPlayerEating || pauseDrinking.value && PlayerUtil.isPlayerDrinking)) {
+        if (pause.value && (pauseHealth.value && getEntityHealth(minecraft.player) <= pauseHealthValue.value || pauseEating.value && PlayerUtil.isPlayerEating || pauseDrinking.value && PlayerUtil.isPlayerDrinking)) {
             return
         }
 
@@ -183,54 +186,27 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
         // Get overriding state
         // Called once because otherwise we do the same logic several times
-        val overriding: Boolean = isOverriding(currentTarget!!)
+        overriding = isOverriding(currentTarget!!)
 
         // Add target to AutoEZ list
         addTarget(currentTarget!!.name)
 
-        when (order.value) {
-            Order.PLACE_EXPLODE -> {
-                if (timing.value != Timing.SEQUENTIAL || currentActionState == ActionState.PLACING) {
-                    // Find placement
-                    currentPlacement = findBestPosition(overriding)
-
-                    if (currentPlacement != null) {
-                        placeSearchedPosition()
-                    }
-                }
-
-                if (timing.value != Timing.SEQUENTIAL || currentActionState == ActionState.EXPLODING) {
-                    // Find crystal
-                    currentCrystal = findBestCrystal(overriding)
-
-                    if (currentCrystal != null) {
-                        explodeSearchedCrystal()
-                    }
-                }
-            }
-
-            Order.EXPLODE_PLACE -> {
-                if (timing.value != Timing.SEQUENTIAL || currentActionState == ActionState.EXPLODING) {
-                    // Find crystal
-                    currentCrystal = findBestCrystal(overriding)
-
-                    if (currentCrystal != null) {
-                        explodeSearchedCrystal()
-                    }
-                }
-
-                if (timing.value != Timing.SEQUENTIAL || currentActionState == ActionState.PLACING) {
-                    // Find placement
-                    currentPlacement = findBestPosition(overriding)
-
-                    if (currentPlacement != null) {
-                        placeSearchedPosition()
-                    }
-                }
-            }
+        if (timing.value == Timing.LINEAR) {
+            currentCrystal = findBestCrystal(overriding)
+            currentPlacement = findBestPosition(overriding)
         }
 
-        currentActionState = if (currentActionState == ActionState.PLACING) ActionState.EXPLODING else ActionState.PLACING
+        when (order.value) {
+            Order.EXPLODE_PLACE -> {
+                explodeSearchedCrystal()
+                placeSearchedPosition()
+            }
+
+            Order.PLACE_EXPLODE -> {
+                placeSearchedPosition()
+                explodeSearchedCrystal()
+            }
+        }
     }
 
     override fun onRender3D() {
@@ -242,6 +218,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                 .type(render.value)
 
                 .start()
+                .lineWidth(renderOutlineWidth.value)
                 .blend(true)
                 .depth(true)
                 .texture(true)
@@ -271,7 +248,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         // Check it's a sound packet
         if (event.packet is SPacketSoundEffect && explodeSync.value == SetDead.SOUND) {
             // Get packet
-            val packet = event.packet as SPacketSoundEffect
+            val packet = event.packet
 
             // Check it's an explosion sound
             if (packet.sound == SoundEvents.ENTITY_GENERIC_EXPLODE && packet.category == SoundCategory.BLOCKS) {
@@ -355,8 +332,12 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
      * Explodes the searched crystal
      */
     private fun explodeSearchedCrystal() {
+        if (timing.value == Timing.SEQUENTIAL) {
+            currentCrystal = findBestCrystal(overriding)
+        }
+
         // Check we want to explode
-        if (explode.value) {
+        if (explode.value && currentCrystal != null && (currentActionState == ActionState.EXPLODING || timing.value != Timing.SEQUENTIAL)) {
             // Check we want to explode a crystal
             if (!explodeTimer.hasMSPassed(explodeDelay.value) || currentCrystal!!.selfDamage > getEntityHealth(mc.player) && antiSuicide.value) {
                 return
@@ -381,62 +362,48 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                 }
             }
 
-            // Get our original rotation before rotating to the crystal
-            val originalPlayerRotation = Vec2f(mc.player.rotationYaw, mc.player.rotationPitch)
-
             // Get rotation
-            val rotationVec = getRotationToVec3d(Vec3d(currentCrystal!!.crystal.posX, currentCrystal!!.crystal.posY + explodeYOffset.value, currentCrystal!!.crystal.posZ))
+            val rotationVec = getRotationToVec3d(Vec3d(currentCrystal!!.crystal.posX, currentCrystal!!.crystal.posY, currentCrystal!!.crystal.posZ))
 
-            // Check we want to rotate
-            if (explodeRotate.value != Rotate.NONE) {
-                val rotation = Rotation(rotationVec.x, rotationVec.y, explodeRotate.value, RotationPriority.HIGHEST)
-
-                // Send rotation
-                Paragon.INSTANCE.rotationManager.addRotation(rotation)
-            }
-
-            if (packetExplode.value) {
-                // Explode with a packet
-                mc.player.connection.sendPacket(CPacketUseEntity(currentCrystal!!.crystal))
-            }
-
-            else {
-                // Attack crystal
-                mc.playerController.attackEntity(mc.player, currentCrystal!!.crystal)
-            }
-
-            // If we want to set the crystal to dead as soon as we attack, do that
-            if (explodeSync.value == SetDead.ATTACK) {
-                currentCrystal!!.crystal.setDead()
-            }
-
-            // Remove it from our self placed crystals
-            selfPlacedCrystals.remove(currentCrystal!!.crystal.position.down())
-
-            // Swing our arm
-            swing(explodeSwing.value)
-
-            // Rotate back to our original rotation
-            if (explodeRotate.value != Rotate.NONE && explodeRotateBack.value) {
-                val rotation = Rotation(originalPlayerRotation.x, originalPlayerRotation.y, explodeRotate.value, RotationPriority.HIGHEST)
-
-                // Send rotation
-                Paragon.INSTANCE.rotationManager.addRotation(rotation)
-            }
-
-            // Check we want to switch
-            if (antiWeakness.value != AntiWeakness.OFF && mc.player.isPotionActive(MobEffects.WEAKNESS)) {
-                // Fake opening inventory
-                if (strictInventory.value) {
-                    mc.player.connection.sendPacket(CPacketCloseWindow(mc.player.inventoryContainer.windowId))
+            if (rotate(rotationVec)) {
+                if (packetExplode.value) {
+                    // Explode with a packet
+                    mc.player.connection.sendPacket(CPacketUseEntity(currentCrystal!!.crystal))
                 }
 
-                // Switch to slot
-                if (antiWeaknessSlot != -1) {
-                    switchToSlot(antiWeaknessSlot, antiWeakness.value == AntiWeakness.SILENT)
+                else {
+                    // Attack crystal
+                    mc.playerController.attackEntity(mc.player, currentCrystal!!.crystal)
                 }
+
+                // If we want to set the crystal to dead as soon as we attack, do that
+                if (explodeSync.value == SetDead.ATTACK) {
+                    currentCrystal!!.crystal.setDead()
+                }
+
+                // Remove it from our self placed crystals
+                selfPlacedCrystals.remove(currentCrystal!!.crystal.position.down())
+
+                // Swing our arm
+                swing(explodeSwing.value)
+
+                // Check we want to switch
+                if (antiWeakness.value != AntiWeakness.OFF && mc.player.isPotionActive(MobEffects.WEAKNESS)) {
+                    // Fake opening inventory
+                    if (strictInventory.value) {
+                        mc.player.connection.sendPacket(CPacketCloseWindow(mc.player.inventoryContainer.windowId))
+                    }
+
+                    // Switch to slot
+                    if (antiWeaknessSlot != -1) {
+                        switchToSlot(antiWeaknessSlot, antiWeakness.value == AntiWeakness.SILENT)
+                    }
+                }
+
+                explodeTimer.reset()
+
+                currentActionState = ActionState.PLACING
             }
-            explodeTimer.reset()
         }
     }
 
@@ -444,8 +411,12 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
      * Places a crystal at the searched position
      */
     private fun placeSearchedPosition() {
+        if (timing.value == Timing.SEQUENTIAL) {
+            currentPlacement = findBestPosition(overriding)
+        }
+
         // Check we want to place a crystal
-        if (!placeTimer.hasMSPassed(placeDelay.value) && currentPlacement!!.selfDamage > getEntityHealth(mc.player) && antiSuicide.value) {
+        if (currentPlacement != null && !placeTimer.hasMSPassed(placeDelay.value) && currentPlacement!!.selfDamage > getEntityHealth(mc.player) && antiSuicide.value && (currentActionState == ActionState.EXPLODING || timing.value != Timing.SEQUENTIAL)) {
             return
         }
 
@@ -472,52 +443,43 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             return
         }
 
-        // Get our current rotation
-        val originalRotation = Vec2f(mc.player.rotationYaw, mc.player.rotationPitch)
-
         // Get rotation
-        val placeRotation = getRotationToBlockPos(currentPlacement!!.position, placeYOffset.value)
+        val placeRotation = getRotationToBlockPos(currentPlacement!!.position, 0.5)
 
         // Check we want to rotate
-        if (placeRotate.value != Rotate.NONE) {
-            val rotation = Rotation(placeRotation.x, placeRotation.y, placeRotate.value, RotationPriority.HIGHEST)
-            Paragon.INSTANCE.rotationManager.addRotation(rotation)
-        }
+        if (rotate(placeRotation)) {
+            val placeHand = getHandHolding(Items.END_CRYSTAL)
 
-        val placeHand = getHandHolding(Items.END_CRYSTAL)
+            // Let's call this, it fixes the packet place bug, and it shouldn't do anything bad afaik.
+            (mc.playerController as IPlayerControllerMP).hookSyncCurrentPlayItem()
 
-        // Let's call this, it fixes the packet place bug, and it shouldn't do anything bad afaik.
-        (mc.playerController as IPlayerControllerMP).hookSyncCurrentPlayItem()
+            if (placePacket.value && placeHand != null) {
+                // Send packet
+                mc.player.connection.sendPacket(CPacketPlayerTryUseItemOnBlock(currentPlacement!!.position, currentPlacement!!.facing, if (mc.player.heldItemOffhand.item.equals(Items.END_CRYSTAL)) EnumHand.OFF_HAND else placeHand, currentPlacement!!.facingVec.x.toFloat(), currentPlacement!!.facingVec.y.toFloat(), currentPlacement!!.facingVec.z.toFloat()))
 
-        if (placePacket.value && placeHand != null) {
-            // Send packet
-            mc.player.connection.sendPacket(CPacketPlayerTryUseItemOnBlock(currentPlacement!!.position, currentPlacement!!.facing, if (mc.player.heldItemOffhand.item.equals(Items.END_CRYSTAL)) EnumHand.OFF_HAND else placeHand, currentPlacement!!.facingVec.x.toFloat(), currentPlacement!!.facingVec.y.toFloat(), currentPlacement!!.facingVec.z.toFloat()))
-
-            // Swing arm
-            swing(placeSwing.value)
-        }
-
-        else if (placeHand != null) {
-            // Place crystal
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement!!.position, currentPlacement!!.facing, Vec3d(currentPlacement!!.facing.directionVec), if (mc.player.heldItemOffhand.item.equals(Items.END_CRYSTAL)) EnumHand.OFF_HAND else placeHand).equals(EnumActionResult.SUCCESS)) {
                 // Swing arm
                 swing(placeSwing.value)
             }
-        }
 
-        // Add position to our self placed crystals
-        selfPlacedCrystals.add(currentPlacement!!.position)
+            else if (placeHand != null) {
+                // Place crystal
+                if (mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement!!.position, currentPlacement!!.facing, Vec3d(currentPlacement!!.facing.directionVec), if (mc.player.heldItemOffhand.item.equals(Items.END_CRYSTAL)) EnumHand.OFF_HAND else placeHand).equals(EnumActionResult.SUCCESS)) {
+                    // Swing arm
+                    swing(placeSwing.value)
+                }
+            }
 
-        // Check we want to rotate back
-        if (placeRotate.value != Rotate.NONE && placeRotateBack.value) {
-            // Rotate back
-            val rotation = Rotation(originalRotation.x, originalRotation.y, placeRotate.value, RotationPriority.HIGHEST)
-            Paragon.INSTANCE.rotationManager.addRotation(rotation)
+            // Add position to our self placed crystals
+            selfPlacedCrystals.add(currentPlacement!!.position)
+
+            if (placeWhen.value == When.SILENT_SWITCH) {
+                switchToSlot(oldSlot, false)
+            }
+
+            placeTimer.reset()
+
+            currentActionState = ActionState.EXPLODING;
         }
-        if (placeWhen.value == When.SILENT_SWITCH) {
-            switchToSlot(oldSlot, false)
-        }
-        placeTimer.reset()
     }
 
     /**
@@ -720,6 +682,51 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         }
 
         return false
+    }
+
+    private fun rotate(vec: Vec2f): Boolean {
+        // We use the server rotation as it lets us place when using packet rotate
+        val yaw = calculateAngle(Paragon.INSTANCE.rotationManager.serverRotation.x, vec.x)
+
+        when (rotate.value) {
+            Rotate.PACKET -> {
+                minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(yaw.first, vec.y, minecraft.player.onGround))
+            }
+
+            Rotate.LEGIT -> {
+                minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(yaw.first, vec.y, minecraft.player.onGround))
+                minecraft.player.rotationYaw = yaw.first
+                minecraft.player.rotationYawHead = yaw.first
+                minecraft.player.rotationPitch = vec.y
+            }
+
+            else -> {}
+        }
+
+        if (yaw.second) {
+            return true
+        }
+
+        return false
+    }
+
+    private fun calculateAngle(playerAngle: Float, wantedAngle: Float): Pair<Float, Boolean> {
+        var calculatedAngle = wantedAngle - playerAngle
+
+        if (abs(calculatedAngle) > 180) {
+            calculatedAngle = RotationUtil.normalizeAngle(calculatedAngle)
+        }
+
+        var isFinished = false
+
+        calculatedAngle = if (abs(calculatedAngle) > yawStep.value) {
+            RotationUtil.normalizeAngle((playerAngle + yawStep.value * if (wantedAngle > 0) 1 else -1).toFloat())
+        } else {
+            isFinished = true
+            wantedAngle
+        }
+
+        return Pair(calculatedAngle, isFinished)
     }
 
     /**
