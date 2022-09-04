@@ -9,9 +9,18 @@
     "updateUrl": "",
     "authorList": [
       "Surge",
-      "TeleTofu"
+      "TeleTofu",
+      "SooStrator",
+      "GentlemanMC",
+      "master7720",
+      "EBSmash",
+      "Chanakan55991",
+      "Sxmurai / Aestheticall",
+      "TheRealBush",
+      "Xello12121",
+      "swpq"
     ],
-    "credits": "Thanks to: SpongePowered (Mixins), Litarvan (OpenAuth), and all the people who's code I have used (click 'Credits' in the main menu)",
+    "credits": "Thanks to: SpongePowered (Mixins), Litarvan (OpenAuth), org.json (JSON), Mincced (Discord RPC API), Bush (Translator), Surge (Animation System), JetBrains (Kotlin)",
     "logoFile": "",
     "screenshots": [],
     "dependencies": []
