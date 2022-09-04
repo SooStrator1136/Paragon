@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
+import java.util.function.Consumer
 
 /**
  * @author Wolfsurge
@@ -34,36 +35,12 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
 
     init {
         val hsbColour = Color.RGBtoHSB(setting.value.red, setting.value.green, setting.value.blue, null)
-        hue = Setting(
-            "Hue",
-            (hsbColour[0] * 360f).toInt().toFloat(),
-            0f,
-            360f,
-            1f
-        ) describedBy "The hue of the colour"
-        alpha = Setting(
-            "Alpha",
-            setting.value.alpha.toFloat(),
-            0f,
-            255f,
-            1f
-        ) describedBy "The alpha of the colour"
-        rainbow = Setting("Rainbow", setting.isRainbow) describedBy "Whether the colour is a rainbow"
-        rainbowSpeed = Setting(
-            "Rainbow Speed",
-            setting.rainbowSpeed,
-            0.1f,
-            10f,
-            0.1f
-        ) describedBy "The speed of the rainbow"
-        rainbowSaturation = Setting(
-            "Rainbow Saturation",
-            setting.rainbowSaturation,
-            0f,
-            100f,
-            1f
-        ) describedBy "The saturation of the rainbow"
-        sync = Setting("Sync", setting.isSync) describedBy "Whether the colour is synced to the client's main colour"
+        hue = Setting("Hue", (hsbColour[0] * 360f).toInt().toFloat(), 0f, 360f, 1f) describedBy "The hue of the colour"
+        alpha = Setting("Alpha", setting.value.alpha.toFloat(), 0f, 255f, 1f) describedBy "The alpha of the colour"
+        rainbow = Setting("Rainbow", setting.isRainbow, setting.isRainbow, setting.isRainbow, setting.isRainbow) describedBy "Whether the colour is a rainbow"
+        rainbowSpeed = Setting("Rainbow Speed", setting.rainbowSpeed, 0.1f, 10f, 0.1f) describedBy  "The speed of the rainbow"
+        rainbowSaturation = Setting("Rainbow Saturation", setting.rainbowSaturation, 0f, 100f, 1f) describedBy "The saturation of the rainbow"
+        sync = Setting("Sync", setting.isSync, setting.isSync, setting.isSync, setting.isSync) describedBy "Whether the colour is synced to the client's main colour"
         val settings: MutableList<Setting<*>> = ArrayList()
         settings.add(hue)
         settings.add(alpha)
@@ -105,13 +82,13 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
         }
 
         // ???
-        // why doesn't it stop dragging when mouseReleased is called
+        // why doesnt it stop dragging when mouseReleased is called
         if (!Mouse.isButtonDown(0)) {
             dragging = false
         }
         if (isExpanded) {
             // Render sliders
-            components.forEach { it.renderSetting(mouseX, mouseY) }
+            components.forEach(Consumer { settingComponent: SettingComponent<*> -> settingComponent.renderSetting(mouseX, mouseY) })
             setting.alpha = alpha.value
             setting.isRainbow = rainbow.value
             setting.rainbowSaturation = rainbowSaturation.value
@@ -177,13 +154,15 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
                 val satDiff = Math.min(dimension, Math.max(0f, mouseX - x))
                 saturation = if (satDiff == 0f) {
                     0f
-                } else {
+                }
+                else {
                     roundDouble((satDiff / dimension * 100).toDouble(), 0).toFloat()
                 }
                 val brightDiff = Math.min(height, Math.max(0f, y + height - mouseY))
                 brightness = if (brightDiff == 0f) {
                     0f
-                } else {
+                }
+                else {
                     roundDouble((brightDiff / height * 100).toDouble(), 0).toFloat()
                 }
                 finalColour = Color(Color.HSBtoRGB(hue / 360, saturation / 100, brightness / 100))
@@ -218,18 +197,18 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
             dragging = true
         }
         if (isExpanded) {
-            components.forEach {
-                it.mouseClicked(mouseX, mouseY, mouseButton)
+            components.forEach(Consumer { settingComponent: SettingComponent<*> ->
+                settingComponent.mouseClicked(mouseX, mouseY, mouseButton)
                 val settingUpdateEvent = SettingUpdateEvent(setting)
                 Paragon.INSTANCE.eventBus.post(settingUpdateEvent)
-            }
+            })
         }
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {
         dragging = false
         if (isExpanded) {
-            components.forEach { it.mouseReleased(mouseX, mouseY, mouseButton) }
+            components.forEach(Consumer { settingComponent: SettingComponent<*> -> settingComponent.mouseReleased(mouseX, mouseY, mouseButton) })
         }
         super.mouseReleased(mouseX, mouseY, mouseButton)
     }

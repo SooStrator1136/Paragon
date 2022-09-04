@@ -55,7 +55,7 @@ object TargetHUD : HUDModule("TargetHUD", "") {
         if (target == null || clearTimer.hasMSPassed(clearDelay.value)) {
             val possibleTargets = arrayOf(
                 if (Aura.isEnabled) Aura.lastTarget else null,
-                if (AutoCrystal.isEnabled) AutoCrystal.lastTarget else null
+                //if (AutoCrystal.isEnabled) AutoCrystal.lastTarget else null
             )
 
             val newTarget = possibleTargets.anyIndexed { it != null }

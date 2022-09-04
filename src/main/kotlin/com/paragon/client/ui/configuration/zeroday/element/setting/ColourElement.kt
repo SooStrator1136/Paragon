@@ -18,31 +18,18 @@ import net.minecraft.util.math.MathHelper
 import org.lwjgl.input.Mouse
 import java.awt.Color
 import java.util.function.Consumer
-import kotlin.math.max
-import kotlin.math.min
 
-class ColourElement(
-    layer: Int,
-    setting: Setting<Color>,
-    moduleElement: ModuleElement,
-    x: Float,
-    y: Float,
-    width: Float,
-    height: Float
-) : Element(layer, x, y, width, height) {
-
+class ColourElement(layer: Int, setting: Setting<Color>, moduleElement: ModuleElement, x: Float, y: Float, width: Float, height: Float) : Element(layer, x, y, width, height) {
     val setting: Setting<Color>
 
     private val expand = Animation(animationSpeed::value, false, easing::value)
 
     private val hue = Setting("Hue", 0f, 0f, 360f, 1f) describedBy "The hue of the colour"
     private val alpha = Setting("Alpha", 0f, 0f, 255f, 1f) describedBy "The alpha of the colour"
-    private val rainbow = Setting("Rainbow", false) describedBy "Whether the colour is a rainbow"
+    private val rainbow = Setting("Rainbow", false, false, false, false) describedBy "Whether the colour is a rainbow"
     private val rainbowSpeed = Setting("Speed", 4f, 0f, 10f, 0.1f) describedBy "The speed of the rainbow"
-    private val rainbowSaturation = Setting(
-        "Saturation", 100f, 0f, 100f, 1f
-    ) describedBy "The saturation of the rainbow"
-    private val sync = Setting("Sync", false) describedBy "Whether the colour is synced with the client's colour"
+    private val rainbowSaturation = Setting("Saturation", 100f, 0f, 100f, 1f) describedBy "The saturation of the rainbow"
+    private val sync = Setting("Sync", false, false, false, false) describedBy "Whether the colour is synced with the client's colour"
     private var finalColour: Color
     private var dragging = false
 
@@ -67,29 +54,10 @@ class ColourElement(
         // I hate this btw
         for (setting1 in settings) {
             if (setting1.value is Boolean) {
-                subElements.add(
-                    BooleanElement(
-                        layer + 1,
-                        (setting1 as Setting<Boolean>),
-                        moduleElement,
-                        x,
-                        y,
-                        width,
-                        height
-                    )
-                )
-            } else if (setting1.value is Number) {
-                subElements.add(
-                    SliderElement(
-                        layer + 1,
-                        setting1 as Setting<Number>,
-                        moduleElement,
-                        x,
-                        y,
-                        width,
-                        height
-                    )
-                )
+                subElements.add(BooleanElement(layer + 1, (setting1 as Setting<Boolean>), moduleElement, x, y, width, height))
+            }
+            else if (setting1.value is Number) {
+                subElements.add(SliderElement(layer + 1, setting1 as Setting<Number>, moduleElement, x, y, width, height))
             }
         }
         finalColour = setting.value
@@ -99,28 +67,12 @@ class ColourElement(
         if (setting.isVisible()) {
             hover.state = isHovered(mouseX, mouseY)
             drawRect(x, y, width, height, Color(40, 40, 45).rgb)
-            drawRect(
-                x + layer,
-                y,
-                width - layer * 2,
-                height,
-                Color(
-                    (40 + 30 * hover.getAnimationFactor()).toInt(),
-                    (40 + 30 * hover.getAnimationFactor()).toInt(),
-                    (45 + 30 * hover.getAnimationFactor()).toInt()
-                ).rgb
-            )
-            drawRect(
-                x + layer,
-                y,
-                MathHelper.clamp((width - layer * 2) * expand.getAnimationFactor(), 1.0, width.toDouble()).toFloat(),
-                height,
-                setting.value.rgb
-            )
+            drawRect(x + layer, y, width - layer * 2, height, Color((40 + 30 * hover.getAnimationFactor()).toInt(), (40 + 30 * hover.getAnimationFactor()).toInt(), (45 + 30 * hover.getAnimationFactor()).toInt()).rgb)
+            drawRect(x + layer, y, MathHelper.clamp((width - layer * 2) * expand.getAnimationFactor(), 1.0, width.toDouble()).toFloat(), height, setting.value.rgb)
             drawStringWithShadow(setting.name, x + layer * 2 + 5, y + height / 2 - 3.5f, -0x1)
 
             // ???
-            // why doesn't it stop dragging when mouseReleased is called
+            // why doesnt it stop dragging when mouseReleased is called
             if (!Mouse.isButtonDown(0)) {
                 dragging = false
             }
@@ -150,12 +102,7 @@ class ColourElement(
                 GlStateManager.disableTexture2D()
                 GlStateManager.enableBlend()
                 GlStateManager.disableAlpha()
-                GlStateManager.tryBlendFuncSeparate(
-                    GlStateManager.SourceFactor.SRC_ALPHA,
-                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                    GlStateManager.SourceFactor.ONE,
-                    GlStateManager.DestFactor.ZERO
-                )
+                GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
                 GlStateManager.shadeModel(7425)
 
                 // Get tessellator and buffer builder
@@ -197,16 +144,18 @@ class ColourElement(
                 if (dragging) {
                     val saturation: Float
                     val brightness: Float
-                    val satDiff = min(dimension, max(0f, mouseX - x))
+                    val satDiff = Math.min(dimension, Math.max(0f, mouseX - x))
                     saturation = if (satDiff == 0f) {
                         0f
-                    } else {
+                    }
+                    else {
                         roundDouble((satDiff / dimension * 100).toDouble(), 0).toFloat()
                     }
-                    val brightDiff = min(dimension, max(0f, y + dimension - mouseY))
+                    val brightDiff = Math.min(dimension, Math.max(0f, y + dimension - mouseY))
                     brightness = if (brightDiff == 0f) {
                         0f
-                    } else {
+                    }
+                    else {
                         roundDouble((brightDiff / dimension * 100).toDouble(), 0).toFloat()
                     }
                     finalColour = Color(Color.HSBtoRGB(hue / 360, saturation / 100, brightness / 100))
@@ -271,5 +220,4 @@ class ColourElement(
     override fun getTotalHeight(): Float {
         return if (setting.isVisible()) (height + (getSubElementsHeight() + 112) * expand.getAnimationFactor()).toFloat() else 0f
     }
-
 }
