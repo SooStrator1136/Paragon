@@ -9,12 +9,12 @@ import com.paragon.api.module.Module
 object ReverseStep : Module("ReverseStep", Category.MOVEMENT, "Moves you down when you walk off of a block") {
 
     override fun onTick() {
-        minecraft?.player?.let { player ->
+        minecraft.player?.let {
             // Check that we want to fall
-            if (player.onGround && !player.isInWater && !player.isInLava && !player.isOnLadder && !minecraft.gameSettings.keyBindJump.isKeyDown) {
-                minecraft.player.motionY = -1.0 //shouldnt be 10
+            if (it.onGround && !it.isInWater && !it.isInLava && !it.isOnLadder && !minecraft.gameSettings.keyBindJump.isKeyDown) {
+                minecraft.player.motionY = -10.0
             }
         }
     }
-//i dont like java this shit is pure aids
+
 }

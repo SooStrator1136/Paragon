@@ -35,12 +35,14 @@ class ColourElement(
 
     private val expand = Animation(animationSpeed::value, false, easing::value)
 
-    private val hue = Setting("Hue", 0f, 0f, 360f, 1f).setDescription("The hue of the colour")
-    private val alpha = Setting("Alpha", 0f, 0f, 255f, 1f).setDescription("The alpha of the colour")
-    private val rainbow = Setting("Rainbow", false).setDescription("Whether the colour is a rainbow")
-    private val rainbowSpeed = Setting("Speed", 4f, 0f, 10f, 0.1f).setDescription("The speed of the rainbow")
-    private val rainbowSaturation = Setting("Saturation", 100f, 0f, 100f, 1f).setDescription("The saturation of the rainbow")
-    private val sync = Setting("Sync", false).setDescription("Whether the colour is synced with the client's colour")
+    private val hue = Setting("Hue", 0f, 0f, 360f, 1f) describedBy "The hue of the colour"
+    private val alpha = Setting("Alpha", 0f, 0f, 255f, 1f) describedBy "The alpha of the colour"
+    private val rainbow = Setting("Rainbow", false) describedBy "Whether the colour is a rainbow"
+    private val rainbowSpeed = Setting("Speed", 4f, 0f, 10f, 0.1f) describedBy "The speed of the rainbow"
+    private val rainbowSaturation = Setting(
+        "Saturation", 100f, 0f, 100f, 1f
+    ) describedBy "The saturation of the rainbow"
+    private val sync = Setting("Sync", false) describedBy "Whether the colour is synced with the client's colour"
     private var finalColour: Color
     private var dragging = false
 

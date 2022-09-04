@@ -31,10 +31,17 @@ object NearestStronghold : Command("Nearest", "nearest") {
             }
             var closestX = endPortalCoords[0][0]
             var closestZ = endPortalCoords[0][1]
-            var shortestDistance = minecraft.player.getDistanceSq(endPortalCoords[0][0].toDouble(), 0.0, endPortalCoords[0][1].toDouble()).toInt()
+            var shortestDistance = minecraft.player.getDistanceSq(
+                endPortalCoords[0][0].toDouble(),
+                0.0,
+                endPortalCoords[0][1].toDouble()
+            )
             for (i in 1 until endPortalCoords.size) {
-                val d = minecraft.player.getDistanceSq(endPortalCoords[i][0].toDouble(), 0.0, endPortalCoords[i][1].toDouble())
-                    .toInt()
+                val d = minecraft.player.getDistanceSq(
+                    endPortalCoords[i][0].toDouble(),
+                    0.0,
+                    endPortalCoords[i][1].toDouble()
+                )
                 if (d < shortestDistance) {
                     closestX = endPortalCoords[i][0]
                     closestZ = endPortalCoords[i][1]

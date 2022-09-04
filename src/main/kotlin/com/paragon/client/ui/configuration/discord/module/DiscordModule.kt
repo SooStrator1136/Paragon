@@ -27,7 +27,7 @@ class DiscordModule(val module: Module) : IRenderable {
                 10.0,
                 10.0,
                 10.0,
-                GuiDiscord.CHANNEL_HOVERED_COLOR.rgb
+                GuiDiscord.channelHoveredColor.rgb
             )
         }
 
@@ -35,7 +35,7 @@ class DiscordModule(val module: Module) : IRenderable {
             "# ${module.name}",
             rect.x + 5F,
             rect.y + (rect.height / 2F) - (FontUtil.getHeight() / 2),
-            GuiDiscord.CHANNEL_TEXT_COLOR.rgb
+            GuiDiscord.channelTextColor.rgb
         )
 
         //Tooltip
@@ -49,7 +49,7 @@ class DiscordModule(val module: Module) : IRenderable {
                 5.0,
                 5.0,
                 5.0,
-                GuiDiscord.CHANNEL_HOVERED_COLOR.rgb
+                GuiDiscord.channelHoveredColor.rgb
             )
             RenderUtil.drawRoundedOutline(
                 mouseX - 3.0,
@@ -61,10 +61,15 @@ class DiscordModule(val module: Module) : IRenderable {
                 5.0,
                 5.0,
                 1F,
-                GuiDiscord.CATEGORY_BAR_BACKGROUND.rgb
+                GuiDiscord.categoryBarBackground.rgb
             )
 
-            FontUtil.drawStringWithShadow(module.description, mouseX.toFloat(), mouseY - (FontUtil.getHeight() / 2F), -1)
+            FontUtil.drawStringWithShadow(
+                module.description,
+                mouseX.toFloat(),
+                mouseY - (FontUtil.getHeight() / 2F),
+                -1
+            )
         }
     }
 

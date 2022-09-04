@@ -52,7 +52,7 @@ object PhaseESP : Module("PhaseESP", Category.RENDER, "Highlights phased players
         }
 
         backgroundThread {
-            if (lastJob == null || lastJob!!.isCompleted) {
+            if (lastJob == null || (lastJob ?: return@backgroundThread).isCompleted) {
                 lastJob = launch {
                     phased.addAll(minecraft.world.playerEntities.filter {
                         if (it.uniqueID == minecraft.player.uniqueID && !self.value) {

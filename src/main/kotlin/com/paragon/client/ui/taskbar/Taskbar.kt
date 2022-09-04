@@ -56,7 +56,15 @@ object Taskbar : Wrapper {
         )
 
         if (tooltip != "") {
-            RenderUtil.drawRect((scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 4) + ((FontUtil.getStringWidth(tooltip) + 4) * expandAnimation.getAnimationFactor()).toFloat(), scaledResolution.scaledHeight - 16f, FontUtil.getStringWidth(tooltip) + 4, 13f, 0x90000000.toInt())
+            RenderUtil.drawRect(
+                (scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 4) + ((FontUtil.getStringWidth(
+                    tooltip
+                ) + 4) * expandAnimation.getAnimationFactor()).toFloat(),
+                scaledResolution.scaledHeight - 16f,
+                FontUtil.getStringWidth(tooltip) + 4,
+                13f,
+                0x90000000.toInt()
+            )
             FontUtil.drawStringWithShadow(
                 tooltip,
                 scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 2,

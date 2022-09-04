@@ -54,7 +54,7 @@ object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find do
     ) describedBy "The delay between alerts"
 
     private val addedEntities: MutableList<Entity> = ArrayList(3)
-    private val founds: Queue<Found> = LinkedList()
+    private val founds: Queue<Pair<String, Entity>> = LinkedList()
     private val timer = Timer()
 
     override fun onTick() {
@@ -65,7 +65,7 @@ object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find do
         for (e in Minecraft.getMinecraft().world.loadedEntityList) {
             var animalType: String? = null
 
-            if (this.founds.any { it.entity == e }) {
+            if (this.founds.any { it.second == e }) {
                 continue
             }
 
@@ -89,14 +89,14 @@ object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find do
                     if (!multiAlert.value) {
                         addedEntities.add(e)
                     }
-                    founds.add(Found(animalType, e))
+                    founds.add(Pair(animalType, e))
                 }
             }
         }
 
         if (timer.hasMSPassed(alertDelay.value.toDouble()) && !founds.isEmpty()) {
             val nextFound = founds.poll()
-            notify(nextFound.animalType, nextFound.entity)
+            notify(nextFound.first, nextFound.second)
             timer.reset()
         }
     }
@@ -114,8 +114,6 @@ object DonkeyAlert : Module("DonkeyAlert", Category.MISC, "Allows you to find do
             Paragon.INSTANCE.commandManager.sendClientMessage(str, false)
         }
     }
-
-    private class Found(val animalType: String, val entity: Entity)
 
     private enum class AlertType {
         NOTIFICATION, MESSAGE

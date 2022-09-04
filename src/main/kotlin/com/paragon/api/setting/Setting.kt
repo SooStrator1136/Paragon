@@ -66,17 +66,6 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
     }
 
     /**
-     * Sets the description of the setting.
-     *
-     * @param description the description of the setting.
-     * @return this setting
-     */
-    fun setDescription(description: String): Setting<T> {
-        this.description = description
-        return this
-    }
-
-    /**
      * Sets the value of the setting.
      *
      * @param value the value of the setting.
@@ -99,34 +88,11 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
     }
 
     /**
-     * Sets the parent setting of the setting.
-     *
-     * @param parentSetting the parent setting of the setting.
-     * @return this setting
-     */
-    fun setParentSetting(parentSetting: Setting<*>?): Setting<T> {
-        this.parentSetting = parentSetting
-        this.parentSetting!!.subsettings.add(this)
-        return this
-    }
-
-    /**
      * Gets the visibility of the setting.
      *
      * @return the visibility of the setting.
      */
     fun isVisible() = isVisible.get()
-
-    /**
-     * Sets the visibility of the setting.
-     *
-     * @param isVisible the visibility of the setting.
-     * @return this setting
-     */
-    fun setVisibility(isVisible: Supplier<Boolean>): Setting<T> {
-        this.isVisible = isVisible
-        return this
-    }
 
     /**
      * Gets the next mode of the setting.
@@ -142,7 +108,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
             return java.lang.Enum.valueOf(enumeration::class.java, values[nextIndex]) as T
         }
 
-    val nextIndex: Int
+    private val nextIndex: Int
         get() {
             val enumeration = value as Enum<*>
             val values = enumeration.javaClass.enumConstants.map { it.name }.toTypedArray()
@@ -150,10 +116,20 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
             return if (index + 1 > values.size - 1) 0 else index + 1
         }
 
-    infix fun describedBy(description: String) = setDescription(description)
+    infix fun describedBy(description: String): Setting<T> {
+        this.description = description
+        return this
+    }
 
-    infix fun visibleWhen(isVisible: Supplier<Boolean>) = setVisibility(isVisible)
+    infix fun visibleWhen(visibility: Supplier<Boolean>): Setting<T> {
+        this.isVisible = visibility
+        return this
+    }
 
-    infix fun subOf(parent: Setting<*>?) = setParentSetting(parent)
+    infix fun subOf(parent: Setting<*>?): Setting<T> {
+        this.parentSetting = parent
+        this.parentSetting!!.subsettings.add(this)
+        return this
+    }
 
 }

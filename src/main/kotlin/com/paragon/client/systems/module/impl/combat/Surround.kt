@@ -36,14 +36,29 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
 
     private val performOn = Setting("PerformOn", PerformOn.PACKET) describedBy "When to perform"
     private val disable = Setting("Disable", Disable.OFF_GROUND) describedBy "When to automatically disable the module"
-    private val center = Setting("Center", Center.MOTION) describedBy "How to center the player to the center of the block"
-    private val blocksPerTick = Setting("BlocksPerTick", 4.0, 1.0, 8.0, 1.0) describedBy "The limit to how many blocks can be placed in a tick"
+    private val center = Setting(
+        "Center",
+        Center.MOTION
+    ) describedBy "How to center the player to the center of the block"
+    private val blocksPerTick = Setting(
+        "BlocksPerTick",
+        4.0,
+        1.0,
+        8.0,
+        1.0
+    ) describedBy "The limit to how many blocks can be placed in a tick"
     private val support = Setting("Support", true) describedBy "Support blocks by placing beneath them"
 
     private val rotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate"
 
-    private val render = Setting("Render", true) describedBy "Render a highlight on the positions we need to place blocks at"
-    private val renderColour = Setting("Colour", Color(185, 17, 255, 130)) describedBy "The colour of the highlight" subOf render
+    private val render = Setting(
+        "Render",
+        true
+    ) describedBy "Render a highlight on the positions we need to place blocks at"
+    private val renderColour = Setting(
+        "Colour",
+        Color(185, 17, 255, 130)
+    ) describedBy "The colour of the highlight" subOf render
 
     // List of positions to place on tick
     private var surroundPositions = arrayListOf<BlockPos>()
@@ -178,7 +193,9 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
             // It's a placeable position, and we haven't already attempted to place there
             if (!isNotReplaceable(pos) && !placedCache.contains(pos)) {
                 // Check sub (support) status
-                val sub = if (support.value && pos.down().getBlockAtPos().isReplaceable(minecraft.world, pos.down())) pos.down() else null
+                val sub = if (support.value && pos.down().getBlockAtPos().isReplaceable(minecraft.world, pos.down())) {
+                    pos.down()
+                } else null
 
                 // Place sub block
                 if (sub != null) {
@@ -211,13 +228,18 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
         }
     }
 
-    private fun isNotReplaceable(pos: BlockPos): Boolean = !pos.getBlockAtPos().blockState.block.isReplaceable(minecraft.world, pos)
+    private fun isNotReplaceable(pos: BlockPos): Boolean {
+        return !pos.getBlockAtPos().blockState.block.isReplaceable(minecraft.world, pos)
+    }
 
     private fun getBlocks(origin: BlockPos): ArrayList<BlockPos> {
         val blocks = arrayListOf<BlockPos>()
 
         // If we don't want to support, ignore this block
-        if (!support.value && origin.getBlockAtPos().isReplaceable(minecraft.world, origin) && origin.down().getBlockAtPos().isReplaceable(minecraft.world, origin.down())) {
+        if (!support.value
+            && origin.getBlockAtPos().isReplaceable(minecraft.world, origin)
+            && origin.down().getBlockAtPos().isReplaceable(minecraft.world, origin.down())
+        ) {
             return blocks
         }
 
@@ -237,7 +259,11 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
 
     private fun getBlocks(): ArrayList<BlockPos> {
         val blocks = ArrayList<BlockPos>()
-        val playerPos = BlockPos(floor(minecraft.player.posX), floor(minecraft.player.posY), floor(minecraft.player.posZ)).add(0, 1, 0)
+        val playerPos = BlockPos(
+            floor(minecraft.player.posX),
+            floor(minecraft.player.posY),
+            floor(minecraft.player.posZ)
+        ).add(0, 1, 0)
 
         // Add blocks
         blocks.addAll(getBlocks(playerPos.add(-1, -1, 0)))
@@ -255,7 +281,9 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
         // Slot to switch to
         val obsidianSlot = InventoryUtil.getHotbarBlockSlot(Blocks.OBSIDIAN)
 
-        if (obsidianSlot != -1 && !minecraft.world.loadedEntityList.any { it.entityBoundingBox.intersects(BlockUtil.getBlockBox(position)) }) {
+        if (obsidianSlot != -1 && !minecraft.world.loadedEntityList.any {
+                it.entityBoundingBox.intersects(BlockUtil.getBlockBox(position))
+            }) {
             minecraft.player.inventory.currentItem = obsidianSlot
 
             // Get rotation yaw and pitch
@@ -272,6 +300,7 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
         }
     }
 
+    @Suppress("unused")
     enum class PerformOn {
         /**
          * Place when block is destroyed
@@ -284,6 +313,7 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
         TICK
     }
 
+    @Suppress("unused")
     enum class Disable {
         /**
          * Disable when finished
@@ -301,6 +331,7 @@ object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds y
         NEVER
     }
 
+    @Suppress("unused")
     enum class Center {
         /**
          * Move the player to the center of the block

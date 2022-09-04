@@ -78,7 +78,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
                 2.5,
                 2.5,
                 2.5,
-                GuiDiscord.MEDIA_BACKGROUND.rgb
+                GuiDiscord.mediaBackground.rgb
             )
             RenderUtil.drawRoundedOutline(
                 mediaRect.x.toDouble(),
@@ -90,20 +90,20 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
                 2.5,
                 2.5,
                 2F,
-                GuiDiscord.MEDIA_BACKGROUND_BORDER.rgb
+                GuiDiscord.mediaBackgroundBorder.rgb
             )
 
             drawStringWithShadow(
                 "${setting.name}.mp3",
                 mediaRect.x + 5F,
                 mediaRect.y + FontUtil.getHeight(),
-                GuiDiscord.MEDIA_TITLE.rgb
+                GuiDiscord.mediaTitle.rgb
             )
             drawStringWithShadow(
                 size,
                 mediaRect.x + 5F,
                 mediaRect.y + (FontUtil.getHeight() * 2F),
-                GuiDiscord.MEDIA_SIZE.rgb
+                GuiDiscord.mediaSize.rgb
             )
         }
 
@@ -118,7 +118,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
                 2.5,
                 2.5,
                 2.5,
-                GuiDiscord.MEDIA_PROGRESS_BACKGROUND.rgb
+                GuiDiscord.mediaProgressBackground.rgb
             )
 
             drawStringWithShadow(
@@ -144,7 +144,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
                 2.0,
                 2.0,
                 2.0,
-                GuiDiscord.MEDIA_PROGRESSBAR_BACKGROUND.rgb
+                GuiDiscord.mediaProgressbarBackground.rgb
             )
         }
 
@@ -168,7 +168,7 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
                 2.0,
                 2.0,
                 2.0,
-                GuiDiscord.MEDIA_PROGRESS.rgb
+                GuiDiscord.mediaProgress.rgb
             )
         }
 

@@ -15,20 +15,40 @@ object ConfigCommand : Command("Config", "config [load/save] [name]") {
         if (args.size == 2) {
             if (args[0].equals("save", ignoreCase = true)) {
                 Paragon.INSTANCE.storageManager.saveModules(args[1])
-                Paragon.INSTANCE.notificationManager.addNotification(Notification("Saved config " + args[1], NotificationType.INFO))
+                Paragon.INSTANCE.notificationManager.addNotification(
+                    Notification(
+                        "Saved config " + args[1],
+                        NotificationType.INFO
+                    )
+                )
             } else if (args[0].equals("load", ignoreCase = true)) {
                 Paragon.INSTANCE.storageManager.loadModules(args[1])
-                Paragon.INSTANCE.notificationManager.addNotification(Notification("Loading config " + args[1], NotificationType.INFO))
+                Paragon.INSTANCE.notificationManager.addNotification(
+                    Notification(
+                        "Loading config " + args[1],
+                        NotificationType.INFO
+                    )
+                )
             } else if (args[0].equals("delete", ignoreCase = true)) {
                 val file = File("paragon" + File.separator + "configs" + File.separator + args[1])
                 if (file.exists()) {
                     file.delete()
                 } else {
-                    Paragon.INSTANCE.notificationManager.addNotification(Notification("Config " + args[1] + " does not exist", NotificationType.ERROR))
+                    Paragon.INSTANCE.notificationManager.addNotification(
+                        Notification(
+                            "Config " + args[1] + " does not exist",
+                            NotificationType.ERROR
+                        )
+                    )
                 }
             }
         } else {
-            Paragon.INSTANCE.notificationManager.addNotification(Notification("Syntax: $syntax", NotificationType.ERROR))
+            Paragon.INSTANCE.notificationManager.addNotification(
+                Notification(
+                    "Syntax: $syntax",
+                    NotificationType.ERROR
+                )
+            )
         }
     }
 

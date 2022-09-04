@@ -51,7 +51,12 @@ class ZerodayGUI : GuiImplementation() {
             GlStateManager.disableTexture2D()
             GlStateManager.enableBlend()
             GlStateManager.disableAlpha()
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
+            GlStateManager.tryBlendFuncSeparate(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+            )
             GlStateManager.shadeModel(7425)
 
             val tessellator = Tessellator.getInstance()

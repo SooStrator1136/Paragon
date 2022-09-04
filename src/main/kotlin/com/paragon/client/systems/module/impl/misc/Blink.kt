@@ -91,16 +91,19 @@ object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a len
         }
 
         when (mode.value) {
-            Mode.PACKETS_QUEUED -> if (packetQueue.size >= queueLength.value) {
-                sendPackets()
-            }
+            Mode.PACKETS_QUEUED -> if (packetQueue.size >= queueLength.value) sendPackets()
 
             Mode.DELAY -> if (timer.hasMSPassed(delay.value * 1000)) {
                 sendPackets()
                 timer.reset()
             }
 
-            Mode.DISTANCE -> if (minecraft.player.getDistance(lastPosition!!.x.toDouble(), lastPosition!!.y.toDouble(), lastPosition!!.z.toDouble()) >= distance.value) {
+            Mode.DISTANCE -> if (minecraft.player.getDistance(
+                    (lastPosition ?: return).x.toDouble(),
+                    (lastPosition ?: return).y.toDouble(),
+                    (lastPosition ?: return).z.toDouble()
+                ) >= distance.value
+            ) {
                 sendPackets()
             }
 
@@ -136,6 +139,7 @@ object Blink : Module("Blink", Category.MISC, "Cancels sending packets for a len
         minecraft.world.addEntityToWorld(-351352, fakePlayer)
     }
 
+    @Suppress("UNUSED")
     enum class Mode {
         /**
          * Send queued packets after a certain amount of packets have been queued

@@ -87,7 +87,7 @@ object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes
         }
 
         backgroundThread {
-            if (lastJob == null || lastJob!!.isCompleted) {
+            if (lastJob == null || (lastJob ?: return@backgroundThread).isCompleted) {
                 lastJob = launch {
                     holes.addAll(BlockUtil.getSphere(range.value, false).filter {
                         it.y == 0 && minecraft.world.getBlockState(it).material.isReplaceable && !holes.contains(it)

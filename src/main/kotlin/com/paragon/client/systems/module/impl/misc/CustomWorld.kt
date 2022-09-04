@@ -50,6 +50,7 @@ object CustomWorld : Module("CustomWorld", Category.MISC, "Changes the way the w
         }
     }
 
+    @Suppress("UNUSED")
     enum class Weather(val rainStrength: Int) {
         /**
          * Clear weather - no rain or thunder

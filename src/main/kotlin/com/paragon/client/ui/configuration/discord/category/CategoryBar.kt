@@ -16,10 +16,10 @@ import org.lwjgl.util.Rectangle
 object CategoryBar : IRenderable {
 
     val rect = Rectangle(
-        GuiDiscord.BASE_RECT.x,
-        GuiDiscord.BASE_RECT.y,
-        GuiDiscord.BASE_RECT.x + (GuiDiscord.BASE_RECT.width / 10),
-        GuiDiscord.BASE_RECT.height
+        GuiDiscord.baseRect.x,
+        GuiDiscord.baseRect.y,
+        GuiDiscord.baseRect.x + (GuiDiscord.baseRect.width / 10),
+        GuiDiscord.baseRect.height
     )
     private val categories = arrayOfNulls<DiscordCategory>(Category.values().size)
 
@@ -36,7 +36,7 @@ object CategoryBar : IRenderable {
             rect.y,
             rect.x + rect.width,
             rect.y + rect.height,
-            GuiDiscord.CATEGORY_BAR_BACKGROUND.rgb
+            GuiDiscord.categoryBarBackground.rgb
         )
 
         val catAmount = categories.size
@@ -53,10 +53,10 @@ object CategoryBar : IRenderable {
         }
 
         rect.setBounds(
-            GuiDiscord.BASE_RECT.x,
-            GuiDiscord.BASE_RECT.y,
+            GuiDiscord.baseRect.x,
+            GuiDiscord.baseRect.y,
             catHeight,
-            GuiDiscord.BASE_RECT.height
+            GuiDiscord.baseRect.height
         )
     }
 

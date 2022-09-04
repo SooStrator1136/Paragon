@@ -46,13 +46,19 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
 
-        RenderUtil.drawRect(x, y, width, height, Color(40, 40, 60).fade(Color(60, 60, 80), isHovered(mouseX, mouseY).toBinary().toDouble()).rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            width,
+            height,
+            Color(40, 40, 60).fade(Color(60, 60, 80), isHovered(mouseX, mouseY).toBinary().toDouble()).rgb
+        )
 
         var titleOffset = 5f
 
         if (icon.value != ClickGUI.Icon.NONE) {
             if (icon.value == ClickGUI.Icon.BACKGROUND) {
-                RenderUtil.drawRect(x, y, height, height, 0x70000000.toInt())
+                RenderUtil.drawRect(x, y, height, height, 0x70000000)
             }
 
             // Eye of ender is offset weirdly...

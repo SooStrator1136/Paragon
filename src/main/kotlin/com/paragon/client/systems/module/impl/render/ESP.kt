@@ -17,15 +17,14 @@ import com.paragon.api.util.render.OutlineUtil.renderTwo
 import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
 import com.paragon.api.util.string.StringUtil
+import com.paragon.bus.listener.Listener
+import com.paragon.client.shader.shaders.OutlineShader
 import com.paragon.mixins.accessor.IEntityRenderer
 import com.paragon.mixins.accessor.IRenderGlobal
 import com.paragon.mixins.accessor.IShaderGroup
-import com.paragon.bus.listener.Listener
-import com.paragon.client.shader.shaders.OutlineShader
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.shader.Framebuffer
-import net.minecraft.client.shader.Shader
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.item.EntityEnderCrystal
@@ -40,7 +39,6 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import java.awt.Color
-import java.util.function.Consumer
 
 /**
  * @author Surge, with shader stuff from Cosmos (first time using shaders / glsl lel)
@@ -224,11 +222,11 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
         if (mode.value == Mode.GLOW) {
             // Get shaders
             val shaders = ((minecraft.renderGlobal as IRenderGlobal).entityOutlineShader as IShaderGroup).listShaders
-            shaders.forEach(Consumer { shader: Shader? ->
+            shaders.forEach {
                 // Get line width
-                val uniform = shader!!.shaderManager.getShaderUniform("Radius")
+                val uniform = (it ?: return@forEach).shaderManager.getShaderUniform("Radius")
                 uniform?.set(lineWidth.value)
-            })
+            }
         }
     }
 

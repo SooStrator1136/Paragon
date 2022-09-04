@@ -42,7 +42,7 @@ class DiscordCategory(val category: Category) : IRenderable {
                 15.0,
                 15.0,
                 15.0,
-                if (isHovered) GuiDiscord.CHANNEL_BAR_BACKGROUND.brighter().rgb else GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
+                if (isHovered) GuiDiscord.channelBarBackground.brighter().rgb else GuiDiscord.channelBarBackground.rgb
             )
 
             val scaleFac = rect.width / 16.0
@@ -71,7 +71,7 @@ class DiscordCategory(val category: Category) : IRenderable {
                 5.0,
                 5.0,
                 5.0,
-                GuiDiscord.CATEGORY_TEXT_BACKGROUND.rgb
+                GuiDiscord.categoryTextBackground.rgb
             )
             drawStringWithShadow(
                 category.Name,

@@ -19,8 +19,11 @@ import net.minecraft.util.math.Vec3d
  */
 object ChorusControl : Module("ChorusControl", Category.MISC, "Cancels packets to let you not teleport") {
 
-    private val cPacketPlayer = Setting("CPacketPlayer", true, null, null, null) describedBy "Utilise CPacketPlayer packets"
-    private val packetPlayerPosLook = Setting("SPacketPlayerPosLook", true, null, null, null) describedBy "Utilise SPacketPlayerPosLook packets"
+    private val cPacketPlayer = Setting("CPacketPlayer", true) describedBy "Utilise CPacketPlayer packets"
+    private val packetPlayerPosLook = Setting(
+        "SPacketPlayerPosLook",
+        true
+    ) describedBy "Utilise SPacketPlayerPosLook packets"
     private val packets: MutableCollection<CPacketPlayer> = ArrayList(10)
 
     private val teleportPackets: MutableCollection<CPacketConfirmTeleport> = ArrayList(2)
@@ -30,8 +33,8 @@ object ChorusControl : Module("ChorusControl", Category.MISC, "Cancels packets t
 
     override fun onDisable() {
         if (minecraft.connection != null) {
-            packets.forEach(minecraft.connection!!::sendPacket)
-            teleportPackets.forEach(minecraft.connection!!::sendPacket)
+            packets.forEach((minecraft.connection ?: return)::sendPacket)
+            teleportPackets.forEach((minecraft.connection ?: return)::sendPacket)
         }
 
         packets.clear()
@@ -56,11 +59,11 @@ object ChorusControl : Module("ChorusControl", Category.MISC, "Cancels packets t
         }
 
         if (ate) {
-            if (event.packet is SPacketPlayerPosLook && packetPlayerPosLook.value!!) {
+            if (event.packet is SPacketPlayerPosLook && packetPlayerPosLook.value) {
                 event.cancel()
             }
 
-            if (event.packet is CPacketPlayer && cPacketPlayer.value!!) {
+            if (event.packet is CPacketPlayer && cPacketPlayer.value) {
                 packets.add(event.packet)
                 event.cancel()
             }

@@ -6,8 +6,8 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.InventoryUtil
-import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.bus.listener.Listener
+import com.paragon.mixins.accessor.IMinecraft
 import net.minecraft.init.Items
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem
@@ -54,7 +54,9 @@ object FastUse : Module("FastUse", Category.MISC, "Allows you to use items quick
         }
 
         // Check we want to set the delay timer to 0
-        if (xp.value && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE) || crystals.value && InventoryUtil.isHolding(Items.END_CRYSTAL)) {
+        if (xp.value && InventoryUtil.isHolding(Items.EXPERIENCE_BOTTLE)
+            || crystals.value && InventoryUtil.isHolding(Items.END_CRYSTAL)
+        ) {
             if (randomPause.value && random.nextInt(randomChance.value.toInt()) == 1) {
                 (minecraft as IMinecraft).setRightClickDelayTimer(4)
                 return

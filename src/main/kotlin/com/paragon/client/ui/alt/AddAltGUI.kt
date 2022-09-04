@@ -24,14 +24,14 @@ class AddAltGUI : GuiScreen() {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         drawDefaultBackground()
-        emailField!!.drawTextBox()
-        passwordField!!.drawTextBox()
+        (emailField ?: return).drawTextBox()
+        (passwordField ?: return).drawTextBox()
 
-        if (emailField!!.text.isEmpty() && !emailField!!.isFocused) {
+        if ((emailField ?: return).text.isEmpty() && !(emailField ?: return).isFocused) {
             drawStringWithShadow("Email", width / 2f - 97, height / 2f - 39, Color(150, 150, 150).rgb)
         }
 
-        if (passwordField!!.text.isEmpty() && !passwordField!!.isFocused) {
+        if ((passwordField ?: return).text.isEmpty() && !(passwordField ?: return).isFocused) {
             drawStringWithShadow("Password", width / 2f - 97, height / 2f - 17, Color(150, 150, 150).rgb)
         }
 
@@ -41,22 +41,22 @@ class AddAltGUI : GuiScreen() {
 
     @Throws(IOException::class)
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        emailField!!.textboxKeyTyped(typedChar, keyCode)
-        passwordField!!.textboxKeyTyped(typedChar, keyCode)
+        emailField?.textboxKeyTyped(typedChar, keyCode)
+        passwordField?.textboxKeyTyped(typedChar, keyCode)
         super.keyTyped(typedChar, keyCode)
     }
 
     @Throws(IOException::class)
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        emailField!!.mouseClicked(mouseX, mouseY, mouseButton)
-        passwordField!!.mouseClicked(mouseX, mouseY, mouseButton)
+        emailField?.mouseClicked(mouseX, mouseY, mouseButton)
+        passwordField?.mouseClicked(mouseX, mouseY, mouseButton)
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 
     override fun actionPerformed(button: GuiButton) {
         when (button.id) {
             0 -> {
-                Paragon.INSTANCE.altManager.addAlt(Alt(emailField!!.text, passwordField!!.text))
+                Paragon.INSTANCE.altManager.addAlt(Alt((emailField ?: return).text, (passwordField ?: return).text))
                 mc.displayGuiScreen(AltManagerGUI())
             }
 

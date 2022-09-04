@@ -27,10 +27,24 @@ object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes
 
     @Listener
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if (minecraft.player.posY < 2.1 && minecraft.world.getBlockState(BlockPos(minecraft.player.posX, 0.0, minecraft.player.posZ)).material.isReplaceable) {
+        if (minecraft.player.posY < 2.1 && minecraft.world.getBlockState(
+                BlockPos(
+                    minecraft.player.posX,
+                    0.0,
+                    minecraft.player.posZ
+                )
+            ).material.isReplaceable
+        ) {
             var y = MathHelper.clamp(minecraft.player.posY, 0.0, Double.MAX_VALUE)
 
-            while (y > 0.0 && minecraft.world.getBlockState(BlockPos(minecraft.player.posX, y, minecraft.player.posZ)).material.isReplaceable) {
+            while (y > 0.0 && minecraft.world.getBlockState(
+                    BlockPos(
+                        minecraft.player.posX,
+                        y,
+                        minecraft.player.posZ
+                    )
+                ).material.isReplaceable
+            ) {
                 val pos = BlockPos(minecraft.player.posX, y, minecraft.player.posZ)
 
                 // Intercepting block
@@ -48,7 +62,14 @@ object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes
                     renderPosition = BlockPos(minecraft.player.posX, 0.0, minecraft.player.posZ)
                 }
 
-                Mode.LAGBACK -> minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY + 100, minecraft.player.posZ, minecraft.player.onGround))
+                Mode.LAGBACK -> minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Position(
+                        minecraft.player.posX,
+                        minecraft.player.posY + 100,
+                        minecraft.player.posZ,
+                        minecraft.player.onGround
+                    )
+                )
             }
         } else {
             renderPosition = null

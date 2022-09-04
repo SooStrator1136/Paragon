@@ -24,6 +24,11 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
 
+    private val renderStyle = Setting(
+        "Style",
+        Style.WIREFRAME
+    )
+
     private val aliveTime = Setting(
         "Time",
         2000F,
@@ -132,7 +137,7 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
 
             glPushMatrix()
             glPushAttrib(GL_ALL_ATTRIB_BITS)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            glPolygonMode(GL_FRONT_AND_BACK, if (renderStyle.value == Style.FILL) GL_FILL else GL_LINE)
             glDisable(GL_TEXTURE_2D)
             glEnable(GL_LINE_SMOOTH)
             glEnable(GL_BLEND)
@@ -203,6 +208,10 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
 
     internal enum class MovementDirection {
         UP, DOWN
+    }
+
+    internal enum class Style {
+        WIREFRAME, FILL
     }
 
 }

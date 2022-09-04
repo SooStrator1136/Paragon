@@ -116,4 +116,5 @@ object Replenish : Module("Replenish", Category.COMBAT, "Automatically refills i
             }
         }
     }
+
 }

@@ -26,8 +26,22 @@ object Criticals : Module("Criticals", Category.COMBAT, "Makes all your hits cri
             // We are on the ground and we aren't jumping
             if (minecraft.player.onGround && !minecraft.gameSettings.keyBindJump.isKeyDown) {
                 // Send packets
-                minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY + 0.1, minecraft.player.posZ, false))
-                minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY, minecraft.player.posZ, false))
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Position(
+                        minecraft.player.posX,
+                        minecraft.player.posY + 0.1,
+                        minecraft.player.posZ,
+                        false
+                    )
+                )
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Position(
+                        minecraft.player.posX,
+                        minecraft.player.posY,
+                        minecraft.player.posZ,
+                        false
+                    )
+                )
             }
         }
     }

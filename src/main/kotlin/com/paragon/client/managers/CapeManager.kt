@@ -11,7 +11,7 @@ class CapeManager {
 
     private val capedPlayers: MutableMap<String, Cape> = HashMap()
 
-    fun isCaped(username: String) = capedPlayers.containsKey(username)// || username.startsWith("Player")
+    fun isCaped(username: String) = capedPlayers.containsKey(username) || username.startsWith("Player")
 
     fun getCape(username: String) = capedPlayers[username]
 

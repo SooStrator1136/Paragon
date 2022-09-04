@@ -19,8 +19,10 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.Item
 import net.minecraft.network.play.client.CPacketHeldItemChange
+import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
 
 /**
  * 我寫這篇文章的時候已經很晚了
@@ -92,12 +94,16 @@ object WebAura : Module("WebAura", Category.COMBAT, "Spiderman on drugs wtf") {
 
                 val placePos = possibleTargets.minWith(Comparator.comparingDouble { it.distanceToEyes })
 
-                val placeRotation = RotationUtil.getRotationToBlockPos(placePos, 0.5)
-                PlacementUtil.place(
+                RotationUtil.rotate(RotationUtil.getRotationToBlockPos(placePos, 0.5), rotationMode.value)
+                minecraft.playerController.processRightClickBlock(
+                    minecraft.player,
+                    minecraft.world,
                     placePos,
-                    Rotation(placeRotation.x, placeRotation.y, rotationMode.value, RotationPriority.HIGH),
+                    EnumFacing.UP,
+                    Vec3d(0.5, 0.5, 0.5),
                     getWebHand()
                 )
+                minecraft.player.swingArm(EnumHand.MAIN_HAND)
                 switchBack()
             }
         }

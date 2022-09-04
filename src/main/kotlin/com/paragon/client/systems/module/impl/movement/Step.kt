@@ -6,9 +6,9 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.string.StringUtil.getFormattedText
+import com.paragon.bus.listener.Listener
 import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.mixins.accessor.ITimer
-import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -21,11 +21,20 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up blocks") {
 
     // Step mode
-    private val mode = Setting("Mode", Mode.NCP, null, null, null) describedBy "What mode to use"
+    private val mode = Setting("Mode", Mode.NCP) describedBy "What mode to use"
 
     // Vanilla step height
-    private val stepHeight = Setting("StepHeight", 1.5f, 0.5f, 2.5f, 0.5f) describedBy "How high to step up"
-    private val useTimer = Setting("UseTimer", true, null, null, null) describedBy "If to use timer to prevent the MORE_PACKETS flag on NCP" visibleWhen  { mode.value == Mode.NCP }
+    private val stepHeight = Setting(
+        "StepHeight",
+        1.5f,
+        0.5f,
+        2.5f,
+        0.5f
+    ) describedBy "How high to step up"
+    private val useTimer = Setting(
+        "UseTimer",
+        true
+    ) describedBy "If to use timer to prevent the MORE_PACKETS flag on NCP" visibleWhen { mode.value == Mode.NCP }
 
     private val ncpOffsets: Map<Double, DoubleArray> = hashMapOf(
         0.875 to doubleArrayOf(0.39, 0.7, 0.875),
@@ -77,7 +86,7 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
             val height: Double = event.bB.minY - minecraft.player.posY
 
             // don't step if there are any flagging conditions
-            if (height > stepHeight.value || !minecraft.player.onGround || minecraft.player.isInWater() || minecraft.player.isInLava()) {
+            if (height > stepHeight.value || !minecraft.player.onGround || minecraft.player.isInWater || minecraft.player.isInLava) {
                 return
             }
 
@@ -88,8 +97,7 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
                 return
             }
 
-            if (useTimer.value!!) {
-
+            if (useTimer.value) {
                 // set our timer dynamically based off of the amount of offsets we are using
                 ((minecraft as IMinecraft).timer as ITimer).tickLength = 50.0f / (1.0f / (offsets.size + 1.0f))
                 timer = true
@@ -97,15 +105,23 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
 
             // Send offsets - this simulates a fake jump
             for (offset in offsets) {
-                minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX, minecraft.player.posY + offset, minecraft.player.posZ, false))
+                minecraft.player.connection.sendPacket(
+                    CPacketPlayer.Position(
+                        minecraft.player.posX,
+                        minecraft.player.posY + offset,
+                        minecraft.player.posZ,
+                        false
+                    )
+                )
             }
         }
     }
 
     override fun getData(): String {
-        return getFormattedText(mode.value!!)
+        return getFormattedText(mode.value)
     }
 
+    @Suppress("UNUSED")
     enum class Mode {
         /**
          * Vanilla step - bypasses almost no servers :P

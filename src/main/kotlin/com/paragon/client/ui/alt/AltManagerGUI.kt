@@ -20,7 +20,7 @@ import java.io.IOException
 
 class AltManagerGUI : GuiScreen(), Wrapper {
 
-    private val altEntries = ArrayList<AltEntry?>(3)
+    private val altEntries = ArrayList<AltEntry>(3)
 
     override fun initGui() {
         renderString = TextFormatting.GRAY.toString() + "Idle"
@@ -43,11 +43,11 @@ class AltManagerGUI : GuiScreen(), Wrapper {
 
         scroll()
 
-        drawRect(0f, 150f, width.toFloat(), 200f, -0x70000000)
+        drawRect(0f, 150F, width.toFloat(), 200f, -0x70000000)
 
         pushScissor(0.0, 150.0, width.toDouble(), 200.0)
 
-        altEntries.forEach { altEntry: AltEntry? -> altEntry!!.drawAlt(mouseX, mouseY, width) }
+        altEntries.forEach { it.drawAlt(width) }
 
         popScissor()
 
@@ -67,19 +67,23 @@ class AltManagerGUI : GuiScreen(), Wrapper {
     private fun scroll() {
         val scroll = Mouse.getDWheel()
 
+        if (altEntries.isEmpty()) {
+            return
+        }
+
         if (scroll > 0) {
-            if (altEntries[0]!!.offset < 150) {
+            if (altEntries[0].offset < 150) {
                 for (altEntry in altEntries) {
-                    altEntry!!.offset = altEntry.offset + 10
+                    altEntry.offset = altEntry.offset + 10
                 }
             }
             return
         }
 
         if (scroll < 0) {
-            if (altEntries[altEntries.size - 1]!!.offset > 340) {
+            if (altEntries[altEntries.size - 1].offset > 340) {
                 for (altEntry in altEntries) {
-                    altEntry!!.offset = altEntry.offset - 10
+                    altEntry.offset = altEntry.offset - 10
                 }
             }
         }
@@ -87,14 +91,14 @@ class AltManagerGUI : GuiScreen(), Wrapper {
 
     @Throws(IOException::class)
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        altEntries.forEach { altEntry: AltEntry? ->
+        altEntries.forEach {
             if (isHovered(0f, 150f, width.toFloat(), 350f, mouseX, mouseY)) {
-                if (isHovered(0f, altEntry!!.offset, width.toFloat(), altEntry.offset + 20, mouseX, mouseY)) {
-                    if (selectedAltEntry == altEntry) {
-                        renderString = "Logging in with the email: " + altEntry.alt.email
-                        altEntry.clicked(mouseX, mouseY, width)
+                if (isHovered(0f, it.offset, width.toFloat(), it.offset + 20, mouseX, mouseY)) {
+                    if (selectedAltEntry == it) {
+                        renderString = "Logging in with the email: " + it.alt.email
+                        it.clicked(mouseX, mouseY, width)
                     } else {
-                        selectedAltEntry = altEntry
+                        selectedAltEntry = it
                     }
                 }
             }

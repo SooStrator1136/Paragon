@@ -74,7 +74,12 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
     @SubscribeEvent
     fun onRenderWorld(event: RenderWorldLastEvent?) {
         minecraft.world.loadedEntityList.forEach(Consumer { entity: Entity ->
-            if (entity.isEntityAllowed(players.value, mobs.value, passive.value) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value) {
+            if (entity.isEntityAllowed(
+                    players.value,
+                    mobs.value,
+                    passive.value
+                ) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value
+            ) {
                 RenderUtil.drawTracer(entity, lineWidth.value, getColourByEntity(entity))
             }
         })

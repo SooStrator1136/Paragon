@@ -26,7 +26,7 @@ object Sprint : Module("Sprint", Category.MOVEMENT, "Automatically sprint") {
     }
 
     override fun onTick() {
-        minecraft?.player?.let {
+        minecraft.player?.let {
             when (mode.value) {
                 Mode.OMNI -> {
                     if (onlyWhenMoving.value && !PlayerUtil.isMoving) {

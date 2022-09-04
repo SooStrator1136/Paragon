@@ -14,9 +14,21 @@ import net.minecraft.util.math.BlockPos
  */
 object BowRelease : Module("BowRelease", Category.COMBAT, "Automatically releases your bow when at max charge") {
 
-    private val release = Setting("Release", Release.TICKS, null, null, null) describedBy "When to release the bow"
-    private val releasePower = Setting("Power", 3.1f, 0.1f, 4.0f, 0.1f) describedBy "The power the bow needs to be before releasing" visibleWhen  { release.value == Release.POWER }
-    private val releaseTicks = Setting("Ticks", 3.0f, 0.0f, 60.0f, 1.0f) describedBy "The amount of ticks that have passed before releasing" visibleWhen  { release.value == Release.TICKS }
+    private val release = Setting("Release", Release.TICKS) describedBy "When to release the bow"
+    private val releasePower = Setting(
+        "Power",
+        3.1f,
+        0.1f,
+        4.0f,
+        0.1f
+    ) describedBy "The power the bow needs to be before releasing" visibleWhen { release.value == Release.POWER }
+    private val releaseTicks = Setting(
+        "Ticks",
+        3.0f,
+        0.0f,
+        60.0f,
+        1.0f
+    ) describedBy "The amount of ticks that have passed before releasing" visibleWhen { release.value == Release.TICKS }
 
     private var ticks = 0
 
@@ -40,18 +52,18 @@ object BowRelease : Module("BowRelease", Category.COMBAT, "Automatically release
                 }
             }
 
-            Release.TICKS ->
-                // Return if we haven't passed the required ticks
-                if (ticks++ < releaseTicks.value) {
-                    return
-                }
-
-            else -> {}
+            Release.TICKS -> if (ticks++ < releaseTicks.value) return
         }
 
 
         // Release the bow
-        minecraft.player.connection.sendPacket(CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, minecraft.player.horizontalFacing))
+        minecraft.player.connection.sendPacket(
+            CPacketPlayerDigging(
+                CPacketPlayerDigging.Action.RELEASE_USE_ITEM,
+                BlockPos.ORIGIN,
+                minecraft.player.horizontalFacing
+            )
+        )
         minecraft.player.connection.sendPacket(CPacketPlayerTryUseItem(minecraft.player.activeHand))
         minecraft.player.stopActiveHand()
 

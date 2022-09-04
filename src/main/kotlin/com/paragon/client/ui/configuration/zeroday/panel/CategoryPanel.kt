@@ -2,7 +2,6 @@ package com.paragon.client.ui.configuration.zeroday.panel
 
 import com.paragon.Paragon
 import com.paragon.api.module.Category
-import com.paragon.api.module.Module
 import com.paragon.api.util.render.RenderUtil.drawHorizontalGradientRoundedRect
 import com.paragon.api.util.render.RenderUtil.drawRoundedRect
 import com.paragon.api.util.render.RenderUtil.popScissor
@@ -60,7 +59,7 @@ class CategoryPanel(
         this.parent = this
 
         var offset = y + barHeight
-        for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { module: Module -> module.category == category }) {
+        for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category }) {
             elements.add(ModuleElement(this, module, x, offset, width, 16f))
             offset += 16f
         }

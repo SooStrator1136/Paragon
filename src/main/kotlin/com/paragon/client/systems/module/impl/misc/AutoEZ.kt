@@ -26,7 +26,7 @@ object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message w
     ) describedBy "The furthest distance from the player to target"
 
     @JvmStatic
-    fun addTarget(name: String?) {
+    fun addTarget(name: String) {
         if (!targeted.contains(minecraft.world.getPlayerEntityByName(name))) {
             targeted.add(minecraft.world.getPlayerEntityByName(name))
         }
@@ -43,10 +43,10 @@ object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message w
         targeted.removeIf { it!!.getDistance(minecraft.player) > maximumRange.value }
 
         // Iterate through entities
-        targeted.forEach { player: EntityPlayer? ->
-            if (player!!.health <= 0 && targeted.contains(player)) {
-                minecraft.player.sendChatMessage(player.name + ", did you really just die to the worst client?!")
-                targeted.remove(player)
+        targeted.forEach {
+            if ((it ?: return@forEach).health <= 0 && targeted.contains(it)) {
+                minecraft.player.sendChatMessage(it.name + ", did you really just die to the worst client?!")
+                targeted.remove(it)
             }
         }
     }
@@ -57,7 +57,7 @@ object AutoEZ : Module("AutoEZ", Category.MISC, "Automatically sends a message w
             val packet = event.packet
             if (packet.action == CPacketUseEntity.Action.ATTACK) {
                 if (packet.getEntityFromWorld(minecraft.world) is EntityPlayer) {
-                    addTarget((packet.getEntityFromWorld(minecraft.world) as EntityPlayer).getName())
+                    addTarget((packet.getEntityFromWorld(minecraft.world) as EntityPlayer).name)
                 }
             }
         }

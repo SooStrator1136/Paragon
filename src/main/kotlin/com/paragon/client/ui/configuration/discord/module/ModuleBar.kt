@@ -1,6 +1,7 @@
 package com.paragon.client.ui.configuration.discord.module
 
 import com.paragon.api.module.Module
+import com.paragon.api.util.mc
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.RenderUtil.scaleTo
 import com.paragon.api.util.render.font.FontUtil
@@ -56,12 +57,12 @@ object ModuleBar : IRenderable {
         //Render the actual modules
         run {
             //Scroll logic
-            if (GuiDiscord.D_WHEEL != 0 && shownModules.isNotEmpty() && rect.contains(mouseX, mouseY)) {
+            if (GuiDiscord.dWheel != 0 && shownModules.isNotEmpty() && rect.contains(mouseX, mouseY)) {
                 val lastRect = shownModules[shownModules.size - 1].rect
 
                 val maxOffset = min(((((lastRect.y + lastRect.height) - shownModules[0].rect.y) - rect.height) * -1), 0)
-                val newScrollOffset = scrollOffset + (GuiDiscord.D_WHEEL / 13)
-                if (GuiDiscord.D_WHEEL < 0) {
+                val newScrollOffset = scrollOffset + (GuiDiscord.dWheel / 13)
+                if (GuiDiscord.dWheel < 0) {
                     scrollOffset = if (newScrollOffset < maxOffset) maxOffset else newScrollOffset
                 } else if (scrollOffset < 0) {
                     scrollOffset = if (newScrollOffset > 0) 0 else newScrollOffset
@@ -79,7 +80,7 @@ object ModuleBar : IRenderable {
                 rect.y.toFloat(),
                 rect.width.toFloat(),
                 rect.height.toFloat(),
-                GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
+                GuiDiscord.channelBarBackground.rgb
             )
 
             RenderUtil.pushScissor(
@@ -103,7 +104,7 @@ object ModuleBar : IRenderable {
                 userRect.y.toFloat(),
                 userRect.width.toFloat(),
                 userRect.height.toFloat(),
-                GuiDiscord.USER_FIELD_BACKGROUND.rgb
+                GuiDiscord.userFieldBackground.rgb
             )
             renderHead(userRect.x + 3, userRect.y + 2, 20)
 
@@ -136,7 +137,7 @@ object ModuleBar : IRenderable {
                     5.0,
                     5.0,
                     5.0,
-                    GuiDiscord.USER_COPIED_COLOR.rgb
+                    GuiDiscord.userCopiedColor.rgb
                 )
                 renderCenteredString(
                     "Copied!",

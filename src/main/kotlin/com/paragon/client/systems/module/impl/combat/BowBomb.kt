@@ -17,7 +17,7 @@ import kotlin.math.sin
 
 object BowBomb : Module("BowBomb", Category.COMBAT, "Makes bows speedy bois") {
 
-    private val ticks = Setting("Ticks", 10f, 1f, 50f, 1f) describedBy "ticks? i dont know"
+    private val ticks = Setting("Ticks", 10f, 1f, 50f, 1f) describedBy "ticks? i don't know"
 
     private val projectileTimer = Timer()
 
@@ -25,8 +25,18 @@ object BowBomb : Module("BowBomb", Category.COMBAT, "Makes bows speedy bois") {
     fun onPacketSend(event: PreSend) {
         if (event.packet is CPacketPlayerDigging && event.packet.action == CPacketPlayerDigging.Action.RELEASE_USE_ITEM) {
             if (isHolding(Items.BOW) && projectileTimer.hasMSPassed(5000.0)) {
-                minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_SPRINTING))
-                minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_SPRINTING))
+                minecraft.player.connection.sendPacket(
+                    CPacketEntityAction(
+                        minecraft.player,
+                        CPacketEntityAction.Action.START_SPRINTING
+                    )
+                )
+                minecraft.player.connection.sendPacket(
+                    CPacketEntityAction(
+                        minecraft.player,
+                        CPacketEntityAction.Action.START_SPRINTING
+                    )
+                )
 
                 val projectileRandom = Random()
 
@@ -35,13 +45,39 @@ object BowBomb : Module("BowBomb", Category.COMBAT, "Makes bows speedy bois") {
                     val cos = cos(Math.toRadians(minecraft.player.rotationYaw.toDouble()))
 
                     if (projectileRandom.nextBoolean()) {
-                        minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX + sin * 100, minecraft.player.posY + 5, minecraft.player.posZ + cos * 100, false))
-                        minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX - sin * 100, minecraft.player.posY, minecraft.player.posZ - cos * 100, true))
-                    }
-
-                    else {
-                        minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX - sin * 100, minecraft.player.posY, minecraft.player.posZ - cos * 100, true))
-                        minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.posX + sin * 100, minecraft.player.posY + 5, minecraft.player.posZ + cos * 100, false))
+                        minecraft.player.connection.sendPacket(
+                            CPacketPlayer.Position(
+                                minecraft.player.posX + sin * 100,
+                                minecraft.player.posY + 5,
+                                minecraft.player.posZ + cos * 100,
+                                false
+                            )
+                        )
+                        minecraft.player.connection.sendPacket(
+                            CPacketPlayer.Position(
+                                minecraft.player.posX - sin * 100,
+                                minecraft.player.posY,
+                                minecraft.player.posZ - cos * 100,
+                                true
+                            )
+                        )
+                    } else {
+                        minecraft.player.connection.sendPacket(
+                            CPacketPlayer.Position(
+                                minecraft.player.posX - sin * 100,
+                                minecraft.player.posY,
+                                minecraft.player.posZ - cos * 100,
+                                true
+                            )
+                        )
+                        minecraft.player.connection.sendPacket(
+                            CPacketPlayer.Position(
+                                minecraft.player.posX + sin * 100,
+                                minecraft.player.posY + 5,
+                                minecraft.player.posZ + cos * 100,
+                                false
+                            )
+                        )
                     }
 
                     projectileTimer.reset()

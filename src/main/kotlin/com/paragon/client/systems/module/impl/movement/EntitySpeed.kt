@@ -18,6 +18,7 @@ object EntitySpeed : Module("EntitySpeed", Category.MOVEMENT, "Allows entities t
     ) describedBy "How fast the entity goes"
 
 
+    @Suppress("ReplaceNotNullAssertionWithElvisReturn")
     override fun onTick() {
         if (minecraft.anyNull) {
             return

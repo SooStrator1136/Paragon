@@ -57,7 +57,7 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
         }
 
         backgroundThread {
-            if (lastJob == null || lastJob!!.isCompleted) {
+            if (lastJob == null || (lastJob ?: return@backgroundThread).isCompleted) {
                 lastJob = launch {
                     sources.addAll(BlockUtil.getSphere(range.value, true).filter {
                         !sources.contains(it) && it.isSource

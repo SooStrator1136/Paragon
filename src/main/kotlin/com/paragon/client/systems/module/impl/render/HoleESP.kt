@@ -135,7 +135,7 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
 
         // Refresh holes list
         backgroundThread {
-            if (lastJob == null || lastJob!!.isCompleted) { //TODO fix flickering
+            if (lastJob == null || (lastJob ?: return@backgroundThread).isCompleted) { //TODO fix flickering
                 lastJob = launch {
                     holes.removeIf {
                         !(isSurroundedByBlock(it.holePosition, Blocks.OBSIDIAN) && obsidian.value) ||
@@ -204,7 +204,16 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
 
             if (outline.value) {
                 RenderBuilder()
-                    .boundingBox(AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + outlineHeight.value, blockBB.maxZ))
+                    .boundingBox(
+                        AxisAlignedBB(
+                            blockBB.minX,
+                            blockBB.minY,
+                            blockBB.minZ,
+                            blockBB.maxX,
+                            blockBB.minY + outlineHeight.value,
+                            blockBB.maxZ
+                        )
+                    )
                     .outer(it.holeColour.integrateAlpha(255f))
                     .type(BoxRenderMode.OUTLINE)
 
@@ -251,8 +260,13 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
     }
 
     private fun isSurroundedByBlock(pos: BlockPos, blockCheck: Block): Boolean {
-        return pos.getBlockAtPos() === Blocks.AIR && pos.north().getBlockAtPos() === blockCheck && pos.south().getBlockAtPos() === blockCheck && pos.east().getBlockAtPos() === blockCheck &&
-                pos.west().getBlockAtPos() === blockCheck && pos.up().getBlockAtPos() === Blocks.AIR && pos.up().up().getBlockAtPos() === Blocks.AIR && pos.getBlockAtPos() !== Blocks.AIR
+        return pos.getBlockAtPos() === Blocks.AIR && pos.north().getBlockAtPos() === blockCheck
+                && pos.south().getBlockAtPos() === blockCheck
+                && pos.east().getBlockAtPos() === blockCheck
+                && pos.west().getBlockAtPos() === blockCheck
+                && pos.up().getBlockAtPos() === Blocks.AIR
+                && pos.up().up().getBlockAtPos() === Blocks.AIR
+                && pos.getBlockAtPos() !== Blocks.AIR
     }
 
     enum class HoleType {

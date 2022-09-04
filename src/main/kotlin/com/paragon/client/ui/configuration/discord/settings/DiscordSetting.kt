@@ -26,7 +26,7 @@ abstract class DiscordSetting(val dSetting: Setting<*>) : IRenderable {
                 bounds.y.toFloat(),
                 bounds.width.toFloat(),
                 bounds.height.toFloat(),
-                GuiDiscord.MSG_HOVERED.rgb
+                GuiDiscord.msgHovered.rgb
             )
         }
 

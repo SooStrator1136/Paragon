@@ -92,9 +92,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         1f
     ) describedBy "The time it takes for a side to rotate" subOf crystals visibleWhen { rubiks.value }
 
-    private val cube = Setting("Cube", true)
-        .setDescription("Render the crystal cube")
-        .setParentSetting(crystals)
+    private val cube = Setting("Cube", true) describedBy "Render the crystal cube" subOf crystals
 
     private val glass = Setting(
         "Glass",

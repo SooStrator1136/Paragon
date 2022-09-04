@@ -122,7 +122,11 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private val swapTimer = Timer()
 
     override fun onTick() {
-        if (minecraft.anyNull || minecraft.player.isDead || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
+        if (minecraft.anyNull
+            || minecraft.player.isDead
+            || minecraft.currentScreen is GuiContainer
+            || !swapTimer.hasMSPassed(delay.value.toDouble())
+        ) {
             return
         }
 
@@ -137,7 +141,12 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         }
 
         if (inventorySpoof.value) {
-            minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.OPEN_INVENTORY))
+            minecraft.player.connection.sendPacket(
+                CPacketEntityAction(
+                    minecraft.player,
+                    CPacketEntityAction.Action.OPEN_INVENTORY
+                )
+            )
         }
 
         swapOffhand(item)
@@ -196,11 +205,13 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         if (crystal.value) {
             var deadlyCrystals = 0
 
-            minecraft.world.loadedEntityList.stream().filter { entity -> entity.getDistance(minecraft.player) <= 6 }.forEach { entity ->
-                    if (entity is EntityEnderCrystal && entity.getDamageToEntity(minecraft.player) > EntityUtil.getEntityHealth(minecraft.player)) {
-                        deadlyCrystals++
-                    }
+            minecraft.world.loadedEntityList.stream().filter { it.getDistance(minecraft.player) <= 6 }.forEach {
+                if (it is EntityEnderCrystal
+                    && it.getDamageToEntity(minecraft.player) > EntityUtil.getEntityHealth(minecraft.player)
+                ) {
+                    deadlyCrystals++
                 }
+            }
 
             if (deadlyCrystals > 0) {
                 return true
@@ -223,7 +234,15 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
             return true
         }
 
-        if ((dynamicGapple.value == DynamicGapple.HOLE || dynamicGapple.value == DynamicGapple.BOTH) && BlockUtil.isSafeHole(BlockPos(floor(minecraft.player.posX), floor(minecraft.player.posY), floor(minecraft.player.posZ)), true)) {
+        if ((dynamicGapple.value == DynamicGapple.HOLE || dynamicGapple.value == DynamicGapple.BOTH)
+            && BlockUtil.isSafeHole(
+                BlockPos(
+                    floor(minecraft.player.posX),
+                    floor(minecraft.player.posY),
+                    floor(minecraft.player.posZ)
+                ), true
+            )
+        ) {
             return true
         }
 
@@ -252,7 +271,7 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         minecraft.playerController.updateController()
 
         if (inventorySpoof.value && minecraft.connection != null) {
-            minecraft.connection!!.sendPacket(CPacketCloseWindow(window))
+            minecraft.connection?.sendPacket(CPacketCloseWindow(window))
         }
     }
 

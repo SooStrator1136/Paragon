@@ -56,14 +56,6 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
         true
     ) describedBy "Outline the box at the end of the line" subOf box
 
-    private val outlineWidth = Setting(
-        "OutlineWidth",
-        1.0f,
-        0.1f,
-        3.0f,
-        0.1f
-    ) describedBy "The width of the outline" subOf box visibleWhen outline::value
-
     private val boxColour = Setting(
         "BoxColour",
         Color(185, 17, 255, 130)
@@ -110,11 +102,14 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
 
             // Original arrow position
             var position = Vec3d(
-                minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * (minecraft as IMinecraft).timer!!.renderPartialTicks - cos(
+                minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * ((minecraft as IMinecraft).timer
+                    ?: return).renderPartialTicks - cos(
                     Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()
                 ) * 0.16f,
-                minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * (minecraft as IMinecraft).timer!!.renderPartialTicks + minecraft.player.getEyeHeight() - 0.15,
-                minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * (minecraft as IMinecraft).timer!!.renderPartialTicks - sin(
+                minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * ((minecraft as IMinecraft).timer
+                    ?: return).renderPartialTicks + minecraft.player.getEyeHeight() - 0.15,
+                minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * ((minecraft as IMinecraft).timer
+                    ?: return).renderPartialTicks - sin(
                     Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()
                 ) * 0.16f
             )

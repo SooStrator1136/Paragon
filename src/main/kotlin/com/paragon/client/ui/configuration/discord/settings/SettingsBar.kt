@@ -40,7 +40,7 @@ object SettingsBar : IRenderable {
             toggleRect.setBounds(
                 ModuleBar.rect.x + ModuleBar.rect.width,
                 ModuleBar.rect.y,
-                GuiDiscord.BASE_RECT.width - (CategoryBar.rect.width + ModuleBar.rect.width),
+                GuiDiscord.baseRect.width - (CategoryBar.rect.width + ModuleBar.rect.width),
                 if (ModuleBar.focusedModule != null) (FontUtil.getHeight() * 4).toInt() else 0,
             )
             toggleButton.setBounds(
@@ -54,7 +54,7 @@ object SettingsBar : IRenderable {
                 toggleRect.x,
                 toggleRect.y + toggleRect.height,
                 toggleRect.width,
-                GuiDiscord.BASE_RECT.height - toggleRect.height
+                GuiDiscord.baseRect.height - toggleRect.height
             )
 
             if (rect.contains(mouseX, mouseY) && shownSettings.isNotEmpty()) {
@@ -62,8 +62,8 @@ object SettingsBar : IRenderable {
                 maxScrollOffset = Optional.of(
                     ((((lastRect.y + lastRect.height) - shownSettings[0].bounds.y) - rect.height) * -1) - 25
                 ).map { if (it > 0) 0 else it }.get()
-                val newOffset = scrollOffset + (GuiDiscord.D_WHEEL / 7)
-                if (GuiDiscord.D_WHEEL < 0) {
+                val newOffset = scrollOffset + (GuiDiscord.dWheel / 7)
+                if (GuiDiscord.dWheel < 0) {
                     scrollOffset = if (newOffset < maxScrollOffset) maxScrollOffset else newOffset
                 } else if (scrollOffset < 0) {
                     scrollOffset = if (newOffset > 0) 0 else newOffset
@@ -81,7 +81,7 @@ object SettingsBar : IRenderable {
             rect.y.toFloat(),
             rect.width.toFloat(),
             rect.height.toFloat(),
-            GuiDiscord.CHAT_BACKGROUND.rgb
+            GuiDiscord.chatBackground.rgb
         )
 
         //Render module toggle button
@@ -95,21 +95,21 @@ object SettingsBar : IRenderable {
                     toggleRect.y.toFloat(),
                     toggleRect.width.toFloat(),
                     toggleRect.height.toFloat(),
-                    GuiDiscord.CHAT_BACKGROUND.rgb
+                    GuiDiscord.chatBackground.rgb
                 )
                 RenderUtil.drawRect(
                     toggleRect.x + 10F,
                     toggleRect.y + (FontUtil.getHeight() * 3.2F),
                     toggleRect.width - 20F,
                     2F,
-                    GuiDiscord.MEDIA_SIZE.rgb
+                    GuiDiscord.mediaSize.rgb
                 )
 
                 FontUtil.drawStringWithShadow(
                     ModuleBar.focusedModule!!.name,
                     toggleRect.x + 10F,
                     toggleRect.y + FontUtil.getHeight(),
-                    GuiDiscord.CHANNEL_TEXT_COLOR.rgb
+                    GuiDiscord.channelTextColor.rgb
                 )
 
                 RenderUtil.drawRoundedRect(
@@ -121,7 +121,7 @@ object SettingsBar : IRenderable {
                     toggleButton.height / 2.0,
                     toggleButton.height / 2.0,
                     toggleButton.height / 2.0,
-                    GuiDiscord.CHANNEL_HOVERED_COLOR.rgb
+                    GuiDiscord.channelHoveredColor.rgb
                 )
 
                 //Indicator whether the module is toggled or not

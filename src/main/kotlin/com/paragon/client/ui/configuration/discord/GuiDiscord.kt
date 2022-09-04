@@ -15,65 +15,65 @@ import java.awt.Color
  */
 object GuiDiscord : GuiImplementation(), Wrapper {
 
-    var D_WHEEL = 0
+    var dWheel = 0
         private set
-    val BASE_RECT = Rectangle()
+    val baseRect = Rectangle()
 
-    val USER_FIELD_BACKGROUND = Color(41, 43, 47)
-    val USER_COPIED_COLOR = Color(59, 165, 93)
+    val userFieldBackground = Color(41, 43, 47)
+    val userCopiedColor = Color(59, 165, 93)
 
-    val CATEGORY_BAR_BACKGROUND = Color(32, 34, 37)
-    val CATEGORY_TEXT_BACKGROUND = Color(24, 25, 28)
+    val categoryBarBackground = Color(32, 34, 37)
+    val categoryTextBackground = Color(24, 25, 28)
 
-    val CHANNEL_BAR_BACKGROUND = Color(47, 49, 54)
-    val CHANNEL_TEXT_COLOR = Color(142, 146, 151)
-    val CHANNEL_HOVERED_COLOR = Color(60, 63, 69)
+    val channelBarBackground = Color(47, 49, 54)
+    val channelTextColor = Color(142, 146, 151)
+    val channelHoveredColor = Color(60, 63, 69)
 
-    val MEDIA_BACKGROUND_BORDER = Color(44, 46, 51)
-    val MEDIA_BACKGROUND = CHANNEL_BAR_BACKGROUND
-    val MEDIA_PROGRESS_BACKGROUND = Color(19, 20, 22)
-    val MEDIA_PROGRESS = Color(88, 101, 242)
-    val MEDIA_PROGRESSBAR_BACKGROUND = Color(69, 70, 73)
-    val MEDIA_SIZE = Color(107, 110, 114)
-    val MEDIA_TITLE = Color(11, 155, 198)
-    val MSG_HOVERED = Color(50, 53, 59)
-    val CHAT_BACKGROUND = Color(54, 57, 63)
+    val mediaBackgroundBorder = Color(44, 46, 51)
+    val mediaBackground = channelBarBackground
+    val mediaProgressBackground = Color(19, 20, 22)
+    val mediaProgress = Color(88, 101, 242)
+    val mediaProgressbarBackground = Color(69, 70, 73)
+    val mediaSize = Color(107, 110, 114)
+    val mediaTitle = Color(11, 155, 198)
+    val msgHovered = Color(50, 53, 59)
+    val chatBackground = Color(54, 57, 63)
 
-    private val renderables = arrayOf(
+    private val parts = arrayOf(
         SettingsBar,
         ModuleBar,
         CategoryBar
     )
 
     override fun drawScreen(mouseX: Int, mouseY: Int, mouseDelta: Int) {
-        BASE_RECT.setBounds(
+        baseRect.setBounds(
             ((minecraft.currentScreen ?: return).width / 2) - 200,
             ((minecraft.currentScreen ?: return).height / 2) - 150,
             400,
             300
         )
 
-        D_WHEEL = mouseDelta
+        dWheel = mouseDelta
 
-        for (renderable in renderables) {
+        for (renderable in parts) {
             renderable.render(mouseX, mouseY)
         }
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        for (renderable in renderables) {
+        for (renderable in parts) {
             renderable.onClick(mouseX, mouseY, mouseButton)
         }
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        for (renderable in renderables) {
+        for (renderable in parts) {
             renderable.onRelease(mouseX, mouseY, mouseButton)
         }
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        for (renderable in renderables) {
+        for (renderable in parts) {
             renderable.onKey(keyCode)
         }
     }

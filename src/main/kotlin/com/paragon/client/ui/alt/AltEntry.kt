@@ -7,7 +7,7 @@ import com.paragon.client.managers.alt.Alt
 
 class AltEntry(val alt: Alt, var offset: Float) : Wrapper {
 
-    fun drawAlt(mouseX: Int, mouseY: Int, screenWidth: Int) {
+    fun drawAlt(screenWidth: Int) {
         drawRect(
             0f,
             offset,

@@ -7,9 +7,9 @@ import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.InventoryUtil.getItemInHotbar
 import com.paragon.api.util.player.InventoryUtil.switchToSlot
+import com.paragon.bus.listener.Listener
 import com.paragon.mixins.accessor.ICPacketPlayer
 import com.paragon.mixins.accessor.IPlayerControllerMP
-import com.paragon.bus.listener.Listener
 import net.minecraft.init.Items
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.EnumHand
@@ -20,9 +20,15 @@ import net.minecraft.world.GameType
  */
 object NoFall : Module("NoFall", Category.MOVEMENT, "Disables fall damage") {
 
-    private val mode = Setting("Mode", Mode.VANILLA, null, null, null) describedBy "How to prevent fall damage"
-    private val spoofFall = Setting("SpoofFall", false, null, null, null) describedBy "Spoof fall distance" visibleWhen  { mode.value == Mode.RUBBERBAND }
-    private val ignoreElytra = Setting("IgnoreElytra", true, null, null, null) describedBy "Don't attempt to place a water bucket when flying with an elytra" visibleWhen  { mode.value == Mode.BUCKET }
+    private val mode = Setting("Mode", Mode.VANILLA) describedBy "How to prevent fall damage"
+    private val spoofFall = Setting(
+        "SpoofFall",
+        false
+    ) describedBy "Spoof fall distance" visibleWhen { mode.value == Mode.RUBBERBAND }
+    private val ignoreElytra = Setting(
+        "IgnoreElytra",
+        true
+    ) describedBy "Don't attempt to place a water bucket when flying with an elytra" visibleWhen { mode.value == Mode.BUCKET }
 
     override fun onTick() {
         if (minecraft.anyNull) {
@@ -30,7 +36,8 @@ object NoFall : Module("NoFall", Category.MOVEMENT, "Disables fall damage") {
         }
 
         // Ignore if we are flying with an elytra, or we are in creative mode
-        if (minecraft.player.isElytraFlying && ignoreElytra.value!! || minecraft.playerController.currentGameType.equals(GameType.CREATIVE)) {
+        @Suppress("IncorrectFormatting")
+        if (minecraft.player.isElytraFlying && ignoreElytra.value || minecraft.playerController.currentGameType.equals(GameType.CREATIVE)) {
             return
         }
 
@@ -41,10 +48,17 @@ object NoFall : Module("NoFall", Category.MOVEMENT, "Disables fall damage") {
 
                 Mode.RUBBERBAND -> {
                     // Send an invalid packet
-                    minecraft.player.connection.sendPacket(CPacketPlayer.Position(minecraft.player.motionX, 0.0, minecraft.player.motionZ, true))
+                    minecraft.player.connection.sendPacket(
+                        CPacketPlayer.Position(
+                            minecraft.player.motionX,
+                            0.0,
+                            minecraft.player.motionZ,
+                            true
+                        )
+                    )
 
                     // Set the fall distance to 0
-                    if (spoofFall.value!!) {
+                    if (spoofFall.value) {
                         minecraft.player.fallDistance = 0f
                     }
                 }
@@ -59,13 +73,23 @@ object NoFall : Module("NoFall", Category.MOVEMENT, "Disables fall damage") {
                         (minecraft.playerController as IPlayerControllerMP).hookSyncCurrentPlayItem()
 
                         // Send rotation packet
-                        minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(minecraft.player.rotationYaw, 90f, false))
+                        minecraft.player.connection.sendPacket(
+                            CPacketPlayer.Rotation(
+                                minecraft.player.rotationYaw,
+                                90f,
+                                false
+                            )
+                        )
 
                         // Set client rotation
                         minecraft.player.rotationPitch = 90f
 
                         // Attempt to place water bucket
-                        minecraft.playerController.processRightClick(minecraft.player, minecraft.world, EnumHand.MAIN_HAND)
+                        minecraft.playerController.processRightClick(
+                            minecraft.player,
+                            minecraft.world,
+                            EnumHand.MAIN_HAND
+                        )
                     }
 
                 else -> {}
@@ -80,7 +104,8 @@ object NoFall : Module("NoFall", Category.MOVEMENT, "Disables fall damage") {
         }
 
         // Ignore if we are flying with an elytra, or we are in creative mode
-        if (minecraft.player.isElytraFlying && ignoreElytra.value!! || minecraft.playerController.currentGameType.equals(GameType.CREATIVE)) {
+        @Suppress("IncorrectFormatting")
+        if (minecraft.player.isElytraFlying && ignoreElytra.value || minecraft.playerController.currentGameType.equals(GameType.CREATIVE)) {
             return
         }
 

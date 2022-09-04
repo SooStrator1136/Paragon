@@ -214,7 +214,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                     5.0,
                     5.0,
                     5.0,
-                    GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
+                    GuiDiscord.channelBarBackground.rgb
                 )
                 RenderUtil.drawRoundedRect(
                     x.toDouble(),
@@ -225,7 +225,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                     3.5,
                     3.5,
                     3.5,
-                    GuiDiscord.CHANNEL_HOVERED_COLOR.rgb
+                    GuiDiscord.channelHoveredColor.rgb
                 )
 
 
@@ -240,7 +240,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                         5.0,
                         5.0,
                         5.0,
-                        GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
+                        GuiDiscord.channelBarBackground.rgb
                     )
                     RenderUtil.drawRoundedRect(
                         (x + catWidth + FontUtil.getStringWidth("# ")).toDouble(),
@@ -251,7 +251,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                         3.5,
                         3.5,
                         3.5,
-                        GuiDiscord.CHANNEL_HOVERED_COLOR.rgb
+                        GuiDiscord.channelHoveredColor.rgb
                     )
                 }
             }
@@ -351,9 +351,11 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                     )
                 }
             }
+
+            ClickGUI.Style.MOOSE -> {} //TODO
         }
 
-        //The most chinese 😭 (i'll probably clean this up)
+        //The most chinese 😭 (I'll probably clean this up)
         if (style.value == ClickGUI.Style.ZERODAY) {
             var catY = y + 1F
             for (cat in Category.values()) {
@@ -385,7 +387,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                     "# ${cat.Name}",
                     x + 2F,
                     catY,
-                    GuiDiscord.CHANNEL_TEXT_COLOR.rgb
+                    GuiDiscord.channelTextColor.rgb
                 )
                 catY += FontUtil.getHeight() + 1F
             }
@@ -397,7 +399,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                         "# ${mod.name}",
                         x + catWidth + 2F + FontUtil.getStringWidth("# "),
                         modY,
-                        GuiDiscord.CHANNEL_TEXT_COLOR.rgb
+                        GuiDiscord.channelTextColor.rgb
                     )
                     modY += FontUtil.getHeight() + 1F
                 }

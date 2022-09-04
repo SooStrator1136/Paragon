@@ -36,11 +36,7 @@ object SizeCommand : Command("Size", "size") {
     private fun getItemSize(stack: ItemStack): Int {
         val buff = PacketBuffer(Unpooled.buffer())
         buff.writeItemStack(stack)
-        val size = buff.writerIndex()
-        buff.release()
-        return size
+        return buff.writerIndex().also { buff.release() }
     }
 
 }
-
-

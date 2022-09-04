@@ -10,9 +10,9 @@ import com.paragon.api.util.player.PlayerUtil.move
 import com.paragon.api.util.player.PlayerUtil.propel
 import com.paragon.api.util.player.PlayerUtil.stopMotion
 import com.paragon.api.util.string.StringUtil.getFormattedText
+import com.paragon.bus.listener.Listener
 import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.mixins.accessor.ITimer
-import com.paragon.bus.listener.Listener
 import net.minecraft.network.play.client.CPacketEntityAction
 
 /**
@@ -21,33 +21,75 @@ import net.minecraft.network.play.client.CPacketEntityAction
 object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easier flight with an elytra") {
 
     // Mode for elytra flight
-    private val mode = Setting("Mode", Mode.CONTROL, null, null, null) describedBy "The mode to use"
+    private val mode = Setting("Mode", Mode.CONTROL) describedBy "The mode to use"
 
     // Strict settings
-    private val ascendPitch = Setting("AscendPitch", -45f, -90f, 90f, 1f) describedBy "What value to set your pitch to when ascending" subOf mode visibleWhen { mode.value == Mode.STRICT }
-    private val descendPitch = Setting("DescendPitch", 45f, -90f, 90f, 1f) describedBy "What value to set your pitch to when descending" subOf mode visibleWhen { mode.value == Mode.STRICT }
-    private val lockPitch = Setting("LockPitch", true, null, null, null) describedBy "Lock your pitch when you are not ascending or descending" subOf mode visibleWhen { mode.value == Mode.STRICT }
-    private val lockPitchVal = Setting("LockedPitch", 0f, -90f, 90f, 1f) describedBy "The pitch to lock you to when you are not ascending or descending"  subOf mode visibleWhen { mode.value == Mode.STRICT }
+    private val ascendPitch = Setting(
+        "AscendPitch",
+        -45f,
+        -90f,
+        90f,
+        1f
+    ) describedBy "What value to set your pitch to when ascending" subOf mode visibleWhen { mode.value == Mode.STRICT }
+    private val descendPitch = Setting(
+        "DescendPitch",
+        45f,
+        -90f,
+        90f,
+        1f
+    ) describedBy "What value to set your pitch to when descending" subOf mode visibleWhen { mode.value == Mode.STRICT }
+    private val lockPitch = Setting(
+        "LockPitch",
+        true
+    ) describedBy "Lock your pitch when you are not ascending or descending" subOf mode visibleWhen { mode.value == Mode.STRICT }
+    private val lockPitchVal = Setting(
+        "LockedPitch",
+        0f,
+        -90f,
+        90f,
+        1f
+    ) describedBy "The pitch to lock you to when you are not ascending or descending" subOf mode visibleWhen { mode.value == Mode.STRICT }
 
     // Boost settings
-    private val cancelMotion = Setting("CancelMotion", false, null, null, null) describedBy "Stop motion when not moving" subOf mode visibleWhen  { mode.value == Mode.BOOST }
+    private val cancelMotion = Setting(
+        "CancelMotion",
+        false
+    ) describedBy "Stop motion when not moving" subOf mode visibleWhen { mode.value == Mode.BOOST }
 
     // Global settings
     private val flySpeed = Setting("FlySpeed", 1f, 0.1f, 2f, 0.1f) describedBy "The speed to fly at"
-    private val ascend = Setting("AscendSpeed", 1.0, 0.1, 2.0, 0.1) describedBy "How fast to ascend" visibleWhen { mode.value != Mode.BOOST }
-    private val descend = Setting("DescendSpeed", 1.0, 0.1, 2.0, 0.1) describedBy "How fast to descend" visibleWhen { mode.value != Mode.BOOST }
-    private val fallSpeed = Setting("FallSpeed", 0f, 0f, 0.1f, 0.01f) describedBy "How fast to fall" 
+    private val ascend = Setting(
+        "AscendSpeed",
+        1.0,
+        0.1,
+        2.0,
+        0.1
+    ) describedBy "How fast to ascend" visibleWhen { mode.value != Mode.BOOST }
+    private val descend = Setting(
+        "DescendSpeed",
+        1.0,
+        0.1,
+        2.0,
+        0.1
+    ) describedBy "How fast to descend" visibleWhen { mode.value != Mode.BOOST }
+    private val fallSpeed = Setting("FallSpeed", 0f, 0f, 0.1f, 0.01f) describedBy "How fast to fall"
 
     // Takeoff settings
-    private val takeOff = Setting("Takeoff", false, null, null, null) describedBy "Automatically take off when you enable the module"
-    private val takeOffTimer = Setting("Timer", 0.2f, 0.1f, 1f, 0.1f) describedBy "How long a tick lasts for" subOf takeOff
+    private val takeOff = Setting("Takeoff", false) describedBy "Automatically take off when you enable the module"
+    private val takeOffTimer = Setting(
+        "Timer",
+        0.2f,
+        0.1f,
+        1f,
+        0.1f
+    ) describedBy "How long a tick lasts for" subOf takeOff
 
     override fun onEnable() {
         if (minecraft.anyNull) {
             return
         }
 
-        if (takeOff.value!!) {
+        if (takeOff.value) {
             // Make sure we aren't elytra flying
             if (!minecraft.player.isElytraFlying) {
 
@@ -57,11 +99,14 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
                 if (minecraft.player.onGround) {
                     // Jump if we're on the ground
                     minecraft.player.jump()
-                }
-
-                else {
+                } else {
                     // Make us fly if we are off the ground
-                    minecraft.player.connection.sendPacket(CPacketEntityAction(minecraft.player, CPacketEntityAction.Action.START_FALL_FLYING))
+                    minecraft.player.connection.sendPacket(
+                        CPacketEntityAction(
+                            minecraft.player,
+                            CPacketEntityAction.Action.START_FALL_FLYING
+                        )
+                    )
                 }
             }
         }
@@ -87,10 +132,8 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
 
                 // Make us fall
                 stopMotion(-fallSpeed.value)
-            }
-
-            else {
-                if (cancelMotion.value!!) {
+            } else {
+                if (cancelMotion.value) {
                     // Cancel motion
                     travelEvent.cancel()
 
@@ -116,12 +159,10 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
                     handleStrict()
                 }
 
-                Mode.BOOST -> if (minecraft.gameSettings.keyBindForward.isKeyDown() && !(minecraft.player.posX - minecraft.player.lastTickPosX > flySpeed.value || minecraft.player.posZ - minecraft.player.lastTickPosZ > flySpeed.value)) {
+                Mode.BOOST -> if (minecraft.gameSettings.keyBindForward.isKeyDown && !(minecraft.player.posX - minecraft.player.lastTickPosX > flySpeed.value || minecraft.player.posZ - minecraft.player.lastTickPosZ > flySpeed.value)) {
                     // Move forward
-                    propel(flySpeed.value * if (cancelMotion.value!!) 1f else 0.015f)
+                    propel(flySpeed.value * if (cancelMotion.value) 1f else 0.015f)
                 }
-
-                else -> {}
             }
 
             // Lock our limbs
@@ -148,27 +189,21 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
 
             // Increase Y
             minecraft.player.motionY = ascend.value
-        }
-
-        else if (minecraft.gameSettings.keyBindSneak.isKeyDown) {
+        } else if (minecraft.gameSettings.keyBindSneak.isKeyDown) {
             // Decrease pitch
             minecraft.player.rotationPitch = descendPitch.value
 
             // Decrease Y
             minecraft.player.motionY = -descend.value
-        }
-
-        else {
-            if (lockPitch.value!!) {
+        } else {
+            if (lockPitch.value) {
                 // Set pitch if we aren't moving
                 minecraft.player.rotationPitch = lockPitchVal.value
             }
         }
     }
 
-    override fun getData(): String {
-        return getFormattedText(mode.value!!)
-    }
+    override fun getData() = getFormattedText(mode.value)
 
     enum class Mode {
         /**

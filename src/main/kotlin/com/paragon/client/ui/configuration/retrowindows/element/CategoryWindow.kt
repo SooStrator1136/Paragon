@@ -31,8 +31,8 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
     init {
         title = category.Name
 
-        Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category }.forEach { module ->
-            moduleElements.add(ModuleElement(this, module, x, y + height, width - 1, height))
+        Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category }.forEach {
+            moduleElements.add(ModuleElement(this, it, x, y + height, width - 1, height))
         }
     }
 
@@ -45,15 +45,29 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
 
         var moduleHeight = 0f
 
-        moduleElements.forEach { moduleElement ->
-            moduleHeight += moduleElement.getTotalHeight()
+        moduleElements.forEach {
+            moduleHeight += it.getTotalHeight()
         }
 
         scissorHeight = (MathHelper.clamp(moduleHeight, 0f, maxHeight) * animation.getAnimationFactor()).toFloat()
 
         // Background
-        RenderUtil.drawRect(x, y, width, (height + scissorHeight + 1 * animation.getAnimationFactor()).toFloat(), Color(148, 148, 148).rgb)
-        RenderUtil.drawHorizontalGradientRect(x + 1, y + 1, width - 2, height - 2, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            width,
+            (height + scissorHeight + 1 * animation.getAnimationFactor()).toFloat(),
+            Color(148, 148, 148).rgb
+        )
+        RenderUtil.drawHorizontalGradientRect(
+            x + 1,
+            y + 1,
+            width - 2,
+            height - 2,
+            Colours.mainColour.value.rgb,
+            if (ClickGUI.gradient.value) Colours.mainColour.value.brighter()
+                .brighter().rgb else Colours.mainColour.value.rgb
+        )
 
         // Minimise button
         RenderUtil.drawRect(x + width - 12.5f, y + 3.5f, 10f, 10f, Color(70, 70, 70).rgb)
