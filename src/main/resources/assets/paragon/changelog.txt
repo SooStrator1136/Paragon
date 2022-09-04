@@ -25,3 +25,4 @@ Added Alerts
 Removed the GUI FPS limit
 Added BookBot
 Added PopChams
+Improved AutoCrystal

@@ -45,8 +45,8 @@ class DiscordCategory(val category: Category) : IRenderable {
                 if (isHovered) GuiDiscord.CHANNEL_BAR_BACKGROUND.brighter().rgb else GuiDiscord.CHANNEL_BAR_BACKGROUND.rgb
             )
 
-            val scaleFac = rect.width / 16.0
-            scaleTo(rect.x.toFloat(), rect.y.toFloat(), 0F, scaleFac, scaleFac, 1.0) {
+            val scaleFac = rect.width / 18.0
+            scaleTo(rect.x.toFloat() - 2 + if (category == Category.RENDER) 0.5f else 0f, rect.y.toFloat() - 2, 0F, scaleFac, scaleFac, 1.0) {
                 RenderUtil.renderItemStack(indicator, rect.x.toFloat(), rect.y.toFloat(), false)
             }
         }
