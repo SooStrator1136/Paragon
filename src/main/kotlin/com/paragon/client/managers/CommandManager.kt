@@ -21,8 +21,10 @@ class CommandManager : Wrapper {
 
     val commands = arrayListOf(
         ConfigCommand,
+        CopySkinCommand,
         HelpCommand,
         OpenFolderCommand,
+        SaveMapCommand,
         SocialCommand,
         SyntaxCommand,
         SizeCommand,
