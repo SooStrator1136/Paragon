@@ -17,6 +17,7 @@ import com.paragon.api.util.render.font.FontUtil.getHeight
 import com.paragon.api.util.render.font.FontUtil.getStringWidth
 import com.paragon.mixins.accessor.IRenderManager
 import com.paragon.bus.listener.Listener
+import com.paragon.client.systems.module.impl.client.ClientFont
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.enchantment.Enchantment
@@ -146,9 +147,9 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             // Disable depth so we can see the nametag through walls
             GlStateManager.disableDepth()
             val stringBuilder = StringBuilder(player.name)
+
             if (health.value) {
-                stringBuilder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player))
-                    .append(EntityUtil.getEntityHealth(player).roundToInt())
+                stringBuilder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player)).append(EntityUtil.getEntityHealth(player).roundToInt())
             }
 
             if (ping.value && minecraft.connection != null) {
@@ -167,13 +168,13 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             }
 
             // Get nametag width
-            val width = getStringWidth(stringBuilder.toString())
+            val width = getStringWidth(stringBuilder.toString()) + 4f
 
             // Center nametag
             GL11.glTranslated((-width / 2).toDouble(), -20.0, 0.0)
 
             // Draw background
-            drawRect(0f, 0f, width, getHeight() + if (isEnabled) 0 else 2, -0x70000000)
+            drawRect(0f, 0f, width, getHeight() + if (ClientFont.isEnabled) 0 else 2, -0x70000000)
 
             // Draw border
             if (outline.value) {
@@ -181,14 +182,14 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                     0f,
                     0f,
                     width,
-                    getHeight() + if (isEnabled) 0 else 2,
+                    getHeight() + if (ClientFont.isEnabled) 0 else 2,
                     outlineWidth.value,
                     outlineColour.value.rgb
                 )
             }
 
             // Render string
-            drawStringWithShadow(stringBuilder.toString(), 2f, 2f, -1)
+            drawStringWithShadow(stringBuilder.toString(), 2f, if (ClientFont.isEnabled) 1f else 2f, -1)
 
             // Render armour
             if (armour.value) {
