@@ -129,7 +129,7 @@ jar {
             'MixinConfigs': 'mixins.paragon.json',
             'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
             'FMLCorePluginContainsFMLMod': 'true',
-            'FMLCorePlugin': 'com.paragon.asm.MixinLoader',
+            'FMLCorePlugin': 'com.paragon.MixinLoader',
             'ForceLoadAsMod': 'true'
     )
 

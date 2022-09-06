@@ -66,6 +66,7 @@ class ModuleManager {
             HandChams,
             HitColour,
             HoleESP,
+            LogoutSpots,
             MobOwner,
             Nametags,
             NoRender,
@@ -92,7 +93,7 @@ class ModuleManager {
             AutoTranslate,
             BookBot,
 
-            // MOVEMENT
+            // Movement
             AutoWalk,
             Blink,
             ChatModifications,
