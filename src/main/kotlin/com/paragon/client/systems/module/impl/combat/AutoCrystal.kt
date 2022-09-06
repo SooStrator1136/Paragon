@@ -8,7 +8,6 @@ import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.calculations.Timer
-import com.paragon.api.util.entity.EntityUtil
 import com.paragon.api.util.entity.EntityUtil.getEntityHealth
 import com.paragon.api.util.entity.EntityUtil.isTooFarAwayFromSelf
 import com.paragon.api.util.mc
@@ -29,8 +28,6 @@ import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.api.util.world.BlockUtil.getSphere
 import com.paragon.bus.listener.Listener
 import com.paragon.client.managers.rotation.Rotate
-import com.paragon.client.managers.rotation.Rotation
-import com.paragon.client.managers.rotation.RotationPriority
 import com.paragon.client.systems.module.impl.misc.AutoEZ.addTarget
 import com.paragon.mixins.accessor.IPlayerControllerMP
 import net.minecraft.block.Block
@@ -110,14 +107,14 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     private val yawStep = Setting("YawStep", 45f, 1f, 180f, 1f) describedBy "The max yaw to step per tick" subOf rotate
 
     /******************************* OVERRIDING *******************************/
-    private val override = Setting("Override", true) describedBy "Override minimum damage when certain things happen"
-    private val overrideHealth = Setting("Health", true) describedBy "Override if the target's health is below a value" subOf override
-    private val overrideHealthValue = Setting("OverrideHealth", 10f, 0f, 36f, 1f) describedBy "If the targets health is this value or below, ignore minimum damage" subOf override visibleWhen (override::value)
-    private val overrideTotalArmour = Setting("Armour", true) describedBy "Override if the target's total armour durability is below a certain value" subOf override
-    private val overrideTotalArmourValue = Setting("ArmourValue", 10f, 0f, 100f, 1f) describedBy "The value which we will start to override at (in %)" subOf override
-    private val forceOverride: Setting<Bind> = Setting("ForceOverride", Bind(0, Bind.Device.KEYBOARD)) describedBy "Force override when you press a key" subOf override
-    private val ignoreMax = Setting("IgnoreMax", true) describedBy "Do not ignore the limits if we are overriding" subOf override visibleWhen (explodeMax::value)
-    private val ignoreMaxLocal = Setting("IgnoreMaxLocal", true) describedBy "Place or explode even if the damage done to us is larger than the max local damage" subOf override
+    private val overrideSetting = Setting("Override", true) describedBy "Override minimum damage when certain things happen"
+    private val overrideHealth = Setting("Health", true) describedBy "Override if the target's health is below a value" subOf overrideSetting
+    private val overrideHealthValue = Setting("OverrideHealth", 10f, 0f, 36f, 1f) describedBy "If the targets health is this value or below, ignore minimum damage" subOf overrideSetting visibleWhen (overrideSetting::value)
+    private val overrideTotalArmour = Setting("Armour", true) describedBy "Override if the target's total armour durability is below a certain value" subOf overrideSetting
+    private val overrideTotalArmourValue = Setting("ArmourValue", 10f, 0f, 100f, 1f) describedBy "The value which we will start to override at (in %)" subOf overrideSetting
+    private val forceOverride: Setting<Bind> = Setting("ForceOverride", Bind(0, Bind.Device.KEYBOARD)) describedBy "Force override when you press a key" subOf overrideSetting
+    private val ignoreMax = Setting("IgnoreMax", true) describedBy "Do not ignore the limits if we are overriding" subOf overrideSetting visibleWhen (explodeMax::value)
+    private val ignoreMaxLocal = Setting("IgnoreMaxLocal", true) describedBy "Place or explode even if the damage done to us is larger than the max local damage" subOf overrideSetting
 
     /******************************* PAUSING *******************************/
     private val pause = Setting("Pause", true) describedBy "Pause if certain things are happening"
@@ -654,7 +651,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     }
 
     private fun isOverriding(target: EntityPlayer): Boolean {
-        if (override.value) {
+        if (overrideSetting.value) {
             if (overrideHealth.value && getEntityHealth(target) <= overrideHealthValue.value || forceOverride.value.isPressed()) {
                 return true
             }

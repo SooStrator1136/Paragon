@@ -14,6 +14,8 @@ import com.paragon.client.ui.configuration.paragon.module.ModuleElement
 import com.paragon.client.ui.configuration.shared.Panel
 import com.paragon.client.ui.util.Click
 import me.surge.animation.Animation
+import me.surge.animation.Easing
+import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.MathHelper
 import org.lwjgl.opengl.GL11
@@ -32,6 +34,7 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
     private val modules = ArrayList<ModuleElement>()
 
     var scroll = 0f
+    var scrollFactor = 0f
 
     private val expand = Animation(ClickGUI.animationSpeed::value, true, ClickGUI.easing::value)
 
@@ -77,7 +80,7 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
 
         FontUtil.drawStringWithShadow(StringUtil.getFormattedText(category), x + titleOffset, y + 7, -1)
 
-        RenderUtil.drawRect(x, y + height, width, 240 * expand.getAnimationFactor().toFloat(), Color(32, 32, 46).rgb)
+        RenderUtil.drawRect(x, y + height, width, 320 * expand.getAnimationFactor().toFloat(), Color(32, 32, 46).rgb)
 
         var moduleHeight = 0f
 
@@ -85,15 +88,25 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
             moduleHeight += it.getAbsoluteHeight()
         }
 
-        interactableHeight = (MathHelper.clamp(moduleHeight.toDouble(), 0.0, 240.0) * expand.getAnimationFactor()).toFloat()
+        interactableHeight = (MathHelper.clamp(moduleHeight.toDouble(), 0.0, 320.0) * expand.getAnimationFactor()).toFloat()
 
-        RenderUtil.pushScissor(x.toDouble(), y + height.toDouble(), width.toDouble(), (MathHelper.clamp(moduleHeight.toDouble(), moduleHeight.toDouble(), 240.0) * expand.getAnimationFactor()))
+        RenderUtil.pushScissor(x.toDouble(), y + height.toDouble(), width.toDouble(), (MathHelper.clamp(moduleHeight.toDouble(), moduleHeight.toDouble(), 320.0) * expand.getAnimationFactor()))
 
-        if (mouseDelta != 0 && mouseX in x..x + width && mouseY in y + height..y + height + 240f) {
-            scroll += mouseDelta * 0.05f
+        if (mouseDelta != 0 && mouseX in x..x + width && mouseY in y + height..y + height + 320f) {
+            scrollFactor = if (mouseDelta > 0) (240f / Minecraft.getDebugFPS()) else -((240f / Minecraft.getDebugFPS()))
+            scrollFactor *= 3
+        } else {
+            if (scrollFactor != 0f) {
+                scrollFactor *= 0.9f
+
+                if (scrollFactor < 0.1 && scrollFactor > -0.1) {
+                    scrollFactor = 0f
+                }
+            }
         }
 
-        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (moduleHeight - 240.0)), 0.0).toFloat()
+        scroll += scrollFactor
+        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (moduleHeight - 320.0)), 0.0).toFloat()
 
         var offset = y + height + scroll
         modules.forEach {

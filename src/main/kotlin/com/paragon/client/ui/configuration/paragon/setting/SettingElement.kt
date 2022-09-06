@@ -32,8 +32,8 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
                 is Number -> subElements.add(SliderElement(it as Setting<Number>, module, x, y, width, height))
                 is Enum<*> -> subElements.add(EnumElement(it as Setting<Enum<*>>, module, x, y, width, height))
                 is Color -> subElements.add(ColourElement(it as Setting<Color>, module, x, y, width, height))
-                is Bind -> subElements.add(SettingElement(it as Setting<Bind>, module, x, y, width, height))
-                is Setting<*> -> subElements.add(StringElement(it as Setting<String>, module, x, y, width, height))
+                is Bind -> subElements.add(BindElement(it as Setting<Bind>, module, x, y, width, height))
+                is String -> subElements.add(StringElement(it as Setting<String>, module, x, y, width, height))
             }
         }
     }
@@ -113,7 +113,7 @@ open class SettingElement<T>(val setting: Setting<T>, val module: ModuleElement,
     }
 
     override fun isHovered(mouseX: Float, mouseY: Float): Boolean {
-        return super.isHovered(mouseX, mouseY) && mouseY > module.panel.y + module.panel.height && mouseY < module.panel.y + module.panel.height + 240.0
+        return super.isHovered(mouseX, mouseY) && mouseY > module.panel.y + module.panel.height && mouseY < module.panel.y + module.panel.height + 320.0
     }
 
 }
