@@ -118,6 +118,7 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
         if (minecraft.anyNull) {
             return
         }
+
         for (e in minecraft.world.loadedEntityList) {
             e.isGlowing = false
         }
@@ -147,15 +148,18 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
             } else {
                 frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
             }
+
             frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
             (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
+
             for (entity in minecraft.world.loadedEntityList) {
                 if (entity != null && entity !== minecraft.player && isEntityValid(entity)) {
                     minecraft.renderManager.renderEntityStatic(entity, event.partialTicks, false)
                 }
             }
+
             minecraft.gameSettings.entityShadows = previousShadows
             GlStateManager.enableBlend()
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
@@ -171,7 +175,9 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
             outlineShader.setFill(if (fill.value) 1 else 0)
             outlineShader.setOutline(if (outline.value) 1 else 0)
             outlineShader.startShader()
+
             minecraft.entityRenderer.setupOverlayRendering()
+
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, frameBuffer!!.framebufferTexture)
             GL11.glBegin(GL11.GL_QUADS)
             GL11.glTexCoord2d(0.0, 1.0)

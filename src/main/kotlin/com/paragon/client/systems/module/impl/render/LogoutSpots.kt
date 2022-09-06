@@ -9,24 +9,43 @@ import com.paragon.api.util.anyNull
 import com.paragon.api.util.render.RenderUtil
 import com.paragon.api.util.render.builder.BoxRenderMode
 import com.paragon.api.util.render.builder.RenderBuilder
+import com.paragon.api.util.toBinary
 import com.paragon.api.util.world.BlockUtil
 import com.paragon.bus.listener.Listener
 import com.paragon.client.managers.notifications.Notification
 import com.paragon.client.managers.notifications.NotificationType
+import com.paragon.client.shader.shaders.OutlineShader
+import com.paragon.mixins.accessor.IEntityRenderer
 import io.ktor.util.collections.*
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.shader.Framebuffer
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.AxisAlignedBB
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.minecraftforge.client.event.RenderGameOverlayEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL20
 import java.awt.Color
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.floor
 
 /**
  * @author Surge
  * @since 06/09/2022
  */
 object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players have logged out") {
+
+    private val renderMode = Setting("RenderMode", RenderMode.SHADER) describedBy "How to render the logout spots"
+
+    private val outline = Setting("Outline", true) describedBy "Outline the fill" subOf renderMode visibleWhen { renderMode.value == RenderMode.SHADER }
+    private val fill = Setting("Fill", true) describedBy "Fill the outline" subOf renderMode visibleWhen { renderMode.value == RenderMode.SHADER }
+
+    private val width = Setting("Width", 0.5f, 0.1f, 2f, 0.1f) describedBy "The width of the lines"
 
     private val range = Setting("Range", 64.0, 16.0, 256.0, 1.0) describedBy "The range to check for players"
 
@@ -36,21 +55,20 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
     private val logOut = Setting("LogOut", false) describedBy "Notify you when a player logs out" subOf notify
     private val logOutType = Setting("LogOutType", NotificationType.INFO) describedBy "The type of notification" subOf notify visibleWhen { logOut.value }
 
-    private val render = Setting("Render", BoxRenderMode.BOTH) describedBy "Render the placement"
-    private val renderOutlineWidth = Setting("OutlineWidth", 0.5f, 0.1f, 2f, 0.1f) describedBy "The width of the lines" subOf render
+    private val box = Setting("Box", BoxRenderMode.BOTH) describedBy "Render the placement" visibleWhen { renderMode.value == RenderMode.BOX }
 
-    private val renderNametag = Setting("Nametag", true) describedBy "Render the nametag" subOf render
-    private val nametagYOffset = Setting("NametagYOffset", 1.1, 0.0, 3.0, 0.1) subOf render visibleWhen { renderNametag.value }
+    private val renderNametag = Setting("Nametag", true) describedBy "Render the nametag" subOf box
+    private val nametagYOffset = Setting("NametagYOffset", 1.1, 0.0, 3.0, 0.1) subOf box visibleWhen { renderNametag.value }
 
-    private val timeNametag = Setting("TimeNametag", true) describedBy "Render the time nametag" subOf render
-    private val timeNametagYOffset = Setting("TimeNametagYOffset", 0.8, 0.0, 3.0, 0.1) describedBy "The Y offset of the time nametag" subOf render visibleWhen { renderNametag.value }
+    private val timeNametag = Setting("TimeNametag", true) describedBy "Render the time nametag" subOf box
+    private val timeNametagYOffset = Setting("TimeNametagYOffset", 0.8, 0.0, 3.0, 0.1) describedBy "The Y offset of the time nametag" subOf box visibleWhen { renderNametag.value }
 
-    private val enemyRenderColour = Setting("EnemyFillColour", Color(185, 19, 255, 130)) describedBy "The colour of the fill" subOf render
-    private val enemyRenderOutlineColour = Setting("EnemyOutlineColour", Color(185, 19, 255)) subOf render
-    private val friendRenderColour = Setting("FriendFillColour", Color(185, 19, 255, 130)) describedBy "The colour of the fill" subOf render
-    private val friendRenderOutlineColour = Setting("FriendOutlineColour", Color(185, 19, 255)) subOf render
+    private val enemyRenderColour = Setting("EnemyFillColour", Color(185, 19, 255, 130)) describedBy "The colour of the fill" subOf box
+    private val enemyRenderOutlineColour = Setting("EnemyOutlineColour", Color(185, 19, 255)) subOf box visibleWhen { renderMode.value != RenderMode.SHADER }
+    private val friendRenderColour = Setting("FriendFillColour", Color(185, 19, 255, 130)) describedBy "The colour of the fill" subOf box
+    private val friendRenderOutlineColour = Setting("FriendOutlineColour", Color(185, 19, 255)) subOf box visibleWhen { renderMode.value != RenderMode.SHADER }
 
-    private val boxHeight = Setting("BoxHeight", 2.0, 0.0, 3.0, 0.1) describedBy "The height of the box" subOf render
+    private val boxHeight = Setting("BoxHeight", 2.0, 0.0, 3.0, 0.1) describedBy "The height of the box" subOf box
 
     // List of players in the world, refreshed each tick
     private val playerSet = ConcurrentSet<EntityPlayer>()
@@ -58,6 +76,13 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
     // List of logged players
     private val logged = ConcurrentHashMap<EntityPlayer, String>()
 
+    // Shaders
+    private val outlineShader = OutlineShader()
+    private var frameBuffer: Framebuffer? = null
+    private var lastScaleFactor = 0f
+    private var lastScaleWidth = 0f
+    private var lastScaleHeight = 0f
+    
     override fun onTick() {
         if (minecraft.anyNull) {
             // Clear if we aren't in a world
@@ -77,41 +102,124 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
                 return@forEach
             }
 
-            // Original box
-            val originalBox = BlockUtil.getBlockBox(player.position)
+            val playerPosition = BlockPos(floor(player.posX), floor(player.posY), floor(player.posZ))
 
-            // Original box, with modified height
-            val boundingBox: AxisAlignedBB = originalBox.setMaxY(originalBox.minY + boxHeight.value)
+            if (renderMode.value == RenderMode.BOX) {
+                // Original box
+                val originalBox = BlockUtil.getBlockBox(playerPosition)
 
-            // Render box
-            RenderBuilder()
-                .boundingBox(boundingBox)
-                .inner(if (Paragon.INSTANCE.socialManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value)
-                .outer(if (Paragon.INSTANCE.socialManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value)
-                .type(render.value)
+                // Original box, with modified height
+                val boundingBox: AxisAlignedBB = originalBox.setMaxY(originalBox.minY + boxHeight.value)
 
-                .start()
-                .lineWidth(renderOutlineWidth.value)
-                .blend(true)
-                .depth(true)
-                .texture(true)
-                .build(false)
+                // Render box
+                RenderBuilder()
+                    .boundingBox(boundingBox)
+                    .inner(if (Paragon.INSTANCE.socialManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value)
+                    .outer(if (Paragon.INSTANCE.socialManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value)
+                    .type(box.value)
 
-            // Vec3d of the player's position
-            val posVec = Vec3d(player.position)
+                    .start()
+                    .lineWidth(width.value)
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
+                    .build(false)
+            }
+
+            val vec = if (renderMode.value == RenderMode.BOX) Vec3d(floor(player.posX) + 0.5, floor(player.posY), floor(player.posZ) + 0.5) else player.positionVector
 
             // Render name nametag
             if (renderNametag.value) {
-                RenderUtil.drawNametagText(player.name, posVec.add(Vec3d(0.5, nametagYOffset.value, 0.5)), -1)
+                RenderUtil.drawNametagText(player.name, vec.add(Vec3d(0.0, nametagYOffset.value, 0.0)), -1)
             }
 
             // Render time nametag
             if (timeNametag.value) {
-                RenderUtil.drawNametagText(date, posVec.add(Vec3d(0.5, timeNametagYOffset.value, 0.5)), -1)
+                RenderUtil.drawNametagText(date, vec.add(Vec3d(0.0, timeNametagYOffset.value, 0.0)), -1)
             }
         }
     }
 
+    @SubscribeEvent
+    fun onRenderOverlay(event: RenderGameOverlayEvent.Pre) {
+        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR && renderMode.value == RenderMode.SHADER) {
+            // Pretty much just taken from Cosmos, all credit goes to them (sorry linus!)
+            // https://github.com/momentumdevelopment/cosmos/blob/main/src/main/java/cope/cosmos/client/features/modules/visual/ESPModule.java
+            GlStateManager.enableAlpha()
+            GlStateManager.pushMatrix()
+            GlStateManager.pushAttrib()
+
+            // Delete old framebuffer
+            if (frameBuffer != null) {
+                frameBuffer!!.framebufferClear()
+                if (lastScaleFactor != event.resolution.scaleFactor.toFloat() || lastScaleWidth != event.resolution.scaledWidth.toFloat() || lastScaleHeight != event.resolution.scaledHeight.toFloat()) {
+                    frameBuffer!!.deleteFramebuffer()
+                    frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+                    frameBuffer!!.framebufferClear()
+                }
+                lastScaleFactor = event.resolution.scaleFactor.toFloat()
+                lastScaleWidth = event.resolution.scaledWidth.toFloat()
+                lastScaleHeight = event.resolution.scaledHeight.toFloat()
+            } else {
+                frameBuffer = Framebuffer(minecraft.displayWidth, minecraft.displayHeight, true)
+            }
+
+            frameBuffer!!.bindFramebuffer(false)
+            val previousShadows = minecraft.gameSettings.entityShadows
+            minecraft.gameSettings.entityShadows = false
+            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
+
+            logged.forEach { (player, _) ->
+                // Do not render if they are far away
+                if (player.getDistance(minecraft.player) >= range.value) {
+                    return@forEach
+                }
+
+                minecraft.renderManager.renderEntityStatic(player, event.partialTicks, false)
+            }
+
+            minecraft.gameSettings.entityShadows = previousShadows
+            GlStateManager.enableBlend()
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+            frameBuffer!!.unbindFramebuffer()
+            minecraft.framebuffer.bindFramebuffer(true)
+            minecraft.entityRenderer.disableLightmap()
+            RenderHelper.disableStandardItemLighting()
+            GlStateManager.pushMatrix()
+
+            // Render shader
+            outlineShader.setColour(friendRenderColour.value)
+            outlineShader.setWidth(width.value)
+            outlineShader.setFill(fill.value.toBinary())
+            outlineShader.setOutline(outline.value.toBinary())
+            outlineShader.startShader()
+
+            minecraft.entityRenderer.setupOverlayRendering()
+
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, frameBuffer!!.framebufferTexture)
+            GL11.glBegin(GL11.GL_QUADS)
+            GL11.glTexCoord2d(0.0, 1.0)
+            GL11.glVertex2d(0.0, 0.0)
+            GL11.glTexCoord2d(0.0, 0.0)
+            GL11.glVertex2d(0.0, event.resolution.scaledHeight.toDouble())
+            GL11.glTexCoord2d(1.0, 0.0)
+            GL11.glVertex2d(event.resolution.scaledWidth.toDouble(), event.resolution.scaledHeight.toDouble())
+            GL11.glTexCoord2d(1.0, 1.0)
+            GL11.glVertex2d(event.resolution.scaledWidth.toDouble(), 0.0)
+            GL11.glEnd()
+
+            // Stop drawing shader
+            GL20.glUseProgram(0)
+            GL11.glPopMatrix()
+            minecraft.entityRenderer.enableLightmap()
+
+            GlStateManager.popMatrix()
+            GlStateManager.popAttrib()
+
+            minecraft.entityRenderer.setupOverlayRendering()
+        }
+    }
+    
     @Listener
     fun onPlayerJoin(event: PlayerEvent.PlayerJoinEvent) {
         if (minecraft.anyNull) {
@@ -155,6 +263,18 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
                 false
             }
         }
+    }
+
+    enum class RenderMode {
+        /**
+         * Render a box
+         */
+        BOX,
+
+        /**
+         * Render a model
+         */
+        SHADER
     }
 
 }
