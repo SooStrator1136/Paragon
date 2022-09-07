@@ -76,7 +76,7 @@ dependencies {
     libraries group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
     libraries group: 'club.minnced', name: 'java-discord-rpc', version: '2.0.1'
     libraries group: 'com.github.therealbush', name: 'translator', version: '1.0.2'
-    libraries group: 'com.github.Wolfsurge', name: 'animationsystem', version: '1.0'
+    libraries group: 'com.github.Wolfsurge', name: 'animationsystem', version: '-SNAPSHOT'
 
     libraries('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10') {
         exclude module: 'kotlin-stdlib-common'

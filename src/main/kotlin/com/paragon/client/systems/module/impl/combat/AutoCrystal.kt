@@ -436,7 +436,8 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         }
 
         // We haven't switched, don't place
-        if (!hasSwitched) {
+        // Also null checking currentPlacement because funny crash
+        if (!hasSwitched || currentPlacement == null) {
             return
         }
 
