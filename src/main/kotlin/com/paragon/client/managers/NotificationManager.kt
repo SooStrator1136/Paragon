@@ -1,6 +1,7 @@
-package com.paragon.client.managers.notifications
+package com.paragon.client.managers
 
 import com.paragon.api.util.Wrapper
+import com.paragon.client.managers.notifications.Notification
 import net.minecraftforge.common.MinecraftForge
 import java.util.concurrent.CopyOnWriteArrayList
 

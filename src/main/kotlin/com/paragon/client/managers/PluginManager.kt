@@ -1,6 +1,7 @@
-package com.paragon.plugin
+package com.paragon.client.managers
 
 import com.paragon.Paragon
+import com.paragon.plugin.Plugin
 import org.apache.commons.io.IOUtils
 import org.json.JSONObject
 import java.io.File

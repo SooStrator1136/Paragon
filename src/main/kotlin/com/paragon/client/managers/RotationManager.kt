@@ -1,4 +1,4 @@
-package com.paragon.client.managers.rotation
+package com.paragon.client.managers
 
 import com.paragon.Paragon
 import com.paragon.api.event.network.PacketEvent.PreSend
@@ -7,6 +7,8 @@ import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.RotationUtil
 import com.paragon.mixins.accessor.ICPacketPlayer
 import com.paragon.bus.listener.Listener
+import com.paragon.client.managers.rotation.Rotate
+import com.paragon.client.managers.rotation.Rotation
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.math.Vec2f
 import net.minecraftforge.common.MinecraftForge

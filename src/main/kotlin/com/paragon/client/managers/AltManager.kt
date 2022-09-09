@@ -1,4 +1,6 @@
-package com.paragon.client.managers.alt
+package com.paragon.client.managers
+
+import com.paragon.client.managers.alt.Alt
 
 /**
  * @author SooStrator1136

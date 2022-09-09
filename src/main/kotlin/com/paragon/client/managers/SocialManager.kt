@@ -1,6 +1,8 @@
-package com.paragon.client.managers.social
+package com.paragon.client.managers
 
 import com.paragon.Paragon
+import com.paragon.client.managers.social.Player
+import com.paragon.client.managers.social.Relationship
 
 /**
  * @author SooStrator1136
