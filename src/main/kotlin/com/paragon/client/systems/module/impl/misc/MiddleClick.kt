@@ -6,8 +6,6 @@ import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
 import com.paragon.api.util.anyNull
 import com.paragon.api.util.player.InventoryUtil
-import com.paragon.client.managers.social.Player
-import com.paragon.client.managers.social.Relationship
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraft.util.EnumHand
@@ -47,20 +45,22 @@ object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform
                 // If the type of hit is a player
                 if (result == RayTraceResult.Type.ENTITY && minecraft.objectMouseOver.entityHit is EntityPlayer && friend.value) {
                     // Create new player object
-                    val player = Player(minecraft.objectMouseOver.entityHit.name, Relationship.FRIEND)
+                    val player = minecraft.objectMouseOver.entityHit.name
 
-                    if (Paragon.INSTANCE.socialManager.isFriend(player.name)) {
+                    if (Paragon.INSTANCE.friendManager.isFriend(player)) {
                         // Remove player from social list
-                        Paragon.INSTANCE.socialManager.removePlayer(player.name)
+                        Paragon.INSTANCE.friendManager.removePlayer(player)
+
                         Paragon.INSTANCE.commandManager.sendClientMessage(
-                            TextFormatting.RED.toString() + "Removed player " + TextFormatting.GRAY + player.name + TextFormatting.RED + " from your socials list!",
+                            TextFormatting.RED.toString() + "Removed player " + TextFormatting.GRAY + player + TextFormatting.RED + " from your socials list!",
                             false
                         )
                     } else {
                         // Add player to social list
-                        Paragon.INSTANCE.socialManager.addPlayer(player)
+                        Paragon.INSTANCE.friendManager.addName(player)
+
                         Paragon.INSTANCE.commandManager.sendClientMessage(
-                            TextFormatting.GREEN.toString() + "Added player " + TextFormatting.GRAY + player.name + TextFormatting.GREEN + " to your friends list!",
+                            TextFormatting.GREEN.toString() + "Added player " + TextFormatting.GRAY + player + TextFormatting.GREEN + " to your friends list!",
                             false
                         )
                     }

@@ -86,7 +86,7 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
                     players.value,
                     mobs.value,
                     passives.value
-                ) || it is EntityFakePlayer) && (it !is EntityPlayer || !Paragon.INSTANCE.socialManager.isFriend(it.getName()))
+                ) || it is EntityFakePlayer) && (it !is EntityPlayer || !Paragon.INSTANCE.friendManager.isFriend(it.getName()))
             }.collect(Collectors.toList())
 
             // Sort entities

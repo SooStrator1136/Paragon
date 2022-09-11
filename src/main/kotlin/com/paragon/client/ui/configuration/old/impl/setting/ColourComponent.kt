@@ -86,7 +86,8 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
         if (!Mouse.isButtonDown(0)) {
             dragging = false
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             // Render sliders
             components.forEach(Consumer { settingComponent: SettingComponent<*> -> settingComponent.renderSetting(mouseX, mouseY) })
             setting.alpha = alpha.value
@@ -188,15 +189,18 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         if (isInside(moduleButton.panel.x, moduleButton.offset + offset, moduleButton.panel.x + moduleButton.panel.width, moduleButton.offset + offset + 13, mouseX, mouseY)) {
             // Toggle open state
-            animation.state = !isExpanded
+            animation.state = !animation.state
         }
+
         val x = moduleButton.panel.x + 4
         val y = moduleButton.offset + offset + components.size * 13 + 15.5f
         val dimension = 87f
+
         if (isInside(x, y, x + dimension, y + dimension, mouseX, mouseY)) {
             dragging = true
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             components.forEach(Consumer { settingComponent: SettingComponent<*> ->
                 settingComponent.mouseClicked(mouseX, mouseY, mouseButton)
                 val settingUpdateEvent = SettingUpdateEvent(setting)
@@ -207,9 +211,11 @@ class ColourComponent(moduleButton: ModuleButton, setting: Setting<Color>, offse
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, mouseButton: Int) {
         dragging = false
-        if (isExpanded) {
+
+        if (animation.state) {
             components.forEach(Consumer { settingComponent: SettingComponent<*> -> settingComponent.mouseReleased(mouseX, mouseY, mouseButton) })
         }
+
         super.mouseReleased(mouseX, mouseY, mouseButton)
     }
 

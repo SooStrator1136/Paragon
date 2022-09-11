@@ -70,7 +70,7 @@ class Panel(var x: Float, var y: Float, val width: Float, private val barHeight:
 
         pushScissor((x - 0.5f).toDouble(), y.toDouble(), (width + 1).toDouble(), barHeight + height * animation.getAnimationFactor() + 0.5f)
 
-        if (isExpanded) {
+        if (animation.getAnimationFactor() > 0) {
             // Draw modules
             moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.renderModuleButton(mouseX, mouseY) })
         }
@@ -94,11 +94,11 @@ class Panel(var x: Float, var y: Float, val width: Float, private val barHeight:
 
         // Toggle the open state if we right-click on the header
         if (isMouseOverHeader(mouseX, mouseY) && mouseButton == 1) {
-            animation.state = !isExpanded
+            animation.state = !animation.state
         }
 
         // Call the mouseClicked event for each module button if the panel is open
-        if (isExpanded) {
+        if (animation.state) {
             moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.mouseClicked(mouseX, mouseY, mouseButton) })
         }
     }
@@ -114,7 +114,7 @@ class Panel(var x: Float, var y: Float, val width: Float, private val barHeight:
     }
 
     fun keyTyped(keyTyped: Char, keyCode: Int) {
-        if (isExpanded) {
+        if (animation.state) {
             moduleButtons.forEach(Consumer { moduleButton: ModuleButton -> moduleButton.keyTyped(keyTyped, keyCode) })
         }
     }

@@ -114,8 +114,8 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
                 // Render box
                 RenderBuilder()
                     .boundingBox(boundingBox)
-                    .inner(if (Paragon.INSTANCE.socialManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value)
-                    .outer(if (Paragon.INSTANCE.socialManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value)
+                    .inner(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value)
+                    .outer(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value)
                     .type(box.value)
 
                     .start()

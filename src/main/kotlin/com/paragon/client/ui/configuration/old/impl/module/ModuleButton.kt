@@ -84,10 +84,12 @@ class ModuleButton(
         if (module.settings.size > 1) {
             Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("...", (panel.x + panel.width - Minecraft.getMinecraft().fontRenderer.getStringWidth("...") - 1) * scaleFactor, (offset + 1.5f) * scaleFactor, -1)
         }
+
         GL11.glPopMatrix()
 
         // Refresh settings
         refreshSettingOffsets()
+
         if (animation.getAnimationFactor() > 0) {
             // Render settings
             settingComponents.forEach(Consumer { settingComponent: SettingComponent<*> ->
@@ -97,6 +99,7 @@ class ModuleButton(
                 }
             })
         }
+
         if (isMouseOver(mouseX, mouseY)) {
             OldPanelGUI.tooltip = module.description
         }
@@ -114,18 +117,18 @@ class ModuleButton(
     }
 
     fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        if (mouseButton == 0) {
-            if (isMouseOver(mouseX, mouseY)) {
+        if (isMouseOver(mouseX, mouseY)) {
+            if (mouseButton == 0) {
                 // Toggle the module
                 module.toggle()
             }
-        }
-        else if (mouseButton == 1) {
-            if (isMouseOver(mouseX, mouseY)) {
+
+            else if (mouseButton == 1) {
                 // Expand the settings
-                animation.state = animation.getAnimationFactor() <= 0
+                animation.state = !animation.state
             }
         }
+
         if (animation.getAnimationFactor() > 0) {
             // Mouse clicked
             for (settingComponent in settingComponents) {

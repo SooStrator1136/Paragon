@@ -37,19 +37,22 @@ class KeybindComponent(moduleButton: ModuleButton, setting: Setting<Bind?>, offs
             setting.value!!.buttonCode = mouseButton
             return
         }
+
         if (isMouseOver(mouseX, mouseY) && mouseButton == 0) {
             // Set listening
             isListening = !isListening
             val settingUpdateEvent = SettingUpdateEvent(setting)
             Paragon.INSTANCE.eventBus.post(settingUpdateEvent)
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             settingComponents.forEach(Consumer { settingComponent: SettingComponent<*> ->
                 if (settingComponent.setting.isVisible()) {
                     settingComponent.mouseClicked(mouseX, mouseY, mouseButton)
                 }
             })
         }
+
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 
@@ -63,7 +66,8 @@ class KeybindComponent(moduleButton: ModuleButton, setting: Setting<Bind?>, offs
             }
             setting.value!!.buttonCode = keyCode
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             settingComponents.forEach(Consumer { settingComponent: SettingComponent<*> -> settingComponent.keyTyped(typedChar, keyCode) })
         }
     }

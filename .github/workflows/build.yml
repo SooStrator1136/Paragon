@@ -26,8 +26,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Clean
-        run: ./gradlew clean
+      # Cleaning apparently produces a build which does not run in an obfuscated environment
+      # Mixin funkiness.
+      # - name: Clean
+      #  run: ./gradlew clean
 
       - name: Build
         run: ./gradlew build
