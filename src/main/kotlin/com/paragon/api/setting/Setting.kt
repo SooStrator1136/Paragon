@@ -4,7 +4,6 @@ import com.paragon.api.util.render.ColourUtil
 import com.paragon.api.util.render.ColourUtil.integrateAlpha
 import com.paragon.client.systems.module.impl.client.Colours
 import java.awt.Color
-import java.util.function.Supplier
 
 class Setting<T>(val name: String, value: T, val min: T = value, val max: T = value, val incrementation: T = value) {
 
@@ -57,7 +56,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
         private set
 
     // GUI Visibility
-    private var isVisible = Supplier { true }
+    private var isVisible = { true }
 
     init {
         if (value is Color) {
@@ -115,7 +114,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      *
      * @return the visibility of the setting.
      */
-    fun isVisible() = isVisible.get()
+    fun isVisible() = isVisible.invoke()
 
     /**
      * Sets the visibility of the setting.
@@ -123,7 +122,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param isVisible the visibility of the setting.
      * @return this setting
      */
-    private fun setVisibility(isVisible: Supplier<Boolean>): Setting<T> {
+    private fun setVisibility(isVisible: () -> Boolean): Setting<T> {
         this.isVisible = isVisible
         return this
     }
@@ -142,7 +141,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
             return java.lang.Enum.valueOf(enumeration::class.java, values[nextIndex]) as T
         }
 
-    val nextIndex: Int
+    private val nextIndex: Int
         get() {
             val enumeration = value as Enum<*>
             val values = enumeration.javaClass.enumConstants.map { it.name }.toTypedArray()
@@ -151,7 +150,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
         }
 
     infix fun describedBy(description: String) = setDescription(description)
-    infix fun visibleWhen(isVisible: Supplier<Boolean>) = setVisibility(isVisible)
+    infix fun visibleWhen(isVisible: () -> Boolean) = setVisibility(isVisible)
     infix fun subOf(parent: Setting<*>?) = setParentSetting(parent)
 
 }

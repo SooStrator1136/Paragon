@@ -110,7 +110,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         /**
          * Simple GUI (basically Phobos)
          */
-        SIMPLE
+        SIMPLE,
     }
 
     enum class Icon {

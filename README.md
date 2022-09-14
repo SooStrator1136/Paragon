@@ -66,7 +66,7 @@ reviewed.
 
 Follow the [java](https://www.oracle.com/technetwork/java/codeconventions-150003.pdf)
 and [kotlin](https://kotlinlang.org/docs/coding-conventions.html) coding conventions and try to adapt the code style
-found in the rest of the client, such as using `lowerCamelCase` and using the K&R brace style.
+found in the rest of the client, such as using `lowerCamelCase` and using the 1TBS brace style.
 
 # Using the Custom Font
 

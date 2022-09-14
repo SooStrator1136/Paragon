@@ -13,6 +13,7 @@
     "accessor.IEntityRenderer",
     "accessor.IKeyBinding",
     "accessor.IMapItemRenderer",
+    "accessor.IMapItemRendererInstance",
     "accessor.IMinecraft",
     "accessor.IPlayerControllerMP",
     "accessor.IRenderGlobal",

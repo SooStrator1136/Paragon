@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation
 /**
  * @author SooStrator1136
  */
-object CopySkinCommand : Command("CopySkin", "copyskin") {
+object CopySkinCommand : Command("CopySkin", "copyskin <player>") {
 
     var skin: ResourceLocation? = null
 
