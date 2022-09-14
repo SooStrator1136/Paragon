@@ -287,7 +287,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
                 // If it's a friend, and we don't want to target friends, ignore
                 if (!targetFriends.value) {
-                    if (Paragon.INSTANCE.socialManager.isFriend(entityPlayer.name)) {
+                    if (Paragon.INSTANCE.friendManager.isFriend(entityPlayer.name)) {
                         continue
                     }
                 }
@@ -436,7 +436,8 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         }
 
         // We haven't switched, don't place
-        if (!hasSwitched) {
+        // Also null checking currentPlacement because funny crash
+        if (!hasSwitched || currentPlacement == null) {
             return
         }
 

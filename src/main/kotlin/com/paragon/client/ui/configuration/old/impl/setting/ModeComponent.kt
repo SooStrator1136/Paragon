@@ -38,13 +38,15 @@ class ModeComponent(moduleButton: ModuleButton, setting: Setting<Enum<*>>, offse
                 Paragon.INSTANCE.eventBus.post(settingUpdateEvent)
             }
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             settingComponents.forEach(Consumer { settingComponent: SettingComponent<*> ->
                 if (settingComponent.setting.isVisible()) {
                     settingComponent.mouseClicked(mouseX, mouseY, mouseButton)
                 }
             })
         }
+
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 

@@ -104,7 +104,7 @@ open class SettingComponent<T>(val moduleButton: ModuleButton, val setting: Sett
     open fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         if (mouseButton == 1) {
             if (isMouseOver(mouseX, mouseY)) {
-                animation.state = !isExpanded
+                animation.state = !animation.state
             }
         }
     }

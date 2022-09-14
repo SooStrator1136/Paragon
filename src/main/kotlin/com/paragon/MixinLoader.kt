@@ -18,14 +18,8 @@ class MixinLoader : IFMLLoadingPlugin {
     }
 
     override fun getASMTransformerClass(): Array<String> = emptyArray()
-
     override fun getModContainerClass(): String? = null
-
     override fun getSetupClass(): String? = null
-
-    override fun injectData(data: Map<String, Any>) {
-    }
-
+    override fun injectData(data: Map<String, Any>) = Unit
     override fun getAccessTransformerClass(): String? = null
-
 }

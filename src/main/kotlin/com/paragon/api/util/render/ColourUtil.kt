@@ -61,10 +61,10 @@ object ColourUtil {
         val blueDiff = secondary.blue - this.blue
         val alphaDiff = secondary.alpha - this.alpha
 
-        val newRed = (this.red + redDiff * factor).toInt()
-        val newGreen = (this.green + greenDiff * factor).toInt()
-        val newBlue = (this.blue + blueDiff * factor).toInt()
-        val newAlpha = (this.alpha + alphaDiff * factor).toInt()
+        val newRed = (this.red + redDiff * factor.coerceIn(0.0, 1.0)).toInt()
+        val newGreen = (this.green + greenDiff * factor.coerceIn(0.0, 1.0)).toInt()
+        val newBlue = (this.blue + blueDiff * factor.coerceIn(0.0, 1.0)).toInt()
+        val newAlpha = (this.alpha + alphaDiff * factor.coerceIn(0.0, 1.0)).toInt()
 
         return Color(newRed, newGreen, newBlue, newAlpha)
     }

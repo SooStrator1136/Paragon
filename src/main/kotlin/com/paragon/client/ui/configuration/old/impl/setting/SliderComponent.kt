@@ -88,13 +88,15 @@ class SliderComponent(moduleButton: ModuleButton, setting: Setting<Number?>, off
                 Paragon.INSTANCE.eventBus.post(settingUpdateEvent)
             }
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             settingComponents.forEach(Consumer { settingComponent: SettingComponent<*> ->
                 if (settingComponent.setting.isVisible()) {
                     settingComponent.mouseClicked(mouseX, mouseY, mouseButton)
                 }
             })
         }
+
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 

@@ -3,16 +3,15 @@ package com.paragon
 import com.paragon.api.event.EventFactory
 import com.paragon.bus.EventBus
 import com.paragon.client.managers.*
-import com.paragon.client.managers.alt.AltManager
-import com.paragon.client.managers.notifications.NotificationManager
-import com.paragon.client.managers.rotation.RotationManager
-import com.paragon.client.managers.social.SocialManager
+import com.paragon.client.managers.AltManager
+import com.paragon.client.managers.NotificationManager
+import com.paragon.client.managers.RotationManager
+import com.paragon.client.managers.FriendManager
 import com.paragon.client.ui.configuration.ConfigurationGUI
 import com.paragon.client.ui.configuration.retrowindows.Windows98
 import com.paragon.client.ui.configuration.zeroday.ZerodayGUI
 import com.paragon.client.ui.console.Console
 import com.paragon.client.ui.taskbar.Taskbar
-import com.paragon.plugin.PluginManager
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.Mod
@@ -57,51 +56,54 @@ class Paragon {
     fun init(event: FMLInitializationEvent?) {
         logger.info("Starting Paragon $modVersion initialisation")
 
-        // Set up managers
+        //  ________  ________  ________  ________  ________  ________  ________            _____      ________      ________
+        // |\   __  \|\   __  \|\   __  \|\   __  \|\   ____\|\   __  \|\   ___  \         / __  \    |\   __  \    |\   __  \
+        // \ \  \|\  \ \  \|\  \ \  \|\  \ \  \|\  \ \  \___|\ \  \|\  \ \  \\ \  \       |\/_|\  \   \ \  \|\  \   \ \  \|\  \
+        //  \ \   ____\ \   __  \ \   _  _\ \   __  \ \  \  __\ \  \\\  \ \  \\ \  \      \|/ \ \  \   \ \  \\\  \   \ \  \\\  \
+        //   \ \  \___|\ \  \ \  \ \  \\  \\ \  \ \  \ \  \|\  \ \  \\\  \ \  \\ \  \          \ \  \ __\ \  \\\  \ __\ \  \\\  \
+        //    \ \__\    \ \__\ \__\ \__\\ _\\ \__\ \__\ \_______\ \_______\ \__\\ \__\          \ \__\\__\ \_______\\__\ \_______\
+        //     \|__|     \|__|\|__|\|__|\|__|\|__|\|__|\|_______|\|_______|\|__| \|__|           \|__\|__|\|_______\|__|\|_______|
+
+        println("\n ________  ________  ________  ________  ________  ________  ________            _____      ________      ________     \n" + "|\\   __  \\|\\   __  \\|\\   __  \\|\\   __  \\|\\   ____\\|\\   __  \\|\\   ___  \\         / __  \\    |\\   __  \\    |\\   __  \\    \n" + "\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\ \\  \\       |\\/_|\\  \\   \\ \\  \\|\\  \\   \\ \\  \\|\\  \\   \n" + " \\ \\   ____\\ \\   __  \\ \\   _  _\\ \\   __  \\ \\  \\  __\\ \\  \\\\\\  \\ \\  \\\\ \\  \\      \\|/ \\ \\  \\   \\ \\  \\\\\\  \\   \\ \\  \\\\\\  \\  \n" + "  \\ \\  \\___|\\ \\  \\ \\  \\ \\  \\\\  \\\\ \\  \\ \\  \\ \\  \\|\\  \\ \\  \\\\\\  \\ \\  \\\\ \\  \\          \\ \\  \\ __\\ \\  \\\\\\  \\ __\\ \\  \\\\\\  \\ \n" + "   \\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ _\\\\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\\\ \\__\\          \\ \\__\\\\__\\ \\_______\\\\__\\ \\_______\\\n" + "    \\|__|     \\|__|\\|__|\\|__|\\|__|\\|__|\\|__|\\|_______|\\|_______|\\|__| \\|__|           \\|__\\|__|\\|_______\\|__|\\|_______|")
 
         storageManager = StorageManager()
-        logger.info("Storage Manager Initialised")
+        logger.info("StorageManager initialised")
 
-        popManager = PopManager()
-        logger.info("Pop Manager Initialised")
-
-        rotationManager = RotationManager()
-        logger.info("Rotation Manager Initialised")
-
-        socialManager = SocialManager()
-        logger.info("Social Manager Initialised")
-
-        altManager = AltManager()
-        logger.info("Alt Manager Initialised")
-
-        notificationManager = NotificationManager()
-        logger.info("Notification Manager Initialised")
-
-        capeManager = CapeManager()
-        logger.info("Cape Manager Initialised")
+        // Module /  Commands
 
         moduleManager = ModuleManager()
-        logger.info("Module Manager Initialised")
+        logger.info("ModuleManager initialised")
 
         commandManager = CommandManager()
-        logger.info("Command Manager Initialised")
+        logger.info("CommandManager initialised")
 
         pluginManager = PluginManager()
+        logger.info("PluginManager initialised")
+
         pluginManager.onLoad()
-        logger.info("Plugins Loaded")
+        logger.info("Plugins loaded")
 
-        // Load config
-        storageManager.loadModules("current")
-        logger.info("Modules Loaded")
+        // Misc client stuff
 
-        storageManager.loadSocial()
-        logger.info("Social Loaded")
+        altManager = AltManager()
+        logger.info("AltManager initialised")
 
-        storageManager.loadAlts()
-        logger.info("Alts Loaded")
+        capeManager = CapeManager()
+        logger.info("CapeManager initialised")
 
-        storageManager.loadOther()
-        logger.info("Other Loaded")
+        notificationManager = NotificationManager()
+        logger.info("NotificationManager initialised")
+
+        friendManager = FriendManager()
+        logger.info("SocialManager initialised")
+
+        // Event / Ingame stuff
+
+        popManager = PopManager()
+        logger.info("PopManager initialised")
+
+        rotationManager = RotationManager()
+        logger.info("RotationManager initialised")
 
         // GUIs
 
@@ -119,6 +121,20 @@ class Paragon {
 
         configurationGUI = ConfigurationGUI()
         logger.info("Configuration GUI Initialised")
+
+        // Load
+
+        storageManager.loadModules("current")
+        logger.info("Modules Loaded")
+
+        storageManager.loadSocial()
+        logger.info("Social Loaded")
+
+        storageManager.loadAlts()
+        logger.info("Alts Loaded")
+
+        storageManager.loadOther()
+        logger.info("Other Loaded")
 
         logger.info("Paragon $modVersion Initialised Successfully")
     }
@@ -159,7 +175,7 @@ class Paragon {
     lateinit var rotationManager: RotationManager
         private set
 
-    lateinit var socialManager: SocialManager
+    lateinit var friendManager: FriendManager
         private set
 
     lateinit var altManager: AltManager

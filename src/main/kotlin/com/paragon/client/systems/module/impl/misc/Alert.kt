@@ -112,7 +112,7 @@ object Alert : Module("Alert", Category.MISC, "Alerts you on certain things") {
 
         if (friendArmor.value) {
             minecraft.world.loadedEntityList.filter {
-                it is EntityPlayer && Paragon.INSTANCE.socialManager.isFriend(it.name)
+                it is EntityPlayer && Paragon.INSTANCE.friendManager.isFriend(it.name)
             }.forEach {
                 if (!warnedFriendsArmor.containsKey(it)) {
                     warnedFriendsArmor[it] = booleanArrayOf(false, false, false, false)
@@ -133,7 +133,7 @@ object Alert : Module("Alert", Category.MISC, "Alerts you on certain things") {
 
         if (friendHp.value) {
             minecraft.world.loadedEntityList.filter {
-                it is EntityPlayer && Paragon.INSTANCE.socialManager.isFriend(it.name)
+                it is EntityPlayer && Paragon.INSTANCE.friendManager.isFriend(it.name)
             }.forEach {
                 if (!warnedFriendsHp.containsKey(it as EntityPlayer)) {
                     warnedFriendsHp[it] = false
@@ -153,7 +153,7 @@ object Alert : Module("Alert", Category.MISC, "Alerts you on certain things") {
 
     @Listener
     fun onPop(event: TotemPopEvent) {
-        if (!alertForFriends.value || !friendPop.value || !Paragon.INSTANCE.socialManager.isFriend(event.player.name)) {
+        if (!alertForFriends.value || !friendPop.value || !Paragon.INSTANCE.friendManager.isFriend(event.player.name)) {
             return
         }
 

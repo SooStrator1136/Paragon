@@ -5,8 +5,6 @@ import com.paragon.api.setting.Bind
 import com.paragon.api.setting.Bind.Device
 import com.paragon.api.setting.Setting
 import com.paragon.client.managers.alt.Alt
-import com.paragon.client.managers.social.Player
-import com.paragon.client.managers.social.Relationship
 import com.paragon.client.systems.module.hud.HUDModule
 import org.apache.commons.io.FileUtils
 import org.json.JSONArray
@@ -401,11 +399,13 @@ class StorageManager {
             val jsonObject = JSONObject()
             val array = JSONArray()
 
-            Paragon.INSTANCE.socialManager.players.forEach {
-                array.put(it.name + ":" + it.relationship.name) //Put the player's info in the array - name:relationship
+            // Put the UUIDs into the array
+            Paragon.INSTANCE.friendManager.names.forEach {
+                array.put(it)
             }
 
-            jsonObject.putOpt("acquaintances", array) // Add array to json object
+            // Add array to json object
+            jsonObject.putOpt("uuids", array)
 
             writer.write(jsonObject.toString(4))
             writer.flush()
@@ -425,19 +425,19 @@ class StorageManager {
             val json =
                 getJSON(File("paragon${File.separator}social${File.separator}social_interactions.json")) ?: return
 
-            val array = json.getJSONArray("acquaintances")
+            val array = json.getJSONArray("names")
 
             //For every value in array, create add a player to the SocialManager
             for (i in 0 until array.length()) {
-                val info: Array<String> = array.get(i).toString().split(":".toRegex()).toTypedArray()
-                Paragon.INSTANCE.socialManager.addPlayer(Player(info[0], Relationship.valueOf(info[1])))
+                Paragon.INSTANCE.friendManager.addName(array.get(i).toString())
             }
         }
     }
 
     fun saveAlts() {
+        // Create main folder if it doesn't already exist
         if (!mainFolder.exists()) {
-            mainFolder.mkdirs() //Create main folder if it doesn't already exist
+            mainFolder.mkdirs()
         }
 
         val file = File("paragon${File.separator}alts.json")
@@ -492,9 +492,11 @@ class StorageManager {
                 jsonObject.put("mainmenu", Paragon.INSTANCE.isParagonMainMenu)
 
                 var prefixes = ""
+
                 for (prefix in Paragon.INSTANCE.commandManager.commonPrefixes) {
                     prefixes += "$prefix "
                 }
+
                 jsonObject.put("ignored_prefixes", prefixes)
 
                 writer.write(jsonObject.toString(4))

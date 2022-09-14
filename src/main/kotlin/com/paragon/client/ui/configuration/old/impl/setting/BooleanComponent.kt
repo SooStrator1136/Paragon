@@ -29,18 +29,20 @@ class BooleanComponent(moduleButton: ModuleButton, setting: Setting<Boolean>, of
         if (mouseButton == 0) {
             if (isMouseOver(mouseX, mouseY)) {
                 // Toggle setting
-                setting.setValue(!setting.value!!)
+                setting.setValue(!setting.value)
                 val settingUpdateEvent = SettingUpdateEvent(setting)
                 Paragon.INSTANCE.eventBus.post(settingUpdateEvent)
             }
         }
-        if (isExpanded) {
+
+        if (animation.state) {
             settingComponents.forEach(Consumer { settingComponent: SettingComponent<*> ->
                 if (settingComponent.setting.isVisible()) {
                     settingComponent.mouseClicked(mouseX, mouseY, mouseButton)
                 }
             })
         }
+
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 }
