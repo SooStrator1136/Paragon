@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinGuiScreen {
 
     @Inject(method = "renderToolTip", at = @At("HEAD"), cancellable = true)
-    public void onRenderToolTip(ItemStack stack, int x, int y, CallbackInfo ci) {
+    public void hookRenderToolTip(ItemStack stack, int x, int y, CallbackInfo ci) {
         RenderTooltipEvent event = new RenderTooltipEvent(stack, x, y);
         Paragon.INSTANCE.getEventBus().post(event);
 

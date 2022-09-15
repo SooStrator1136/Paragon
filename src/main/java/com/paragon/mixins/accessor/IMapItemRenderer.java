@@ -13,6 +13,6 @@ import java.util.Map;
 public interface IMapItemRenderer {
 
     @Accessor("loadedMaps")
-    Map<String, Object> getLoadedMaps();
+    Map<String, Object> hookGetLoadedMaps();
 
 }

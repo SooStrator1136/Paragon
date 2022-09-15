@@ -171,7 +171,7 @@ object Shader : Module("Shader", Category.RENDER, "Apply a shader to entities an
             frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
-            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
+            (minecraft.entityRenderer as IEntityRenderer).hookSetupCameraTransform(event.partialTicks, 0)
 
             for (entity in minecraft.world.loadedEntityList) {
                 if (entity != null && entity !== minecraft.player && isEntityValid(entity)) {

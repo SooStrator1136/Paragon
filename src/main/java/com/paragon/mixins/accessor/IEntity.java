@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface IEntity {
 
     @Accessor("isInWeb")
-    boolean isInWeb();
+    boolean hookIsInWeb();
 
 }

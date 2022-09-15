@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinBlockModelRenderer {
 
     @Inject(method = "renderModel(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/block/model/IBakedModel;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZJ)Z", at = @At("HEAD"), cancellable = true)
-    public void renderModelPatch(IBlockAccess iBlockAccess, IBakedModel iBakedModel, IBlockState iBlockState, BlockPos blockPos, BufferBuilder bufferBuilder, boolean checkSides, long rand, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+    public void hookRenderModel(IBlockAccess iBlockAccess, IBakedModel iBakedModel, IBlockState iBlockState, BlockPos blockPos, BufferBuilder bufferBuilder, boolean checkSides, long rand, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         RenderBlockModelEvent renderBlockModelEvent = new RenderBlockModelEvent(blockPos);
         Paragon.INSTANCE.getEventBus().post(renderBlockModelEvent);
 
@@ -31,7 +31,7 @@ public class MixinBlockModelRenderer {
     }
 
     @Inject(method = "renderModelSmooth", at = @At("HEAD"), cancellable = true)
-    public void renderModelSmoothPatch(IBlockAccess iBlockAccess, IBakedModel iBakedModel, IBlockState iBlockState, BlockPos blockPos, BufferBuilder bufferBuilder, boolean checkSides, long rand, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+    public void hookRenderModelSmooth(IBlockAccess iBlockAccess, IBakedModel iBakedModel, IBlockState iBlockState, BlockPos blockPos, BufferBuilder bufferBuilder, boolean checkSides, long rand, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         RenderBlockSmoothEvent renderBlockModelEvent = new RenderBlockSmoothEvent(blockPos);
         Paragon.INSTANCE.getEventBus().post(renderBlockModelEvent);
 

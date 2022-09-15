@@ -94,7 +94,7 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
             if (!minecraft.player.isElytraFlying) {
 
                 // Make the game slower
-                ((minecraft as IMinecraft).timer as ITimer).tickLength = 50 / takeOffTimer.value
+                ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50 / takeOffTimer.value)
 
                 if (minecraft.player.onGround) {
                     // Jump if we're on the ground
@@ -114,7 +114,7 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
 
     override fun onDisable() {
         // Set us back to normal speed
-        ((minecraft as IMinecraft).timer as ITimer).tickLength = 50f
+        ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50f)
     }
 
     @Listener
@@ -125,7 +125,7 @@ object ElytraFlight : Module("ElytraFlight", Category.MOVEMENT, "Allows for easi
         if (minecraft.player.isElytraFlying) {
 
             // Set us to normal speed if we are flying
-            ((minecraft as IMinecraft).timer as ITimer).tickLength = 50f
+            ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50f)
             if (mode.value != Mode.BOOST) {
                 // Cancel motion
                 travelEvent.cancel()

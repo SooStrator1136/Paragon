@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface IMapItemRendererInstance {
 
     @Accessor("mapTexture")
-    DynamicTexture getMapTexture();
+    DynamicTexture hookGetMapTexture();
 
 }

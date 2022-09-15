@@ -18,7 +18,7 @@ public abstract class MixinGuiChat extends GuiScreen {
     protected GuiTextField inputField;
 
     @Inject(method = "drawScreen", at = @At("HEAD"))
-    public void onDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+    public void hookDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         if (Keyboard.isKeyDown(Keyboard.KEY_UP) && !Paragon.INSTANCE.getCommandManager().getLastCommand().isEmpty()) {
             this.inputField.setText(Paragon.INSTANCE.getCommandManager().getLastCommand());
         }

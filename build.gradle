@@ -8,7 +8,7 @@ buildscript {
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
-        classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0'
     }
 }
@@ -18,11 +18,11 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+
 apply plugin: 'kotlin'
 apply plugin: 'java'
 apply plugin: 'idea'
-
-apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0.0'
 group = 'com.paragon'
@@ -97,6 +97,9 @@ dependencies {
 
 mixin {
     defaultObfuscationEnv 'searge'
+
+    disableTargetExport = true
+    disableTargetValidator = true
 
     add sourceSets.main, 'mixins.paragon.refmap.json'
     config 'mixins.paragon.json'

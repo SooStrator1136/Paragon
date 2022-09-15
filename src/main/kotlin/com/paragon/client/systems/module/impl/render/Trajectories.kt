@@ -102,13 +102,13 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
 
             // Original arrow position
             var position = Vec3d(
-                minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * ((minecraft as IMinecraft).timer
+                minecraft.player.lastTickPosX + (minecraft.player.posX - minecraft.player.lastTickPosX) * ((minecraft as IMinecraft).hookGetTimer()
                     ?: return).renderPartialTicks - cos(
                     Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()
                 ) * 0.16f,
-                minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * ((minecraft as IMinecraft).timer
+                minecraft.player.lastTickPosY + (minecraft.player.posY - minecraft.player.lastTickPosY) * ((minecraft as IMinecraft).hookGetTimer()
                     ?: return).renderPartialTicks + minecraft.player.getEyeHeight() - 0.15,
-                minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * ((minecraft as IMinecraft).timer
+                minecraft.player.lastTickPosZ + (minecraft.player.posZ - minecraft.player.lastTickPosZ) * ((minecraft as IMinecraft).hookGetTimer()
                     ?: return).renderPartialTicks - sin(
                     Math.toRadians(minecraft.player.rotationYaw.toDouble()).toFloat().toDouble()
                 ) * 0.16f
@@ -162,9 +162,9 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
                 for (i in 0..999) {
                     // Add vertex
                     glVertex3d(
-                        position.x - (minecraft.renderManager as IRenderManager).renderX,
-                        position.y - (minecraft.renderManager as IRenderManager).renderY,
-                        position.z - (minecraft.renderManager as IRenderManager).renderZ
+                        position.x - (minecraft.renderManager as IRenderManager).hookGetRenderPosX(),
+                        position.y - (minecraft.renderManager as IRenderManager).hookGetRenderPosY(),
+                        position.z - (minecraft.renderManager as IRenderManager).hookGetRenderPosZ()
                     )
 
                     // Move position
@@ -208,12 +208,12 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
             if (box.value) {
                 // Get highlight bb
                 val bb = AxisAlignedBB(
-                    position.x - (minecraft.renderManager as IRenderManager).renderX - 0.25,
-                    position.y - (minecraft.renderManager as IRenderManager).renderY - 0.25,
-                    position.z - (minecraft.renderManager as IRenderManager).renderZ - 0.25,
-                    position.x - (minecraft.renderManager as IRenderManager).renderX + 0.25,
-                    position.y - (minecraft.renderManager as IRenderManager).renderY + 0.25,
-                    position.z - (minecraft.renderManager as IRenderManager).renderZ + 0.25
+                    position.x - (minecraft.renderManager as IRenderManager).hookGetRenderPosX() - 0.25,
+                    position.y - (minecraft.renderManager as IRenderManager).hookGetRenderPosY() - 0.25,
+                    position.z - (minecraft.renderManager as IRenderManager).hookGetRenderPosZ() - 0.25,
+                    position.x - (minecraft.renderManager as IRenderManager).hookGetRenderPosX() + 0.25,
+                    position.y - (minecraft.renderManager as IRenderManager).hookGetRenderPosY() + 0.25,
+                    position.z - (minecraft.renderManager as IRenderManager).hookGetRenderPosZ() + 0.25
                 )
 
                 // Draw filled box

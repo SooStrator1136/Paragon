@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ISPacketPlayerPosLook {
 
     @Accessor("yaw")
-    void setYaw(float newYaw);
+    void hookSetYaw(float newYaw);
 
     @Accessor("pitch")
-    void setPitch(float newPitch);
+    void hookSetPitch(float newPitch);
 
 }

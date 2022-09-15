@@ -5,7 +5,6 @@ import com.paragon.api.event.render.entity.RenderEntityEvent
 import com.paragon.api.module.Category
 import com.paragon.api.module.Module
 import com.paragon.api.setting.Setting
-import com.paragon.api.util.render.ColourUtil
 import com.paragon.bus.listener.Listener
 import com.paragon.client.systems.module.impl.client.Colours
 import com.paragon.mixins.accessor.IEntityPlayer
@@ -81,7 +80,7 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
                 cham.model,
                 EntityOtherPlayerMP( //Copying so we don't have new animations or anything
                     cham.entity.world,
-                    (cham.entity as IEntityPlayer).profile
+                    (cham.entity as IEntityPlayer).hookGetGameProfile()
                 ).also { it.copyLocationAndAnglesFrom(cham.entity) },
                 cham.limbSwing,
                 cham.limbSwingAmount,

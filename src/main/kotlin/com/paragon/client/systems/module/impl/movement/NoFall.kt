@@ -113,10 +113,10 @@ object NoFall : Module("NoFall", Category.MOVEMENT, "Disables fall damage") {
         if (event.packet is CPacketPlayer) {
             if (mode.value == Mode.PACKET_MODIFY) {
                 // Set packet Y
-                (event.packet as ICPacketPlayer).setY(minecraft.player.posY + 1)
+                (event.packet as ICPacketPlayer).hookSetY(minecraft.player.posY + 1)
 
                 // Set packet onGround
-                (event.packet as ICPacketPlayer).setOnGround(true)
+                (event.packet as ICPacketPlayer).hookSetOnGround(true)
             }
         }
     }

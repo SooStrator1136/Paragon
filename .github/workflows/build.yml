@@ -1,3 +1,5 @@
+# This needs to be fixed...
+
 name: build
 
 on: [ push,pull_request ]
@@ -26,12 +28,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Cleaning apparently produces a build which does not run in an obfuscated environment
-      # Mixin funkiness.
-      # - name: Clean
-      #  run: ./gradlew clean
+      - name: Clean
+        run: ./gradlew clean
 
       - name: Build
+        run: ./gradlew build
+
+      # this MIGHT fix the weird mixin shadow fields obfuscation
+      # idk tho
+      - name: Build 2 electric boogaloo
         run: ./gradlew build
 
       - uses: actions/upload-artifact@v2

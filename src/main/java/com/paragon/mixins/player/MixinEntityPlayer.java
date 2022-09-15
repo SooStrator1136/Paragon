@@ -19,7 +19,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
     }
 
     @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
-    public void onTravel(float strafe, float vertical, float forward, CallbackInfo info) {
+    public void hookTravel(float strafe, float vertical, float forward, CallbackInfo info) {
         TravelEvent travelEvent = new TravelEvent(strafe, vertical, forward);
         Paragon.INSTANCE.getEventBus().post(travelEvent);
 

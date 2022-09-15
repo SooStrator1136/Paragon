@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinBlockSlime {
 
     @Inject(method = "onEntityWalk", at = @At("HEAD"), cancellable = true)
-    public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
+    public void hookOnEntityWalk(World worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
         try {
             if (entityIn.getEntityId() == Minecraft.getMinecraft().player.getEntityId()) {
                 PlayerCollideWithBlockEvent blockSlowEvent = new PlayerCollideWithBlockEvent(pos, BlockUtil.getBlockAtPos(pos));

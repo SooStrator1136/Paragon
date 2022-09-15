@@ -52,7 +52,7 @@ class AltManagerGUI : GuiScreen(), Wrapper {
         popScissor()
 
         drawStringWithShadow(
-            "Logged in as " + TextFormatting.GRAY + (Minecraft.getMinecraft() as IMinecraft).session.username,
+            "Logged in as " + TextFormatting.GRAY + (Minecraft.getMinecraft() as IMinecraft).hookGetSession().username,
             5f,
             30f,
             -1

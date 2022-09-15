@@ -167,7 +167,7 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
             frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
-            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
+            (minecraft.entityRenderer as IEntityRenderer).hookSetupCameraTransform(event.partialTicks, 0)
 
             logged.forEach { (player, _) ->
                 // Do not render if they are far away

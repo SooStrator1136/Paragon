@@ -142,7 +142,7 @@ object StorageESP : Module("StorageESP", Category.RENDER, "Highlights storage bl
             frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
-            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
+            (minecraft.entityRenderer as IEntityRenderer).hookSetupCameraTransform(event.partialTicks, 0)
 
             for (tileEntity in minecraft.world.loadedTileEntityList) {
                 if (isStorageValid(tileEntity)) {

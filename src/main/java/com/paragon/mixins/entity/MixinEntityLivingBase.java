@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinEntityLivingBase {
 
     @Inject(method = "swingArm", at = @At("HEAD"), cancellable = true)
-    public void onSwingArm(EnumHand hand, CallbackInfo ci) {
+    public void hookSwingArm(EnumHand hand, CallbackInfo ci) {
         SwingArmEvent event = new SwingArmEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 

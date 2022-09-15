@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinNetworkManager {
 
     @Inject(method = "channelRead0*", at = @At("HEAD"), cancellable = true)
-    public void onPacketReceived(ChannelHandlerContext p_channelRead0_1_, Packet<?> p_channelRead0_2_, CallbackInfo ci) {
+    public void headHookChannelRead0(ChannelHandlerContext p_channelRead0_1_, Packet<?> p_channelRead0_2_, CallbackInfo ci) {
         PacketEvent.PreReceive preReceive = new PacketEvent.PreReceive(p_channelRead0_2_);
         Paragon.INSTANCE.getEventBus().post(preReceive);
 
@@ -24,7 +24,7 @@ public class MixinNetworkManager {
     }
 
     @Inject(method = "sendPacket*", at = @At("HEAD"), cancellable = true)
-    public void onPacketSendPre(Packet<?> packetIn, CallbackInfo ci) {
+    public void headHookSendPacket(Packet<?> packetIn, CallbackInfo ci) {
         PacketEvent.PreSend preSend = new PacketEvent.PreSend(packetIn);
         Paragon.INSTANCE.getEventBus().post(preSend);
 
@@ -34,13 +34,13 @@ public class MixinNetworkManager {
     }
 
     @Inject(method = "channelRead0*", at = @At("TAIL"))
-    public void onPacketReceivedPost(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
+    public void tailHookChannelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
         PacketEvent.PostReceive postReceive = new PacketEvent.PostReceive(packet);
         Paragon.INSTANCE.getEventBus().post(postReceive);
     }
 
     @Inject(method = "sendPacket*", at = @At("TAIL"))
-    public void onPacketSendPost(Packet<?> packetIn, CallbackInfo ci) {
+    public void tailHookSendPacket(Packet<?> packetIn, CallbackInfo ci) {
         PacketEvent.PostSend postSend = new PacketEvent.PostSend(packetIn);
         Paragon.INSTANCE.getEventBus().post(postSend);
     }

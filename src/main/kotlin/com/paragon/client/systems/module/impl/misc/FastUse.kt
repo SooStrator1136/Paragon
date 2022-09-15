@@ -58,7 +58,7 @@ object FastUse : Module("FastUse", Category.MISC, "Allows you to use items quick
             || crystals.value && InventoryUtil.isHolding(Items.END_CRYSTAL)
         ) {
             if (randomPause.value && random.nextInt(randomChance.value.toInt()) == 1) {
-                (minecraft as IMinecraft).setRightClickDelayTimer(4)
+                (minecraft as IMinecraft).hookSetRightClickDelayTimer(4)
                 return
             }
 
@@ -66,7 +66,7 @@ object FastUse : Module("FastUse", Category.MISC, "Allows you to use items quick
                 minecraft.player.xpCooldown = 0
             }
 
-            (minecraft as IMinecraft).setRightClickDelayTimer(0)
+            (minecraft as IMinecraft).hookSetRightClickDelayTimer(0)
         }
     }
 

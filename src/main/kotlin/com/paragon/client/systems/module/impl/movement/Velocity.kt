@@ -31,9 +31,9 @@ object Velocity : Module("Velocity", Category.MOVEMENT, "Stops crystals and mobs
                 if (horizontal.value == 0f && vertical.value == 0f) {
                     event.cancel()
                 } else {
-                    (event.packet as ISPacketEntityVelocity).setMotionX(((event.packet as SPacketEntityVelocity).motionX / 100 * (horizontal.value / 100)).toInt())
-                    (event.packet as ISPacketEntityVelocity).setMotionY(vertical.value.toInt() / 100)
-                    (event.packet as ISPacketEntityVelocity).setMotionZ(((event.packet as SPacketEntityVelocity).motionZ / 100 * (horizontal.value / 100)).toInt())
+                    (event.packet as ISPacketEntityVelocity).hookSetMotionX(((event.packet as SPacketEntityVelocity).motionX / 100 * (horizontal.value / 100)).toInt())
+                    (event.packet as ISPacketEntityVelocity).hookSetMotionY(vertical.value.toInt() / 100)
+                    (event.packet as ISPacketEntityVelocity).hookSetMotionZ(((event.packet as SPacketEntityVelocity).motionZ / 100 * (horizontal.value / 100)).toInt())
                 }
             }
         }
@@ -42,9 +42,9 @@ object Velocity : Module("Velocity", Category.MOVEMENT, "Stops crystals and mobs
             if (horizontal.value == 0f && vertical.value == 0f) {
                 event.cancel()
             } else {
-                (event.packet as ISPacketExplosion).setMotionX(horizontal.value / 100 * (event.packet as SPacketExplosion).motionX)
-                (event.packet as ISPacketExplosion).setMotionY(vertical.value / 100 * (event.packet as SPacketExplosion).motionY)
-                (event.packet as ISPacketExplosion).setMotionZ(horizontal.value / 100 * (event.packet as SPacketExplosion).motionZ)
+                (event.packet as ISPacketExplosion).hookSetMotionX(horizontal.value / 100 * (event.packet as SPacketExplosion).motionX)
+                (event.packet as ISPacketExplosion).hookSetMotionY(vertical.value / 100 * (event.packet as SPacketExplosion).motionY)
+                (event.packet as ISPacketExplosion).hookSetMotionZ(horizontal.value / 100 * (event.packet as SPacketExplosion).motionZ)
             }
         }
     }

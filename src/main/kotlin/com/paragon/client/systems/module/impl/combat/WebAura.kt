@@ -78,7 +78,7 @@ object WebAura : Module("WebAura", Category.COMBAT, "Spiderman on drugs wtf") {
                     !it.isDead
                             && it != minecraft.player
                             && it is EntityPlayer
-                            && !(it as IEntity).isInWeb
+                            && !(it as IEntity).hookIsInWeb()
                 }.mapNotNull {
                     val blockUnder = PlayerUtil.getBlockUnder(it)
                     return@mapNotNull if (blockUnder == null || blockUnder.distanceToEyes > range.value) {

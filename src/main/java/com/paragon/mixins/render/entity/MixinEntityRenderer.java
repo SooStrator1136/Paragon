@@ -26,7 +26,7 @@ import java.util.List;
 public abstract class MixinEntityRenderer {
 
     @Redirect(method = "getMouseOver", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;getEntitiesInAABBexcluding(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;Lcom/google/common/base/Predicate;)Ljava/util/List;"))
-    public List<Entity> getEntitiesInAABBexcluding(WorldClient world, Entity entity, AxisAlignedBB axisAlignedBB, Predicate<? super Entity> predicate) {
+    public List<Entity> hookGetMouseOver(WorldClient world, Entity entity, AxisAlignedBB axisAlignedBB, Predicate<? super Entity> predicate) {
         RaytraceEntityEvent raytraceEvent = new RaytraceEntityEvent();
         Paragon.INSTANCE.getEventBus().post(raytraceEvent);
 
@@ -38,7 +38,7 @@ public abstract class MixinEntityRenderer {
     }
 
     @ModifyVariable(method = "orientCamera", at = @At("STORE"), ordinal = 3)
-    public double orientCameraX(double distance) {
+    public double o3HookOrientCamera(double distance) {
         CameraClipEvent cameraClipEvent = new CameraClipEvent(distance);
         Paragon.INSTANCE.getEventBus().post(cameraClipEvent);
 
@@ -50,7 +50,7 @@ public abstract class MixinEntityRenderer {
     }
 
     @ModifyVariable(method = "orientCamera", at = @At("STORE"), ordinal = 7)
-    public double orientCameraZ(double distance) {
+    public double o7HookOrientCamera(double distance) {
         CameraClipEvent cameraClipEvent = new CameraClipEvent(distance);
         Paragon.INSTANCE.getEventBus().post(cameraClipEvent);
 

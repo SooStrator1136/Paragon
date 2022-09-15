@@ -11,12 +11,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ISPacketExplosion {
 
     @Accessor("motionX")
-    void setMotionX(float newMotionX);
+    void hookSetMotionX(float newMotionX);
 
     @Accessor("motionY")
-    void setMotionY(float newMotionY);
+    void hookSetMotionY(float newMotionY);
 
     @Accessor("motionZ")
-    void setMotionZ(float newMotionZ);
+    void hookSetMotionZ(float newMotionZ);
 
 }

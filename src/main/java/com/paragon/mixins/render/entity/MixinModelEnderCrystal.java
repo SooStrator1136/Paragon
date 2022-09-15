@@ -31,7 +31,7 @@ public class MixinModelEnderCrystal {
     private ModelRenderer cube;
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void onRender(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, CallbackInfo ci) {
+    public void hookRender(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, CallbackInfo ci) {
         RenderCrystalEvent renderCrystalEvent = new RenderCrystalEvent(base, glass, cube, (EntityEnderCrystal) entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         Paragon.INSTANCE.getEventBus().post(renderCrystalEvent);
 

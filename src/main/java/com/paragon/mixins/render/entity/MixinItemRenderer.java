@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinItemRenderer {
 
     @Inject(method = "transformEatFirstPerson", at = @At("HEAD"), cancellable = true)
-    public void onTransformEat(float a, EnumHandSide side, ItemStack stack, CallbackInfo ci) {
+    public void hookTransformEatFirstPerson(float a, EnumHandSide side, ItemStack stack, CallbackInfo ci) {
         RenderEatingEvent renderEatingEvent = new RenderEatingEvent();
         Paragon.INSTANCE.getEventBus().post(renderEatingEvent);
 
@@ -25,19 +25,19 @@ public class MixinItemRenderer {
     }
 
     @Inject(method = "transformFirstPerson", at = @At("HEAD"))
-    public void onTransformPre(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
+    public void headHookTransformFirstPerson(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
         RenderItemEvent.Pre renderItemEvent = new RenderItemEvent.Pre(hand);
         Paragon.INSTANCE.getEventBus().post(renderItemEvent);
     }
 
     @Inject(method = "transformFirstPerson", at = @At("TAIL"))
-    public void onTransformPost(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
+    public void tailHookTransformFirstPerson(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
         RenderItemEvent.Post renderItemEvent = new RenderItemEvent.Post(hand);
         Paragon.INSTANCE.getEventBus().post(renderItemEvent);
     }
 
     @Inject(method = "transformSideFirstPerson", at = @At("HEAD"))
-    public void onTransformSide(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
+    public void hookTransformSideFirstPerson(EnumHandSide hand, float p_187453_2_, CallbackInfo ci) {
         RenderItemEvent.Pre renderItemEvent = new RenderItemEvent.Pre(hand);
         Paragon.INSTANCE.getEventBus().post(renderItemEvent);
     }

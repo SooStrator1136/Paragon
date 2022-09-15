@@ -57,7 +57,7 @@ object AntiHunger : Module("AntiHunger", Category.MISC, "Tries to remove huger l
     fun onPacketSend(event: PostSend) {
         if (event.packet is CPacketPlayer) {
             if (groundSpoof.value && !minecraft.player.isRiding && !minecraft.player.isElytraFlying) {
-                (event.packet as ICPacketPlayer).setOnGround(true)
+                (event.packet as ICPacketPlayer).hookSetOnGround(true)
             }
         } else if (event.packet is CPacketEntityAction) { //Kassuk part
             val packet = event.packet

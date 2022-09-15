@@ -51,7 +51,7 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
 
     override fun onRender3D() {
         // Iterate through all blocks being broken
-        (minecraft.renderGlobal as IRenderGlobal).damagedBlocks.forEach { (_: Int?, progress: DestroyBlockProgress?) ->
+        (minecraft.renderGlobal as IRenderGlobal).hookGetDamagedBlocks().forEach { (_: Int?, progress: DestroyBlockProgress?) ->
             if (progress == null) {
                 return@forEach
             }

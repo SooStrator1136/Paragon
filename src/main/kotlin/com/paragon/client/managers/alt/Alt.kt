@@ -38,7 +38,7 @@ class Alt(val email: String, val password: String) {
         }
 
         //Set Minecraft session
-        (Minecraft.getMinecraft() as IMinecraft).session = session
+        (Minecraft.getMinecraft() as IMinecraft).hookSetSession(session)
         AltManagerGUI.renderString = TextFormatting.GREEN.toString() + "Successful Login!"
 
         return true

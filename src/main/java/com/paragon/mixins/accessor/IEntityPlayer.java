@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface IEntityPlayer {
 
     @Accessor("gameProfile")
-    GameProfile getProfile();
+    GameProfile hookGetGameProfile();
 
 }

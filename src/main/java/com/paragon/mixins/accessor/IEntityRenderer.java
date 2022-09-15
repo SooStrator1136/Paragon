@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface IEntityRenderer {
 
     @Invoker("setupCameraTransform")
-    void setupCamera(float partialTicks, int pass);
+    void hookSetupCameraTransform(float partialTicks, int pass);
 
     @Accessor("mapItemRenderer")
     MapItemRenderer getMapItemRenderer();

@@ -19,7 +19,7 @@ import java.util.List;
 public class MixinGuiPlayerTabOverlay {
 
     @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Ljava/util/List;subList(II)Ljava/util/List;", remap = false))
-    public List<NetworkPlayerInfo> onRenderPlayerList(List<NetworkPlayerInfo> list, int i, int j) {
+    public List<NetworkPlayerInfo> hookRenderPlayerList(List<NetworkPlayerInfo> list, int i, int j) {
         TabListEvent event = new TabListEvent(list.size());
         Paragon.INSTANCE.getEventBus().post(event);
 
@@ -31,7 +31,7 @@ public class MixinGuiPlayerTabOverlay {
     }
 
     @Inject(method = "getPlayerName", at = @At("HEAD"), cancellable = true)
-    public void onGetPlayerName(NetworkPlayerInfo networkPlayerInfoIn, CallbackInfoReturnable<String> cir) {
+    public void hookGetPlayerName(NetworkPlayerInfo networkPlayerInfoIn, CallbackInfoReturnable<String> cir) {
         TabOverlayEvent event = new TabOverlayEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 

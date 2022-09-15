@@ -134,7 +134,7 @@ object Strafe : Module("Strafe", Category.MOVEMENT, "Increases your movement spe
     }
 
     private fun setTimerSpeed(input: Float) {
-        ((minecraft as IMinecraft).timer as ITimer).tickLength = 50f / input
+        ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50f / input)
     }
 
     enum class State {

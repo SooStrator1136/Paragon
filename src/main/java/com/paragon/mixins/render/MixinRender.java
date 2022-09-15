@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinRender<T extends Entity> {
 
     @Inject(method = "getTeamColor", at = @At("HEAD"), cancellable = true)
-    public void getTeamColour(T entity, CallbackInfoReturnable<Integer> info) {
+    public void hookGetTeamColor(T entity, CallbackInfoReturnable<Integer> info) {
         ShaderColourEvent event = new ShaderColourEvent(entity);
         Paragon.INSTANCE.getEventBus().post(event);
 

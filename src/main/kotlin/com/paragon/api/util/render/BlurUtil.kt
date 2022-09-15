@@ -35,7 +35,7 @@ object BlurUtil : Wrapper {
                     ResourceLocation("shaders/post/blur.json")
                 )
                 blurShader!!.createBindFramebuffers(minecraft.displayWidth, minecraft.displayHeight)
-                framebuffer = (blurShader as IShaderGroup?)!!.mainFramebuffer
+                framebuffer = (blurShader as IShaderGroup?)!!.hookGetMainFramebuffer()
             } catch (exception: Exception) {
                 exception.printStackTrace()
             }
@@ -47,10 +47,10 @@ object BlurUtil : Wrapper {
     }
 
     private fun updateUniforms(intensity: Int) {
-        (blurShader as IShaderGroup?)!!.listShaders[0]?.shaderManager?.getShaderUniform("Radius")!!.set(intensity.toFloat())
-        (blurShader as IShaderGroup?)!!.listShaders[1]?.shaderManager?.getShaderUniform("Radius")!!.set(intensity.toFloat())
-        (blurShader as IShaderGroup?)!!.listShaders[0]?.shaderManager?.getShaderUniform("BlurDir")!![2f] = 1f
-        (blurShader as IShaderGroup?)!!.listShaders[1]?.shaderManager?.getShaderUniform("BlurDir")!![1f] = 1f
+        (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("Radius")!!.set(intensity.toFloat())
+        (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("Radius")!!.set(intensity.toFloat())
+        (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("BlurDir")!![2f] = 1f
+        (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("BlurDir")!![1f] = 1f
     }
 
     fun blur(x: Int, y: Int, width: Int, height: Int, intensity: Int) {

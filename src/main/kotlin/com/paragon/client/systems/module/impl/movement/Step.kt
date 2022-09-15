@@ -54,7 +54,7 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
         minecraft.player.stepHeight = 0.6f
 
         // reset our tickLength to 50.0f (1 timer speed)
-        ((minecraft as IMinecraft).timer as ITimer).tickLength = 50.0f
+        ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50.0f)
         timer = false
     }
 
@@ -75,7 +75,7 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
             // if we have used timer before and we are on ground after stepping, reset our timer
             if (timer && minecraft.player.onGround) {
                 timer = false
-                ((minecraft as IMinecraft).timer as ITimer).tickLength = 50.0f
+                ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50.0f)
             }
         }
     }
@@ -99,7 +99,7 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
 
             if (useTimer.value) {
                 // set our timer dynamically based off of the amount of offsets we are using
-                ((minecraft as IMinecraft).timer as ITimer).tickLength = 50.0f / (1.0f / (offsets.size + 1.0f))
+                ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50.0f / (1.0f / (offsets.size + 1.0f)))
                 timer = true
             }
 

@@ -11,12 +11,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ISPacketEntityVelocity {
 
     @Accessor("motionX")
-    void setMotionX(int newMotionX);
+    void hookSetMotionX(int newMotionX);
 
     @Accessor("motionY")
-    void setMotionY(int newMotionY);
+    void hookSetMotionY(int newMotionY);
 
     @Accessor("motionZ")
-    void setMotionZ(int newMotionZ);
+    void hookSetMotionZ(int newMotionZ);
 
 }

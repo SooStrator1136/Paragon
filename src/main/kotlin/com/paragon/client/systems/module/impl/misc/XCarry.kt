@@ -14,7 +14,7 @@ object XCarry : Module("XCarry", Category.MISC, "Lets you carry items in your cr
 
     @Listener
     fun onPacketSent(event: PreSend) {
-        if (event.packet is CPacketCloseWindow && (event.packet as ICPacketCloseWindow).id == minecraft.player.inventoryContainer.windowId) {
+        if (event.packet is CPacketCloseWindow && (event.packet as ICPacketCloseWindow).hookGetWindowId() == minecraft.player.inventoryContainer.windowId) {
             event.cancel()
         }
     }

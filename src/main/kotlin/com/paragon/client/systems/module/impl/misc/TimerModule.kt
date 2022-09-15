@@ -21,7 +21,7 @@ object TimerModule : Module("Timer", Category.MISC, "Modifies how long each tick
     ) describedBy "How much to multiply the timer speed by"
 
     override fun onDisable() {
-        ((minecraft as IMinecraft).timer as ITimer).tickLength = 50f
+        ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50f)
     }
 
     override fun onTick() {
@@ -29,7 +29,7 @@ object TimerModule : Module("Timer", Category.MISC, "Modifies how long each tick
             return
         }
 
-        ((minecraft as IMinecraft).timer as ITimer).tickLength = 50 / timer.value
+        ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookSetTickLength(50 / timer.value)
     }
 
 }

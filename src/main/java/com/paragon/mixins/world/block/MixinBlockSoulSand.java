@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinBlockSoulSand {
 
     @Inject(method = "onEntityCollidedWithBlock", at = @At("HEAD"), cancellable = true)
-    public void onEntityCollide(World worldIn, BlockPos pos, IBlockState state, Entity entityIn, CallbackInfo ci) {
+    public void hookOnEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn, CallbackInfo ci) {
         try {
             if (entityIn.getEntityId() == Minecraft.getMinecraft().player.getEntityId()) {
                 PlayerCollideWithBlockEvent blockSlowEvent = new PlayerCollideWithBlockEvent(pos, BlockUtil.getBlockAtPos(pos));

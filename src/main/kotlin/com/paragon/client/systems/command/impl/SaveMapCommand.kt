@@ -43,7 +43,7 @@ object SaveMapCommand : Command("SaveMap", "savemap <holding/frames/smart>") {
 
 
         @Suppress("IncorrectFormatting")
-        itemRenderInstances = ((minecraft.entityRenderer as IEntityRenderer).mapItemRenderer as IMapItemRenderer).loadedMaps
+        itemRenderInstances = ((minecraft.entityRenderer as IEntityRenderer).mapItemRenderer as IMapItemRenderer).hookGetLoadedMaps()
 
         when (args[0]) {
             "holding" -> {
@@ -336,7 +336,7 @@ object SaveMapCommand : Command("SaveMap", "savemap <holding/frames/smart>") {
                 0,
                 128,
                 128,
-                ((itemRenderInstances[id] ?: return@also) as IMapItemRendererInstance).mapTexture.textureData,
+                ((itemRenderInstances[id] ?: return@also) as IMapItemRendererInstance).hookGetMapTexture().textureData,
                 0,
                 128
             )

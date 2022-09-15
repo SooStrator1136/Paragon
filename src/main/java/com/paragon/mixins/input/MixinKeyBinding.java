@@ -18,9 +18,10 @@ public class MixinKeyBinding {
     private int keyCode;
 
     @Inject(method = "isKeyDown", at = @At("HEAD"), cancellable = true)
-    public void isPressedHook(CallbackInfoReturnable<Boolean> info) {
+    public void hookIsKeyDown(CallbackInfoReturnable<Boolean> info) {
         KeybindingPressedEvent event = new KeybindingPressedEvent(keyCode, pressed);
         Paragon.INSTANCE.getEventBus().post(event);
+
         if (event.isCancelled()) {
             info.setReturnValue(event.getPressedState());
         }

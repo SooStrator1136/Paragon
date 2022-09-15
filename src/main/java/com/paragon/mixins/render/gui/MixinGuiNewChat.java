@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinGuiNewChat {
 
     @Redirect(method = "drawChat", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiNewChat;drawRect(IIIII)V"))
-    public void onDrawChatRect(int x, int y, int x2, int y2, int colour) {
+    public void hookDrawChat(int x, int y, int x2, int y2, int colour) {
         RenderChatEvent chatEvent = new RenderChatEvent(colour);
         Paragon.INSTANCE.getEventBus().post(chatEvent);
 

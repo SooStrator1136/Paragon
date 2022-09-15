@@ -71,14 +71,14 @@ class RotationManager : Wrapper {
             if (packetYaw != -1f && packetPitch != -1f) {
                 event.cancel()
 
-                (event.packet as ICPacketPlayer).yaw = packetYaw
-                (event.packet as ICPacketPlayer).pitch = packetPitch
+                (event.packet as ICPacketPlayer).hookSetYaw(packetYaw)
+                (event.packet as ICPacketPlayer).hookSetPitch(packetPitch)
 
                 packetYaw = -1f
                 packetPitch = -1f
             }
 
-            serverRotation = Vec2f((event.packet as ICPacketPlayer).yaw, (event.packet as ICPacketPlayer).pitch)
+            serverRotation = Vec2f((event.packet as ICPacketPlayer).hookGetYaw(), (event.packet as ICPacketPlayer).hookGetPitch())
         }
     }
 

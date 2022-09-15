@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinWorld {
 
     @Inject(method = "removeEntity", at = @At("HEAD"))
-    public void onEntityRemove(Entity entity, CallbackInfo ci) {
+    public void hookRemoveEntity(Entity entity, CallbackInfo ci) {
         EntityRemoveFromWorldEvent entityRemoveFromWorldEvent = new EntityRemoveFromWorldEvent(entity);
         Paragon.INSTANCE.getEventBus().post(entityRemoveFromWorldEvent);
     }

@@ -318,6 +318,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                     // Add item damage to total
                     totalArmour += armour.itemDamage.toFloat()
                 }
+
                 totalArmour.toDouble()
             })
         }

@@ -152,7 +152,7 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
             frameBuffer!!.bindFramebuffer(false)
             val previousShadows = minecraft.gameSettings.entityShadows
             minecraft.gameSettings.entityShadows = false
-            (minecraft.entityRenderer as IEntityRenderer).setupCamera(event.partialTicks, 0)
+            (minecraft.entityRenderer as IEntityRenderer).hookSetupCameraTransform(event.partialTicks, 0)
 
             for (entity in minecraft.world.loadedEntityList) {
                 if (entity != null && entity !== minecraft.player && isEntityValid(entity)) {
@@ -227,7 +227,7 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
         // Check glow
         if (mode.value == Mode.GLOW) {
             // Get shaders
-            val shaders = ((minecraft.renderGlobal as IRenderGlobal).entityOutlineShader as IShaderGroup).listShaders
+            val shaders = ((minecraft.renderGlobal as IRenderGlobal).hookGetEntityOutlineShader() as IShaderGroup).hookGetListShaders()
             shaders.forEach {
                 // Get line width
                 val uniform = (it ?: return@forEach).shaderManager.getShaderUniform("Radius")

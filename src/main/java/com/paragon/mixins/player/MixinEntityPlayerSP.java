@@ -56,7 +56,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Inject(method = "onUpdateWalkingPlayer", at = @At("HEAD"), cancellable = true)
-    public void onUpdateWalkingPlayer(CallbackInfo ci) {
+    public void hookOnUpdateWalkingPlayer(CallbackInfo ci) {
         UpdateEvent updateEvent = new UpdateEvent();
         Paragon.INSTANCE.getEventBus().post(updateEvent);
 
@@ -95,7 +95,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
     }
 
     @Redirect(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;move(Lnet/minecraft/entity/MoverType;DDD)V"))
-    public void onMove(AbstractClientPlayer instance, MoverType moverType, double x, double y, double z) {
+    public void hookMove(AbstractClientPlayer instance, MoverType moverType, double x, double y, double z) {
         PlayerMoveEvent moveEvent = new PlayerMoveEvent(x, y, z);
         Paragon.INSTANCE.getEventBus().post(moveEvent);
 

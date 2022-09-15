@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface IKeyBinding {
 
     @Accessor("pressed")
-    void setPressed(boolean pressed);
+    void hookSetPressed(boolean pressed);
 
 }

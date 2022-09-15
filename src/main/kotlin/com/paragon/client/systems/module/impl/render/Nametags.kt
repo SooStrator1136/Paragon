@@ -112,9 +112,9 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
 
             // Get render x, y, and z
             val renderValues = doubleArrayOf(
-                (minecraft.renderManager as IRenderManager).renderX,
-                (minecraft.renderManager as IRenderManager).renderY,
-                (minecraft.renderManager as IRenderManager).renderZ
+                (minecraft.renderManager as IRenderManager).hookGetRenderPosX(),
+                (minecraft.renderManager as IRenderManager).hookGetRenderPosY(),
+                (minecraft.renderManager as IRenderManager).hookGetRenderPosZ()
             )
             // Get player interpolated position
             val renderVec = EntityUtil.getInterpolatedPosition(player)

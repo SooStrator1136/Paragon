@@ -16,8 +16,8 @@ object NoRotate : Module("NoRotate", Category.MISC, "Stops the server from rotat
     @Listener
     fun onPacketReceive(event: PreReceive) {
         if (!minecraft.anyNull && event.packet is SPacketPlayerPosLook) {
-            (event.packet as ISPacketPlayerPosLook).setYaw(minecraft.player.rotationYaw)
-            (event.packet as ISPacketPlayerPosLook).setPitch(minecraft.player.rotationPitch)
+            (event.packet as ISPacketPlayerPosLook).hookSetYaw(minecraft.player.rotationYaw)
+            (event.packet as ISPacketPlayerPosLook).hookSetPitch(minecraft.player.rotationPitch)
         }
     }
 

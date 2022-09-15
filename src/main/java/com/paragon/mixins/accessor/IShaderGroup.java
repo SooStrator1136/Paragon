@@ -12,9 +12,9 @@ import java.util.List;
 public interface IShaderGroup {
 
     @Accessor("listShaders")
-    List<Shader> getListShaders();
+    List<Shader> hookGetListShaders();
 
     @Accessor("mainFramebuffer")
-    Framebuffer getMainFramebuffer();
+    Framebuffer hookGetMainFramebuffer();
 
 }

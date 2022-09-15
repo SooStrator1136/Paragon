@@ -75,7 +75,7 @@ object Speed : HUDModule("Speed", "Displays your current speed") {
     }
 
     fun getPlayerSpeed(distX: Double, distZ: Double): Double {
-        return hypot(distX, distZ) * (1000 / ((minecraft as IMinecraft).timer as ITimer).tickLength).toDouble()
+        return hypot(distX, distZ) * (1000 / ((minecraft as IMinecraft).hookGetTimer() as ITimer).hookGetTickLength()).toDouble()
     }
 
 }

@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface IRenderManager {
 
     @Accessor("renderPosX")
-    double getRenderX();
+    double hookGetRenderPosX();
 
     @Accessor("renderPosY")
-    double getRenderY();
+    double hookGetRenderPosY();
 
     @Accessor("renderPosZ")
-    double getRenderZ();
+    double hookGetRenderPosZ();
 
 }

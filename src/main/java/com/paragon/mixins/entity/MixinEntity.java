@@ -22,7 +22,7 @@ public abstract class MixinEntity {
     private AxisAlignedBB boundingBox;
 
     @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target="Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
-    public void onEntityCollision(Entity entity, double x, double y, double z) {
+    public void hookApplyEntityCollision(Entity entity, double x, double y, double z) {
         EntityPushEvent event = new EntityPushEvent(entity);
         Paragon.INSTANCE.getEventBus().post(event);
 
@@ -34,7 +34,7 @@ public abstract class MixinEntity {
     }
 
     @Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endSection()V", shift = At.Shift.BEFORE, ordinal = 0))
-    public void onMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
+    public void hookMove(MoverType type, double x, double y, double z, CallbackInfo ci) {
         StepEvent stepEvent = new StepEvent(boundingBox, (Entity) (Object) this, 0.5f);
         Paragon.INSTANCE.getEventBus().post(stepEvent);
 

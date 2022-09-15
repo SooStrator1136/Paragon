@@ -12,9 +12,9 @@ import java.util.Map;
 public interface IRenderGlobal {
 
     @Accessor("entityOutlineShader")
-    ShaderGroup getEntityOutlineShader();
+    ShaderGroup hookGetEntityOutlineShader();
 
     @Accessor("damagedBlocks")
-    Map<Integer, DestroyBlockProgress> getDamagedBlocks();
+    Map<Integer, DestroyBlockProgress> hookGetDamagedBlocks();
 
 }

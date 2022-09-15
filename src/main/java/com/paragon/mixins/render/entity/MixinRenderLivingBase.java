@@ -42,7 +42,7 @@ public abstract class MixinRenderLivingBase<T extends EntityLivingBase> extends 
     }
 
     @Inject(method = "renderModel", at = @At("TAIL"), cancellable = true)
-    public void renderModel(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, CallbackInfo ci) {
+    public void hookRenderModel(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, CallbackInfo ci) {
         RenderEntityEvent renderEntityEvent = new RenderEntityEvent(mainModel, entitylivingbaseIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         Paragon.INSTANCE.getEventBus().post(renderEntityEvent);
 
@@ -55,7 +55,7 @@ public abstract class MixinRenderLivingBase<T extends EntityLivingBase> extends 
      * Couldn't figure out how to inject into the if statement, so here we are.
      */
     @Inject(method = "setBrightness", at = @At("HEAD"), cancellable = true)
-    public void onSetBrightness(T entitylivingbaseIn, float partialTicks, boolean combineTextures, CallbackInfoReturnable<Boolean> cir) {
+    public void hookSetBrightness(T entitylivingbaseIn, float partialTicks, boolean combineTextures, CallbackInfoReturnable<Boolean> cir) {
         EntityHighlightOnHitEvent event = new EntityHighlightOnHitEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 
@@ -66,6 +66,7 @@ public abstract class MixinRenderLivingBase<T extends EntityLivingBase> extends 
             int i = getColorMultiplier(entitylivingbaseIn, f, partialTicks);
             boolean flag = (i >> 24 & 255) > 0;
             boolean flag1 = entitylivingbaseIn.hurtTime > 0 || entitylivingbaseIn.deathTime > 0;
+
             if (!flag && !flag1) {
                 cir.setReturnValue(false);
             } else if (!flag && !combineTextures) {

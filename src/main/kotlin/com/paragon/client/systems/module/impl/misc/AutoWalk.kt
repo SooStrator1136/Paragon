@@ -24,7 +24,7 @@ object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk")
         }
 
         // Reset the key on disable
-        (direction.value.key as IKeyBinding).setPressed(false)
+        (direction.value.key as IKeyBinding).hookSetPressed(false)
     }
 
     override fun onTick() {
@@ -33,7 +33,7 @@ object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk")
         }
 
         // Set the key to pressed
-        (direction.value.key as IKeyBinding).setPressed(true)
+        (direction.value.key as IKeyBinding).hookSetPressed(true)
     }
 
     enum class Direction(val key: KeyBinding) {

@@ -10,15 +10,15 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface IMinecraft {
 
     @Accessor("rightClickDelayTimer")
-    void setRightClickDelayTimer(int newTimer);
+    void hookSetRightClickDelayTimer(int newTimer);
 
     @Accessor("timer")
-    Timer getTimer();
+    Timer hookGetTimer();
 
     @Accessor("session")
-    Session getSession();
+    Session hookGetSession();
 
     @Accessor("session")
-    void setSession(Session newSession);
+    void hookSetSession(Session newSession);
 
 }
