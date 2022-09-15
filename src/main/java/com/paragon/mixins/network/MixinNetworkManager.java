@@ -1,7 +1,7 @@
 package com.paragon.mixins.network;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.network.PacketEvent;
+import com.paragon.impl.event.network.PacketEvent;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;

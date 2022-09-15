@@ -1,7 +1,7 @@
 package com.paragon.mixins.entity;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.entity.SwingArmEvent;
+import com.paragon.impl.event.render.entity.SwingArmEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHand;
 import org.spongepowered.asm.mixin.Mixin;

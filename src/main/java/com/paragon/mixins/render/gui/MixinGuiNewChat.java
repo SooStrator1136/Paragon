@@ -1,7 +1,7 @@
 package com.paragon.mixins.render.gui;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.gui.RenderChatEvent;
+import com.paragon.impl.event.render.gui.RenderChatEvent;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiNewChat;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,7 @@ public class MixinGuiNewChat {
         RenderChatEvent chatEvent = new RenderChatEvent(colour);
         Paragon.INSTANCE.getEventBus().post(chatEvent);
 
-        if (!chatEvent.isCancelled()) {
+        if (! chatEvent.isCancelled()) {
             Gui.drawRect(x, y, x2, y2, chatEvent.getColour());
         }
     }

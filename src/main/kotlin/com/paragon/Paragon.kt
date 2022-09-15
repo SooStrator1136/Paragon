@@ -1,18 +1,12 @@
 package com.paragon
 
-import com.paragon.api.event.EventFactory
-import com.paragon.bus.EventBus
-import com.paragon.client.managers.*
-import com.paragon.client.managers.AltManager
-import com.paragon.client.managers.NotificationManager
-import com.paragon.client.managers.RotationManager
-import com.paragon.client.managers.FriendManager
-import com.paragon.client.systems.module.impl.render.Nametags
-import com.paragon.client.ui.configuration.ConfigurationGUI
-import com.paragon.client.ui.configuration.retrowindows.Windows98
-import com.paragon.client.ui.configuration.zeroday.ZerodayGUI
-import com.paragon.client.ui.console.Console
-import com.paragon.client.ui.taskbar.Taskbar
+import com.paragon.impl.event.EventFactory
+import com.paragon.impl.managers.*
+import com.paragon.impl.ui.configuration.ConfigurationGUI
+import com.paragon.impl.ui.configuration.retrowindows.Windows98
+import com.paragon.impl.ui.configuration.zeroday.ZerodayGUI
+import com.paragon.impl.ui.console.Console
+import com.paragon.impl.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.Mod
@@ -25,17 +19,14 @@ import java.awt.Desktop
 import java.net.URI
 import javax.swing.JOptionPane
 
-@Mod(name = Paragon.modName, modid = Paragon.modID, version = Paragon.modVersion)
+@Mod(name = com.paragon.Paragon.Companion.modName, modid = com.paragon.Paragon.Companion.modID, version = com.paragon.Paragon.Companion.modVersion)
 class Paragon {
 
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent?) {
         if (ForgeVersion.buildVersion < 2860) {
             JOptionPane.showMessageDialog(
-                null,
-                "Forge version is too old. Paragon requires Forge to be at least build 2860.",
-                "Outdated Forge!",
-                JOptionPane.ERROR_MESSAGE
+                null, "Forge version is too old. Paragon requires Forge to be at least build 2860.", "Outdated Forge!", JOptionPane.ERROR_MESSAGE
             )
 
             Desktop.getDesktop().browse(
@@ -55,7 +46,7 @@ class Paragon {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent?) {
-        logger.info("Starting Paragon $modVersion initialisation")
+        logger.info("Starting Paragon ${modVersion} initialisation")
 
         //  ________  ________  ________  ________  ________  ________  ________            _____      ________      ________
         // |\   __  \|\   __  \|\   __  \|\   __  \|\   ____\|\   __  \|\   ___  \         / __  \    |\   __  \    |\   __  \
@@ -65,7 +56,9 @@ class Paragon {
         //    \ \__\    \ \__\ \__\ \__\\ _\\ \__\ \__\ \_______\ \_______\ \__\\ \__\          \ \__\\__\ \_______\\__\ \_______\
         //     \|__|     \|__|\|__|\|__|\|__|\|__|\|__|\|_______|\|_______|\|__| \|__|           \|__\|__|\|_______\|__|\|_______|
 
-        println("\n ________  ________  ________  ________  ________  ________  ________            _____      ________      ________     \n" + "|\\   __  \\|\\   __  \\|\\   __  \\|\\   __  \\|\\   ____\\|\\   __  \\|\\   ___  \\         / __  \\    |\\   __  \\    |\\   __  \\    \n" + "\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\ \\  \\       |\\/_|\\  \\   \\ \\  \\|\\  \\   \\ \\  \\|\\  \\   \n" + " \\ \\   ____\\ \\   __  \\ \\   _  _\\ \\   __  \\ \\  \\  __\\ \\  \\\\\\  \\ \\  \\\\ \\  \\      \\|/ \\ \\  \\   \\ \\  \\\\\\  \\   \\ \\  \\\\\\  \\  \n" + "  \\ \\  \\___|\\ \\  \\ \\  \\ \\  \\\\  \\\\ \\  \\ \\  \\ \\  \\|\\  \\ \\  \\\\\\  \\ \\  \\\\ \\  \\          \\ \\  \\ __\\ \\  \\\\\\  \\ __\\ \\  \\\\\\  \\ \n" + "   \\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ _\\\\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\\\ \\__\\          \\ \\__\\\\__\\ \\_______\\\\__\\ \\_______\\\n" + "    \\|__|     \\|__|\\|__|\\|__|\\|__|\\|__|\\|__|\\|_______|\\|_______|\\|__| \\|__|           \\|__\\|__|\\|_______\\|__|\\|_______|")
+        println(
+            "\n ________  ________  ________  ________  ________  ________  ________            _____      ________      ________     \n" + "|\\   __  \\|\\   __  \\|\\   __  \\|\\   __  \\|\\   ____\\|\\   __  \\|\\   ___  \\         / __  \\    |\\   __  \\    |\\   __  \\    \n" + "\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\___|\\ \\  \\|\\  \\ \\  \\\\ \\  \\       |\\/_|\\  \\   \\ \\  \\|\\  \\   \\ \\  \\|\\  \\   \n" + " \\ \\   ____\\ \\   __  \\ \\   _  _\\ \\   __  \\ \\  \\  __\\ \\  \\\\\\  \\ \\  \\\\ \\  \\      \\|/ \\ \\  \\   \\ \\  \\\\\\  \\   \\ \\  \\\\\\  \\  \n" + "  \\ \\  \\___|\\ \\  \\ \\  \\ \\  \\\\  \\\\ \\  \\ \\  \\ \\  \\|\\  \\ \\  \\\\\\  \\ \\  \\\\ \\  \\          \\ \\  \\ __\\ \\  \\\\\\  \\ __\\ \\  \\\\\\  \\ \n" + "   \\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ _\\\\ \\__\\ \\__\\ \\_______\\ \\_______\\ \\__\\\\ \\__\\          \\ \\__\\\\__\\ \\_______\\\\__\\ \\_______\\\n" + "    \\|__|     \\|__|\\|__|\\|__|\\|__|\\|__|\\|__|\\|_______|\\|_______|\\|__| \\|__|           \\|__\\|__|\\|_______\\|__|\\|_______|"
+        )
 
         storageManager = StorageManager()
         logger.info("StorageManager initialised")
@@ -136,7 +129,7 @@ class Paragon {
         storageManager.loadOther()
         logger.info("Other Loaded")
 
-        logger.info("Paragon $modVersion Initialised Successfully")
+        logger.info("Paragon ${com.paragon.Paragon.Companion.modVersion} Initialised Successfully")
     }
 
     companion object {
@@ -146,10 +139,10 @@ class Paragon {
 
         @JvmField
         @Mod.Instance
-        var INSTANCE = Paragon()
+        var INSTANCE = com.paragon.Paragon()
     }
 
-    val eventBus = EventBus()
+    val eventBus = com.paragon.bus.EventBus()
 
     // Client stuff
     var logger: Logger = LogManager.getLogger("paragon")

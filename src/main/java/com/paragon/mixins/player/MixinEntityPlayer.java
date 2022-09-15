@@ -1,7 +1,7 @@
 package com.paragon.mixins.player;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.player.TravelEvent;
+import com.paragon.impl.event.player.TravelEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +20,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
 
     @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
     public void hookTravel(float strafe, float vertical, float forward, CallbackInfo info) {
-        TravelEvent travelEvent = new TravelEvent(strafe, vertical, forward);
+        TravelEvent travelEvent = new TravelEvent();
         Paragon.INSTANCE.getEventBus().post(travelEvent);
 
         if (travelEvent.isCancelled()) {

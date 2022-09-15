@@ -1,7 +1,7 @@
 package com.paragon.mixins.render.gui;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.gui.RenderTooltipEvent;
+import com.paragon.impl.event.render.gui.RenderTooltipEvent;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

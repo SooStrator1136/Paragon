@@ -1,9 +1,9 @@
 package com.paragon.mixins.render.gui;
 
 import com.paragon.Paragon;
-import com.paragon.client.systems.module.impl.client.Colours;
-import com.paragon.client.ui.menu.ParagonButton;
-import com.paragon.client.ui.menu.ParagonMenu;
+import com.paragon.impl.module.client.Colours;
+import com.paragon.impl.ui.menu.ParagonButton;
+import com.paragon.impl.ui.menu.ParagonMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -19,7 +19,7 @@ public class MixinGuiMainMenu extends GuiScreen {
 
     @Inject(method = "initGui", at = @At("TAIL"))
     public void hookInitGui(CallbackInfo ci) {
-        this.buttonList.add(new ParagonButton(-1, this.width - 83, 3, 80, 20, "Paragon Menu"));
+        this.buttonList.add(new ParagonButton(- 1, this.width - 83, 3, 80, 20, "Paragon Menu"));
     }
 
     @Inject(method = "drawScreen", at = @At("TAIL"))
@@ -29,7 +29,7 @@ public class MixinGuiMainMenu extends GuiScreen {
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))
     public void hookActionPerformed(GuiButton button, CallbackInfo ci) {
-        if (button.id == -1) {
+        if (button.id == - 1) {
             Paragon.INSTANCE.setParagonMainMenu(true);
             mc.displayGuiScreen(new ParagonMenu());
         }

@@ -30,7 +30,7 @@ mat3 rotY(float a) {
 }
 
 float random(vec2 pos) {
-    return fract(1.0 * sin(pos.y + fract(100.0 * sin(pos.x)))); // http://www.matteo-basei.it/noise
+    return fract(1.0 * sin(pos.y + fract(100.0 * sin(pos.x))));// http://www.matteo-basei.it/noise
 }
 
 float noise(vec2 pos) {
@@ -67,21 +67,21 @@ void main() {
         float f = fbm(pos * 2.0 * vec2(fbm(pos - (time / 8.0)), fbm(pos / 2.0 - (time / 8.0))));
 
         vec3 colour = mix(
-            vec3(col.r, col.g, col.b),
-            vec3(col.r, col.g, col.b),
-            vec3(col.r, col.g, col.b)
+        vec3(col.r, col.g, col.b),
+        vec3(col.r, col.g, col.b),
+        vec3(col.r, col.g, col.b)
         );
 
         colour = mix(
-            colour,
-            vec3(col.r, col.g, col.b),
-            vec3(col.r, col.g, col.b)
+        colour,
+        vec3(col.r, col.g, col.b),
+        vec3(col.r, col.g, col.b)
         );
 
         colour = mix(
-            colour,
-            vec3(col.r, col.g, col.b),
-            vec3(col.r, col.g, col.b)
+        colour,
+        vec3(col.r, col.g, col.b),
+        vec3(col.r, col.g, col.b)
         );
 
         colour = (f * 1.5) * colour;

@@ -2,10 +2,10 @@ package com.paragon.mixins.render.entity;
 
 import com.google.common.base.Predicate;
 import com.paragon.Paragon;
-import com.paragon.api.event.player.RaytraceEntityEvent;
-import com.paragon.api.event.render.AspectEvent;
-import com.paragon.api.event.render.entity.CameraClipEvent;
-import com.paragon.api.event.render.entity.HurtcamEvent;
+import com.paragon.impl.event.player.RaytraceEntityEvent;
+import com.paragon.impl.event.render.AspectEvent;
+import com.paragon.impl.event.render.entity.CameraClipEvent;
+import com.paragon.impl.event.render.entity.HurtcamEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -62,7 +62,7 @@ public abstract class MixinEntityRenderer {
     }
 
     @Inject(method = "hurtCameraEffect", at = @At("HEAD"), cancellable = true)
-    public void onHurtcamEffect(float partialTicks, CallbackInfo ci) {
+    public void hookHurtcameraEffect(float partialTicks, CallbackInfo ci) {
         HurtcamEvent event = new HurtcamEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 
@@ -71,8 +71,8 @@ public abstract class MixinEntityRenderer {
         }
     }
 
-    @Redirect(method = "setupCameraTransform", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V"))
-    public void onSetupCameraTransform(float fov, float aspect, float z1, float z2) {
+    @Redirect(method = "setupCameraTransform", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V", remap = false))
+    public void hookSetupCameraTransform(float fov, float aspect, float z1, float z2) {
         AspectEvent event = new AspectEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 
@@ -83,8 +83,8 @@ public abstract class MixinEntityRenderer {
         }
     }
 
-    @Redirect(method = "renderWorldPass", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V"))
-    public void onRenderWorldPass(float fov, float aspect, float z1, float z2) {
+    @Redirect(method = "renderWorldPass", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V", remap = false))
+    public void hookRenderWorldPass(float fov, float aspect, float z1, float z2) {
         AspectEvent event = new AspectEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 
@@ -95,8 +95,8 @@ public abstract class MixinEntityRenderer {
         }
     }
 
-    @Redirect(method = "renderCloudsCheck", at = @At(value="INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V"))
-    public void onRenderCloudsCheck(float fov, float aspect, float z1, float z2) {
+    @Redirect(method = "renderCloudsCheck", at = @At(value = "INVOKE", target = "Lorg/lwjgl/util/glu/Project;gluPerspective(FFFF)V", remap = false))
+    public void hookRenderCloudsCheck(float fov, float aspect, float z1, float z2) {
         AspectEvent event = new AspectEvent();
         Paragon.INSTANCE.getEventBus().post(event);
 

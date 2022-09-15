@@ -2,7 +2,7 @@ package com.paragon.mixins.player;
 
 import com.mojang.authlib.GameProfile;
 import com.paragon.Paragon;
-import com.paragon.client.systems.command.impl.CopySkinCommand;
+import com.paragon.impl.command.impl.CopySkinCommand;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;

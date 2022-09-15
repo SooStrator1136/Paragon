@@ -1,8 +1,8 @@
 package com.paragon.mixins.render.world;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.world.RenderBlockModelEvent;
-import com.paragon.api.event.render.world.RenderBlockSmoothEvent;
+import com.paragon.impl.event.render.world.RenderBlockModelEvent;
+import com.paragon.impl.event.render.world.RenderBlockSmoothEvent;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BufferBuilder;

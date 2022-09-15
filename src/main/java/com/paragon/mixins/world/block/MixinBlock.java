@@ -1,8 +1,8 @@
 package com.paragon.mixins.world.block;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.world.FullCubeBlockEvent;
-import com.paragon.api.event.render.world.SideRenderBlockEvent;
+import com.paragon.impl.event.render.world.FullCubeBlockEvent;
+import com.paragon.impl.event.render.world.SideRenderBlockEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;

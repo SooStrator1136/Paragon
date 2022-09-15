@@ -84,7 +84,8 @@ class EventBus {
             if (!subscribedMethods[clazz]!!.contains(subscribedMethod)) {
                 subscribedMethods[clazz]!!.add(subscribedMethod)
             }
-        } else {
+        }
+        else {
             // Create new arraylist
             val array = ArrayList<SubscribedMethod>()
 

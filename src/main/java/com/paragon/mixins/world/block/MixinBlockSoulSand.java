@@ -1,8 +1,8 @@
 package com.paragon.mixins.world.block;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.world.PlayerCollideWithBlockEvent;
-import com.paragon.api.util.world.BlockUtil;
+import com.paragon.impl.event.world.PlayerCollideWithBlockEvent;
+import com.paragon.util.world.BlockUtil;
 import net.minecraft.block.BlockSoulSand;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

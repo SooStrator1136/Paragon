@@ -1,8 +1,8 @@
 package com.paragon.mixins.entity;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.player.StepEvent;
-import com.paragon.api.event.world.entity.EntityPushEvent;
+import com.paragon.impl.event.player.StepEvent;
+import com.paragon.impl.event.world.entity.EntityPushEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,12 +21,12 @@ public abstract class MixinEntity {
     @Shadow
     private AxisAlignedBB boundingBox;
 
-    @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target="Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
+    @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
     public void hookApplyEntityCollision(Entity entity, double x, double y, double z) {
         EntityPushEvent event = new EntityPushEvent(entity);
         Paragon.INSTANCE.getEventBus().post(event);
 
-        if (!event.isCancelled()) {
+        if (! event.isCancelled()) {
             entity.motionX += x;
             entity.motionY += y;
             entity.motionZ += z;

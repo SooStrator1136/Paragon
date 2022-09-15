@@ -1,8 +1,8 @@
 package com.paragon.mixins.render.entity;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.entity.RenderArmEvent;
-import com.paragon.api.event.render.entity.RenderNametagEvent;
+import com.paragon.impl.event.render.entity.RenderArmEvent;
+import com.paragon.impl.event.render.entity.RenderNametagEvent;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;

@@ -1,8 +1,8 @@
 package com.paragon.mixins.render.entity;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.player.RenderItemEvent;
-import com.paragon.api.event.render.entity.RenderEatingEvent;
+import com.paragon.impl.event.player.RenderItemEvent;
+import com.paragon.impl.event.render.entity.RenderEatingEvent;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;

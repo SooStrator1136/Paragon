@@ -1,8 +1,8 @@
 package com.paragon.mixins.render.gui;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.gui.TabListEvent;
-import com.paragon.api.event.render.gui.TabOverlayEvent;
+import com.paragon.impl.event.render.gui.TabListEvent;
+import com.paragon.impl.event.render.gui.TabOverlayEvent;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScorePlayerTeam;

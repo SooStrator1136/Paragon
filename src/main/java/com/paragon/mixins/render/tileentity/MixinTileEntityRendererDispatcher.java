@@ -1,7 +1,7 @@
 package com.paragon.mixins.render.tileentity;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.tileentity.RenderTileEntityEvent;
+import com.paragon.impl.event.render.tileentity.RenderTileEntityEvent;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,7 +1,7 @@
 package com.paragon.mixins.render.world;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.world.BlockHighlightEvent;
+import com.paragon.impl.event.render.world.BlockHighlightEvent;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.RayTraceResult;

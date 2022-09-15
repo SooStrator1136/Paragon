@@ -1,7 +1,7 @@
 package com.paragon.mixins.world.block;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.world.LiquidInteractEvent;
+import com.paragon.impl.event.world.LiquidInteractEvent;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import org.spongepowered.asm.mixin.Mixin;

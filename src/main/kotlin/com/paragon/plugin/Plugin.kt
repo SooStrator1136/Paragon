@@ -1,7 +1,6 @@
 package com.paragon.plugin
 
-import com.paragon.api.module.Module
-import com.paragon.client.systems.command.Command
+import com.paragon.impl.module.Module
 
 /**
  * @author Surge
@@ -13,7 +12,7 @@ abstract class Plugin {
     lateinit var authors: Array<String>
 
     val modules = arrayListOf<Module>()
-    val commands = arrayListOf<Command>()
+    val commands = arrayListOf<com.paragon.impl.command.Command>()
 
     /**
      * Because funky kotlin!

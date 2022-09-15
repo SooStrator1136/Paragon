@@ -19,7 +19,7 @@ public abstract class MixinGuiChat extends GuiScreen {
 
     @Inject(method = "drawScreen", at = @At("HEAD"))
     public void hookDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP) && !Paragon.INSTANCE.getCommandManager().getLastCommand().isEmpty()) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP) && ! Paragon.INSTANCE.getCommandManager().getLastCommand().isEmpty()) {
             this.inputField.setText(Paragon.INSTANCE.getCommandManager().getLastCommand());
         }
     }

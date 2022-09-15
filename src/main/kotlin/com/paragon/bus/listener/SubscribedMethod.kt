@@ -20,7 +20,8 @@ class SubscribedMethod(val source: Any?, method: Method) {
     private var handler: Consumer<Any>? = null
 
     init {
-        if (handlerCache.containsKey(method)) handler = handlerCache[method] else try {
+        if (handlerCache.containsKey(method)) handler = handlerCache[method]
+        else try {
             // Get lookup instance
             val lookup = MethodHandles.lookup()
 

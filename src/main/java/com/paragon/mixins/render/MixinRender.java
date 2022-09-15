@@ -1,7 +1,7 @@
 package com.paragon.mixins.render;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.ShaderColourEvent;
+import com.paragon.impl.event.render.ShaderColourEvent;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;

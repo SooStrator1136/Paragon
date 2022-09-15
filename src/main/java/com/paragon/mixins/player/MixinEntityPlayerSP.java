@@ -1,8 +1,8 @@
 package com.paragon.mixins.player;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.player.PlayerMoveEvent;
-import com.paragon.api.event.player.UpdateEvent;
+import com.paragon.impl.event.player.PlayerMoveEvent;
+import com.paragon.impl.event.player.UpdateEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;

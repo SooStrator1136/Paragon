@@ -1,7 +1,7 @@
 package com.paragon.mixins.world;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.world.entity.EntityRemoveFromWorldEvent;
+import com.paragon.impl.event.world.entity.EntityRemoveFromWorldEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;

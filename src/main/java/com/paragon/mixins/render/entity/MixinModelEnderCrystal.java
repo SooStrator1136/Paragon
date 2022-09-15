@@ -1,7 +1,7 @@
 package com.paragon.mixins.render.entity;
 
 import com.paragon.Paragon;
-import com.paragon.api.event.render.entity.RenderCrystalEvent;
+import com.paragon.impl.event.render.entity.RenderCrystalEvent;
 import net.minecraft.client.model.ModelEnderCrystal;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -32,7 +32,7 @@ public class MixinModelEnderCrystal {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void hookRender(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, CallbackInfo ci) {
-        RenderCrystalEvent renderCrystalEvent = new RenderCrystalEvent(base, glass, cube, (EntityEnderCrystal) entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+        RenderCrystalEvent renderCrystalEvent = new RenderCrystalEvent(base, glass, cube, (EntityEnderCrystal) entityIn, limbSwingAmount, ageInTicks, scale);
         Paragon.INSTANCE.getEventBus().post(renderCrystalEvent);
 
         if (renderCrystalEvent.isCancelled()) {
