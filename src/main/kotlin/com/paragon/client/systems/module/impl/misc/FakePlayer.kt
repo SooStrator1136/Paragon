@@ -43,6 +43,7 @@ object FakePlayer : Module("FakePlayer", Category.MISC, "Spawns a fake client si
         if (event.packet is SPacketDestroyEntities && popAble.value) {
             event.packet.entityIDs.forEach {
                 val entity = minecraft.world.getEntityByID(it)
+
                 if (entity !is EntityEnderCrystal) {
                     return@forEach
                 }

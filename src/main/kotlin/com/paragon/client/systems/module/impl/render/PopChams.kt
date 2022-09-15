@@ -81,7 +81,7 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
                 cham.model,
                 EntityOtherPlayerMP( //Copying so we don't have new animations or anything
                     cham.entity.world,
-                    (cham.entity as IEntityPlayer).profile
+                    (cham.entity as IEntityPlayer).hookGetGameProfile()
                 ).also { it.copyLocationAndAnglesFrom(cham.entity) },
                 cham.limbSwing,
                 cham.limbSwingAmount,
@@ -149,7 +149,7 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
                 outlineColor.value.blue / 255F,
 
                 if (fadeOut.value) {
-                    1.0 - animFac
+                    1.0 - animFac.coerceIn(0.0, 1.0)
                 } else {
                     outlineColor.alpha / 255.0
                 }.toFloat()
