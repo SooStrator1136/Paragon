@@ -3,7 +3,8 @@ package com.paragon.client.managers
 import net.minecraft.entity.player.EntityPlayer
 
 /**
- * @author Surge, SooStrator1136
+ * @author Surge
+ * @author SooStrator1136
  */
 class FriendManager {
 

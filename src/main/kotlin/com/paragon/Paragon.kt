@@ -7,6 +7,7 @@ import com.paragon.client.managers.AltManager
 import com.paragon.client.managers.NotificationManager
 import com.paragon.client.managers.RotationManager
 import com.paragon.client.managers.FriendManager
+import com.paragon.client.systems.module.impl.render.Nametags
 import com.paragon.client.ui.configuration.ConfigurationGUI
 import com.paragon.client.ui.configuration.retrowindows.Windows98
 import com.paragon.client.ui.configuration.zeroday.ZerodayGUI
@@ -89,7 +90,6 @@ class Paragon {
         logger.info("AltManager initialised")
 
         capeManager = CapeManager()
-        logger.info("CapeManager initialised")
 
         notificationManager = NotificationManager()
         logger.info("NotificationManager initialised")

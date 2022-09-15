@@ -41,7 +41,6 @@ object PhaseESP : Module("PhaseESP", Category.RENDER, "Highlights phased players
         false
     ) describedBy "Highlight yourself when phasing"
 
-    //Ikik but blocking is even worse (I actually tested)
     private val phased: MutableList<EntityPlayer> = CopyOnWriteArrayList()
 
     private var lastJob: Job? = null

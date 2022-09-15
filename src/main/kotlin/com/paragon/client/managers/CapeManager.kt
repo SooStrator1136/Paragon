@@ -1,18 +1,26 @@
 package com.paragon.client.managers
 
 import com.paragon.Paragon
+import com.paragon.api.util.mc
 import com.paragon.api.util.system.ResourceUtil
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler
 import java.util.*
 
 class CapeManager {
 
     private val capedPlayers: MutableMap<String, Cape> = HashMap()
 
-    fun isCaped(username: String) = capedPlayers.containsKey(username) || username.startsWith("Player")
+    /**
+     * Checks if a player has a cape using the players username
+     */
+    fun isCaped(username: String) = capedPlayers.containsKey(username) || FMLLaunchHandler.isDeobfuscatedEnvironment()
 
+    /**
+     * Gets the cape for a given [username]
+     */
     fun getCape(username: String) = capedPlayers[username]
 
     init {
@@ -27,6 +35,13 @@ class CapeManager {
             }
         }.onFailure {
             Paragon.INSTANCE.logger.error("Couldn't fetch capes! Looks like the host is down.")
+        }.onSuccess {
+            Paragon.INSTANCE.logger.info("Loaded capes!")
+        }
+
+        //Give a cape to the player if we are in a dev env
+        if (FMLLaunchHandler.isDeobfuscatedEnvironment()) {
+            capedPlayers[mc.session.username] = Cape.BASED
         }
     }
 

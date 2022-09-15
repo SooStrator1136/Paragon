@@ -12,7 +12,6 @@ import com.paragon.api.util.world.BlockUtil
 import com.paragon.api.util.world.BlockUtil.getBlockAtPos
 import com.paragon.api.util.world.BlockUtil.isSource
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import net.minecraft.block.BlockLiquid
 import net.minecraft.init.Blocks
 import net.minecraft.util.math.BlockPos
@@ -56,25 +55,23 @@ object SourceESP : Module("SourceESP", Category.RENDER, "Highlights liquid sourc
             return
         }
 
-        backgroundThread {
-            if (lastJob == null || (lastJob ?: return@backgroundThread).isCompleted) {
-                lastJob = launch {
-                    sources.addAll(BlockUtil.getSphere(range.value, true).filter {
-                        !sources.contains(it) && it.isSource
-                    })
+        if (lastJob == null || (lastJob ?: return).isCompleted) {
+            lastJob = backgroundThread {
+                sources.addAll(BlockUtil.getSphere(range.value, true).filter {
+                    !sources.contains(it) && it.isSource
+                })
 
-                    sources.removeIf {
-                        if (onlyTop.value && !isTopSource(it)) {
-                            return@removeIf true
-                        }
-
-                        return@removeIf !it.isSource
-                                || it.getDistance(
-                            minecraft.player.posX.toInt(),
-                            minecraft.player.posY.toInt(),
-                            minecraft.player.posZ.toInt()
-                        ) > range.value
+                sources.removeIf {
+                    if (onlyTop.value && !isTopSource(it)) {
+                        return@removeIf true
                     }
+
+                    return@removeIf !it.isSource
+                            || it.getDistance(
+                        minecraft.player.posX.toInt(),
+                        minecraft.player.posY.toInt(),
+                        minecraft.player.posZ.toInt()
+                    ) > range.value
                 }
             }
         }

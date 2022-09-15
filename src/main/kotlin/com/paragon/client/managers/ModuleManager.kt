@@ -87,6 +87,7 @@ class ModuleManager {
             // Misc
             Alert,
             Announcer,
+            AntiGhast,
             AntiHunger,
             AutoEZ,
             AutoLog,

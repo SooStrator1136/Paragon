@@ -367,9 +367,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                 if (packetExplode.value) {
                     // Explode with a packet
                     mc.player.connection.sendPacket(CPacketUseEntity(currentCrystal!!.crystal))
-                }
-
-                else {
+                } else {
                     // Attack crystal
                     mc.playerController.attackEntity(mc.player, currentCrystal!!.crystal)
                 }
@@ -427,9 +425,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
                 if (silentCrystalSlot == -1) {
                     false
-                }
-
-                else {
+                } else {
                     switchToSlot(silentCrystalSlot, false)
                     true
                 }
@@ -458,9 +454,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
                 // Swing arm
                 swing(placeSwing.value)
-            }
-
-            else if (placeHand != null) {
+            } else if (placeHand != null) {
                 // Place crystal
                 if (mc.playerController.processRightClickBlock(mc.player, mc.world, currentPlacement!!.position, currentPlacement!!.facing, Vec3d(currentPlacement!!.facing.directionVec), if (mc.player.heldItemOffhand.item.equals(Items.END_CRYSTAL)) EnumHand.OFF_HAND else placeHand).equals(EnumActionResult.SUCCESS)) {
                     // Swing arm
@@ -505,8 +499,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                         if (!overriding && !ignoreMax.value) {
                             continue
                         }
-                    }
-                    else {
+                    } else {
                         explodeLimitMap[entity.getEntityId()] = explodeLimitMap.getOrDefault(entity.getEntityId(), 0) + 1
                     }
 
@@ -591,9 +584,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
                     if (!overriding && !ignoreMax.value) {
                         continue
                     }
-                }
-
-                else {
+                } else {
                     placeLimitMap.put(pos, (placeLimitMap[pos] ?: 0) + 1)
                 }
 
@@ -803,9 +794,9 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
     private fun calculateHeuristic(crystal: CrystalPosition?, heuristic: Heuristic?): Float {
         return if (crystal == null) {
             0f
+        } else {
+            calculateHeuristic(crystal.selfDamage, crystal.targetDamage, mc.player.getDistanceSq(crystal.position).toFloat(), heuristic)
         }
-
-        else calculateHeuristic(crystal.selfDamage, crystal.targetDamage, mc.player.getDistanceSq(crystal.position).toFloat(), heuristic)
     }
 
     /**
@@ -859,7 +850,11 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
             return damage
         }
 
-        damage = CombatRules.getDamageAfterAbsorb(damage, entity.totalArmorValue.toFloat(), entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).attributeValue.toFloat())
+        damage = CombatRules.getDamageAfterAbsorb(
+            damage,
+            entity.totalArmorValue.toFloat(),
+            entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).attributeValue.toFloat()
+        )
         return damage
     }
 

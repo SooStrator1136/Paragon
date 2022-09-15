@@ -41,6 +41,14 @@ class DiscordPresenceManager : Wrapper {
         rpc.Discord_ClearPresence()
     }
 
-    private fun getDetails() = if (minecraft.anyNull || !com.paragon.client.systems.module.impl.client.DiscordRPC.showServer.value) "Idling" else if (minecraft.isSingleplayer) "Playing on singleplayer" else if (minecraft.currentServerData == null) "paragon client threw a java.lang.NullPointerException" else "Playing on " + minecraft.currentServerData!!.serverIP
+    private fun getDetails(): String {
+        return if (minecraft.anyNull || !com.paragon.client.systems.module.impl.client.DiscordRPC.showServer.value) {
+            "Idling"
+        } else if (minecraft.isSingleplayer) {
+            "Playing on singleplayer"
+        } else if (minecraft.currentServerData == null){
+            "paragon client threw a java.lang.NullPointerException"
+        } else "Playing on " + minecraft.currentServerData!!.serverIP
+    }
 
 }
