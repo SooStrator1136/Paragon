@@ -26,7 +26,7 @@ public abstract class MixinEntity {
         EntityPushEvent event = new EntityPushEvent(entity);
         Paragon.INSTANCE.getEventBus().post(event);
 
-        if (! event.isCancelled()) {
+        if (!event.isCancelled()) {
             entity.motionX += x;
             entity.motionY += y;
             entity.motionZ += z;

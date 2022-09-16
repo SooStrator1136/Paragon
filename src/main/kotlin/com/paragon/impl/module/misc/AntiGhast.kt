@@ -18,12 +18,15 @@ import net.minecraft.util.EnumHand
 object AntiGhast : Module("AntiGhast", Category.MISC, "Keep yourself save (kys) from fireballs") {
 
     private val rotation = Setting("Rotation", Rotate.NONE)
+
     private val range = Setting(
         "Range", 3.0, 2.0, 7.0, 0.1
     ) describedBy "The range to attack Fireballs in"
+
     private val delay = Setting(
         "Delay", 50F, 50F, 250F, 10F
     ) describedBy "The minimum delay between hitting fireballs"
+
     private val hitType = Setting("HitType", AttackType.NORMAL)
 
     private val timer = Timer()

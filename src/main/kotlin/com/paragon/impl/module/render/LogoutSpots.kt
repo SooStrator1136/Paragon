@@ -83,11 +83,23 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
     private var lastScaleWidth = 0f
     private var lastScaleHeight = 0f
 
+    private var lastDimension: Int = -Int.MAX_VALUE
+
     override fun onTick() {
         if (minecraft.anyNull) {
             // Clear if we aren't in a world
             playerSet.clear()
             logged.clear()
+
+            return
+        }
+
+        if (minecraft.player.dimension != lastDimension) {
+            lastDimension = minecraft.player.dimension
+
+            playerSet.clear()
+            logged.clear()
+
             return
         }
 
@@ -113,7 +125,6 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
 
                 // Render box
                 RenderBuilder().boundingBox(boundingBox).inner(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value).outer(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value).type(box.value)
-
                     .start().lineWidth(width.value).blend(true).depth(true).texture(true).build(false)
             }
 

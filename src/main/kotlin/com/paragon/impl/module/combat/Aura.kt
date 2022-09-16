@@ -44,14 +44,19 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
 
     // Main settings
     private val range = Setting("Range", 5f, 0f, 6f, 0.1f) describedBy "The range to attack"
+
     private val delay = Setting(
         "Delay", 700.0, 0.0, 2000.0, 1.0
     ) describedBy "The delay between attacking in milliseconds"
+
     private val performWhen = Setting("When", com.paragon.impl.module.combat.Aura.When.HOLDING) describedBy "When to attack"
+
     private val rotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate to the target"
+
     private val rotateBack = Setting(
         "RotateBack", true
     ) describedBy "Rotate back to your original rotation" subOf com.paragon.impl.module.combat.Aura.rotate
+
     private val where = Setting("Where", com.paragon.impl.module.combat.Aura.Where.BODY) describedBy "Where to attack"
     private val packetAttack = Setting("Packet", false) describedBy "Attack with a packet"
 

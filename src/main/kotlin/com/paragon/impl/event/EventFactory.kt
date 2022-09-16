@@ -55,6 +55,7 @@ class EventFactory : Wrapper {
     fun onPacketReceive(event: PreReceive) {
         if (event.packet is SPacketPlayerListItem) {
             val packet = event.packet
+
             when (packet.action) {
                 SPacketPlayerListItem.Action.ADD_PLAYER -> packet.entries.forEach { entry: AddPlayerData ->
                     if (entry.profile.name != null) {
