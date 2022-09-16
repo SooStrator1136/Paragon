@@ -76,4 +76,10 @@ class PluginManager {
         }
     }
 
+    fun onPostLoad() {
+        plugins.forEach {
+            it.onPostLoad()
+        }
+    }
+
 }

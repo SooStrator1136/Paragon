@@ -1,6 +1,8 @@
 package com.paragon.impl.module.client
 
 import com.paragon.Paragon
+import com.paragon.bus.listener.Listener
+import com.paragon.impl.event.client.SettingUpdateEvent
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.IgnoredByNotifications
 import com.paragon.impl.module.Module
@@ -10,7 +12,6 @@ import com.paragon.impl.ui.configuration.GuiImplementation
 import com.paragon.impl.ui.configuration.discord.GuiDiscord
 import com.paragon.impl.ui.configuration.old.OldPanelGUI
 import com.paragon.impl.ui.configuration.paragon.ParagonGUI
-import com.paragon.impl.ui.configuration.simple.SimpleGUI
 import me.surge.animation.Easing
 import org.lwjgl.input.Keyboard
 
@@ -39,10 +40,10 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
     // Shared settings
     @JvmStatic
-    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f) describedBy "How fast animations are" visibleWhen { style.value != Style.SIMPLE }
+    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f) describedBy "How fast animations are" visibleWhen { style.value != Style.PLUGIN }
 
     @JvmStatic
-    val easing = Setting("Easing", Easing.EXPO_IN_OUT) describedBy "The easing of the animations" visibleWhen { style.value != Style.SIMPLE }
+    val easing = Setting("Easing", Easing.EXPO_IN_OUT) describedBy "The easing of the animations" visibleWhen { style.value != Style.PLUGIN }
 
     @JvmStatic
     val darkenBackground = Setting("DarkenBackground", true) describedBy "Whether or not to darken the background"
@@ -51,7 +52,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     val pause = Setting("Pause Game", false) describedBy "Pause the game whilst in the GUI"
 
     @JvmStatic
-    val tooltips = Setting("Tooltips", true) describedBy "Render tooltips on the taskbar"
+    val tooltips = Setting("Tooltips", true) describedBy "Render tooltips on the taskbar" visibleWhen { style.value != Style.PLUGIN }
 
     @JvmStatic
     val scrollSpeed = Setting("ScrollSpeed", 10f, 5f, 30f, 1f) describedBy "How fast to scroll" subOf style visibleWhen { style.value == Style.OLD }
@@ -66,14 +67,13 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
 
     val intensity = Setting("Intensity", 10f, 1f, 20f, 1f) describedBy "The intensity of the blur" subOf blur
 
-
     fun getGUI(): GuiImplementation = when (style.value) {
         Style.PARAGON -> ParagonGUI
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
         Style.DISCORD -> GuiDiscord
         Style.OLD -> OldPanelGUI.INSTANCE
-        Style.SIMPLE -> SimpleGUI
+        Style.PLUGIN -> Paragon.INSTANCE.pluginGui ?: ParagonGUI
     }
 
     override fun onEnable() {
@@ -108,9 +108,9 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         DISCORD,
 
         /**
-         * Simple GUI (basically Phobos)
+         * The current plugin gui
          */
-        SIMPLE,
+        PLUGIN,
     }
 
     enum class Icon {

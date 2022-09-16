@@ -1,8 +1,10 @@
 package com.paragon
 
+import com.paragon.bus.EventBus
 import com.paragon.impl.event.EventFactory
 import com.paragon.impl.managers.*
 import com.paragon.impl.ui.configuration.ConfigurationGUI
+import com.paragon.impl.ui.configuration.GuiImplementation
 import com.paragon.impl.ui.configuration.retrowindows.Windows98
 import com.paragon.impl.ui.configuration.zeroday.ZerodayGUI
 import com.paragon.impl.ui.console.Console
@@ -10,7 +12,9 @@ import com.paragon.impl.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -22,7 +26,7 @@ import javax.swing.JOptionPane
 @Mod(name = com.paragon.Paragon.Companion.modName, modid = com.paragon.Paragon.Companion.modID, version = com.paragon.Paragon.Companion.modVersion)
 class Paragon {
 
-    @Mod.EventHandler
+    @EventHandler
     fun preInit(event: FMLPreInitializationEvent?) {
         if (ForgeVersion.buildVersion < 2860) {
             JOptionPane.showMessageDialog(
@@ -44,7 +48,7 @@ class Paragon {
         eventParser = EventFactory()
     }
 
-    @Mod.EventHandler
+    @EventHandler
     fun init(event: FMLInitializationEvent?) {
         logger.info("Starting Paragon ${modVersion} initialisation")
 
@@ -132,6 +136,11 @@ class Paragon {
         logger.info("Paragon ${com.paragon.Paragon.Companion.modVersion} Initialised Successfully")
     }
 
+    @EventHandler
+    fun postInit(event: FMLPostInitializationEvent) {
+        pluginManager.onPostLoad()
+    }
+
     companion object {
         const val modName = "Paragon"
         const val modID = "paragon"
@@ -139,14 +148,16 @@ class Paragon {
 
         @JvmField
         @Mod.Instance
-        var INSTANCE = com.paragon.Paragon()
+        var INSTANCE = Paragon()
     }
 
-    val eventBus = com.paragon.bus.EventBus()
+    val eventBus = EventBus()
 
     // Client stuff
     var logger: Logger = LogManager.getLogger("paragon")
         private set
+
+    var pluginGui: GuiImplementation? = null
 
     val presenceManager = DiscordPresenceManager()
 

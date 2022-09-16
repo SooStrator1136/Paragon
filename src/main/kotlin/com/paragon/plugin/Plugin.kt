@@ -26,4 +26,9 @@ abstract class Plugin {
      */
     abstract fun onLoad()
 
+    /**
+     * Called after the client is fully loaded
+     */
+    abstract fun onPostLoad()
+
 }

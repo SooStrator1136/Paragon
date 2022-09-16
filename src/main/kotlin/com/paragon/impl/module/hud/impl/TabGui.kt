@@ -61,6 +61,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                 RenderUtil.drawRoundedRect(
                     x.toDouble(), y.toDouble(), catWidth + 15.0, catHeight + 1.0, 5.0, 5.0, 5.0, 5.0, background.value.rgb
                 )
+
                 RenderUtil.drawRoundedRect(
                     x.toDouble(), (y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory))).toDouble(), 3.0, FontUtil.getHeight().toDouble(), 3.0, 3.0, 3.0, 3.0, color.value.rgb
                 )
@@ -142,33 +143,8 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                 }
             }
 
-            ClickGUI.Style.SIMPLE -> {
-                RenderUtil.drawRect(
-                    x, y, catWidth, catHeight, Color.BLACK.rgb
-                )
-                RenderUtil.drawRect(
-                    x, y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory)), catWidth, FontUtil.getHeight(), color.value.darker().rgb
-                )
-                RenderUtil.drawBorder(
-                    x, y, catWidth, catHeight, 1F, color.value.rgb
-                )
-
-                if (focusedModule != null && shownModules != null) {
-                    moduleY = y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory))
-                    RenderUtil.drawRect(
-                        x + catWidth, moduleY - 1, moduleWidth, moduleHeight + 2, color.value.rgb
-                    )
-                    RenderUtil.drawRect(
-                        x + catWidth, moduleY, moduleWidth - 1, moduleHeight, Color.BLACK.rgb
-                    )
-                    RenderUtil.drawRect(
-                        x + catWidth, moduleY + ((FontUtil.getHeight() + 1F) * shownModules!!.indexOf(focusedModule)), moduleWidth - 1, FontUtil.getHeight(), color.value.darker().rgb
-                    )
-
-                    RenderUtil.drawRect(
-                        x + catWidth, y + catHeight, 1F, ((shownModules!!.size * (FontUtil.getHeight() + 1F)) - catHeight) + ((Category.values().indexOf(focusedCategory) * (FontUtil.getHeight() + 1F))), color.value.rgb
-                    )
-                }
+            ClickGUI.Style.PLUGIN -> {
+                FontUtil.drawStringWithShadow("Feature not implemented!", x, y, -1)
             }
 
             ClickGUI.Style.PARAGON -> {
@@ -192,6 +168,8 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                     )
                 }
             }
+
+            else -> {}
         }
 
         //The most chinese 😭 (I'll probably clean this up)
