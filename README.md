@@ -47,8 +47,7 @@ Xello12121
 
 ## Other Credits
 
-Most files will have an @author javadoc tag at the top to tell you who wrote the file, if it doesn't, then Surge wrote
-it
+Files will have an @author tag just before the class declaration to tell you who wrote it.
 
 # Build instructions
 
@@ -61,6 +60,9 @@ Linux/Mac (or any other based UNIX/UNIX-LIKE OS):
 `chmod +x gradlew`
 
 `./gradlew build`
+
+Note that this may not produce a functioning build, as Mixin's annotation processor does not
+always work correctly.
 
 # Contributing
 

@@ -103,26 +103,6 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
                 }
             }
 
-            ClickGUI.Style.OLD -> {
-                RenderUtil.drawRect(
-                    x, y, catWidth, catHeight, Color(100, 100, 100, 100).rgb
-                )
-
-                RenderUtil.drawRect(
-                    x, y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory)), catWidth, FontUtil.getHeight(), color.value.rgb
-                )
-
-                if (focusedModule != null && shownModules != null) {
-                    moduleY = y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory))
-                    RenderUtil.drawRect(
-                        x + catWidth, moduleY, moduleWidth - 1, moduleHeight, Color(100, 100, 100, 100).rgb
-                    )
-                    RenderUtil.drawRect(
-                        x + catWidth, moduleY + ((FontUtil.getHeight() + 1F) * shownModules!!.indexOf(focusedModule)), moduleWidth - 1, FontUtil.getHeight(), color.value.rgb
-                    )
-                }
-            }
-
             ClickGUI.Style.DISCORD -> {
                 RenderUtil.drawRoundedRect(
                     x.toDouble(), y - 1.0, (catWidth + FontUtil.getStringWidth("# ")).toDouble(), catHeight + 1.0, 5.0, 5.0, 5.0, 5.0, GuiDiscord.channelBarBackground.rgb

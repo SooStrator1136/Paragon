@@ -3,12 +3,12 @@ buildscript {
         mavenCentral()
 
         maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url = 'https://repo.spongepowered.org/maven/' }
+        maven { url = 'https://files.minecraftforge.net/maven/' }
     }
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0'
     }
 }
@@ -36,7 +36,7 @@ compileJava {
 repositories {
     mavenCentral()
 
-    maven { url = 'https://repo.spongepowered.org/maven/' }
+    maven { url = 'https://files.minecraftforge.net/maven/' }
     maven { url 'https://jitpack.io' }
 }
 
@@ -62,13 +62,13 @@ configurations {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
-    libraries('org.spongepowered:mixin:0.8.5') {
+    libraries('org.spongepowered:mixin:0.8') {
         exclude module: 'guava'
         exclude module: 'gson'
         exclude module: 'commons-io'
     }
 
-    annotationProcessor('org.spongepowered:mixin:0.8.5:processor') {
+    annotationProcessor('org.spongepowered:mixin:0.8:processor') {
         exclude module: 'gson'
     }
 
@@ -97,9 +97,6 @@ dependencies {
 
 mixin {
     defaultObfuscationEnv 'searge'
-
-    disableTargetExport = true
-    disableTargetValidator = true
 
     add sourceSets.main, 'mixins.paragon.refmap.json'
     config 'mixins.paragon.json'

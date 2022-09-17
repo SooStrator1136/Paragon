@@ -10,7 +10,6 @@ import com.paragon.impl.setting.Bind
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.ui.configuration.GuiImplementation
 import com.paragon.impl.ui.configuration.discord.GuiDiscord
-import com.paragon.impl.ui.configuration.old.OldPanelGUI
 import com.paragon.impl.ui.configuration.paragon.ParagonGUI
 import me.surge.animation.Easing
 import org.lwjgl.input.Keyboard
@@ -36,7 +35,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     val icon = Setting("Icon", Icon.BACKGROUND) describedBy "How to draw the icon" subOf style visibleWhen { style.value == Style.ZERODAY || style.value == Style.PARAGON }
 
     @JvmStatic
-    val radius = Setting("Radius", 1f, 1f, 15f, 1f) describedBy "The radius of the panel's corners" subOf style visibleWhen { style.value == Style.ZERODAY || style.value == Style.OLD }
+    val radius = Setting("Radius", 1f, 1f, 15f, 1f) describedBy "The radius of the panel's corners" subOf style visibleWhen { style.value == Style.ZERODAY}
 
     // Shared settings
     @JvmStatic
@@ -54,15 +53,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     @JvmStatic
     val tooltips = Setting("Tooltips", true) describedBy "Render tooltips on the taskbar" visibleWhen { style.value != Style.PLUGIN }
 
-    @JvmStatic
-    val scrollSpeed = Setting("ScrollSpeed", 10f, 5f, 30f, 1f) describedBy "How fast to scroll" subOf style visibleWhen { style.value == Style.OLD }
-
-    @JvmStatic
-    val panelHeaderSeparator = Setting("HeaderSeparator", true) describedBy "Draw a separator between the header and the module buttons" subOf style visibleWhen { style.value == Style.OLD }
-
-    @JvmStatic
-    val cornerRadius = Setting("CornerRadius", 1f, 1f, 7f, 1f) describedBy "The radius of the corners" subOf style visibleWhen { style.value == Style.OLD }
-
     val blur = Setting("Blur", true) describedBy "Whether the windows have a blur"
 
     val intensity = Setting("Intensity", 10f, 1f, 20f, 1f) describedBy "The intensity of the blur" subOf blur
@@ -72,7 +62,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
         Style.WINDOWS_98 -> Paragon.INSTANCE.windows98GUI
         Style.ZERODAY -> Paragon.INSTANCE.zerodayGUI
         Style.DISCORD -> GuiDiscord
-        Style.OLD -> OldPanelGUI.INSTANCE
         Style.PLUGIN -> Paragon.INSTANCE.pluginGui ?: ParagonGUI
     }
 
@@ -96,11 +85,6 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
          * AWFUL remake of the ZeroDay b21/22 GUI
          */
         ZERODAY,
-
-        /**
-         * Old Paragon gui
-         */
-        OLD,
 
         /**
          * Discord like gui
