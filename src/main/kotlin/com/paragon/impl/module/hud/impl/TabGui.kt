@@ -24,12 +24,10 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
     private val color = Setting(
         "Color", Colours.mainColour.value
     ) describedBy "Color that will be used in most of the styles"
+
     private val style = Setting(
         "Style", ClickGUI.style.value
     ) describedBy "Style of the TabGui"
-    private val background = Setting(
-        "Background", Color(100, 100, 100, 150)
-    ) subOf style visibleWhen { style.value == ClickGUI.Style.ZERODAY }
 
     private var focusedModule: Module? = null
     private var shownModules: Array<Module>? = null
@@ -57,27 +55,6 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
         catWidth = FontUtil.getStringWidth(Category.values().maxWith(Comparator.comparingDouble { FontUtil.getStringWidth(it.Name).toDouble() }).Name) + 4F
 
         when (style.value) {
-            ClickGUI.Style.ZERODAY -> {
-                RenderUtil.drawRoundedRect(
-                    x.toDouble(), y.toDouble(), catWidth + 15.0, catHeight + 1.0, 5.0, 5.0, 5.0, 5.0, background.value.rgb
-                )
-
-                RenderUtil.drawRoundedRect(
-                    x.toDouble(), (y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory))).toDouble(), 3.0, FontUtil.getHeight().toDouble(), 3.0, 3.0, 3.0, 3.0, color.value.rgb
-                )
-
-
-                if (focusedModule != null && shownModules != null) {
-                    moduleY = y + ((FontUtil.getHeight() + 1F) * Category.values().indexOf(focusedCategory))
-                    RenderUtil.drawRoundedRect(
-                        x + catWidth + 15.0, moduleY - 1.0, moduleWidth + 5.0, moduleHeight + 2.0, 5.0, 5.0, 5.0, 5.0, background.value.rgb
-                    )
-                    RenderUtil.drawRoundedRect(
-                        (x + catWidth + 20.0 + moduleWidth) - 3.0, (moduleY + ((FontUtil.getHeight() + 1F) * shownModules!!.indexOf(focusedModule))).toDouble(), 3.0, FontUtil.getHeight().toDouble(), 3.0, 3.0, 3.0, 3.0, color.value.rgb
-                    )
-                }
-            }
-
             ClickGUI.Style.WINDOWS_98 -> {
                 RenderUtil.drawRect(
                     x + 1, y + 1, catWidth, catHeight, Color(100, 100, 100).rgb
@@ -153,26 +130,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
         }
 
         //The most chinese 😭 (I'll probably clean this up)
-        if (style.value == ClickGUI.Style.ZERODAY) {
-            var catY = y + 1F
-            for (cat in Category.values()) {
-                FontUtil.drawStringWithShadow(
-                    cat.Name, if (cat == focusedCategory) x + 10F else x + 2F, catY, -1
-                )
-                catY += FontUtil.getHeight() + 1F
-            }
-
-            if (focusedModule != null && shownModules != null) {
-                var modY = moduleY + 1F
-                for (mod in shownModules!!) {
-                    FontUtil.drawStringWithShadow(
-                        mod.name, x + catWidth + 17F, modY, -1
-                    )
-                    modY += FontUtil.getHeight() + 1F
-                }
-            }
-        }
-        else if (style.value == ClickGUI.Style.DISCORD) {
+        if (style.value == ClickGUI.Style.DISCORD) {
             var catY = y + 1F
             for (cat in Category.values()) {
                 FontUtil.drawStringWithShadow(
@@ -265,10 +223,7 @@ object TabGui : HUDModule("TabGui", "Gui with tabs or smth") {
     }
 
     override var width = 0F
-        get() = if (style.value != ClickGUI.Style.ZERODAY) {
-            catWidth
-        }
-        else if (style.value == ClickGUI.Style.DISCORD) {
+        get() = if (style.value == ClickGUI.Style.DISCORD) {
             catWidth + FontUtil.getStringWidth("# ")
         }
         else {

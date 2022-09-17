@@ -6,7 +6,6 @@ import com.paragon.impl.managers.*
 import com.paragon.impl.ui.configuration.ConfigurationGUI
 import com.paragon.impl.ui.configuration.GuiImplementation
 import com.paragon.impl.ui.configuration.retrowindows.Windows98
-import com.paragon.impl.ui.configuration.zeroday.ZerodayGUI
 import com.paragon.impl.ui.console.Console
 import com.paragon.impl.ui.taskbar.Taskbar
 import net.minecraft.client.Minecraft
@@ -110,9 +109,6 @@ class Paragon {
         windows98GUI = Windows98()
         logger.info("Windows98 GUI Initialised")
 
-        zerodayGUI = ZerodayGUI()
-        logger.info("Panel GUI Initialised")
-
         console = Console("Paragon Console", 400f, 300f)
         logger.info("Console Initialised")
 
@@ -199,9 +195,6 @@ class Paragon {
         private set
 
     lateinit var windows98GUI: Windows98
-        private set
-
-    lateinit var zerodayGUI: ZerodayGUI
         private set
 
     lateinit var configurationGUI: ConfigurationGUI
