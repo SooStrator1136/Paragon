@@ -208,9 +208,17 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
     override fun onRender3D() {
         if (currentPlacement != null && place.value) {
-            RenderBuilder().boundingBox(BlockUtil.getBlockBox(currentPlacement!!.position)).inner(renderColour.value).outer(renderOutlineColour.value).type(render.value)
-
-                .start().lineWidth(renderOutlineWidth.value).blend(true).depth(true).texture(true).build(false)
+            RenderBuilder()
+                .boundingBox(BlockUtil.getBlockBox(currentPlacement!!.position))
+                .inner(renderColour.value)
+                .outer(renderOutlineColour.value)
+                .type(render.value)
+                .start()
+                .lineWidth(renderOutlineWidth.value)
+                .blend(true)
+                .depth(true)
+                .texture(true)
+                .build(false)
 
             // Render damage nametag
             if (renderDamageNametag.value) {

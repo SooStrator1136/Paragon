@@ -56,7 +56,7 @@ object RenderUtil : Wrapper {
 
         val tessellator = Tessellator.getInstance()
         val bufferbuilder = tessellator.buffer
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
+        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
         bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
         bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
         bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
@@ -373,17 +373,41 @@ object RenderUtil : Wrapper {
 
     @JvmStatic
     fun drawBorder(x: Float, y: Float, width: Float, height: Float, border: Float, colour: Int) {
-        // Left
-        drawRect(x - border, y, border, height, colour)
+        val c = (colour shr 24 and 255).toFloat() / 255.0f
+        val c1 = (colour shr 16 and 255).toFloat() / 255.0f
+        val c2 = (colour shr 8 and 255).toFloat() / 255.0f
+        val c3 = (colour and 255).toFloat() / 255.0f
 
-        // Right
-        drawRect(x + width, y, border, height, colour)
+        GlStateManager.pushMatrix()
+        GlStateManager.disableTexture2D()
+        GlStateManager.disableAlpha()
+        GlStateManager.enableBlend()
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
+        GlStateManager.shadeModel(GL_SMOOTH)
 
-        // Top
-        drawRect(x - border, y - border, width + border * 2, border, colour)
+        glLineWidth(border)
 
-        // Bottom
-        drawRect(x - border, y + height, width + border * 2, border, colour)
+        val tessellator = Tessellator.getInstance()
+
+        glEnable(GL_LINE_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
+        tessellator.buffer.begin(GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR)
+
+        tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
+        tessellator.buffer.pos(x.toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
+        tessellator.buffer.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
+        tessellator.buffer.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
+
+        tessellator.draw()
+
+        glDisable(GL_LINE_SMOOTH)
+
+        GlStateManager.shadeModel(GL_FLAT)
+        GlStateManager.enableAlpha()
+        GlStateManager.disableBlend()
+        GlStateManager.enableTexture2D()
+        GlStateManager.popMatrix()
     }
 
     /**
@@ -616,7 +640,9 @@ object RenderUtil : Wrapper {
         GlStateManager.scale(-scale, -scale, scale)
         GlStateManager.disableDepth()
         GlStateManager.translate(-(getStringWidth(text) / 2), 0f, 0f)
+
         renderText(text, 0f, 0f, textColour)
+
         GlStateManager.enableDepth()
         GlStateManager.popMatrix()
     }
@@ -626,16 +652,17 @@ object RenderUtil : Wrapper {
         if (itemStack == null) {
             return
         }
-        val renderItem = minecraft.renderItem
+
         GlStateManager.enableDepth()
-        renderItem.zLevel = 200f
-        renderItem.renderItemAndEffectIntoGUI(itemStack, x.toInt(), y.toInt())
+        minecraft.renderItem.zLevel = 200f
+
+        minecraft.renderItem.renderItemAndEffectIntoGUI(itemStack, x.toInt(), y.toInt())
 
         if (overlay) {
-            renderItem.renderItemOverlays(minecraft.fontRenderer, itemStack, x.toInt(), y.toInt())
+            minecraft.renderItem.renderItemOverlays(minecraft.fontRenderer, itemStack, x.toInt(), y.toInt())
         }
 
-        renderItem.zLevel = 0f
+        minecraft.renderItem.zLevel = 0f
         GlStateManager.enableTexture2D()
         GlStateManager.disableLighting()
         GlStateManager.enableDepth()
