@@ -32,14 +32,10 @@ class ParagonMenu : GuiScreen() {
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        // Get background offsets
-        val xOffset = -1.0f * ((mouseX - width / 10.0f) / (width / 10.0f))
-        val yOffset = -1.0f * ((mouseY - height / 10.0f) / (height / 10.0f))
-
         // Draw background
         mc.textureManager.bindTexture(ResourceLocation("paragon", "textures/background.png"))
         RenderUtil.drawModalRectWithCustomSizedTexture(
-            xOffset, yOffset, 0f, 0f, width + 10f, height + 10f, width + 10f, height + 10f
+            0f, 0f, 0f, 0f, width + 10f, height + 10f, width + 10f, height + 10f
         )
 
         // Draw button background
