@@ -32,7 +32,10 @@ object Step : Module("Step", Category.MOVEMENT, "Lets you instantly step up bloc
     ) describedBy "If to use timer to prevent the MORE_PACKETS flag on NCP" visibleWhen { mode.value == Mode.NCP }
 
     private val ncpOffsets: Map<Double, DoubleArray> = hashMapOf(
-        0.875 to doubleArrayOf(0.39, 0.7, 0.875), 1.0 to doubleArrayOf(0.42, 0.75, 1.0), 1.5 to doubleArrayOf(0.42, 0.78, 0.63, 0.51, 0.9, 1.21, 1.45, 1.43), 2.0 to doubleArrayOf(0.425, 0.821, 0.699, 0.599, 1.022, 1.372, 1.652, 1.869, 2.019, 1.919)
+        0.875 to doubleArrayOf(0.39, 0.7, 0.875),
+        1.0 to doubleArrayOf(0.42, 0.75, 1.0),
+        1.5 to doubleArrayOf(0.42, 0.78, 0.63, 0.51, 0.9, 1.21, 1.45, 1.43),
+        2.0 to doubleArrayOf(0.425, 0.821, 0.699, 0.599, 1.022, 1.372, 1.652, 1.869, 2.019, 1.919)
     )
 
     private var timer = false

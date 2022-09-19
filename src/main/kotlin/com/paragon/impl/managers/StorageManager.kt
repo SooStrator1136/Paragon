@@ -12,6 +12,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.awt.Color
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileWriter
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -25,6 +26,8 @@ class StorageManager {
     private val mainFolder = File("paragon")
     private val configFolder = File("paragon${File.separator}configs${File.separator}")
     private val socialFolder = File("paragon${File.separator}social")
+
+    var mainMenuShadow: String = "#ifdef GL_ES\n" + "precision mediump float;\n" + "#endif\n" + "\n" + "#extension GL_OES_standard_derivatives : enable\n" + "\n" + "uniform vec2      resolution;\n" + "uniform float     time;\n" + "\n" + "\n" + "float rand(vec2 n) {\n" + "    return fract(cos(dot(n, vec2(16.9898, 10.1414))) * 93758.5453);\n" + "}\n" + "\n" + "float noise(vec2 n) {\n" + "    const vec2 d = vec2(0.0, 1.0);\n" + "    vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));\n" + "    return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);\n" + "}\n" + "\n" + "float fbm(vec2 n) {\n" + "    float total = 0.0, amplitude = 1.0;\n" + "    for (int i = 0; i < 10; i++) {\n" + "        total += noise(n) * amplitude;\n" + "        n += n;\n" + "        amplitude *= 0.3;\n" + "    }\n" + "    return total;\n" + "}\n" + "\n" + "void main() {\n" + "    const vec3 c1 = vec3(300.0/255.0, 50.0/255.0, 197.0/255.0);\n" + "    const vec3 c2 = vec3(-11.0/255.0, 50.0/255.0, 111.4/255.0);\n" + "    const vec3 c3 = vec3(0.2 + .19, 0.19, 0.19);\n" + "    const vec3 c4 = vec3(6./255.0, 150.0/255.0, 260./255.0);\n" + "    const vec3 c5 = vec3(0.6);\n" + "    const vec3 c6 = vec3(.3);\n" + "\n" + "    vec2 p = gl_FragCoord.xy * 7.0 / resolution.xx;\n" + "    float q = fbm(p - time * 0.1);\n" + "    vec2 r = vec2(fbm(p + q + time * 0.1 - p.x - p.y), fbm(p + q - time * -0.1));\n" + "    vec3 c = mix(c1, c2, fbm(p + r)) + mix(c3, c4, r.x) - mix(c5, c6, r.y);\n" + "    gl_FragColor = vec4(c * cos(0.0 * gl_FragCoord.y / resolution.y), 1.0);\n" + "    gl_FragColor.w = 0.8;\n" + "}"
 
     @Throws(IOException::class, JSONException::class)
     private fun getJSON(file: File) = if (!Files.exists(file.toPath())) null else JSONObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8))

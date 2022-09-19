@@ -18,14 +18,26 @@ import kotlin.math.max
 object FontUtil : Wrapper {
 
     @JvmStatic
-    val defaultFont = FontRenderer(getFont("font"))
+    lateinit var font: FontRenderer
+
+    @JvmStatic
+    lateinit var fontLarge: FontRenderer
+
+    @JvmStatic
+    lateinit var icons: FontRenderer
 
     private var yIncrease = 0F
+
+    fun init() {
+        font = FontRenderer(getFont("font"))
+        fontLarge = FontRenderer(getFont(FileInputStream("paragon/font/font.ttf"), 80f))
+        icons = FontRenderer(Font.createFont(0, javaClass.getResourceAsStream("/assets/paragon/font/icons.ttf")).deriveFont(Font.PLAIN, 80f))
+    }
 
     @JvmStatic
     fun drawStringWithShadow(text: String, x: Float, y: Float, colour: Int) {
         if (ClientFont.isEnabled) {
-            defaultFont.drawStringWithShadow(text, x, y - 3f + yIncrease, colour)
+            font.drawStringWithShadow(text, x, y - 3f + yIncrease, colour)
             return
         }
 
@@ -51,7 +63,7 @@ object FontUtil : Wrapper {
 
         if (ClientFont.isEnabled) {
             if (centeredY) {
-                y -= defaultFont.height / 2f
+                y -= font.height / 2f
             }
 
             if (text.contains("\n")) {
@@ -59,17 +71,17 @@ object FontUtil : Wrapper {
                 var newY = 0.0f
 
                 for (s in parts) {
-                    defaultFont.drawStringWithShadow(
-                        s, x - defaultFont.getStringWidth(s) / 2f, y - 3.5f + yIncrease + newY, colour
+                    font.drawStringWithShadow(
+                        s, x - font.getStringWidth(s) / 2f, y - 3.5f + yIncrease + newY, colour
                     )
 
-                    newY += defaultFont.height
+                    newY += font.height
                 }
 
                 return
             }
 
-            defaultFont.drawStringWithShadow(text, x - getStringWidth(text) / 2f, y - 3f + yIncrease, colour)
+            font.drawStringWithShadow(text, x - getStringWidth(text) / 2f, y - 3f + yIncrease, colour)
             return
         }
 
@@ -80,6 +92,11 @@ object FontUtil : Wrapper {
         minecraft.fontRenderer.drawStringWithShadow(
             text, x - minecraft.fontRenderer.getStringWidth(text) / 2f, y, colour
         )
+    }
+
+    @JvmStatic
+    fun drawIcon(icon: Icon, x: Float, y: Float, colour: Int) {
+        icons.drawString(icon.char.toString(), x, y, colour, false)
     }
 
     @JvmStatic
@@ -96,7 +113,7 @@ object FontUtil : Wrapper {
         }
 
         return if (ClientFont.isEnabled) {
-            defaultFont.getStringWidth(text).toFloat()
+            font.getStringWidth(text).toFloat()
         }
         else {
             minecraft.fontRenderer.getStringWidth(text).toFloat()
@@ -104,7 +121,7 @@ object FontUtil : Wrapper {
     }
 
     @JvmStatic
-    fun getHeight() = if (ClientFont.isEnabled) defaultFont.height else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
+    fun getHeight() = if (ClientFont.isEnabled) font.height else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
 
     private fun getFont(name: String): Font {
         val fontDir = File("paragon/font/")
@@ -163,7 +180,6 @@ object FontUtil : Wrapper {
 
             size = jsonObject.getInt("size").toFloat()
             yIncrease = jsonObject.getFloat("y_offset")
-
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -172,12 +188,52 @@ object FontUtil : Wrapper {
 
         runCatching {
             val fontStream = FileInputStream("paragon/font/$name.ttf")
-            val font = Font.createFont(0, fontStream)
-            fontStream.close()
-            result = font.deriveFont(Font.PLAIN, if (name == "ms_sans_serif") 45f else size)
+            return getFont(fontStream, size)
         }
 
         return result
+    }
+
+    private fun getFont(stream: InputStream, size: Float): Font {
+        val font = Font.createFont(0, stream)
+        stream.close()
+        return font.deriveFont(Font.PLAIN, size)
+    }
+
+    enum class Icon(val char: Char) {
+        PEOPLE('a'),
+        PERSON('b'),
+        ARROW_LEFT('c'),
+        CODE_ARROWS('d'),
+        CONSOLE('e'),
+        WINDOWS('f'),
+        MOUSE_POINT('g'),
+        MOUSE_GRAB('h'),
+        MOUSE_IDLE('i'),
+        ERROR('j'),
+        WARNING('k'),
+        COPY('l'),
+        SLIDERS('m'),
+        EYE('n'),
+        HIDDEN_EYE('o'),
+        GEARS('p'),
+        GEAR('q'),
+        BIN('r'),
+        BIN_FILLED('s'),
+        DOWNLOAD('t'),
+        UPLOAD('u'),
+        TICK('v'),
+        GITHUB('w'),
+        TERMINAL('x'),
+        CUBOID('y'),
+        POWER('z'),
+        EYE_ALTERNATE('A'),
+        EYE_FILLED('B'),
+        EYE_HIDDEN_FILLED('C'),
+        RUNNING('D'),
+        EXIT('E'),
+        CLOSE('F'),
+        BLOCK('G')
     }
 
 }

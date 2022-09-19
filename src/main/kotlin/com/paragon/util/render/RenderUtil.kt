@@ -1,6 +1,6 @@
 package com.paragon.util.render
 
-import com.paragon.util.render.font.FontUtil.defaultFont
+import com.paragon.util.render.font.FontUtil.font
 import com.paragon.impl.module.client.ClientFont
 import com.paragon.util.Wrapper
 import com.paragon.util.entity.EntityUtil
@@ -124,64 +124,41 @@ object RenderUtil : Wrapper {
 
     @JvmStatic
     fun drawRoundedRect(x: Double, y: Double, width: Double, height: Double, tLeft: Double, tRight: Double, bLeft: Double, bRight: Double, colour: Int) {
-        var x = x
-        var y = y
-        var width = width
-        var height = height
-        glPushAttrib(0)
-        glScaled(0.5, 0.5, 0.5)
-        x *= 2.0
-        y *= 2.0
-        width *= 2.0
-        height *= 2.0
         glDisable(GL_DEPTH_TEST)
-        glEnable(GL_BLEND)
         glDisable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDepthMask(true)
+        setColour(colour)
+
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+
         glBegin(GL_POLYGON)
-        setColour(colour)
-        var i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + tLeft + Math.sin(i * Math.PI / 180.0) * tLeft * -1.0, y + tLeft + Math.cos(i * Math.PI / 180.0) * tLeft * -1.0
-            )
-            i += 3
+
+        for (i in 0..90) {
+            glVertex2d(x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0, y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0)
         }
-        i = 90
-        while (i <= 180) {
-            glVertex2d(
-                x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0, y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0
-            )
-            i += 3
+
+        for (i in 90..180) {
+            glVertex2d(x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0, y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0)
         }
-        i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + width - bRight + sin(i * Math.PI / 180.0) * bRight, y + height - bRight + cos(i * Math.PI / 180.0) * bRight
-            )
-            i += 3
+
+        for (i in 0..90) {
+            glVertex2d(x + width - bRight + sin(i * Math.PI / 180.0) * bRight, y + height - bRight + cos(i * Math.PI / 180.0) * bRight)
         }
-        i = 90
-        while (i <= 180) {
-            glVertex2d(
-                x + width - tRight + Math.sin(i * Math.PI / 180.0) * tRight, y + tRight + cos(i * Math.PI / 180.0) * tRight
-            )
-            i += 3
+
+        for (i in 90..180) {
+            glVertex2d(x + width - tRight + sin(i * Math.PI / 180.0) * tRight, y + tRight + cos(i * Math.PI / 180.0) * tRight)
         }
+
         glEnd()
+
+        glDisable(GL_LINE_SMOOTH)
+
         glEnable(GL_TEXTURE_2D)
         glEnable(GL_DEPTH_TEST)
-        glDisable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE)
-        glScaled(2.0, 2.0, 2.0)
-        glPopAttrib()
-        glLineWidth(1f)
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
+        glColor4f(1f, 1f, 1f, 1f)
     }
 
     fun drawRoundedOutline(x: Double, y: Double, width: Double, height: Double, tLeft: Double, tRight: Double, bLeft: Double, bRight: Double, lineWidth: Float, colour: Int) {
@@ -305,6 +282,16 @@ object RenderUtil : Wrapper {
         glTranslatef(x, y, z)
         glScaled(scaleFacX, scaleFacY, scaleFacZ)
         glTranslatef(-x, -y, -z)
+        block.invoke()
+        glPopMatrix()
+    }
+
+    @JvmStatic
+    inline fun rotate(angle: Float, x: Float, y: Float, z: Float, block: () -> Unit) {
+        glPushMatrix()
+        glTranslatef(x, y, z)
+        glRotated(angle.toDouble(), 0.0, 0.0, 1.0)
+        //glTranslatef(-x, -y, -z)
         block.invoke()
         glPopMatrix()
     }
@@ -693,7 +680,7 @@ object RenderUtil : Wrapper {
 
     fun renderText(text: String?, x: Float, y: Float, colour: Int) {
         if (ClientFont.isEnabled) {
-            defaultFont.drawString(text!!, x, y - 3.5f, colour, false)
+            font.drawString(text!!, x, y - 3.5f, colour, false)
             return
         }
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, colour)
@@ -701,7 +688,7 @@ object RenderUtil : Wrapper {
 
     fun getStringWidth(text: String?): Float {
         return if (ClientFont.isEnabled) {
-            defaultFont.getStringWidth(text!!).toFloat()
+            font.getStringWidth(text!!).toFloat()
         }
         else Minecraft.getMinecraft().fontRenderer.getStringWidth(text).toFloat()
     }

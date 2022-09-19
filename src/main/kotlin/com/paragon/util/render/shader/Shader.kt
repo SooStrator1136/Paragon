@@ -5,6 +5,7 @@ import com.paragon.util.Wrapper
 import org.apache.commons.io.IOUtils
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20.*
+import java.io.File
 import java.nio.charset.Charset
 
 /**
@@ -18,6 +19,7 @@ open class Shader(path: String?) : Wrapper {
     init {
         var vertex = 0
         var fragment = 0
+
         try {
             val vertStream = javaClass.getResourceAsStream("/assets/paragon/glsl/vertex.vert")
 

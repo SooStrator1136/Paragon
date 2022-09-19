@@ -8,6 +8,7 @@ import com.paragon.impl.ui.configuration.GuiImplementation
 import com.paragon.impl.ui.configuration.retrowindows.Windows98
 import com.paragon.impl.ui.console.Console
 import com.paragon.impl.ui.taskbar.Taskbar
+import com.paragon.util.render.font.FontUtil
 import net.minecraft.client.Minecraft
 import net.minecraftforge.common.ForgeVersion
 import net.minecraftforge.fml.common.Mod
@@ -45,6 +46,7 @@ class Paragon {
         }
 
         eventParser = EventFactory()
+        FontUtil.init()
     }
 
     @EventHandler

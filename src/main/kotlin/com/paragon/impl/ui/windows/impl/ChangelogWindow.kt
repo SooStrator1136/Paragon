@@ -55,7 +55,7 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
         FontUtil.drawStringWithShadow("Changelog", x + 3, y + 4, -1)
 
         RenderUtil.drawRect((x + ((width - 16f) * openAnimation.getAnimationFactor())).toFloat(), y, 16f, grabbableHeight, 0x90000000.toInt())
-        FontUtil.defaultFont.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.defaultFont.getStringWidth("X") / 2f), y + 1.5f, -1)
+        FontUtil.font.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.font.getStringWidth("X") / 2f), y + 1.5f, -1)
 
         RenderUtil.popScissor()
 

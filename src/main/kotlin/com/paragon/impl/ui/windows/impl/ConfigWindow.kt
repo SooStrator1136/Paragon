@@ -79,7 +79,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         RenderUtil.drawBorder(x + 0.5f, y + 0.5f, ((width - 1) * openAnimation.getAnimationFactor()).toFloat(), ((height - 1) * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value.rgb)
 
         RenderUtil.drawRect(x + width - 16f, y, 16f, grabbableHeight, 0x90000000.toInt())
-        FontUtil.defaultFont.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.defaultFont.getStringWidth("X") / 2f), y + 1.5f, -1)
+        FontUtil.font.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.font.getStringWidth("X") / 2f), y + 1.5f, -1)
 
         if (scroll > 0) {
             scroll = 0f
@@ -177,7 +177,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
             FontUtil.drawStringWithShadow(name, x + 3, y + 4, -1)
 
             RenderUtil.drawRect(x + width - 16f, y, 16f, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            FontUtil.defaultFont.drawStringWithShadow("D", x + width - 12.5f, y + 1.5f, if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED.rgb else -1)
+            FontUtil.font.drawStringWithShadow("D", x + width - 12.5f, y + 1.5f, if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED.rgb else -1)
         }
 
         fun clicked(mouseX: Int, mouseY: Int, click: Click): Boolean {

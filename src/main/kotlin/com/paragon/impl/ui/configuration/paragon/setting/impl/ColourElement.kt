@@ -187,9 +187,9 @@ class ColourElement(setting: Setting<Color>, module: ModuleElement, x: Float, y:
         RenderUtil.drawRect(x + width - 7, y, 7f, height, Color(37, 42, 51, 100).rgb)
 
         // lel
-        FontUtil.defaultFont.drawStringWithShadow(".", x + width - 6, y - 5, -1)
-        FontUtil.defaultFont.drawStringWithShadow(".", x + width - 6, y - 1, -1)
-        FontUtil.defaultFont.drawStringWithShadow(".", x + width - 6, y + 3, -1)
+        FontUtil.font.drawStringWithShadow(".", x + width - 6, y - 5, -1)
+        FontUtil.font.drawStringWithShadow(".", x + width - 6, y - 1, -1)
+        FontUtil.font.drawStringWithShadow(".", x + width - 6, y + 3, -1)
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, click: Click) {

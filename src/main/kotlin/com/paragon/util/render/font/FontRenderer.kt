@@ -138,7 +138,7 @@ class FontRenderer(font: Font) : Wrapper {
         }
 
         glDisable(GL_LINE_SMOOTH)
-        // GlStateManager.disableBlend()
+        GlStateManager.disableBlend()
         GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
 
         return (x + getStringWidth(text).toFloat()).toInt()
