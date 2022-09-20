@@ -18,6 +18,7 @@ import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import org.lwjgl.opengl.ARBMultisample.*
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Toolkit
@@ -131,9 +132,6 @@ object RenderUtil : Wrapper {
         glDepthMask(true)
         setColour(colour)
 
-        glEnable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-
         glBegin(GL_POLYGON)
 
         for (i in 0..90) {
@@ -153,9 +151,6 @@ object RenderUtil : Wrapper {
         }
 
         glEnd()
-
-        glDisable(GL_LINE_SMOOTH)
-
         glEnable(GL_TEXTURE_2D)
         glEnable(GL_DEPTH_TEST)
         glColor4f(1f, 1f, 1f, 1f)

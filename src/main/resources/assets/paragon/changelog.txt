@@ -4,3 +4,8 @@ Added Plugin System
 Added command to save maps ($saveMap)
 Added command to change skin client sided ($copySkin)
 Added AntiGhast
+Remade Main Menu
+Moved most GUIs to plugins
+Added LogoutSpots
+Updated Nametags
+Added MainMenu module

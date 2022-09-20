@@ -39,7 +39,7 @@ class ModuleManager {
             AutoWalk, Blink, ChatModifications, ChorusControl, Cryptic, CustomWorld, DonkeyAlert, ExtraTab, FakePlayer, FastUse, Interact, Lawnmower, MiddleClick, NoGlobalSounds, NoRotate, Notifier, OnDeath, RotationLock, Spammer, TeleTofu, TimerModule, XCarry,
 
             // Client
-            ClientFont, Colours, ClickGUI, DiscordRPC,
+            ClientFont, Colours, ClickGUI, DiscordRPC, MainMenu,
 
             // HUD
             Armour, ArrayListHUD, CombatInfo, Coordinates, Crystals, CustomText, Direction, FPS, GraphCPS, GraphFPS, GraphPing, GraphSpeed, HUD, HUDEditor, Inventory, Keystrokes, Notifications, Ping, PotionHUD, Speed, TabGui, TargetHUD, Totems, Watermark

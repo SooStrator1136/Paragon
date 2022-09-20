@@ -483,8 +483,6 @@ class StorageManager {
             FileWriter(file).use { writer ->
                 val jsonObject = JSONObject()
 
-                jsonObject.put("mainmenu", Paragon.INSTANCE.isParagonMainMenu)
-
                 var prefixes = ""
 
                 for (prefix in Paragon.INSTANCE.commandManager.commonPrefixes) {
@@ -507,8 +505,6 @@ class StorageManager {
 
         runCatching {
             val jsonObject = getJSON(File("paragon${File.separator}client.json")) ?: return
-
-            Paragon.INSTANCE.isParagonMainMenu = jsonObject.getBoolean("mainmenu")
 
             if (jsonObject.has("ignored_prefixes")) {
                 for (prefix in jsonObject.getString("ignored_prefixes").toString().split(" ".toRegex())) {

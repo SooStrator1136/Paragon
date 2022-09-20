@@ -17,22 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = GuiMainMenu.class, priority = Integer.MAX_VALUE)
 public class MixinGuiMainMenu extends GuiScreen {
 
-    @Inject(method = "initGui", at = @At("TAIL"))
-    public void hookInitGui(CallbackInfo ci) {
-        this.buttonList.add(new ParagonButton(- 1, this.width - 83, 3, 80, 20, "Paragon Menu"));
-    }
-
     @Inject(method = "drawScreen", at = @At("TAIL"))
     public void hookDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo info) {
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Paragon " + TextFormatting.GRAY + Paragon.modVersion, 2, 2, Colours.mainColour.getValue().getRGB());
-    }
-
-    @Inject(method = "actionPerformed", at = @At("TAIL"))
-    public void hookActionPerformed(GuiButton button, CallbackInfo ci) {
-        if (button.id == - 1) {
-            Paragon.INSTANCE.setParagonMainMenu(true);
-            mc.displayGuiScreen(new ParagonMenu());
-        }
     }
 
 }

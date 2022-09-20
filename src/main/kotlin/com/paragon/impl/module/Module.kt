@@ -1,5 +1,6 @@
 package com.paragon.impl.module
 
+import com.paragon.Paragon
 import com.paragon.impl.event.client.ModuleToggleEvent
 import com.paragon.impl.module.hud.impl.ArrayListHUD
 import com.paragon.impl.setting.Bind
@@ -31,7 +32,6 @@ open class Module(val name: String, val category: Category, val description: Str
 
     // Whether the module is enabled
     var isEnabled = false
-        private set
 
     init {
         if (isConstant) {
@@ -39,7 +39,7 @@ open class Module(val name: String, val category: Category, val description: Str
 
             // Register events
             MinecraftForge.EVENT_BUS.register(this)
-            com.paragon.Paragon.INSTANCE.eventBus.register(this)
+            Paragon.INSTANCE.eventBus.register(this)
         }
     }
 

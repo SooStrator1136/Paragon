@@ -205,10 +205,4 @@ class Paragon {
     lateinit var console: Console
         private set
 
-    var isParagonMainMenu = false
-        set(paragonMainMenu) {
-            field = paragonMainMenu
-            storageManager.saveOther()
-        }
-
 }
