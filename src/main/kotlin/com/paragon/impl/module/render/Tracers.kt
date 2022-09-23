@@ -4,18 +4,20 @@ import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.impl.module.Category
+import com.paragon.util.entity.EntityUtil
 import com.paragon.util.entity.EntityUtil.isEntityAllowed
 import com.paragon.util.entity.EntityUtil.isMonster
 import com.paragon.util.entity.EntityUtil.isPassive
-import com.paragon.util.render.RenderUtil
+import com.paragon.util.render.ColourUtil
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec3d
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import org.lwjgl.opengl.GL11.*
 import java.awt.Color
-import java.util.function.Consumer
 
 /**
  * @author Surge
@@ -62,14 +64,58 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
 
     @SubscribeEvent
     fun onRenderWorld(event: RenderWorldLastEvent?) {
-        minecraft.world.loadedEntityList.forEach(Consumer { entity: Entity ->
-            if (entity.isEntityAllowed(
-                    players.value, mobs.value, passive.value
-                ) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value
-            ) {
-                RenderUtil.drawTracer(entity, lineWidth.value, getColourByEntity(entity))
+        minecraft.world.loadedEntityList.forEach { entity: Entity ->
+            if (entity.isEntityAllowed(players.value, mobs.value, passive.value) && entity !== minecraft.player || entity is EntityEnderCrystal && crystals.value) {
+                val vec = EntityUtil.getInterpolatedPosition(entity)
+                val x = vec.x - minecraft.renderManager.viewerPosX
+                val y = vec.y - minecraft.renderManager.viewerPosY
+                val z = vec.z - minecraft.renderManager.viewerPosZ
+
+                val eyes = Vec3d(0.0, 0.0, 1.0).rotatePitch(-Math.toRadians(minecraft.player.rotationPitch.toDouble()).toFloat()).rotateYaw(
+                    -Math.toRadians(
+                        minecraft.player.rotationYaw.toDouble()
+                    ).toFloat()
+                )
+
+                if (getColourByEntity(entity).alpha == 0) {
+                    return
+                }
+
+                // Enable render 3D
+                glDepthMask(false)
+                glDisable(GL_DEPTH_TEST)
+                glDisable(GL_ALPHA_TEST)
+                glEnable(GL_BLEND)
+                glDisable(GL_TEXTURE_2D)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                glEnable(GL_LINE_SMOOTH)
+                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+                glLineWidth(0.1f)
+
+                // Colour line
+                ColourUtil.setColour(getColourByEntity(entity).rgb)
+
+                // Set line width
+                glLineWidth(lineWidth.value)
+                glBegin(GL_LINE_STRIP)
+
+                // Draw line
+                glVertex3d(eyes.x, eyes.y + minecraft.player.getEyeHeight(), eyes.z)
+                glVertex3d(x, y + entity.height / 2, z)
+                glEnd()
+
+                // Disable render 3D
+                glDepthMask(true)
+                glEnable(GL_DEPTH_TEST)
+                glEnable(GL_TEXTURE_2D)
+                glDisable(GL_BLEND)
+                glEnable(GL_ALPHA_TEST)
+                glDisable(GL_LINE_SMOOTH)
+
+                // Reset colour
+                glColor4f(1.0f, 1.0f, 1.0f, 1.0f)
             }
-        })
+        }
     }
 
     /**

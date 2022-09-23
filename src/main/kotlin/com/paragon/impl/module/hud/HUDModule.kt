@@ -2,10 +2,7 @@ package com.paragon.impl.module.hud
 
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
-import com.paragon.util.render.RenderUtil.screenHeight
-import com.paragon.util.render.RenderUtil.screenWidth
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.util.math.MathHelper
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
@@ -35,8 +32,8 @@ abstract class HUDModule(name: String, description: String) : Module(name, Categ
         // Set X and Y
         if (isDragging) {
             val sr = ScaledResolution(minecraft)
-            val newX = MathHelper.clamp(mouseX - lastX, 1f, screenWidth)
-            val newY = MathHelper.clamp(mouseY - lastY, 1f, screenHeight)
+            val newX = mouseX - lastX
+            val newY = mouseY - lastY
 
             println(sr.scaleFactor)
 

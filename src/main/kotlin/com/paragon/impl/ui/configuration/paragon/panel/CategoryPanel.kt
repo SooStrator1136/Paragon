@@ -72,7 +72,7 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
             titleOffset = 25f
         }
 
-        FontUtil.drawStringWithShadow(StringUtil.getFormattedText(category), x + titleOffset, y + 7, -1)
+        FontUtil.drawStringWithShadow(StringUtil.getFormattedText(category), x + titleOffset, y + 6.5f, -1)
 
         RenderUtil.drawRect(x, y + height, width, 320 * expand.getAnimationFactor().toFloat(), Color(32, 32, 46).rgb)
 

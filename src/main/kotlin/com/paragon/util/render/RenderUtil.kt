@@ -2,13 +2,17 @@ package com.paragon.util.render
 
 import com.paragon.util.render.font.FontUtil.font
 import com.paragon.impl.module.client.ClientFont
+import com.paragon.impl.module.render.Nametags
 import com.paragon.util.Wrapper
 import com.paragon.util.entity.EntityUtil
 import com.paragon.util.render.ColourUtil.setColour
+import com.paragon.util.render.font.FontUtil
+import com.sun.org.apache.xpath.internal.operations.Bool
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.BufferBuilder
 import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.Entity
@@ -23,6 +27,7 @@ import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Toolkit
 import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.sin
 
 
@@ -95,32 +100,6 @@ object RenderUtil : Wrapper {
         glShadeModel(GL_FLAT)
         glEnable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
-    }
-
-    fun drawVerticalGradientRect(x: Float, y: Float, width: Float, height: Float, topColour: Int, bottomColour: Int) {
-        val top = Color(topColour)
-        val bottom = Color(bottomColour)
-        GlStateManager.pushMatrix()
-        GlStateManager.disableTexture2D()
-        GlStateManager.enableBlend()
-        GlStateManager.enableAlpha()
-        GlStateManager.tryBlendFuncSeparate(
-            GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO
-        )
-
-        GlStateManager.shadeModel(7425)
-        val tessellator = Tessellator.getInstance()
-        val bufferbuilder = tessellator.buffer
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
-        bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(top.red / 255f, top.green / 255f, top.blue / 255f, top.alpha / 255f).endVertex()
-        bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(top.red / 255f, top.green / 255f, top.blue / 255f, top.alpha / 255f).endVertex()
-        bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(bottom.red / 255f, bottom.green / 255f, bottom.blue / 255f, bottom.alpha / 255f).endVertex()
-        bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(bottom.red / 255f, bottom.green / 255f, bottom.blue / 255f, bottom.alpha / 255f).endVertex()
-        tessellator.draw()
-        GlStateManager.shadeModel(7424)
-        GlStateManager.enableAlpha()
-        GlStateManager.enableTexture2D()
-        GlStateManager.popMatrix()
     }
 
     @JvmStatic
@@ -292,68 +271,6 @@ object RenderUtil : Wrapper {
     }
 
     @JvmStatic
-    fun drawHorizontalGradientRoundedRect(x: Double, y: Double, width: Double, height: Double, tLeft: Double, tRight: Double, bLeft: Double, bRight: Double, left: Int, right: Int) {
-        var x = x
-        var y = y
-        var width = width
-        var height = height
-        glPushAttrib(0)
-        glScaled(0.5, 0.5, 0.5)
-        x *= 2.0
-        y *= 2.0
-        width *= 2.0
-        height *= 2.0
-        glDisable(GL_DEPTH_TEST)
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDepthMask(true)
-        glEnable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-        glBegin(GL_POLYGON)
-        setColour(left)
-        var i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0, y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
-            )
-            i += 3
-        }
-        i = 90
-        while (i <= 180) {
-            glVertex2d(
-                x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0, y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0
-            )
-            i += 3
-        }
-        setColour(right)
-        i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + width - bRight + sin(i * Math.PI / 180.0) * bRight, y + height - bRight + cos(i * Math.PI / 180.0) * bRight
-            )
-            i += 3
-        }
-        i = 90
-        while (i <= 180) {
-            glVertex2d(
-                x + width - tRight + sin(i * Math.PI / 180.0) * tRight, y + tRight + cos(i * Math.PI / 180.0) * tRight
-            )
-            i += 3
-        }
-        glEnd()
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
-        glDisable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE)
-        glScaled(2.0, 2.0, 2.0)
-        glPopAttrib()
-        glLineWidth(1f)
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
-    }
-
-    @JvmStatic
     fun drawBorder(x: Float, y: Float, width: Float, height: Float, border: Float, colour: Int) {
         val c = (colour shr 24 and 255).toFloat() / 255.0f
         val c1 = (colour shr 16 and 255).toFloat() / 255.0f
@@ -402,13 +319,26 @@ object RenderUtil : Wrapper {
      */
     @JvmStatic
     fun pushScissor(x: Double, y: Double, width: Double, height: Double) {
+        var x = x
+        var y = y
         var width = width
         var height = height
+
         width = MathHelper.clamp(width, 0.0, width)
         height = MathHelper.clamp(height, 0.0, height)
+
         glPushAttrib(GL_SCISSOR_BIT)
         run {
-            scissorRect(x, y, width, height)
+            val sr = ScaledResolution(minecraft)
+            val scale = sr.scaleFactor.toDouble()
+
+            y = sr.scaledHeight - y
+            x *= scale
+            y *= scale
+            width *= scale
+            height *= scale
+
+            glScissor(x.toInt(), (y - height).toInt(), width.toInt(), height.toInt())
             glEnable(GL_SCISSOR_TEST)
         }
     }
@@ -420,105 +350,6 @@ object RenderUtil : Wrapper {
     fun popScissor() {
         glDisable(GL_SCISSOR_TEST)
         glPopAttrib()
-    }
-
-    /**
-     * Scissors a rect
-     *
-     * @param x      X coord
-     * @param y      Y coord
-     * @param width  Width of scissor
-     * @param height Height of scissor
-     */
-    private fun scissorRect(x: Double, y: Double, width: Double, height: Double) {
-        var x = x
-        var y = y
-        var width = width
-        var height = height
-        val sr = ScaledResolution(minecraft)
-        val scale = sr.scaleFactor.toDouble()
-        y = sr.scaledHeight - y
-        x *= scale
-        y *= scale
-        width *= scale
-        height *= scale
-        glScissor(x.toInt(), (y - height).toInt(), width.toInt(), height.toInt())
-    }
-
-    /**
-     * Draws a line from one pos to another
-     *
-     * @param x1           Start X
-     * @param y1           Start Y
-     * @param z1           Start Z
-     * @param x2           End X
-     * @param y2           End Y
-     * @param z2           End Z
-     * @param color        The colour of the line
-     * @param disableDepth Disable GL depth
-     * @param lineWidth    Width of the line
-     */
-    fun drawLine3D(x1: Double, y1: Double, z1: Double, x2: Double, y2: Double, z2: Double, color: Int, disableDepth: Boolean, lineWidth: Float) {
-        // Enable render 3D
-        if (disableDepth) {
-            glDepthMask(false)
-            glDisable(GL_DEPTH_TEST)
-        }
-        glDisable(GL_ALPHA_TEST)
-        glEnable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glLineWidth(0.1f)
-
-        // Colour line
-        setColour(color)
-
-        // Set line width
-        glLineWidth(lineWidth)
-        glBegin(GL_CURRENT_BIT)
-
-        // Draw line
-        glVertex3d(x1, y1, z1)
-        glVertex3d(x2, y2, z2)
-        glEnd()
-
-        // Disable render 3D
-        if (disableDepth) {
-            glDepthMask(true)
-            glEnable(GL_DEPTH_TEST)
-        }
-        glEnable(GL_TEXTURE_2D)
-        glDisable(GL_BLEND)
-        glEnable(GL_ALPHA_TEST)
-        glDisable(GL_LINE_SMOOTH)
-
-        // Reset colour
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f)
-    }
-
-    /**
-     * Draws a tracer to a given entity
-     *
-     * @param e         The entity to draw a line to
-     * @param lineWidth The width of the line
-     * @param col       The colour of the line
-     */
-    fun drawTracer(e: Entity, lineWidth: Float, col: Color) {
-        val vec = EntityUtil.getInterpolatedPosition(e)
-        val x = vec.x - minecraft.renderManager.viewerPosX
-        val y = vec.y - minecraft.renderManager.viewerPosY
-        val z = vec.z - minecraft.renderManager.viewerPosZ
-        val eyes = Vec3d(0.0, 0.0, 1.0).rotatePitch(-Math.toRadians(minecraft.player.rotationPitch.toDouble()).toFloat()).rotateYaw(
-                -Math.toRadians(
-                    minecraft.player.rotationYaw.toDouble()
-                ).toFloat()
-            )
-        if (col.alpha == 0) return
-        drawLine3D(
-            eyes.x, eyes.y + minecraft.player.getEyeHeight(), eyes.z, x, y + e.height / 2, z, col.rgb, true, lineWidth
-        )
     }
 
     fun drawGradientBox(axisAlignedBB: AxisAlignedBB, top: Color, bottom: Color) {
@@ -566,7 +397,7 @@ object RenderUtil : Wrapper {
         glDisable(GL_BLEND)
     }
 
-    fun addGradientBoxVertices(builder: BufferBuilder, bb: AxisAlignedBB, topColour: Color, bottomColour: Color) {
+    private fun addGradientBoxVertices(builder: BufferBuilder, bb: AxisAlignedBB, topColour: Color, bottomColour: Color) {
         val minX = bb.minX
         val minY = bb.minY
         val minZ = bb.minZ
@@ -608,7 +439,7 @@ object RenderUtil : Wrapper {
     }
 
     @JvmStatic
-    fun drawNametagText(text: String?, location: Vec3d, textColour: Int) {
+    fun drawNametagText(text: String, location: Vec3d, textColour: Int) {
         GlStateManager.pushMatrix()
         // Translate
         val scale = 0.02666667f
@@ -621,12 +452,47 @@ object RenderUtil : Wrapper {
         GlStateManager.rotate(minecraft.player.rotationPitch, if (minecraft.gameSettings.thirdPersonView == 2) -1f else 1.toFloat(), 0f, 0f)
         GlStateManager.scale(-scale, -scale, scale)
         GlStateManager.disableDepth()
-        GlStateManager.translate(-(getStringWidth(text) / 2), 0f, 0f)
+        GlStateManager.translate(-(FontUtil.getStringWidth(text) / 2), 0f, 0f)
 
-        renderText(text, 0f, 0f, textColour)
+        FontUtil.drawStringWithShadow(text, 0f, 0f, textColour)
 
         GlStateManager.enableDepth()
         GlStateManager.popMatrix()
+    }
+
+    @JvmStatic
+    fun drawNametag(location: Vec3d, scaled: Boolean, defaultScale: Double = 0.2, block: () -> Unit) {
+        val distance = minecraft.player.getDistance(location.x, location.y, location.z)
+
+        var scale = defaultScale / 5
+
+        if (scaled) {
+            scale = max(defaultScale / 5, distance / 50) / 5
+        }
+
+        glPushMatrix()
+        RenderHelper.enableStandardItemLighting()
+        glDisable(GL_LIGHTING)
+
+        GlStateManager.translate(
+            location.x - minecraft.renderManager.viewerPosX,
+            location.y - minecraft.renderManager.viewerPosY,
+            location.z - minecraft.renderManager.viewerPosZ
+        )
+
+        GlStateManager.rotate(-minecraft.player.rotationYaw, 0f, 1f, 0f)
+
+        // Rotate based on the view
+        GlStateManager.rotate(minecraft.player.rotationPitch, if (minecraft.gameSettings.thirdPersonView == 2) -1f else 1.toFloat(), 0f, 0f)
+        GlStateManager.scale(-scale, -scale, scale)
+
+        glDisable(GL_DEPTH_TEST)
+
+        block.invoke()
+
+        GlStateManager.enableDepth()
+        GlStateManager.disableBlend()
+        glPopMatrix()
     }
 
     @JvmStatic
@@ -663,29 +529,6 @@ object RenderUtil : Wrapper {
         bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).tex(((u + width) * f).toDouble(), (v * f1).toDouble()).endVertex()
         bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).tex((u * f).toDouble(), (v * f1).toDouble()).endVertex()
         tessellator.draw()
-    }
-
-    @JvmStatic
-    val screenWidth: Float
-        get() = Toolkit.getDefaultToolkit().screenSize.width / 2f
-
-    @JvmStatic
-    val screenHeight: Float
-        get() = Toolkit.getDefaultToolkit().screenSize.height / 2f
-
-    fun renderText(text: String?, x: Float, y: Float, colour: Int) {
-        if (ClientFont.isEnabled) {
-            font.drawString(text!!, x, y - 3.5f, colour, false)
-            return
-        }
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, colour)
-    }
-
-    fun getStringWidth(text: String?): Float {
-        return if (ClientFont.isEnabled) {
-            font.getStringWidth(text!!).toFloat()
-        }
-        else Minecraft.getMinecraft().fontRenderer.getStringWidth(text).toFloat()
     }
 
 }

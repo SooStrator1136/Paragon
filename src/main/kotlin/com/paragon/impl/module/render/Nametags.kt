@@ -59,163 +59,145 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                return@forEach
             }
 
-            val interpolated = EntityUtil.getInterpolatedPosition(player)
+            val interpolated = EntityUtil.getInterpolatedPosition(player).addVector(0.0, 2.2, 0.0)
 
-            val distance = minecraft.player.getDistance(interpolated.x, interpolated.y, interpolated.z)
+            RenderUtil.drawNametag(interpolated, scaleSetting.value == ScaleEnum.DISTANCE, if (scaleSetting.value == ScaleEnum.DISTANCE) 0.2 else scaleValue.value) {
 
-            var scale = scaleValue.value / 5
+                val builder = StringBuilder().append(player.name)
 
-            if (scaleSetting.value == ScaleEnum.DISTANCE) {
-                scale = max(0.10, distance / 50) / 5
-            }
-
-            glPushMatrix()
-            RenderHelper.enableStandardItemLighting()
-            glDisable(GL_LIGHTING)
-
-            GlStateManager.translate(
-                interpolated.x - minecraft.renderManager.viewerPosX,
-                interpolated.y + player.height + 0.45 + (if (player.isSneaking) 0.05 else 0.08) - minecraft.renderManager.viewerPosY,
-                interpolated.z - minecraft.renderManager.viewerPosZ
-            )
-
-            GlStateManager.rotate(-minecraft.player.rotationYaw, 0f, 1f, 0f)
-
-            // Rotate based on the view
-            GlStateManager.rotate(minecraft.player.rotationPitch, if (minecraft.gameSettings.thirdPersonView == 2) -1f else 1.toFloat(), 0f, 0f)
-            GlStateManager.scale(-scale, -scale, scale)
-
-            glDisable(GL_DEPTH_TEST)
-
-            val builder = StringBuilder().append(player.name)
-
-            if (health.value) {
-                builder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player)).append(EntityUtil.getEntityHealth(player).roundToInt())
-            }
-
-            if (ping.value && minecraft.connection != null) {
-                if (player is EntityFakePlayer) {
-                    builder.append(" ").append(TextFormatting.GRAY).append(-1)
-                } else {
-                    minecraft.connection!!.getPlayerInfo(player.uniqueID)
-
-                    builder.append(" ").append(getPingColour(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)).append(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)
-                }
-            }
-
-            if (pops.value) {
-                builder.append(" ").append(TextFormatting.GOLD).append("-").append(Paragon.INSTANCE.popManager.getPops(player))
-            }
-
-            val string = builder.toString()
-
-            val width = FontUtil.getStringWidth(string) + 4
-            val height = FontUtil.getHeight() + if (healthBar.value) 2 else 0 + if (!ClientFont.isEnabled) 2 else 0
-
-            glTranslated(-(width / 2.0), 0.0, 0.0)
-
-            RenderUtil.drawRect(0f, 0f, width, height, 0x90000000.toInt())
-            RenderUtil.drawBorder(0f, 0f, width, height, 1f, Color.BLACK.rgb)
-            FontUtil.drawStringWithShadow(string, 1f, 1f, -1)
-
-            if (healthBar.value) {
-                // 3/4 will be normal health, 1/4 will be gapple
-                val healthWidth = ((width - 1) * 0.75f) * (player.health / player.maxHealth)
-                val gappleWidth = ((width - 1) * 0.25f) * (player.absorptionAmount / 16)
-
-                RenderUtil.drawRect(0.5f, height - 1.5f, healthWidth, 1f, Color(0, 255, 0).rgb)
-                RenderUtil.drawRect((width - 1) * 0.75f, height - 1.5f, gappleWidth, 1f, Color(255, 255, 0).rgb)
-            }
-
-            val items = arrayListOf<ItemStack>()
-
-            if (offhand.value) {
-                items.add(player.heldItemOffhand)
-            }
-
-            if (armour.value) {
-                items.addAll(player.inventory.armorInventory.filter { it.item != Items.AIR }.reversed())
-            }
-
-            if (mainHand.value) {
-                items.add(player.heldItemMainhand)
-            }
-
-            var itemX = (width / 2) - ((items.size * 18f) / 2)
-
-            items.forEach {
-                glPushMatrix()
-                glDepthMask(true)
-
-                // Prevent enchantment texture rendering as a square
-                GlStateManager.disableDepth()
-
-                RenderHelper.enableStandardItemLighting()
-                GlStateManager.scale(1f, 1f, 0f)
-
-                RenderUtil.renderItemStack(it, itemX, -18f, true)
-
-                RenderHelper.disableStandardItemLighting()
-                GlStateManager.disableDepth()
-                glPopMatrix()
-
-                val itemInfo = arrayListOf<String>()
-
-                if (durability.value && (it.item is ItemTool || it.item is ItemArmor)) {
-                    val damage = 1 - it.itemDamage.toFloat() / it.maxDamage.toFloat()
-                    itemInfo.add((damage * 100).toInt().toString() + "%")
+                if (health.value) {
+                    builder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player))
+                        .append(EntityUtil.getEntityHealth(player).roundToInt())
                 }
 
-                if (enchantments.value) {
-                    val enchants = it.enchantmentTagList
-                    for (i in 0 until enchants.tagCount()) {
-                        // Get enchant ID and level
-                        val id = enchants.getCompoundTagAt(i).getInteger("id")
-                        val level = enchants.getCompoundTagAt(i).getInteger("lvl")
+                if (ping.value && minecraft.connection != null) {
+                    if (player is EntityFakePlayer) {
+                        builder.append(" ").append(TextFormatting.GRAY).append(-1)
+                    } else {
+                        minecraft.connection!!.getPlayerInfo(player.uniqueID)
 
-                        // Get the enchantment
-                        val enchantment = Enchantment.getEnchantmentByID(id)
+                        builder.append(" ")
+                            .append(getPingColour(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime))
+                            .append(minecraft.connection!!.getPlayerInfo(player.uniqueID).responseTime)
+                    }
+                }
 
-                        // Make sure the enchantment is valid
-                        if (enchantment != null) {
-                            // Don't render if it's a curse
-                            if (enchantment.isCurse) {
-                                continue
+                if (pops.value) {
+                    builder.append(" ").append(TextFormatting.GOLD).append("-")
+                        .append(Paragon.INSTANCE.popManager.getPops(player))
+                }
+
+                val string = builder.toString()
+
+                val width = FontUtil.getStringWidth(string) + 4
+                val height = FontUtil.getHeight() + if (healthBar.value) 2 else 0 + if (!ClientFont.isEnabled) 2 else 0
+
+                glTranslated(-(width / 2.0), 0.0, 0.0)
+
+                RenderUtil.drawRect(0f, 0f, width, height, 0x90000000.toInt())
+                RenderUtil.drawBorder(0f, 0f, width, height, 1f, Color.BLACK.rgb)
+                FontUtil.drawStringWithShadow(string, 1f, 1f, -1)
+
+                if (healthBar.value) {
+                    // 3/4 will be normal health, 1/4 will be gapple
+                    val healthWidth = ((width - 1) * 0.75f) * (player.health / player.maxHealth)
+                    val gappleWidth = ((width - 1) * 0.25f) * (player.absorptionAmount / 16)
+
+                    RenderUtil.drawRect(0.5f, height - 1.5f, healthWidth, 1f, Color(0, 255, 0).rgb)
+                    RenderUtil.drawRect((width - 1) * 0.75f, height - 1.5f, gappleWidth, 1f, Color(255, 255, 0).rgb)
+                }
+
+                val items = arrayListOf<ItemStack>()
+
+                if (offhand.value) {
+                    items.add(player.heldItemOffhand)
+                }
+
+                if (armour.value) {
+                    items.addAll(player.inventory.armorInventory.filter { it.item != Items.AIR }.reversed())
+                }
+
+                if (mainHand.value) {
+                    items.add(player.heldItemMainhand)
+                }
+
+                var itemX = width / 2 // (width / 2) - ((items.size * 18f) / 2)
+
+                items.forEach {
+                    glPushMatrix()
+                    glDepthMask(true)
+
+                    // Prevent enchantment texture rendering as a square
+                    GlStateManager.disableDepth()
+
+                    RenderHelper.enableStandardItemLighting()
+                    GlStateManager.scale(1f, 1f, 0f)
+
+                    RenderUtil.renderItemStack(it, itemX, -18f, true)
+
+                    RenderHelper.disableStandardItemLighting()
+                    GlStateManager.disableDepth()
+                    glPopMatrix()
+
+                    val itemInfo = arrayListOf<String>()
+
+                    if (durability.value && (it.item is ItemTool || it.item is ItemArmor)) {
+                        val damage = 1 - it.itemDamage.toFloat() / it.maxDamage.toFloat()
+                        itemInfo.add((damage * 100).toInt().toString() + "%")
+                    }
+
+                    if (enchantments.value) {
+                        val enchants = it.enchantmentTagList
+                        for (i in 0 until enchants.tagCount()) {
+                            // Get enchant ID and level
+                            val id = enchants.getCompoundTagAt(i).getInteger("id")
+                            val level = enchants.getCompoundTagAt(i).getInteger("lvl")
+
+                            // Get the enchantment
+                            val enchantment = Enchantment.getEnchantmentByID(id)
+
+                            // Make sure the enchantment is valid
+                            if (enchantment != null) {
+                                // Don't render if it's a curse
+                                if (enchantment.isCurse) {
+                                    continue
+                                }
+
+                                // Get enchantment name
+                                val enchantmentName =
+                                    enchantment.getTranslatedName(level).substring(0, 4) + if (level == 1) "" else level
+
+                                // Render the enchantment's name and level
+                                itemInfo.add(enchantmentName)
                             }
-
-                            // Get enchantment name
-                            val enchantmentName = enchantment.getTranslatedName(level).substring(0, 4) + if (level == 1) "" else level
-
-                            // Render the enchantment's name and level
-                            itemInfo.add(enchantmentName)
                         }
                     }
-                }
 
-                glPushMatrix()
-                glScaled(0.5, 0.5, 0.5)
-                var y = -22f
+                    glPushMatrix()
+                    glScaled(0.5, 0.5, 0.5)
+                    var y = -22f
 
-                itemInfo.forEach { info ->
-                    var colour = -1
-                    if (info.contains("%")) {
-                        val green = (it.maxDamage.toFloat() - it.itemDamage.toFloat()) / it.maxDamage.toFloat()
-                        val red = 1 - green
-                        colour = Color(red, green, 0f, 1f).rgb
+                    itemInfo.forEach { info ->
+                        var colour = -1
+                        if (info.contains("%")) {
+                            val green = (it.maxDamage.toFloat() - it.itemDamage.toFloat()) / it.maxDamage.toFloat()
+                            val red = 1 - green
+                            colour = Color(red, green, 0f, 1f).rgb
+                        }
+
+                        FontUtil.drawStringWithShadow(info, itemX * 2, y * 2, colour)
+                        y -= FontUtil.getHeight() / 2
                     }
 
-                    FontUtil.drawStringWithShadow(info, itemX * 2, y * 2, colour)
-                    y -= FontUtil.getHeight() / 2
+                    glPopMatrix()
+
+                    itemX += 18f
                 }
-
-                glPopMatrix()
-
-                itemX += 18f
             }
 
-            GlStateManager.enableDepth()
+            /* GlStateManager.enableDepth()
             GlStateManager.disableBlend()
-            glPopMatrix()
+            glPopMatrix() */
         }
     }
 

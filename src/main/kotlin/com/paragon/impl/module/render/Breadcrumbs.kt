@@ -85,6 +85,7 @@ object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behin
         minecraft.entityRenderer.disableLightmap()
 
         glBegin(GL_LINE_STRIP)
+
         for (pos in positions) {
             val renderPosX = minecraft.renderManager.viewerPosX
             val renderPosY = minecraft.renderManager.viewerPosY
