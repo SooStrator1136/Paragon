@@ -32,7 +32,7 @@ class EventFactory : Wrapper {
     }
 
     @SubscribeEvent
-    fun onRender2D(event: RenderGameOverlayEvent) {
+    fun onRender2D(event: RenderGameOverlayEvent.Post) {
         if (event.type.equals(RenderGameOverlayEvent.ElementType.TEXT)) {
             Paragon.INSTANCE.moduleManager.modules.forEach {
                 if (it.isEnabled) {

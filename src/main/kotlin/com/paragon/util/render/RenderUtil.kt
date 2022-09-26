@@ -102,6 +102,32 @@ object RenderUtil : Wrapper {
         glDisable(GL_BLEND)
     }
 
+    fun drawVerticalGradientRect(x: Float, y: Float, width: Float, height: Float, topColour: Int, bottomColour: Int) {
+        val top = Color(topColour)
+        val bottom = Color(bottomColour)
+        GlStateManager.pushMatrix()
+        GlStateManager.disableTexture2D()
+        GlStateManager.enableBlend()
+        GlStateManager.enableAlpha()
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO
+        )
+
+        GlStateManager.shadeModel(7425)
+        val tessellator = Tessellator.getInstance()
+        val bufferbuilder = tessellator.buffer
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
+        bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(top.red / 255f, top.green / 255f, top.blue / 255f, top.alpha / 255f).endVertex()
+        bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(top.red / 255f, top.green / 255f, top.blue / 255f, top.alpha / 255f).endVertex()
+        bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(bottom.red / 255f, bottom.green / 255f, bottom.blue / 255f, bottom.alpha / 255f).endVertex()
+        bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(bottom.red / 255f, bottom.green / 255f, bottom.blue / 255f, bottom.alpha / 255f).endVertex()
+        tessellator.draw()
+        GlStateManager.shadeModel(7424)
+        GlStateManager.enableAlpha()
+        GlStateManager.enableTexture2D()
+        GlStateManager.popMatrix()
+    }
+
     @JvmStatic
     fun drawRoundedRect(x: Double, y: Double, width: Double, height: Double, tLeft: Double, tRight: Double, bLeft: Double, bRight: Double, colour: Int) {
         glDisable(GL_DEPTH_TEST)

@@ -8,6 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.Font
+import kotlin.math.min
 import kotlin.random.Random
 
 /**
@@ -35,13 +36,15 @@ class FontRenderer(font: Font) : Wrapper {
     }
 
     fun drawString(text: String, x: Float, y: Float, color: Int, dropShadow: Boolean): Int {
+        val alpha = Color(color).alpha
+
         if (text.contains("\n")) {
             val parts = text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             var newY = 0.0f
 
             for (s in parts) {
                 if (dropShadow) {
-                    drawText(s, x + 0.6f, y + newY + 0.6f, Color(0, 0, 0, 150).rgb, true)
+                    drawText(s, x + 0.6f, y + newY + 0.6f, Color(0, 0, 0, min(alpha, 150)).rgb, true)
                 }
 
                 drawText(s, x, y + newY, color, dropShadow)
@@ -52,7 +55,7 @@ class FontRenderer(font: Font) : Wrapper {
         }
 
         if (dropShadow) {
-            drawText(text, x + 0.6f, y + 0.6f, Color(0, 0, 0, 150).rgb, true)
+            drawText(text, x + 0.6f, y + 0.6f, Color(0, 0, 0, min(alpha, 150)).rgb, true)
         }
 
         return drawText(text, x, y, color, false)
@@ -146,8 +149,7 @@ class FontRenderer(font: Font) : Wrapper {
 
     fun getStringWidth(text: String): Int {
         if (text.contains("§")) {
-            val parts = text.split("§".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val currentFont = defaultFont
+            val parts = text.split("§".toRegex()).toTypedArray()
             var width = 0
 
             for (index in parts.indices) {
@@ -158,12 +160,12 @@ class FontRenderer(font: Font) : Wrapper {
                 }
 
                 if (index == 0) {
-                    width += currentFont.getStringWidth(part)
+                    width += defaultFont.getStringWidth(part)
                     continue
                 }
 
                 val words = part.substring(1)
-                width += currentFont.getStringWidth(words)
+                width += defaultFont.getStringWidth(words)
             }
 
             return width / 2

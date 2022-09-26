@@ -173,7 +173,7 @@ class ParagonMenu : GuiScreen() {
             RenderUtil.drawRoundedRect(x.toDouble(), y - (16 * hover.getAnimationFactor()), 64.0, 64.0, 15.0, 15.0, 15.0, 15.0, 0x90000000.toInt())
 
             RenderUtil.scaleTo(x + 10 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), 0f, 2.0, 2.0, 0.0) {
-                FontUtil.drawIcon(icon, x + 10 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), -1)
+                FontUtil.drawIcon(icon, x + 11 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), -1)
             }
 
             FontUtil.font.drawString(name, (x + 32) - (FontUtil.font.getStringWidth(name) / 2), y + 64 - (16 * hover.getAnimationFactor()).toFloat(), Color(255, 255, 255, (255 * hover.getAnimationFactor()).toInt().coerceAtLeast(5)).rgb, false)

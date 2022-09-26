@@ -83,6 +83,11 @@ class ModuleElement(val module: Module, val panel: CategoryPanel, x: Float, y: F
 
             RenderUtil.drawRect(x, y + height, 1f, offset - y - height, Colours.mainColour.value.rgb)
         }
+
+        if (hover.state) {
+            panel.tooltipName = module.name
+            panel.tooltipContent = module.description
+        }
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, click: Click) {

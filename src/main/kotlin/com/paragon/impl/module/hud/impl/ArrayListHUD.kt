@@ -1,218 +1,468 @@
-@file:Suppress("IncorrectFormatting")
-
 package com.paragon.impl.module.hud.impl
 
 import com.paragon.Paragon
+import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
-import com.paragon.impl.module.client.Colours
+import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.setting.Setting
+import com.paragon.util.render.BlurUtil
 import com.paragon.util.render.ColourUtil
-import com.paragon.util.render.font.FontUtil
-import com.paragon.impl.module.hud.HUDEditorGUI
-import com.paragon.impl.module.hud.HUDModule
+import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.util.text.TextFormatting.GRAY
-import net.minecraft.util.text.TextFormatting.WHITE
+import net.minecraft.util.math.MathHelper
+import net.minecraft.util.text.TextFormatting
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import java.awt.Color
 
 @SideOnly(Side.CLIENT)
-object ArrayListHUD : HUDModule("ArrayList", "Renders the enabled modules on screen") {
+object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled modules on screen") {
 
-    val animationSpeed = Setting(
-        "Animation", 200f, 0f, 1000f, 10f
-    ) describedBy "The speed of the animation"
+    private val anchor = Setting("Anchor", Anchor.TOP_RIGHT) describedBy "Where the ArrayList is positioned"
+    private val margin = Setting("Margin", 5f, 0f, 20f, 1f) describedBy "The margin between the screen bounds and the array list"
+    private val colour = Setting("Colour", Colour.GRADIENT) describedBy "How to colour the elements"
+    private val colourValue = Setting("ColourValue", Color.WHITE) describedBy "The text colour" visibleWhen { colour.value == Colour.VALUE }
+    private val startHue = Setting("StartHue", 0f, 0f, 360f, 1f) describedBy "The start hue of the gradient" visibleWhen { colour.value == Colour.GRADIENT }
+    private val endHue = Setting("EndHue", 360f, 0f, 360f, 1f) describedBy "The end hue of the gradient" visibleWhen { colour.value == Colour.GRADIENT }
+    private val saturation = Setting("Saturation", 100f, 0f, 100f, 1f) describedBy "The saturation of the colour" visibleWhen { colour.value != Colour.VALUE }
+    private val brightness = Setting("Brightness", 100f, 0f, 100f, 1f) describedBy "The brightness of the colour" visibleWhen { colour.value == Colour.GRADIENT }
+    private val speed = Setting("Speed", 4f, 0.1f, 10f, 0.1f) describedBy "The speed of the rainbow" visibleWhen { colour.value == Colour.WAVE }
+    private val background = Setting("Background", Color(0, 0, 0, 150)) describedBy "The colour of the background"
+    private val backgroundSync = Setting("BackgroundSync", false) describedBy "Sync the background colour to the text colour"
+    private val moduleHeight = Setting("ModuleHeight", 13f, 10f, 20f, 1f) describedBy "The height of each module"
+    private val dataMode = Setting("Data", Data.PLAIN) describedBy "How to render the module data"
+    private val scissorSlide = Setting("ScissorSlide", false) describedBy "Whether the scissor will horizontally reveal the module"
+    private val sideBar = Setting("SideBar", true) describedBy "Draw a bar at the side of the ArrayList"
+    private val moduleBar = Setting("ModuleBar", false) describedBy "Draw a bar at the side of each module"
+    private val topBar = Setting("TopBar", true) describedBy "Draw a bar at the top of the ArrayList"
+    private val connect = Setting("Connect", false) describedBy "Connect each module with a bar"
 
-    private val arrayListColour = Setting(
-        "Colour", ArrayListColour.RAINBOW_WAVE
-    ) describedBy "What colour to render the modules in"
+    val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1500f, 5f) describedBy "The speed of the module animations"
+    val easing = Setting("Easing", Easing.LINEAR) describedBy "The easing type of the animation"
 
-    val easing = Setting(
-        "Easing", Easing.EXPO_IN_OUT
-    ) describedBy "The easing type of the animation"
-
-    private val background = Setting(
-        "Background", Background.Normal
-    ) describedBy "Render a background behind the text"
-
-    private var corner = Corner.TOP_LEFT
-
-    // Value = width
-    private var modules: Map<Module, Float> = HashMap()
-
-    override fun render() {
+    override fun onRender2D() {
         val scaledResolution = ScaledResolution(minecraft)
 
-        if (x + width / 2 < scaledResolution.scaledWidth / 2f) {
-            corner = if (y + height / 2 > scaledResolution.scaledHeight / 2f) {
-                Corner.BOTTOM_LEFT
-            }
-            else {
-                Corner.TOP_LEFT
-            }
-        }
-        else if (x + width / 2 > scaledResolution.scaledWidth / 2f) {
-            if (y + height / 2 < scaledResolution.scaledHeight / 2f) {
-                corner = Corner.TOP_RIGHT
-            }
-            else if (y + height / 2 > scaledResolution.scaledHeight / 2f) {
-                corner = Corner.BOTTOM_RIGHT
-            }
-        }
+        val modules = Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.animation.getAnimationFactor() > 0 && it.isVisible() }
+            .sortedBy { FontUtil.getStringWidth(it.name + if (dataMode.value != Data.OFF) "" + if (it.getData().isNotEmpty()) " " + dataMode.value.first + it.getData() + dataMode.value.second else "" else "") }
+            .reversed()
 
-        if (minecraft.currentScreen is HUDEditorGUI) {
-            RenderUtil.drawRect(x, y, width - 2, height - 2, -0x70000000)
-            RenderUtil.drawBorder(x, y, width - 2, height - 2, 1f, Colours.mainColour.value.rgb)
-        }
+        when (anchor.value) {
+            Anchor.TOP_LEFT -> {
+                val x = margin.value
+                var y = margin.value + if (topBar.value) 1f else 0f
 
-        modules = HashMap()
+                modules.forEachIndexed { index, module ->
+                    val data = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                    val info = module.name + TextFormatting.GRAY + data
 
-        for (module in Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.isVisible() && it.animation.getAnimationFactor() > 0.0 }) {
-            (modules as HashMap<Module, Float>)[module] = FontUtil.getStringWidth(module.name + (if (module.getData() == "") "" else "$GRAY[$WHITE ${module.getData()}$GRAY]"))
-        }
+                    val factor = module.animation.getAnimationFactor().coerceAtLeast(0.0)
 
-        modules = modules.toSortedMap(compareBy<Module?> { modules[it] }.reversed())
-
-        val scissorWidth = modules.firstNotNullOf { it.value }.toDouble()
-
-        when (corner) {
-            Corner.TOP_LEFT -> {
-                RenderUtil.pushScissor(x.toDouble() + 1, y.toDouble(), scissorWidth, modules.size * 13.0)
-                var yOffset = y
-
-                for (value in modules) {
-                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else "$GRAY[$WHITE${value.key.getData()}$GRAY]")
-
-                    val origin = x - FontUtil.getStringWidth(moduleData)
-
-                    if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, 0x70000000)
-                    }
-                    else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData) + 1F, 14f, -12171706, -7039852)
-                        RenderUtil.drawRect((origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, -7039852)
+                    if (factor != 1.0) {
+                        RenderUtil.pushScissor(
+                            (x * if (scissorSlide.value) factor else 1.0) - 3,
+                            y.toDouble() - 1,
+                            FontUtil.getStringWidth(info) + 12.0,
+                            ((moduleHeight.value + 1) * factor) + 3
+                        )
                     }
 
-                    FontUtil.drawStringWithShadow(moduleData, (origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    val colourRGB: Int = when (colour.value) {
+                        Colour.VALUE -> colourValue.value.rgb
 
-                    yOffset += 13f * value.key.animation.getAnimationFactor().toFloat()
+                        Colour.GRADIENT -> {
+                            val indexHue = index.toFloat() / modules.size.toFloat()
+                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                        }
+
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
+                    }
+
+                    RenderUtil.drawRect(
+                        x - 2,
+                        y,
+                        FontUtil.getStringWidth(info) + 8 + if (sideBar.value) 1f else 0f,
+                        (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
+
+                        if (backgroundSync.value) {
+                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                        } else {
+                            background.value.rgb
+                        }
+                    )
+
+                    FontUtil.drawStringWithShadow(
+                        info,
+                        x + 1,
+                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                    )
+
+                    if (index == 0 && topBar.value) {
+                        RenderUtil.drawRect(
+                            x - 3,
+                            y - 1,
+                            FontUtil.getStringWidth(info) + (if (moduleBar.value) 8 else 7) + if (sideBar.value) 2 else 0,
+                            1f,
+                            colourRGB
+                        )
+                    }
+
+                    if (moduleBar.value) {
+                        RenderUtil.drawRect(
+                            x + FontUtil.getStringWidth(info) + 6,
+                            y,
+                            1f,
+                            moduleHeight.value,
+                            colourRGB
+                        )
+                    }
+
+                    if (connect.value)  {
+                        val width = if (index == modules.size - 1) {
+                            FontUtil.getStringWidth(info) + 8
+                        } else {
+                            val module = modules[index + 1]
+                            val nextData = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                            val nextInfo = module.name + TextFormatting.GRAY + nextData
+
+                            (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
+                        }
+
+                        RenderUtil.drawRect(x + FontUtil.getStringWidth(info) + 6 - width + if (sideBar.value) 0f else 1f, y + moduleHeight.value - 1, width, 1f, colourRGB)
+                    }
+
+                    if (sideBar.value) {
+                        RenderUtil.drawRect(x - 3f, y, 1f, moduleHeight.value, colourRGB)
+                    }
+
+                    if (factor != 1.0) {
+                        RenderUtil.popScissor()
+                    }
+
+                    y += (moduleHeight.value * module.animation.getAnimationFactor()).toFloat()
                 }
             }
 
-            Corner.TOP_RIGHT -> {
-                RenderUtil.pushScissor(((x + width) - scissorWidth), y.toDouble(), scissorWidth + 1, modules.size * 13.0)
+            Anchor.TOP_RIGHT -> {
+                val x = (scaledResolution.scaledWidth - margin.value) - 2 - if (sideBar.value) 2f else 0f
+                var y = margin.value + if (topBar.value) 1f else 0f
 
-                var yOffset = y
+                modules.forEachIndexed { index, module ->
+                    val data = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                    val info = module.name + TextFormatting.GRAY + data
 
-                for (value in modules) {
-                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
+                    val factor = module.animation.getAnimationFactor().coerceAtLeast(0.0)
 
-                    val origin = x + width
-
-                    if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, 0x70000000)
+                    if (factor != 1.0) {
+                        RenderUtil.pushScissor(
+                            (x - FontUtil.getStringWidth(info) * if (scissorSlide.value) factor else 1.0) - 3,
+                            y.toDouble() - 1,
+                            FontUtil.getStringWidth(info) + 7.0,
+                            ((moduleHeight.value + 1) * factor) + 3
+                        )
                     }
-                    else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, FontUtil.getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
-                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, -7039852)
+
+                    val colourRGB: Int = when (colour.value) {
+                        Colour.VALUE -> colourValue.value.rgb
+
+                        Colour.GRADIENT -> {
+                            val indexHue = index.toFloat() / modules.size.toFloat()
+                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                        }
+
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
                     }
 
-                    FontUtil.drawStringWithShadow(moduleData, (origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    /* BlurUtil.blur(
+                        (x - (FontUtil.getStringWidth(info) - 2) * module.animation.getAnimationFactor()).toInt(),
+                        y.toInt() + 1,
+                        (FontUtil.getStringWidth(info) + 4 + if (sideBar.value) 1f else 0f).toInt(),
+                        (moduleHeight.value * module.animation.getAnimationFactor()).toInt(),
+                        5f
+                    ) */
 
-                    yOffset += 13f * value.key.animation.getAnimationFactor().toFloat()
+                    RenderUtil.drawRect(
+                        x - FontUtil.getStringWidth(info) - 2,
+                        y,
+                        FontUtil.getStringWidth(info) + 4 + if (sideBar.value) 1f else 0f,
+                        (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
+
+                        if (backgroundSync.value) {
+                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                        } else {
+                            background.value.rgb
+                        }
+                    )
+
+                    FontUtil.drawStringWithShadow(
+                        info,
+                        x - FontUtil.getStringWidth(info),
+                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                    )
+
+                    if (index == 0 && topBar.value) {
+                        RenderUtil.drawRect(
+                            x - FontUtil.getStringWidth(info) - 2 - (if (moduleBar.value) 1 else 0),
+                            y - 1,
+                            FontUtil.getStringWidth(info) + (if (moduleBar.value) 5 else 4) + if (sideBar.value) 2 else 0,
+                            1f,
+                            colourRGB
+                        )
+                    }
+
+                    if (moduleBar.value) {
+                        RenderUtil.drawRect(
+                            x - FontUtil.getStringWidth(info) - 3,
+                            y,
+                            1f,
+                            moduleHeight.value,
+                            colourRGB
+                        )
+                    }
+
+                    if (connect.value)  {
+                        val width = if (index == modules.size - 1) {
+                            FontUtil.getStringWidth(info) + 5
+                        } else {
+                            val module = modules[index + 1]
+                            val nextData = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                            val nextInfo = module.name + TextFormatting.GRAY + nextData
+
+                            (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
+                        }
+
+                        RenderUtil.drawRect(x - FontUtil.getStringWidth(info) - 2, y + moduleHeight.value - 1, width, 1f, colourRGB)
+                    }
+
+                    if (sideBar.value) {
+                        RenderUtil.drawRect(x + 3f, y, 1f, moduleHeight.value, colourRGB)
+                    }
+
+                    if (factor != 1.0) {
+                        RenderUtil.popScissor()
+                    }
+
+                    y += (moduleHeight.value * module.animation.getAnimationFactor()).toFloat()
                 }
             }
 
-            Corner.BOTTOM_LEFT -> {
-                RenderUtil.pushScissor(x.toDouble() + 1, (y + height) - modules.size * 13.0, scissorWidth, modules.size * 13.0)
-                var yOffset = y + height - 13f
+            Anchor.BOTTOM_RIGHT -> {
+                val x = (scaledResolution.scaledWidth - margin.value) - 2 - if (sideBar.value) 2f else 0f
+                var y = scaledResolution.scaledHeight - margin.value - moduleHeight.value - if (topBar.value) 1f else 0f
 
-                for (value in modules) {
-                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
-                    val width = FontUtil.getStringWidth(moduleData) + 4
+                modules.forEachIndexed { index, module ->
+                    val data = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                    val info = module.name + TextFormatting.GRAY + data
 
-                    val origin = x - FontUtil.getStringWidth(moduleData)
+                    val factor = module.animation.getAnimationFactor().coerceAtLeast(0.0)
 
-                    if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, 0x70000000)
+                    if (factor != 1.0) {
+                        RenderUtil.pushScissor(
+                            (x - FontUtil.getStringWidth(info) * if (scissorSlide.value) factor else 1.0) - 3,
+                            y.toDouble() - 1,
+                            FontUtil.getStringWidth(info) + 7.0,
+                            ((moduleHeight.value + 1) * factor) + 3
+                        )
                     }
-                    else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width + 1F, 14f, -12171706, -7039852)
-                        RenderUtil.drawRect((origin + width * value.key.animation.getAnimationFactor()).toFloat(), yOffset, width, 13f, -7039852)
+
+                    val colourRGB: Int = when (colour.value) {
+                        Colour.VALUE -> colourValue.value.rgb
+
+                        Colour.GRADIENT -> {
+                            val indexHue = index.toFloat() / modules.size.toFloat()
+                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                        }
+
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
                     }
 
-                    FontUtil.drawStringWithShadow(moduleData, (origin + FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    RenderUtil.drawRect(
+                        x - FontUtil.getStringWidth(info) - 2,
+                        y,
+                        FontUtil.getStringWidth(info) + 4 + if (sideBar.value) 1f else 0f,
+                        (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
-                    yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
+                        if (backgroundSync.value) {
+                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                        } else {
+                            background.value.rgb
+                        }
+                    )
+
+                    FontUtil.drawStringWithShadow(
+                        info,
+                        x - FontUtil.getStringWidth(info),
+                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                    )
+
+                    if (index == 0 && topBar.value) {
+                        RenderUtil.drawRect(
+                            x - FontUtil.getStringWidth(info) - 2 - (if (moduleBar.value) 1 else 0),
+                            y + moduleHeight.value,
+                            FontUtil.getStringWidth(info) + (if (moduleBar.value) 5 else 4) + if (sideBar.value) 2 else 0,
+                            1f,
+                            colourRGB
+                        )
+                    }
+
+                    if (moduleBar.value) {
+                        RenderUtil.drawRect(
+                            x - FontUtil.getStringWidth(info) - 3,
+                            y,
+                            1f,
+                            moduleHeight.value,
+                            colourRGB
+                        )
+                    }
+
+                    if (connect.value)  {
+                        val width = if (index == modules.size - 1) {
+                            FontUtil.getStringWidth(info) + 5
+                        } else {
+                            val module = modules[index + 1]
+                            val nextData = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                            val nextInfo = module.name + TextFormatting.GRAY + nextData
+
+                            (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
+                        }
+
+                        RenderUtil.drawRect(x - FontUtil.getStringWidth(info) - 2, y, width, 1f, colourRGB)
+                    }
+
+                    if (sideBar.value) {
+                        RenderUtil.drawRect(x + 3f, y, 1f, moduleHeight.value, colourRGB)
+                    }
+
+                    if (factor != 1.0) {
+                        RenderUtil.popScissor()
+                    }
+
+                    y -= (moduleHeight.value * module.animation.getAnimationFactor()).toFloat()
                 }
             }
 
-            Corner.BOTTOM_RIGHT -> {
-                RenderUtil.pushScissor(((x + width) - scissorWidth), (y + height) - modules.size * 13.0, scissorWidth + 1, modules.size * 13.0)
+            Anchor.BOTTOM_LEFT -> {
+                val x = margin.value - if (sideBar.value) 1f else 2f
+                var y = scaledResolution.scaledHeight - margin.value - moduleHeight.value - if (topBar.value) 1f else 0f
 
-                var yOffset = y + height - 13f
+                modules.forEachIndexed { index, module ->
+                    val data = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                    val info = module.name + TextFormatting.GRAY + data
 
-                for (value in modules) {
-                    val moduleData = value.key.name + (if (value.key.getData() == "") "" else " $GRAY[$WHITE${value.key.getData()}$GRAY]")
+                    val factor = module.animation.getAnimationFactor().coerceAtLeast(0.0)
 
-                    val origin = x + width
-
-                    if (background.value == Background.Normal) {
-                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, 0x70000000)
+                    if (factor != 1.0) {
+                        RenderUtil.pushScissor(
+                            x + 3.0,
+                            y.toDouble() - 1,
+                            FontUtil.getStringWidth(info) + 7.0,
+                            ((moduleHeight.value + 1) * factor) + 3
+                        )
                     }
-                    else if (background.value == Background.Win98) {
-                        RenderUtil.drawHorizontalGradientRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat() - 1F, yOffset, FontUtil.getStringWidth(moduleData) + 1F, 14f, -7039852, -12171706)
-                        RenderUtil.drawRect((origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset, FontUtil.getStringWidth(moduleData), 13f, -7039852)
+
+                    val colourRGB: Int = when (colour.value) {
+                        Colour.VALUE -> colourValue.value.rgb
+
+                        Colour.GRADIENT -> {
+                            val indexHue = index.toFloat() / modules.size.toFloat()
+                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                        }
+
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
                     }
 
-                    FontUtil.drawStringWithShadow(moduleData, (origin - FontUtil.getStringWidth(moduleData) * value.key.animation.getAnimationFactor()).toFloat(), yOffset + 2, arrayListColour.value.getColour(yOffset.toInt() / 13))
+                    RenderUtil.drawRect(
+                        x + 2,
+                        y,
+                        FontUtil.getStringWidth(info) + 4 + if (sideBar.value) 1f else 0f,
+                        (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
-                    yOffset -= 13f * value.key.animation.getAnimationFactor().toFloat()
+                        if (backgroundSync.value) {
+                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                        } else {
+                            background.value.rgb
+                        }
+                    )
+
+                    FontUtil.drawStringWithShadow(
+                        info,
+                        x + 4,
+                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                    )
+
+                    if (index == 0 && topBar.value) {
+                        RenderUtil.drawRect(
+                            x + (if (moduleBar.value) 2 else 1) + if (sideBar.value) -1 else 0,
+                            y + moduleHeight.value,
+                            FontUtil.getStringWidth(info) + (if (moduleBar.value) 5 else 4) + if (sideBar.value) 1 else 1,
+                            1f,
+                            colourRGB
+                        )
+                    }
+
+                    if (moduleBar.value) {
+                        RenderUtil.drawRect(
+                            x + 6 + FontUtil.getStringWidth(info),
+                            y,
+                            1f,
+                            moduleHeight.value,
+                            colourRGB
+                        )
+                    }
+
+                    if (connect.value)  {
+                        val width = if (index == modules.size - 1) {
+                            FontUtil.getStringWidth(info) + 5
+                        } else {
+                            val module = modules[index + 1]
+                            val nextData = if (dataMode.value != Data.OFF) if (module.getData().isNotEmpty()) " " + dataMode.value.first + module.getData() + dataMode.value.second else "" else ""
+                            val nextInfo = module.name + TextFormatting.GRAY + nextData
+
+                            (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
+                        }
+
+                        RenderUtil.drawRect(x + FontUtil.getStringWidth(info) + 6 - width + if (sideBar.value) 0f else 1f, y, width, 1f, colourRGB)
+                    }
+
+                    if (sideBar.value) {
+                        RenderUtil.drawRect(x + 1, y, 1f, moduleHeight.value, colourRGB)
+                    }
+
+                    if (factor != 1.0) {
+                        RenderUtil.popScissor()
+                    }
+
+                    y -= (moduleHeight.value * module.animation.getAnimationFactor()).toFloat()
                 }
             }
         }
-
-        RenderUtil.popScissor()
     }
 
-    override var width = 56F
-    override var height = 56F
-
-    @Suppress("unused")
-    enum class ArrayListColour(private val colour: (Int) -> Int) {
-        /**
-         * The colour is slightly different for each module in the array list
-         */
-        RAINBOW_WAVE({
-            ColourUtil.getRainbow(
-                Colours.mainColour.rainbowSpeed, Colours.mainColour.rainbowSaturation / 100f, it
-            )
-        }),
-
-        /**
-         * Permanent static colour
-         */
-        SYNC({ Colours.mainColour.value.rgb });
-
-        /**
-         * Gets the colour
-         *
-         * @param addition The addition to the colour
-         * @return The colour
-         */
-        fun getColour(addition: Int) = colour.invoke(addition)
-
+    enum class Anchor {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_RIGHT,
+        BOTTOM_LEFT
     }
 
-    enum class Corner {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+    enum class Data(val first: String, val second: String) {
+        PLAIN("", ""),
+        SQUARE("[", "]"),
+        CURLY("{", "}"),
+        OFF("", "")
     }
 
-    @Suppress("unused")
-    enum class Background {
-        NONE, Normal, Win98
+    enum class Colour {
+        VALUE,
+        GRADIENT,
+        WAVE
     }
 
 }

@@ -213,7 +213,7 @@ class StorageManager {
             try {
                 val settings = json.getJSONObject(it.name)
 
-                if (settings.has("x") && settings.has("y")) {
+                if (settings.has("x") && settings.has("y") && it is HUDModule) {
                     it as HUDModule
                     it.x = settings.getInt("x").toFloat()
                     it.y = settings.getInt("y").toFloat()

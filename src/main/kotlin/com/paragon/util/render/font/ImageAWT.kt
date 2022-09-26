@@ -99,7 +99,7 @@ class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
         var width = 0
 
         text.toCharArray().forEach {
-            var index = if (it.code < charLocations.size) it.code else 3
+            val index = if (it.code < charLocations.size) it.code else 3
 
             val fontChar = charLocations[index]
 
@@ -242,7 +242,7 @@ class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
         graphics.font = font
         graphics.color = Color.WHITE
-        graphics.drawString(ch.toString(), 3, 1 + metrics.ascent)
+        graphics.drawString(ch.toString(), 0, metrics.ascent)
 
         return fontImage
     }

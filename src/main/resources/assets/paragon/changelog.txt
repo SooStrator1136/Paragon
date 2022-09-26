@@ -9,3 +9,6 @@ Moved most GUIs to plugins
 Added LogoutSpots
 Updated Nametags
 Added MainMenu module
+Rewrote ArrayList
+Added tooltips to Paragon GUI style
+Added IgnoreActive to ViewModel

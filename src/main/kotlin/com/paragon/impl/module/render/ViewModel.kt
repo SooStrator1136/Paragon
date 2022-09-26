@@ -6,6 +6,7 @@ import com.paragon.impl.setting.Setting
 import com.paragon.bus.listener.Listener
 import com.paragon.impl.module.Category
 import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.util.EnumHand
 import net.minecraft.util.EnumHandSide
 
 /**
@@ -93,16 +94,27 @@ object ViewModel : Module("ViewModel", Category.RENDER, "Changes the way items a
         "ScaleZ", 1f, 0f, 1f, 0.01f
     ) describedBy "The Z scale of the item" subOf offhand
 
+    private val ignoreActive = Setting("IgnoreActive", true) describedBy "Do not apply ViewModel on the hand you are currently using an item in"
+
     @Listener
     fun onRenderItemPre(event: RenderItemEvent.Pre) {
         if (event.side == EnumHandSide.LEFT && offhand.value) {
+            if (minecraft.player.isHandActive && minecraft.player.activeHand == EnumHand.OFF_HAND && ignoreActive.value) {
+                return
+            }
+
             // Translate offhand item according to x, y, and z settings
             GlStateManager.translate(offhandX.value, offhandY.value, offhandZ.value)
 
             // Scale offhand
             GlStateManager.scale(offhandScaleX.value, offhandScaleY.value, offhandScaleZ.value)
         }
+
         if (event.side == EnumHandSide.RIGHT && main.value) {
+            if (minecraft.player.isHandActive && minecraft.player.activeHand == EnumHand.MAIN_HAND && ignoreActive.value) {
+                return
+            }
+
             // Translate main hand item according to x, y, and z settings
             GlStateManager.translate(mainX.value, mainY.value, mainZ.value)
 

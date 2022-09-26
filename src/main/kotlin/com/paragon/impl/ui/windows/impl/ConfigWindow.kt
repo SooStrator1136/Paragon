@@ -69,7 +69,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         RenderUtil.drawRect(x, y, width, height, 0x90000000.toInt())
 
         if (ClickGUI.blur.value) {
-            BlurUtil.blur(x.toInt(), y.toInt(), (width * openAnimation.getAnimationFactor()).toInt(), (height * openAnimation.getAnimationFactor()).toInt(), ClickGUI.intensity.value.toInt())
+            BlurUtil.blur(x.toInt(), y.toInt(), (width * openAnimation.getAnimationFactor()).toInt(), (height * openAnimation.getAnimationFactor()).toInt(), ClickGUI.intensity.value)
         }
 
         RenderUtil.drawRect(x, y, width * openAnimation.getAnimationFactor().toFloat(), grabbableHeight, Colours.mainColour.value.rgb)

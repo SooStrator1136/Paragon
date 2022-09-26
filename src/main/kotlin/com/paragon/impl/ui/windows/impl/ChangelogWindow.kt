@@ -46,7 +46,7 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
         RenderUtil.drawRect(x, y, (width * openAnimation.getAnimationFactor()).toFloat(), (height * openAnimation.getAnimationFactor()).toFloat(), 0x90000000.toInt())
 
         if (ClickGUI.blur.value) {
-            BlurUtil.blur(x.toInt(), y.toInt(), (width * openAnimation.getAnimationFactor()).toInt(), (height * openAnimation.getAnimationFactor()).toInt(), ClickGUI.intensity.value.toInt())
+            BlurUtil.blur(x.toInt(), y.toInt(), (width * openAnimation.getAnimationFactor()).toInt(), (height * openAnimation.getAnimationFactor()).toInt(), ClickGUI.intensity.value)
         }
 
         RenderUtil.pushScissor(x.toDouble(), y.toDouble(), width * openAnimation.getAnimationFactor(), 16 * openAnimation.getAnimationFactor())

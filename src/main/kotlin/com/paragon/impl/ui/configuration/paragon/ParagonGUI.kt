@@ -8,6 +8,7 @@ import com.paragon.impl.ui.configuration.paragon.panel.CategoryPanel
 import com.paragon.impl.ui.configuration.shared.Panel
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.module.Category
+import com.paragon.util.render.RenderUtil
 import com.paragon.util.string.StringUtil
 
 /**
@@ -51,10 +52,10 @@ object ParagonGUI : GuiImplementation() {
             val width = FontUtil.getStringWidth(text) + 6f
             val height = 18f + (text.split(System.lineSeparator()).size * FontUtil.getHeight())
 
-            BlurUtil.blur(mouseX + 8, mouseY + 8, width.toInt(), height.toInt(), ClickGUI.intensity.value.toInt())
+            BlurUtil.blur(mouseX + 8, mouseY + 8, width.toInt(), height.toInt(), 100f)
 
-            FontUtil.drawStringWithShadow(tooltipName, mouseX + 9f, mouseY + 12f, -1)
-            FontUtil.drawStringWithShadow(text, mouseX + 9f, mouseY + 12f + FontUtil.getHeight(), -1)
+            FontUtil.drawStringWithShadow(tooltipName, mouseX + 11f, mouseY + 12f, -1)
+            FontUtil.drawStringWithShadow(text, mouseX + 11f, mouseY + 12f + FontUtil.getHeight(), -1)
         }
     }
 

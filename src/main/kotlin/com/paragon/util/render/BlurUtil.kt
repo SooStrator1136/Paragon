@@ -43,23 +43,32 @@ object BlurUtil : Wrapper {
         lastScaleHeight = heightFactor
     }
 
-    private fun updateUniforms(intensity: Int) {
-        (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("Radius")!!.set(intensity.toFloat())
-        (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("Radius")!!.set(intensity.toFloat())
-        (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("BlurDir")!![2f] = 1f
-        (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("BlurDir")!![1f] = 1f
-    }
-
-    fun blur(x: Int, y: Int, width: Int, height: Int, intensity: Int) {
+    fun blur(x: Int, y: Int, width: Int, height: Int, intensity: Float) {
         val resolution = ScaledResolution(minecraft)
         val currentScale = resolution.scaleFactor
         checkScale(currentScale, resolution.scaledWidth, resolution.scaledHeight)
 
         if (OpenGlHelper.isFramebufferEnabled()) {
-            RenderUtil.pushScissor(x.toDouble(), (y + 1).toDouble(), width.toDouble(), (height - 1).toDouble())
-            updateUniforms(intensity)
+            RenderUtil.pushScissor(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+
+            (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("Radius")!!.set(
+                intensity
+            )
+
+            (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("Radius")!!.set(
+                intensity
+            )
+
+            (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("BlurDir")!!.set(
+                0f, 1f
+            )
+
+            (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("BlurDir")!!.set(
+                0f, 1f
+            )
 
             framebuffer!!.bindFramebuffer(true)
+
             blurShader!!.render(minecraft.renderPartialTicks)
 
             minecraft.framebuffer.bindFramebuffer(true)
@@ -70,6 +79,7 @@ object BlurUtil : Wrapper {
             GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE)
 
             framebuffer!!.framebufferRenderExt(minecraft.displayWidth, minecraft.displayHeight, false)
+
             GlStateManager.disableBlend()
             glScalef(currentScale.toFloat(), currentScale.toFloat(), 0f)
         }

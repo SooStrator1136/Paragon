@@ -1,7 +1,6 @@
 package com.paragon.impl.ui.configuration.paragon.panel
 
 import com.paragon.Paragon
-import com.paragon.util.render.font.FontUtil
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.client.ClickGUI
 import com.paragon.impl.ui.configuration.paragon.module.ModuleElement
@@ -10,6 +9,7 @@ import com.paragon.impl.ui.util.Click
 import com.paragon.util.render.ColourUtil.fade
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.RenderUtil.renderItemStack
+import com.paragon.util.render.font.FontUtil
 import com.paragon.util.string.StringUtil
 import com.paragon.util.toBinary
 import me.surge.animation.Animation
@@ -45,6 +45,9 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
     }
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
+        tooltipName = ""
+        tooltipContent = ""
+
         super.draw(mouseX, mouseY, mouseDelta)
 
         RenderUtil.drawRect(
@@ -74,8 +77,6 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
 
         FontUtil.drawStringWithShadow(StringUtil.getFormattedText(category), x + titleOffset, y + 6.5f, -1)
 
-        RenderUtil.drawRect(x, y + height, width, 320 * expand.getAnimationFactor().toFloat(), Color(32, 32, 46).rgb)
-
         var moduleHeight = 0f
 
         modules.forEach {
@@ -89,8 +90,7 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
         if (mouseDelta != 0 && mouseX in x..x + width && mouseY in y + height..y + height + 320f) {
             scrollFactor = if (mouseDelta > 0) (240f / Minecraft.getDebugFPS()) else -((240f / Minecraft.getDebugFPS()))
             scrollFactor *= 3
-        }
-        else {
+        } else {
             if (scrollFactor != 0f) {
                 scrollFactor *= 0.9f
 
@@ -115,6 +115,13 @@ class CategoryPanel(val category: Category, x: Float, y: Float, width: Float, he
         }
 
         RenderUtil.popScissor()
+
+        // oh GOD idek
+        if (moduleHeight >= 320.0) {
+            var thumbHeight = (320f / moduleHeight) * 320
+
+            // RenderUtil.drawRect(x + width - 1, y + height - scroll, 1f, thumbHeight, -1)
+        }
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, click: Click) {
