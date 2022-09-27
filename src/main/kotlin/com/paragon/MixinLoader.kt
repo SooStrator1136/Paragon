@@ -14,7 +14,7 @@ class MixinLoader : IFMLLoadingPlugin {
         Mixins.addConfiguration("mixins.paragon.json")
         MixinEnvironment.getDefaultEnvironment().obfuscationContext = "searge"
 
-        com.paragon.Paragon.Companion.INSTANCE.logger.info("Mixins loaded with context '${MixinEnvironment.getDefaultEnvironment().obfuscationContext}'")
+        Paragon.INSTANCE.logger.info("Mixins loaded with context '${MixinEnvironment.getDefaultEnvironment().obfuscationContext}'")
     }
 
     override fun getASMTransformerClass(): Array<String> = emptyArray()

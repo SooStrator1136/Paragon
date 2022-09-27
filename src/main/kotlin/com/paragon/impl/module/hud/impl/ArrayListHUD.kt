@@ -170,20 +170,12 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         Colour.VALUE -> colourValue.value.rgb
 
                         Colour.GRADIENT -> {
-                            val indexHue = index.toFloat() / modules.size.toFloat()
+                            val indexHue = index / modules.size.toFloat()
                             Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
                         }
 
                         Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
                     }
-
-                    /* BlurUtil.blur(
-                        (x - (FontUtil.getStringWidth(info) - 2) * module.animation.getAnimationFactor()).toInt(),
-                        y.toInt() + 1,
-                        (FontUtil.getStringWidth(info) + 4 + if (sideBar.value) 1f else 0f).toInt(),
-                        (moduleHeight.value * module.animation.getAnimationFactor()).toInt(),
-                        5f
-                    ) */
 
                     RenderUtil.drawRect(
                         x - FontUtil.getStringWidth(info) - 2,
