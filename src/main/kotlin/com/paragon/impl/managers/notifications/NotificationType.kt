@@ -5,8 +5,8 @@ import java.awt.Color
 /**
  * @author Surge
  */
-enum class NotificationType(val colour: Int) {
+enum class NotificationType(val colour: Color) {
 
-    INFO(Color.GREEN.rgb), WARNING(Color.ORANGE.rgb), ERROR(Color.RED.rgb)
+    INFO(Color.GREEN), WARNING(Color.ORANGE), ERROR(Color.RED)
 
 }

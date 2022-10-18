@@ -5,6 +5,7 @@ import com.paragon.impl.module.hud.impl.Notifications
 import com.paragon.util.render.RenderUtil
 import me.surge.animation.Animation
 import me.surge.animation.Easing
+import java.awt.Color
 
 /**
  * @author Surge
@@ -25,9 +26,11 @@ class Notification(val message: String, val type: NotificationType) {
         val width = FontUtil.getStringWidth(message) + 10
         val x = Notifications.x
 
-        RenderUtil.pushScissor(Notifications.x + (150 - 150) * animation.getAnimationFactor(), y.toDouble(), 300 * animation.getAnimationFactor(), 45.0)
-        RenderUtil.drawRect(x + 150 - width / 2f, y, width, 30f, -0x70000000)
-        FontUtil.renderCenteredString(message, x + 150, y + 15f, -1, true)
+        RenderUtil.pushScissor(Notifications.x, y, 300 * animation.getAnimationFactor().toFloat(), 45f)
+        RenderUtil.drawRect(x + 150 - width / 2f, y, width, 30f, Color(0, 0, 0, 150))
+
+        FontUtil.drawCenteredString(message, x + 150, y + 15f, Color.WHITE, true)
+
         RenderUtil.drawRect(x + 150 - width / 2f, y, width, 1f, type.colour)
         RenderUtil.popScissor()
 

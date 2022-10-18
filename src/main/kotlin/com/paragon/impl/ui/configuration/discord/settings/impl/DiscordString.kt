@@ -9,6 +9,7 @@ import com.paragon.impl.ui.util.Click
 import com.paragon.util.calculations.Timer
 import net.minecraft.util.ChatAllowedCharacters
 import org.lwjgl.input.Keyboard
+import java.awt.Color
 
 /**
  * @author SooStrator1136
@@ -26,13 +27,13 @@ class DiscordString(private val setting: Setting<String>) : DiscordSetting(setti
         super.render(mouseX, mouseY)
 
         FontUtil.drawStringWithShadow(
-            setting.value, bounds.x.toFloat(), bounds.y + FontUtil.getHeight() + 1F, -1
+            setting.value, bounds.x.toFloat(), bounds.y + FontUtil.getHeight() + 1F, Color.WHITE
         )
 
         if (typing) {
             if (cursorTimer.hasMSPassed(500.0)) {
                 FontUtil.drawStringWithShadow(
-                    "|", bounds.x + FontUtil.getStringWidth(setting.value) + 1F, bounds.y + FontUtil.getHeight() + 1F, -1
+                    "|", bounds.x + FontUtil.getStringWidth(setting.value) + 1F, bounds.y + FontUtil.getHeight() + 1F, Color.WHITE
                 )
 
                 if (cursorTimer.hasMSPassed(1000.0)) {

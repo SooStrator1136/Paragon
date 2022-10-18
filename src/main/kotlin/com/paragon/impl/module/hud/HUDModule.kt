@@ -35,8 +35,6 @@ abstract class HUDModule(name: String, description: String) : Module(name, Categ
             val newX = mouseX - lastX
             val newY = mouseY - lastY
 
-            println(sr.scaleFactor)
-
             x = newX
             y = newY
 

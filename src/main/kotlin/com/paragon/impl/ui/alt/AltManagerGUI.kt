@@ -1,14 +1,11 @@
 package com.paragon.impl.ui.alt
 
 import com.paragon.Paragon
-import com.paragon.util.render.font.FontUtil.drawStringWithShadow
-import com.paragon.util.render.font.FontUtil.renderCenteredString
 import com.paragon.impl.managers.alt.Alt
 import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.util.Wrapper
-import com.paragon.util.render.RenderUtil.drawRect
-import com.paragon.util.render.RenderUtil.popScissor
-import com.paragon.util.render.RenderUtil.pushScissor
+import com.paragon.util.render.RenderUtil
+import com.paragon.util.render.font.FontUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiMainMenu
@@ -16,6 +13,7 @@ import net.minecraft.client.gui.GuiMultiplayer
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.text.TextFormatting
 import org.lwjgl.input.Mouse
+import java.awt.Color
 import java.io.IOException
 
 class AltManagerGUI : GuiScreen(), Wrapper {
@@ -43,20 +41,17 @@ class AltManagerGUI : GuiScreen(), Wrapper {
 
         scroll()
 
-        drawRect(0f, 150F, width.toFloat(), 200f, -0x70000000)
+        RenderUtil.drawRect(0f, 150F, width.toFloat(), 200f, Color(0, 0, 0, 200))
 
-        pushScissor(0.0, 150.0, width.toDouble(), 200.0)
+        RenderUtil.pushScissor(0f, 150f, width.toFloat(), 200f)
 
         altEntries.forEach { it.drawAlt(width) }
 
-        popScissor()
+        RenderUtil.popScissor()
 
-        drawStringWithShadow(
-            "Logged in as " + TextFormatting.GRAY + (Minecraft.getMinecraft() as IMinecraft).hookGetSession().username, 5f, 30f, -1
-        )
-
-        renderCenteredString("Paragon Alt Manager", width / 2f, 75f, -1, false)
-        renderCenteredString(renderString, width / 2f, 100f, -1, false)
+        FontUtil.drawStringWithShadow("Logged in as " + TextFormatting.GRAY + (Minecraft.getMinecraft() as IMinecraft).hookGetSession().username, 5f, 30f, Color.WHITE)
+        FontUtil.drawCenteredString("Paragon Alt Manager", width / 2f, 75f, Color.WHITE, false)
+        FontUtil.drawCenteredString(renderString, width / 2f, 100f, Color.WHITE, false)
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

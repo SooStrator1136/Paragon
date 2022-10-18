@@ -1,7 +1,7 @@
 package com.paragon.impl.module.hud
 
 import com.paragon.Paragon
-import com.paragon.util.render.RenderUtil.drawRect
+import com.paragon.util.render.RenderUtil
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import java.awt.Color
@@ -19,12 +19,8 @@ class HUDEditorGUI : GuiScreen() {
 
         val scaledResolution = ScaledResolution(mc)
 
-        drawRect(
-            scaledResolution.scaledWidth / 2f - 0.5f, 0f, 1f, scaledResolution.scaledHeight.toFloat(), Color(255, 255, 255, 100).rgb
-        )
-        drawRect(
-            0f, scaledResolution.scaledHeight / 2f - 0.5f, scaledResolution.scaledWidth.toFloat(), 1f, Color(255, 255, 255, 100).rgb
-        )
+        RenderUtil.drawRect(scaledResolution.scaledWidth / 2f - 0.5f, 0f, 1f, scaledResolution.scaledHeight.toFloat(), Color(255, 255, 255, 100))
+        RenderUtil.drawRect(0f, scaledResolution.scaledHeight / 2f - 0.5f, scaledResolution.scaledWidth.toFloat(), 1f, Color(255, 255, 255, 100))
 
         Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it is HUDModule && it.isEnabled }.forEach {
             (it as HUDModule).updateComponent(mouseX, mouseY)

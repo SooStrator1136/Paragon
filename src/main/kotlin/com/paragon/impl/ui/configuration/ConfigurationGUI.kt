@@ -29,7 +29,7 @@ class ConfigurationGUI : GuiScreen() {
 
         Paragon.INSTANCE.taskbar.tooltip = ""
 
-        if (currentGUI != ClickGUI.getGUI()) {
+        if ((currentGUI?.javaClass ?: return) != ClickGUI.getGUI().javaClass) {
             currentGUI = ClickGUI.getGUI()
             currentGUI?.initGui()
         }

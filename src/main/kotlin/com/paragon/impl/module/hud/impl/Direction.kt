@@ -16,7 +16,7 @@ object Direction : HUDModule("Direction", "Displays what direction you are facin
 
     override fun render() {
         FontUtil.drawStringWithShadow(
-            "Direction " + TextFormatting.WHITE + StringUtil.getFormattedText(PlayerUtil.direction) + " [" + PlayerUtil.getAxis(PlayerUtil.direction) + "]", x, y, Colours.mainColour.value.rgb
+            "Direction " + TextFormatting.WHITE + StringUtil.getFormattedText(PlayerUtil.direction) + " [" + PlayerUtil.getAxis(PlayerUtil.direction) + "]", x, y, Colours.mainColour.value
         )
     }
 

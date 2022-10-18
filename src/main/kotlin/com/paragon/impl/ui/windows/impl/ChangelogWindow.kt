@@ -7,8 +7,10 @@ import com.paragon.impl.module.client.Colours
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.ui.windows.Window
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.toColour
 import net.minecraft.util.math.MathHelper
 import org.apache.commons.io.IOUtils
+import java.awt.Color
 import java.nio.charset.StandardCharsets
 import kotlin.math.max
 
@@ -41,32 +43,61 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
 
         val changelogHeight = changelog.size * FontUtil.getHeight();
 
-        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (changelogHeight - height + grabbableHeight + 6).toDouble()), 0.0).toFloat()
+        scroll = MathHelper.clamp(
+            scroll.toDouble(),
+            -max(0.0, (changelogHeight - height + grabbableHeight + 6).toDouble()),
+            0.0
+        ).toFloat()
 
-        RenderUtil.drawRect(x, y, (width * openAnimation.getAnimationFactor()).toFloat(), (height * openAnimation.getAnimationFactor()).toFloat(), 0x90000000.toInt())
+        RenderUtil.drawRect(
+            x,
+            y + grabbableHeight,
+            (width * openAnimation.getAnimationFactor()).toFloat(),
+            ((height - grabbableHeight) * openAnimation.getAnimationFactor()).toFloat(),
+            Color(0, 0, 0, 120)
+        )
 
         if (ClickGUI.blur.value) {
-            BlurUtil.blur(x.toInt(), y.toInt(), (width * openAnimation.getAnimationFactor()).toInt(), (height * openAnimation.getAnimationFactor()).toInt(), ClickGUI.intensity.value)
+            BlurUtil.blur(
+                x,
+                y + grabbableHeight,
+                (width * openAnimation.getAnimationFactor()).toFloat(),
+                ((height - grabbableHeight) * openAnimation.getAnimationFactor()).toFloat(),
+                ClickGUI.intensity.value
+            )
         }
 
-        RenderUtil.pushScissor(x.toDouble(), y.toDouble(), width * openAnimation.getAnimationFactor(), 16 * openAnimation.getAnimationFactor())
+        RenderUtil.drawRect(
+            x,
+            y,
+            width * openAnimation.getAnimationFactor().toFloat(),
+            grabbableHeight,
+            Colours.mainColour.value
+        )
 
-        RenderUtil.drawRect(x, y, width * openAnimation.getAnimationFactor().toFloat(), grabbableHeight, Colours.mainColour.value.rgb)
-        FontUtil.drawStringWithShadow("Changelog", x + 3, y + 4, -1)
+        RenderUtil.pushScissor(
+            x,
+            y,
+            width * openAnimation.getAnimationFactor().toFloat(),
+            16 * openAnimation.getAnimationFactor().toFloat()
+        )
 
-        RenderUtil.drawRect((x + ((width - 16f) * openAnimation.getAnimationFactor())).toFloat(), y, 16f, grabbableHeight, 0x90000000.toInt())
-        FontUtil.font.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.font.getStringWidth("X") / 2f), y + 1.5f, -1)
+        FontUtil.drawStringWithShadow("Changelog", x + 3, y + 4, Color.WHITE)
+
+        RenderUtil.scaleTo((x + width - 7f) - FontUtil.font.getStringWidth("X"), y + 1, 0f, 0.7, 0.7, 0.7) {
+            FontUtil.drawIcon(FontUtil.Icon.CLOSE, (x + width - 7f) - FontUtil.font.getStringWidth("X"), y + 1, Color.WHITE)
+        }
 
         RenderUtil.popScissor()
 
-        RenderUtil.drawBorder(x + 0.5f, y + 0.5f, ((width - 1) * openAnimation.getAnimationFactor()).toFloat(), ((height - 1) * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value.rgb)
+        RenderUtil.drawBorder(x, y, (width * openAnimation.getAnimationFactor()).toFloat(), (height * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value)
 
-        RenderUtil.pushScissor(x.toDouble(), y.toDouble() + 17, width.toDouble() * openAnimation.getAnimationFactor(), (height.toDouble() - 18) * openAnimation.getAnimationFactor())
+        RenderUtil.pushScissor(x, y + 17, width * openAnimation.getAnimationFactor().toFloat(), (height - 18) * openAnimation.getAnimationFactor().toFloat())
 
         var offset = grabbableHeight + 5f
 
         changelog.forEach {
-            FontUtil.drawStringWithShadow(it, x + 5, y + offset + scroll, -1)
+            FontUtil.drawStringWithShadow(it, x + 5, y + offset + scroll, Color.WHITE)
 
             offset += FontUtil.getHeight()
         }

@@ -13,3 +13,4 @@ Rewrote ArrayList
 Added tooltips to Paragon GUI style
 Added IgnoreActive to ViewModel
 Slightly updated ShulkerViewer
+Remade default GUI

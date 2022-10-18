@@ -13,6 +13,7 @@ import com.paragon.util.entity.EntityUtil
 import com.paragon.util.player.EntityFakePlayer
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
+import com.paragon.util.toColour
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.client.renderer.GlStateManager
@@ -54,9 +55,9 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
             return
         }
 
-        minecraft.world.playerEntities.forEach { player ->
+        for (player in minecraft.world.playerEntities) {
             if (player === minecraft.player) {
-               return@forEach
+               continue
             }
 
             val interpolated = EntityUtil.getInterpolatedPosition(player).addVector(0.0, 2.2, 0.0)
@@ -66,13 +67,16 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                 val builder = StringBuilder().append(player.name)
 
                 if (health.value) {
-                    builder.append(" ").append(EntityUtil.getTextColourFromEntityHealth(player))
+                    builder.append(" ")
+                        .append(EntityUtil.getTextColourFromEntityHealth(player))
                         .append(EntityUtil.getEntityHealth(player).roundToInt())
                 }
 
                 if (ping.value && minecraft.connection != null) {
                     if (player is EntityFakePlayer) {
-                        builder.append(" ").append(TextFormatting.GRAY).append(-1)
+                        builder.append(" ")
+                            .append(TextFormatting.GRAY)
+                            .append(-1)
                     } else {
                         minecraft.connection!!.getPlayerInfo(player.uniqueID)
 
@@ -83,28 +87,30 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                 }
 
                 if (pops.value) {
-                    builder.append(" ").append(TextFormatting.GOLD).append("-")
+                    builder.append(" ")
+                        .append(TextFormatting.GOLD)
+                        .append("-")
                         .append(Paragon.INSTANCE.popManager.getPops(player))
                 }
 
                 val string = builder.toString()
 
                 val width = FontUtil.getStringWidth(string) + 4
-                val height = FontUtil.getHeight() + if (healthBar.value) 2 else 0 + if (!ClientFont.isEnabled) 2 else 0
+                val height = FontUtil.getHeight() + if (healthBar.value) 2 else 0
 
                 glTranslated(-(width / 2.0), 0.0, 0.0)
 
-                RenderUtil.drawRect(0f, 0f, width, height, 0x90000000.toInt())
-                RenderUtil.drawBorder(0f, 0f, width, height, 1f, Color.BLACK.rgb)
-                FontUtil.drawStringWithShadow(string, 1f, 1f, -1)
+                RenderUtil.drawRect(0f, 0f, width, height, Color(0, 0, 0, 130))
+                RenderUtil.drawBorder(0f, 0f, width, height, 1f, Color.BLACK)
+                FontUtil.drawStringWithShadow(string, 1f, 1f, Color.WHITE)
 
                 if (healthBar.value) {
                     // 3/4 will be normal health, 1/4 will be gapple
                     val healthWidth = ((width - 1) * 0.75f) * (player.health / player.maxHealth)
                     val gappleWidth = ((width - 1) * 0.25f) * (player.absorptionAmount / 16)
 
-                    RenderUtil.drawRect(0.5f, height - 1.5f, healthWidth, 1f, Color(0, 255, 0).rgb)
-                    RenderUtil.drawRect((width - 1) * 0.75f, height - 1.5f, gappleWidth, 1f, Color(255, 255, 0).rgb)
+                    RenderUtil.drawRect(0.5f, height - 1.5f, healthWidth, 1f, Color(0, 255, 0))
+                    RenderUtil.drawRect((width - 1) * 0.75f, height - 1.5f, gappleWidth, 1f, Color(255, 255, 0))
                 }
 
                 val items = arrayListOf<ItemStack>()
@@ -121,7 +127,7 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                     items.add(player.heldItemMainhand)
                 }
 
-                var itemX = width / 2 // (width / 2) - ((items.size * 18f) / 2)
+                var itemX = (width / 2f) - ((items.size * 18f) / 2f)
 
                 items.forEach {
                     glPushMatrix()
@@ -178,11 +184,11 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                     var y = -22f
 
                     itemInfo.forEach { info ->
-                        var colour = -1
+                        var colour = Color.WHITE
                         if (info.contains("%")) {
                             val green = (it.maxDamage.toFloat() - it.itemDamage.toFloat()) / it.maxDamage.toFloat()
                             val red = 1 - green
-                            colour = Color(red, green, 0f, 1f).rgb
+                            colour = Color(red, green, 0f, 1f)
                         }
 
                         FontUtil.drawStringWithShadow(info, itemX * 2, y * 2, colour)
@@ -194,10 +200,6 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                     itemX += 18f
                 }
             }
-
-            /* GlStateManager.enableDepth()
-            GlStateManager.disableBlend()
-            glPopMatrix() */
         }
     }
 

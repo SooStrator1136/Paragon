@@ -12,8 +12,8 @@ import java.nio.charset.Charset
  * @author Surge, Cosmos
  */
 open class Shader(path: String?) : Wrapper {
-    private var program = 0
-    private var uniforms: MutableMap<String, Int>? = null
+    var program = 0
+    var uniforms: MutableMap<String, Int>? = null
     var time = 0.0
 
     init {

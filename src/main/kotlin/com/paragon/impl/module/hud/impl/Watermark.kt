@@ -25,7 +25,7 @@ object Watermark : HUDModule("Watermark", "Renders the client's name on screen")
     override fun render() {
         when (display.value) {
             Display.TEXT -> drawStringWithShadow(
-                "Paragon " + TextFormatting.GRAY + Paragon.modVersion, x, y, Colours.mainColour.value.rgb
+                "Paragon " + TextFormatting.GRAY + Paragon.modVersion, x, y, Colours.mainColour.value
             )
 
             Display.IMAGE -> {

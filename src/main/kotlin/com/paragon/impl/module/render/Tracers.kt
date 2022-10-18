@@ -8,6 +8,7 @@ import com.paragon.util.entity.EntityUtil
 import com.paragon.util.entity.EntityUtil.isEntityAllowed
 import com.paragon.util.entity.EntityUtil.isMonster
 import com.paragon.util.entity.EntityUtil.isPassive
+import com.paragon.util.glColour
 import com.paragon.util.render.ColourUtil
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityEnderCrystal
@@ -93,7 +94,7 @@ object Tracers : Module("Tracers", Category.RENDER, "Draws lines to entities in 
                 glLineWidth(0.1f)
 
                 // Colour line
-                ColourUtil.setColour(getColourByEntity(entity).rgb)
+                getColourByEntity(entity).glColour()
 
                 // Set line width
                 glLineWidth(lineWidth.value)

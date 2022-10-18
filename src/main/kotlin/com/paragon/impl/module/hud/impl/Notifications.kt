@@ -16,8 +16,8 @@ object Notifications : HUDModule("Notifications", "Where the notifications will 
 
     override fun render() {
         if (minecraft.currentScreen is HUDEditorGUI) {
-            drawRect(x, y, width, height, Color(23, 23, 23, 200).rgb)
-            FontUtil.drawStringWithShadow("[Notifications]", x + 5, y + 5, -1)
+            drawRect(x, y, width, height, Color(23, 23, 23, 200))
+            FontUtil.drawStringWithShadow("[Notifications]", x + 5, y + 5, Color.WHITE)
         }
 
         else {

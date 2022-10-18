@@ -61,7 +61,7 @@ object TargetHUD : HUDModule("TargetHUD", "") {
         @Suppress("SENSELESS_COMPARISON") if (target == null || minecraft.anyNull || minecraft.connection == null || minecraft.connection!!.getPlayerInfo(target!!.uniqueID) == null) {
             if (minecraft.currentScreen is HUDEditorGUI) { // Dummy for positioning
                 RenderUtil.drawRect(
-                    x, y, width, height, Color(255, 255, 255, 100).rgb
+                    x, y, width, height, Color(255, 255, 255, 100)
                 )
             }
             return
@@ -69,11 +69,11 @@ object TargetHUD : HUDModule("TargetHUD", "") {
 
         scaleTo(x, y, 0F, scale.value, scale.value, 1.0) {
             RenderUtil.drawRoundedRect(
-                x.toDouble(), y.toDouble(), 38.0 + FontUtil.getStringWidth(target!!.name) + 5.0, 38.0, 5.0, 5.0, 5.0, 5.0, color.value.rgb
+                x, y, 38f + FontUtil.getStringWidth(target!!.name) + 5f, 38f, 5f, color.value
             )
 
             FontUtil.drawStringWithShadow(
-                target!!.name, x + 38, y + 5, -1
+                target!!.name, x + 38, y + 5, Color.WHITE
             )
 
             Minecraft.getMinecraft().textureManager.bindTexture(minecraft.connection!!.getPlayerInfo(target!!.uniqueID).locationSkin)
@@ -87,9 +87,9 @@ object TargetHUD : HUDModule("TargetHUD", "") {
 
             val healthFactor = (target!! as EntityLivingBase).health / (target as EntityLivingBase).maxHealth
 
-            RenderUtil.drawRoundedRect(x + 38.0, y + 16.0, 50.0, 7.0, 3.0, 3.0, 3.0, 3.0, Color(50, 50, 55).rgb)
+            RenderUtil.drawRoundedRect(x + 38f, y + 16f, 50f, 7f, 3f, Color(50, 50, 55))
             RenderUtil.drawRoundedRect(
-                x + 38.0, y + 16.0, 50.0 * healthFactor, 7.0, 3.0, 3.0, 3.0, 3.0, Color(255 - (255 * healthFactor).toInt(), (255 * healthFactor).toInt(), 0).rgb
+                x + 38f, y + 16f, 50f * healthFactor, 7f, 3f, Color(255 - (255 * healthFactor).toInt(), (255 * healthFactor).toInt(), 0)
             )
         }
     }

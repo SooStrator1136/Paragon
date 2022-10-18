@@ -40,7 +40,7 @@ object ColourUtil {
     @JvmStatic
     fun Color.integrateAlpha(alpha: Float): Color {
         return Color(
-            this.red / 255F, this.green / 255F, this.blue / 255F, alpha / 255F
+            this.red / 255F, this.green / 255F, this.blue / 255F, alpha.coerceIn(0f, 255f) / 255F
         )
     }
 

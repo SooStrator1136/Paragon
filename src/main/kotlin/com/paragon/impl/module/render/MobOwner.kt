@@ -7,6 +7,7 @@ import com.paragon.util.render.RenderUtil.drawNametagText
 import net.minecraft.entity.IEntityOwnable
 import net.minecraft.entity.passive.AbstractHorse
 import net.minecraft.util.math.Vec3d
+import java.awt.Color
 
 object MobOwner : Module("MobOwner", Category.RENDER, "Displays the owner of a mob") {
 
@@ -23,11 +24,11 @@ object MobOwner : Module("MobOwner", Category.RENDER, "Displays the owner of a m
 
                 if (it is AbstractHorse) {
                     drawNametagText(
-                        "Name: " + name + ", Speed: " + (it as AbstractHorse).aiMoveSpeed + ", Owner: " + owner, Vec3d(vec.x, vec.y + 1.25, vec.z), -1
+                        "Name: " + name + ", Speed: " + (it as AbstractHorse).aiMoveSpeed + ", Owner: " + owner, Vec3d(vec.x, vec.y + 1.25, vec.z), Color.WHITE
                     )
                 }
                 else {
-                    drawNametagText("Name: $name, Owner: $owner", Vec3d(vec.x, vec.y + 1.25, vec.z), -1)
+                    drawNametagText("Name: $name, Owner: $owner", Vec3d(vec.x, vec.y + 1.25, vec.z), Color.WHITE)
                 }
             }
         }

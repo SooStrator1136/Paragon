@@ -44,13 +44,13 @@ object ShulkerViewer : Module("ShulkerViewer", Category.RENDER, "Preview shulker
             val y = event.y - 31
 
             // Background
-            drawRect(event.x + 2, y, 166f, 71f, Color(23, 23, 25).rgb)
+            drawRect(event.x + 2, y, 166f, 71f, Color(23, 23, 25))
 
             // Border
-            drawBorder(event.x + 2, y, 166f, 71f, 2f, Colours.mainColour.value.rgb)
+            drawBorder(event.x + 2, y, 166f, 71f, 2f, Colours.mainColour.value)
 
             // Shulker box name
-            drawStringWithShadow(event.stack.displayName, event.x + 6, y + 3.5f, -1)
+            drawStringWithShadow(event.stack.displayName, event.x + 6, y + 3.5f, Color.WHITE)
 
             // Item X and Y
             var itemX = event.x + 5
@@ -62,7 +62,7 @@ object ShulkerViewer : Module("ShulkerViewer", Category.RENDER, "Preview shulker
             // Iterate through items
             for (item in items) {
                 // Background thing
-                drawRect(itemX - 0.5f, itemY - 0.5f, 17f, 17f, Color(35, 35, 38).rgb)
+                drawRect(itemX - 0.5f, itemY - 0.5f, 17f, 17f, Color(35, 35, 38))
 
                 // Render stack
                 renderItemStack(item, itemX, itemY, true)

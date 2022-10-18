@@ -9,6 +9,7 @@ import com.paragon.impl.ui.configuration.discord.IRenderable
 import com.paragon.impl.module.Category
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.RenderUtil.scaleTo
+import com.paragon.util.string.StringUtil
 import me.surge.animation.Animation
 import net.minecraft.item.ItemStack
 import java.awt.Color
@@ -33,7 +34,7 @@ class DiscordCategory(val category: Category) : IRenderable {
         //Render the basic icon with its background
         run {
             @Suppress("IncorrectFormatting") RenderUtil.drawRoundedRect(
-                rect.x.toDouble(), rect.y.toDouble(), rect.width.toDouble(), rect.height.toDouble(), 15.0, 15.0, 15.0, 15.0, if (isHovered) GuiDiscord.channelBarBackground.brighter().rgb else GuiDiscord.channelBarBackground.rgb
+                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 15f, if (isHovered) GuiDiscord.channelBarBackground.brighter() else GuiDiscord.channelBarBackground
             )
 
             val scaleFac = rect.width / 18.0
@@ -47,14 +48,15 @@ class DiscordCategory(val category: Category) : IRenderable {
             nameAnimation.state = isHovered
 
             RenderUtil.pushScissor(
-                rect.x + rect.width - 2.0, rect.y.toDouble(), (getStringWidth(category.Name) + 6) * nameAnimation.getAnimationFactor(), rect.height.toDouble()
+                rect.x + rect.width - 2f, rect.y.toFloat(), (getStringWidth(StringUtil.getFormattedText(category)) + 6) * nameAnimation.getAnimationFactor().toFloat(), rect.height.toFloat()
             )
 
             RenderUtil.drawRoundedRect(
-                (rect.x + rect.width).toDouble() - 2.0, (rect.centerY - (FontUtil.getHeight() / 2)), getStringWidth(category.Name).toDouble() + 6, FontUtil.getHeight().toDouble(), 5.0, 5.0, 5.0, 5.0, GuiDiscord.categoryTextBackground.rgb
+                (rect.x + rect.width) - 2f, (rect.centerY - (FontUtil.getHeight() / 2f)).toFloat(), getStringWidth(StringUtil.getFormattedText(category)) + 6f, FontUtil.getHeight(), 5f, GuiDiscord.categoryTextBackground
             )
+
             drawStringWithShadow(
-                category.Name, (rect.x + rect.width).toFloat(), (rect.centerY - 4).toFloat(), Color.WHITE.rgb
+                StringUtil.getFormattedText(category), (rect.x + rect.width).toFloat(), (rect.centerY - 4).toFloat(), Color.WHITE
             )
 
             RenderUtil.popScissor()

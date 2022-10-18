@@ -72,7 +72,7 @@ object SettingsBar : IRenderable {
         }
 
         RenderUtil.drawRect(
-            rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), GuiDiscord.chatBackground.rgb
+            rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), GuiDiscord.chatBackground
         )
 
         //Render module toggle button
@@ -81,23 +81,23 @@ object SettingsBar : IRenderable {
                 toggleAnimation.state = !ModuleBar.focusedModule!!.isEnabled
 
                 RenderUtil.drawRect(
-                    toggleRect.x.toFloat(), toggleRect.y.toFloat(), toggleRect.width.toFloat(), toggleRect.height.toFloat(), GuiDiscord.chatBackground.rgb
+                    toggleRect.x.toFloat(), toggleRect.y.toFloat(), toggleRect.width.toFloat(), toggleRect.height.toFloat(), GuiDiscord.chatBackground
                 )
                 RenderUtil.drawRect(
-                    toggleRect.x + 10F, toggleRect.y + (FontUtil.getHeight() * 3.2F), toggleRect.width - 20F, 2F, GuiDiscord.mediaSize.rgb
+                    toggleRect.x + 10F, toggleRect.y + (FontUtil.getHeight() * 3.2F), toggleRect.width - 20F, 2F, GuiDiscord.mediaSize
                 )
 
                 FontUtil.drawStringWithShadow(
-                    ModuleBar.focusedModule!!.name, toggleRect.x + 10F, toggleRect.y + FontUtil.getHeight(), GuiDiscord.channelTextColor.rgb
+                    ModuleBar.focusedModule!!.name, toggleRect.x + 10F, toggleRect.y + FontUtil.getHeight(), GuiDiscord.channelTextColor
                 )
 
                 RenderUtil.drawRoundedRect(
-                    toggleButton.x.toDouble(), toggleButton.y.toDouble(), toggleButton.width.toDouble(), toggleButton.height.toDouble(), toggleButton.height / 2.0, toggleButton.height / 2.0, toggleButton.height / 2.0, toggleButton.height / 2.0, GuiDiscord.channelHoveredColor.rgb
+                    toggleButton.x.toFloat(), toggleButton.y.toFloat(), toggleButton.width.toFloat(), toggleButton.height.toFloat(), toggleButton.height / 2f, GuiDiscord.channelHoveredColor
                 )
 
                 //Indicator whether the module is toggled or not
                 RenderUtil.drawRoundedRect(
-                    toggleButton.x + ((toggleButton.width / 2.0) * toggleAnimation.getAnimationFactor()), toggleButton.y.toDouble(), toggleButton.width / 2.0, toggleButton.height.toDouble(), toggleButton.height / 2.0, toggleButton.height / 2.0, toggleButton.height / 2.0, toggleButton.height / 2.0, if (ModuleBar.focusedModule!!.isEnabled) Color.GREEN.rgb else Color.RED.rgb
+                    toggleButton.x + ((toggleButton.width / 2f) * toggleAnimation.getAnimationFactor()).toFloat(), toggleButton.y.toFloat(), toggleButton.width / 2f, toggleButton.height.toFloat(), toggleButton.height / 2f, if (ModuleBar.focusedModule!!.isEnabled) Color.GREEN else Color.RED
                 )
             }
         }
@@ -113,7 +113,7 @@ object SettingsBar : IRenderable {
             }
 
             RenderUtil.pushScissor(
-                rect.x.toDouble(), rect.y + 1.0, rect.width.toDouble(), rect.height.toDouble()
+                rect.x.toFloat(), rect.y + 1f, rect.width.toFloat(), rect.height.toFloat()
             )
 
             shownSettings.forEach {

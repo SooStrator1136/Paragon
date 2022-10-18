@@ -13,7 +13,7 @@ import net.minecraft.util.text.TextFormatting
 object Ping : HUDModule("Ping", "Displays your ping in ms") {
 
     override fun render() {
-        FontUtil.drawStringWithShadow("Ping: " + TextFormatting.WHITE + getPing() + "ms", x, y, Colours.mainColour.value.rgb)
+        FontUtil.drawStringWithShadow("Ping: " + TextFormatting.WHITE + getPing() + "ms", x, y, Colours.mainColour.value)
     }
 
     override var width = FontUtil.getStringWidth("Ping: " + getPing() + "ms")

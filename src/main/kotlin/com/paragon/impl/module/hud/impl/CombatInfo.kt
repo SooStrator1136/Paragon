@@ -16,11 +16,11 @@ object CombatInfo : HUDModule("CombatInfo", "Shows what combat modules are enabl
 
     override fun render() {
         drawStringWithShadow(
-            "KA " + if (Aura.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled", x, y, Colours.mainColour.value.rgb
+            "KA " + if (Aura.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled", x, y, Colours.mainColour.value
         )
 
         drawStringWithShadow(
-            "CA " + if (AutoCrystal.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled", x, y + FontUtil.getHeight(), Colours.mainColour.value.rgb
+            "CA " + if (AutoCrystal.isEnabled) TextFormatting.GREEN.toString() + "Enabled" else TextFormatting.RED.toString() + "Disabled", x, y + FontUtil.getHeight(), Colours.mainColour.value
         )
     }
 

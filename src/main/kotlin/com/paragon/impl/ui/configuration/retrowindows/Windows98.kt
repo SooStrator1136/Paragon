@@ -52,11 +52,11 @@ class Windows98 : GuiImplementation() {
             val width = FontUtil.getStringWidth(text) + 6f
             val height = 18f + (text.split(System.lineSeparator()).size * FontUtil.getHeight())
 
-            RenderUtil.drawRect(mouseX + 8f, mouseY + 8f, width, height, Color(70, 70, 70).rgb)
-            RenderUtil.drawRect(mouseX + 7f, mouseY + 7f, width, height, Color(148, 148, 148).rgb)
+            RenderUtil.drawRect(mouseX + 8f, mouseY + 8f, width, height, Color(70, 70, 70))
+            RenderUtil.drawRect(mouseX + 7f, mouseY + 7f, width, height, Color(148, 148, 148))
 
-            FontUtil.drawStringWithShadow(tooltipName, mouseX + 9f, mouseY + 12f, -1)
-            FontUtil.drawStringWithShadow(text, mouseX + 9f, mouseY + 12f + FontUtil.getHeight(), -1)
+            FontUtil.drawStringWithShadow(tooltipName, mouseX + 9f, mouseY + 12f, Color.WHITE)
+            FontUtil.drawStringWithShadow(text, mouseX + 9f, mouseY + 12f + FontUtil.getHeight(), Color.WHITE)
         }
     }
 

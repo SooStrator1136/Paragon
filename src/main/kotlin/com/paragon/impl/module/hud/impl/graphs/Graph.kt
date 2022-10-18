@@ -3,6 +3,7 @@ package com.paragon.impl.module.hud.impl.graphs
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.font.FontUtil
 import com.paragon.util.calculations.MathsUtil
+import com.paragon.util.glColour
 import com.paragon.util.render.RenderUtil
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.opengl.GL11
@@ -32,22 +33,22 @@ class Graph(
         run {
             if (background != Background.NONE) {
                 RenderUtil.drawRect(
-                    bounds.x, bounds.y, bounds.width, bounds.height, backgroundColor().rgb
+                    bounds.x, bounds.y, bounds.width, bounds.height, backgroundColor()
                 )
             }
             if (background == Background.ALL) {
                 RenderUtil.drawBorder(
-                    bounds.x, bounds.y, bounds.width, bounds.height, 1F, borderColor().rgb
+                    bounds.x, bounds.y, bounds.width, bounds.height, 1F, borderColor()
                 )
             }
 
             FontUtil.drawStringWithShadow(
-                name, bounds.x + 1F, bounds.y + bounds.height - (FontUtil.getHeight() + 1F), -1
+                name, bounds.x + 1F, bounds.y + bounds.height - (FontUtil.getHeight() + 1F), Color.WHITE
             )
 
             if (background == Background.ALL) {
                 RenderUtil.drawRect(
-                    bounds.x, bounds.y + bounds.height - (FontUtil.getHeight() + 3F), bounds.width, 1F, borderColor().rgb
+                    bounds.x, bounds.y + bounds.height - (FontUtil.getHeight() + 3F), bounds.width, 1F, borderColor()
                 )
             }
         }
@@ -61,7 +62,9 @@ class Graph(
             GL11.glLineWidth(1f)
 
             GL11.glBegin(GL11.GL_LINE_STRIP)
-            ColourUtil.setColour(graphColor().rgb)
+
+            graphColor.invoke().glColour()
+
             points.forEachIndexed { i, percentage ->
                 GL11.glVertex2f(
                     graphRect.x + i, (graphRect.y + (graphRect.height - MathsUtil.getPercentOf(

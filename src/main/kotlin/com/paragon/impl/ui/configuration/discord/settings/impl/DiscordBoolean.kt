@@ -9,6 +9,7 @@ import com.paragon.impl.module.client.Colours
 import com.paragon.impl.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.impl.ui.util.Click
 import org.lwjgl.util.Rectangle
+import java.awt.Color
 
 /**
  * @author SooStrator1136
@@ -29,7 +30,7 @@ class DiscordBoolean(private val setting: Setting<Boolean>) : DiscordSetting(set
         )
 
         FontUtil.drawStringWithShadow(
-            setting.value.toString(), bounds.x.toFloat(), bounds.y + FontUtil.getHeight() + 1F, if (stateRect.contains(mouseX, mouseY)) Colours.mainColour.value.rgb else -1
+            setting.value.toString(), bounds.x.toFloat(), bounds.y + FontUtil.getHeight() + 1F, if (stateRect.contains(mouseX, mouseY)) Colours.mainColour.value else Color.WHITE
         )
     }
 

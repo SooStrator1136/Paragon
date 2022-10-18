@@ -6,6 +6,7 @@ import com.paragon.util.player.PlayerUtil
 import com.paragon.util.render.ColourUtil.setColour
 import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
+import com.paragon.util.glColour
 import net.minecraft.util.math.Vec3d
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
@@ -91,7 +92,7 @@ object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behin
             val renderPosY = minecraft.renderManager.viewerPosY
             val renderPosZ = minecraft.renderManager.viewerPosZ
 
-            setColour(if (rainbow.value) pos.colour.rgb else colour.value.rgb)
+            (if (rainbow.value) pos.colour else colour.value).glColour()
 
             glVertex3d(pos.position.x - renderPosX, pos.position.y - renderPosY, pos.position.z - renderPosZ)
         }

@@ -89,23 +89,23 @@ object Keystrokes : HUDModule("Keystrokes", "Keystrokes duh?") {
             animation.state = Keyboard.isKeyDown(keyCode)
 
             RenderUtil.pushScissor(
-                bounds.x.toDouble(), bounds.y.toDouble(), bounds.width.toDouble(), bounds.height.toDouble()
+                bounds.x, bounds.y, bounds.width, bounds.height
             )
 
             RenderUtil.drawRect(
-                bounds.x, bounds.y, bounds.width, bounds.height, backgroundColor.value.rgb
+                bounds.x, bounds.y, bounds.width, bounds.height, backgroundColor.value
             )
 
             if (animation.getAnimationFactor() > 0.0) {
                 RenderUtil.drawCircle(
                     bounds.centerX, bounds.centerY, Point2D.distance(
                         bounds.centerX, bounds.centerY, bounds.x.toDouble(), bounds.y.toDouble()
-                    ) * animation.getAnimationFactor(), circleColor.value.rgb
+                    ) * animation.getAnimationFactor(), circleColor.value
                 )
             }
 
-            FontUtil.renderCenteredString(
-                Keyboard.getKeyName(keyCode), bounds.centerX.toFloat(), bounds.centerY.toFloat(), -1, true
+            FontUtil.drawCenteredString(
+                Keyboard.getKeyName(keyCode), bounds.centerX.toFloat(), bounds.centerY.toFloat(), Color.WHITE, true
             )
 
             RenderUtil.popScissor()

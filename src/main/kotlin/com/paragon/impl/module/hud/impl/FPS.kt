@@ -14,7 +14,7 @@ import net.minecraft.util.text.TextFormatting
 object FPS : HUDModule("FPS", "Renders your FPS on screen") {
 
     override fun render() {
-        FontUtil.drawStringWithShadow(getText(), x, y, Colours.mainColour.value.rgb)
+        FontUtil.drawStringWithShadow(getText(), x, y, Colours.mainColour.value)
     }
 
     override var width = FontUtil.getStringWidth(getText())

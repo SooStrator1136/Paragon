@@ -72,7 +72,7 @@ class ParagonMenu : GuiScreen() {
 
         frameBuffer!!.bindFramebuffer(false)
 
-        RenderUtil.drawRect(0f, 0f, width.toFloat(), height.toFloat(), -1)
+        RenderUtil.drawRect(0f, 0f, width.toFloat(), height.toFloat(), Color.WHITE)
 
         frameBuffer!!.unbindFramebuffer()
         mc.framebuffer.bindFramebuffer(true)
@@ -97,30 +97,30 @@ class ParagonMenu : GuiScreen() {
         GlStateManager.popMatrix()
         GlStateManager.popAttrib()
 
-        RenderUtil.drawRect(0f, -70 + (100f * buttonSlide.getAnimationFactor().toFloat()), width.toFloat(), 70f, Color(0, 0, 0, 150).rgb)
+        RenderUtil.drawRect(0f, -70 + (100f * buttonSlide.getAnimationFactor().toFloat()), width.toFloat(), 70f, Color(0, 0, 0, 150))
 
         RenderUtil.scaleTo((width / 2f) - FontUtil.fontLarge.getStringWidth("Paragon"), (-180 + (180 * buttonSlide.getAnimationFactor()).toFloat()) + 35f, 0f, 2.0, 2.0, 0.0) {
-            FontUtil.fontLarge.drawString("Paragon", (width / 2f) - FontUtil.fontLarge.getStringWidth("Paragon"), (-180 + (180 * buttonSlide.getAnimationFactor()).toFloat()) + 35f, -1, false)
+            FontUtil.fontLarge.drawString("Paragon", (width / 2f) - FontUtil.fontLarge.getStringWidth("Paragon"), (-180 + (180 * buttonSlide.getAnimationFactor()).toFloat()) + 35f, Color.WHITE, false)
         }
 
-        FontUtil.font.drawString(Paragon.modVersion, width / 2f - FontUtil.font.getStringWidth("Paragon") / 2f, -20 + 103f * buttonSlide.getAnimationFactor().toFloat(), -1, false)
+        FontUtil.font.drawString(Paragon.modVersion, width / 2f - FontUtil.font.getStringWidth("Paragon") / 2f, -20 + 103f * buttonSlide.getAnimationFactor().toFloat(), Color.WHITE, false)
 
         settingHover.state = mouseX.toFloat() in 0f..70f && mouseY.toFloat() in 30f..100f
 
         RenderUtil.scaleTo(15f, -50 + (95f * buttonSlide.getAnimationFactor().toFloat()), 0f, 2.0, 2.0, 2.0) {
-            FontUtil.drawIcon(FontUtil.Icon.GEAR, 15f, -50 + (95f * buttonSlide.getAnimationFactor().toFloat()), settingHover.getColour().rgb)
+            FontUtil.drawIcon(FontUtil.Icon.GEAR, 15f, -50 + (95f * buttonSlide.getAnimationFactor().toFloat()), settingHover.getColour())
         }
 
         exitHover.state = mouseX.toFloat() in width - 25 - FontUtil.icons.getStringWidth(FontUtil.Icon.CLOSE.char.toString()).toFloat() * 4..width.toFloat() && mouseY.toFloat() in 30f..100f
 
         RenderUtil.scaleTo(width - FontUtil.icons.getStringWidth(FontUtil.Icon.CLOSE.char.toString()).toFloat() * 4, -50 + (95f * buttonSlide.getAnimationFactor().toFloat()), 0f, 2.0, 2.0, 2.0) {
-            FontUtil.drawIcon(FontUtil.Icon.CLOSE, width - FontUtil.icons.getStringWidth(FontUtil.Icon.CLOSE.char.toString()).toFloat() * 4, -50 + (95f * buttonSlide.getAnimationFactor().toFloat()), exitHover.getColour().rgb)
+            FontUtil.drawIcon(FontUtil.Icon.CLOSE, width - FontUtil.icons.getStringWidth(FontUtil.Icon.CLOSE.char.toString()).toFloat() * 4, -50 + (95f * buttonSlide.getAnimationFactor().toFloat()), exitHover.getColour())
         }
 
         githubHover.state = mouseX.toFloat() in 0f..34f && mouseY.toFloat() in height - FontUtil.icons.height - 20..height.toFloat()
 
         RenderUtil.scaleTo((-25 + (40 * buttonSlide.getAnimationFactor())).toFloat() + 5f, height - FontUtil.icons.height - 15, 0f, 1.5, 1.5, 0.0) {
-            FontUtil.drawIcon(FontUtil.Icon.GITHUB, (-25 + (40 * buttonSlide.getAnimationFactor())).toFloat() - 5f, height - FontUtil.icons.height - 15, githubHover.getColour().rgb)
+            FontUtil.drawIcon(FontUtil.Icon.GITHUB, (-25 + (40 * buttonSlide.getAnimationFactor())).toFloat() - 5f, height - FontUtil.icons.height - 15, githubHover.getColour())
         }
 
         singleplayerButton.x = ((width * buttonSlide.getAnimationFactor()).toFloat() / 2f) - 66
@@ -137,7 +137,7 @@ class ParagonMenu : GuiScreen() {
 
         whiteFade.state = true
         buttonSlide.state = whiteFade.getAnimationFactor() == 1.0
-        RenderUtil.drawRect(0f, 0f, width.toFloat(), height.toFloat(), whiteFade.getColour().rgb)
+        RenderUtil.drawRect(0f, 0f, width.toFloat(), height.toFloat(), whiteFade.getColour())
     }
 
     override fun onGuiClosed() {
@@ -170,13 +170,13 @@ class ParagonMenu : GuiScreen() {
         fun render(mouseX: Int, mouseY: Int) {
             hover.state = mouseX.toFloat() in x..x + 64 && mouseY.toFloat() in y..y + 64
 
-            RenderUtil.drawRoundedRect(x.toDouble(), y - (16 * hover.getAnimationFactor()), 64.0, 64.0, 15.0, 15.0, 15.0, 15.0, 0x90000000.toInt())
+            RenderUtil.drawRoundedRect(x, y - (16 * hover.getAnimationFactor()).toFloat(), 64f, 64f, 3f, Color(0, 0, 0, 150))
 
             RenderUtil.scaleTo(x + 10 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), 0f, 2.0, 2.0, 0.0) {
-                FontUtil.drawIcon(icon, x + 11 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), -1)
+                FontUtil.drawIcon(icon, x + 11 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), Color.WHITE)
             }
 
-            FontUtil.font.drawString(name, (x + 32) - (FontUtil.font.getStringWidth(name) / 2), y + 64 - (16 * hover.getAnimationFactor()).toFloat(), Color(255, 255, 255, (255 * hover.getAnimationFactor()).toInt().coerceAtLeast(5)).rgb, false)
+            FontUtil.font.drawString(name, (x + 32) - (FontUtil.font.getStringWidth(name) / 2), y + 64 - (16 * hover.getAnimationFactor()).toFloat(), Color(255, 255, 255, (255 * hover.getAnimationFactor()).toInt().coerceAtLeast(5)), false)
         }
 
         fun mouseClicked(mouseX: Int, mouseY: Int) {

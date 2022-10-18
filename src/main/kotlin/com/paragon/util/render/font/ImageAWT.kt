@@ -38,6 +38,7 @@ class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
 
     fun drawString(text: String, x: Double, y: Double, colour: Int) {
         glPushMatrix()
+        glEnable(GL_BLEND)
         glScaled(0.25, 0.25, 0.25)
         glTranslated(x * 2.0, y * 2.0, 0.0)
 

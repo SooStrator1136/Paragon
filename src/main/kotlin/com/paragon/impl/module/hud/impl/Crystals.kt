@@ -5,6 +5,7 @@ import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.RenderUtil.drawBorder
 import com.paragon.util.render.RenderUtil.drawRect
 import com.paragon.util.render.RenderUtil.renderItemStack
+import com.paragon.util.toColour
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.MathHelper
@@ -12,8 +13,8 @@ import net.minecraft.util.math.MathHelper
 object Crystals : HUDModule("Crystals", "Displays the amount of crystals in your inventory") {
 
     override fun render() {
-        drawRect(x, y, width, height, 0x70000000)
-        drawBorder(x, y, width, height, 1f, Colours.mainColour.value.rgb)
+        drawRect(x, y, width, height, 0x70000000.toColour())
+        drawBorder(x, y, width, height, 1f, Colours.mainColour.value)
         val itemStack = ItemStack(Items.END_CRYSTAL, crystals)
         renderItemStack(itemStack, x + width - 18, y + 2, true)
     }

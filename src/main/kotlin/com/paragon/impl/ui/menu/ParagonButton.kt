@@ -3,11 +3,13 @@ package com.paragon.impl.ui.menu
 import com.paragon.util.render.font.FontUtil
 import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.toColour
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.renderer.GlStateManager
+import java.awt.Color
 
 /**
  * @author Surge
@@ -31,16 +33,16 @@ class ParagonButton(buttonId: Int, x: Int, y: Int, widthIn: Int, heightIn: Int, 
             )
 
             RenderUtil.drawRect(
-                x.toFloat(), y.toFloat(), width.toFloat(), height.toFloat(), if (hovered) -0x70000000 else -0x80000000
+                x.toFloat(), y.toFloat(), width.toFloat(), height.toFloat(), if (hovered) 0x70000000.toColour() else 0x80000000.toInt().toColour()
             )
 
             RenderUtil.drawRect(
-                x + (width / 2f - width / 2f * animation.getAnimationFactor().toFloat()), (y + height - 1).toFloat(), (width * animation.getAnimationFactor()).toFloat(), 1f, Colours.mainColour.value.rgb
+                x + (width / 2f - width / 2f * animation.getAnimationFactor().toFloat()), (y + height - 1).toFloat(), (width * animation.getAnimationFactor()).toFloat(), 1f, Colours.mainColour.value
             )
 
             mouseDragged(mc, mouseX, mouseY)
 
-            FontUtil.renderCenteredString(displayString, x + width / 2f, y + (height / 2f) + 1.5f, 0xFFFFFF, true)
+            FontUtil.drawCenteredString(displayString, x + width / 2f, y + (height / 2f) + 1.5f, Color.WHITE, true)
         }
     }
 

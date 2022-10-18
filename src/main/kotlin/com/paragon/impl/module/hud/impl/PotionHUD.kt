@@ -10,6 +10,7 @@ import com.paragon.impl.module.hud.HUDModule
 import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.RenderUtil.scaleTo
+import com.paragon.util.toColour
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
@@ -49,7 +50,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
         if (activeEffects.isEmpty()) {
             if (minecraft.currentScreen is HUDEditorGUI) { //Dummy for positioning
                 RenderUtil.drawRect(
-                    x, y, width, height, Color(255, 255, 255, 100).rgb
+                    x, y, width, height, Color(255, 255, 255, 100)
                 )
             }
             return
@@ -76,8 +77,8 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                         }
 
                         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
-                        minecraft.textureManager.bindTexture(GuiContainer.INVENTORY_BACKGROUND) //Idfk but this is needed to the icon renders properly
-                        FontUtil.drawStringWithShadow("", x, y, -1) //Why? Idfk it makes no sense
+                        minecraft.textureManager.bindTexture(GuiContainer.INVENTORY_BACKGROUND) // Idfk but this is needed to the icon renders properly
+                        FontUtil.drawStringWithShadow("", x, y, Color.WHITE) //Why? Idfk it makes no sense
 
                         if (potion.hasStatusIcon()) {
                             val iconIndex = potion.statusIconIndex
@@ -92,10 +93,10 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                         }
 
                         val effectName = I18n.format(potion.name) + " " + I18n.format("enchantment.level.${effect.amplifier + 1}")
-                        FontUtil.drawStringWithShadow(effectName, (x + 22), (effectY + 6).toFloat(), 16777215)
+                        FontUtil.drawStringWithShadow(effectName, (x + 22), (effectY + 6).toFloat(), 16777215.toColour())
 
                         FontUtil.drawStringWithShadow(
-                            Potion.getPotionDurationString(effect, 1F), (x + 22), (effectY + 6 + 10).toFloat(), 8355711
+                            Potion.getPotionDurationString(effect, 1F), (x + 22), (effectY + 6 + 10).toFloat(), 8355711.toColour()
                         )
 
                         effectY += entryHeight
@@ -125,10 +126,10 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
 
                         if (showBg.value) {
                             RenderUtil.drawRect(
-                                x, effectY, maxWidth, FontUtil.getHeight() + 1F, color.integrateAlpha(100F).rgb
+                                x, effectY, maxWidth, FontUtil.getHeight() + 1F, color.integrateAlpha(100F)
                             )
                             RenderUtil.drawBorder(
-                                x, effectY, maxWidth, FontUtil.getHeight() + 1F, 1F, color.darker().rgb
+                                x, effectY, maxWidth, FontUtil.getHeight() + 1F, 1F, color.darker()
                             )
                         }
 
@@ -137,7 +138,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
                             GlStateManager.disableLighting()
                             minecraft.textureManager.bindTexture(GuiContainer.INVENTORY_BACKGROUND) //Idfk but this is needed to the icon renders properly
-                            FontUtil.drawStringWithShadow("", x, y, -1) //How? Idfk it makes no sense
+                            FontUtil.drawStringWithShadow("", x, y, Color.WHITE) //How? Idfk it makes no sense
 
                             if (effect.potion.hasStatusIcon()) {
                                 val iconIndex = effect.potion.statusIconIndex
@@ -150,7 +151,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                         FontUtil.drawStringWithShadow(
                             I18n.format(effect.potion.name) + " " + I18n.format(
                                 "enchantment.level.${effect.amplifier + 1}"
-                            ) + " ${Potion.getPotionDurationString(effect, 1F)}", x + FontUtil.getHeight() + 1F, effectY + 1F, if (syncTextColor.value) color.rgb else -1
+                            ) + " ${Potion.getPotionDurationString(effect, 1F)}", x + FontUtil.getHeight() + 1F, effectY + 1F, if (syncTextColor.value) color else Color.WHITE
                         )
 
                         effectY += FontUtil.getHeight() + offset.value + 2F

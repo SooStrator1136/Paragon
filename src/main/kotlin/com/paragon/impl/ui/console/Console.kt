@@ -36,28 +36,26 @@ class Console(private val title: String, val width: Float, val height: Float) : 
     fun draw(mouseX: Int, mouseY: Int) {
         val scaledResolution = ScaledResolution(minecraft)
 
-        val x = (scaledResolution.scaledWidth / 2.0) - (width / 2.0)
-        val y = (scaledResolution.scaledHeight / 2.0) - (height / 2.0)
+        val x = (scaledResolution.scaledWidth / 2f) - (width / 2f)
+        val y = (scaledResolution.scaledHeight / 2f) - (height / 2f)
 
-        RenderUtil.drawRoundedRect(x, y, width.toDouble(), height.toDouble(), 5.0, 5.0, 5.0, 5.0, Color(20, 20, 25).rgb)
-        RenderUtil.drawRoundedOutline(
-            x, y, width.toDouble(), height.toDouble(), 5.0, 5.0, 5.0, 5.0, 2f, Colours.mainColour.value.rgb
-        )
+        RenderUtil.drawRoundedRect(x - 2, y - 2, width + 4, height + 4, 1.5f, Color(20, 20, 25))
+        RenderUtil.drawRoundedOutline(x, y, width, height, 2f, 2f, Colours.mainColour.value)
 
-        FontUtil.drawStringWithShadow(title, (x + 5f).toFloat(), (y + 5f).toFloat(), -1)
+        FontUtil.drawStringWithShadow(title, x + 5f, y + 5f, Color.WHITE)
 
         lines.reverse()
 
-        RenderUtil.drawRect(x.toFloat(), (y + 17.5f).toFloat(), width, 1f, Colours.mainColour.value.rgb)
+        RenderUtil.drawRect(x, y + 17.5f, width, 1f, Colours.mainColour.value)
 
         RenderUtil.pushScissor(
-            ((scaledResolution.scaledWidth / 2f) - (width / 2f)).toDouble(), (scaledResolution.scaledHeight / 2f) - (height / 2f) + 20.0, width.toDouble(), (height - 26.5f).toDouble()
+            (scaledResolution.scaledWidth / 2f) - (width / 2f), (scaledResolution.scaledHeight / 2f) - (height / 2f) + 20f, width, (height - 26.5f)
         )
 
         var lineY = (scaledResolution.scaledHeight / 2f) - (height / 2f) + height - 26
 
         for (string in lines) {
-            FontUtil.drawStringWithShadow(string, (scaledResolution.scaledWidth / 2f) - (width / 2f) + 5, lineY, -1)
+            FontUtil.drawStringWithShadow(string, (scaledResolution.scaledWidth / 2f) - (width / 2f) + 5, lineY, Color.WHITE)
             lineY -= 11
         }
 

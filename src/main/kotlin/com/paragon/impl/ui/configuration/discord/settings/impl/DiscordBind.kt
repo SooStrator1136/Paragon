@@ -8,6 +8,7 @@ import com.paragon.impl.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.setting.Bind
 import org.lwjgl.input.Keyboard
+import java.awt.Color
 
 /**
  * @author SooStrator1136
@@ -24,7 +25,7 @@ class DiscordBind(private val setting: Setting<Bind>) : DiscordSetting(setting) 
         super.render(mouseX, mouseY)
 
         FontUtil.drawStringWithShadow(
-            if (listening) "..." else setting.value.getButtonName(), bounds.x.toFloat(), bounds.y + FontUtil.getHeight() + 1F, -1
+            if (listening) "..." else setting.value.getButtonName(), bounds.x.toFloat(), bounds.y + FontUtil.getHeight() + 1F, Color.WHITE
         )
 
         Paragon.INSTANCE.configurationGUI.closeOnEscape = !listening

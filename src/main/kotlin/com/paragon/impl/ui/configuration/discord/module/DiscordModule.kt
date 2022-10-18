@@ -6,6 +6,7 @@ import com.paragon.impl.ui.configuration.discord.GuiDiscord
 import com.paragon.impl.ui.configuration.discord.IRenderable
 import com.paragon.util.render.RenderUtil
 import org.lwjgl.util.Rectangle
+import java.awt.Color
 
 /**
  * @author SooStrator1136
@@ -18,25 +19,25 @@ class DiscordModule(val module: Module) : IRenderable {
         val isHovered = ModuleBar.rect.contains(mouseX, mouseY) && rect.contains(mouseX, mouseY)
         if (isHovered || module == ModuleBar.focusedModule) {
             RenderUtil.drawRoundedRect(
-                rect.x.toDouble(), rect.y.toDouble(), rect.width.toDouble(), rect.height.toDouble(), 10.0, 10.0, 10.0, 10.0, GuiDiscord.channelHoveredColor.rgb
+                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 10f, GuiDiscord.channelHoveredColor
             )
         }
 
         FontUtil.drawStringWithShadow(
-            "# ${module.name}", rect.x + 5F, rect.y + (rect.height / 2F) - (FontUtil.getHeight() / 2), GuiDiscord.channelTextColor.rgb
+            "# ${module.name}", rect.x + 5F, rect.y + (rect.height / 2F) - (FontUtil.getHeight() / 2), GuiDiscord.channelTextColor
         )
 
         //Tooltip
         if (isHovered) {
             RenderUtil.drawRoundedRect(
-                mouseX - 4.0, (mouseY - (FontUtil.getHeight() / 2.0)) - 1.0, FontUtil.getStringWidth(module.description) + 8.0, FontUtil.getHeight() + 2.0, 5.0, 5.0, 5.0, 5.0, GuiDiscord.channelHoveredColor.rgb
+                mouseX - 4f, (mouseY - (FontUtil.getHeight() / 2f)) - 1f, FontUtil.getStringWidth(module.description) + 8f, FontUtil.getHeight() + 2f, 5f, GuiDiscord.channelHoveredColor
             )
             RenderUtil.drawRoundedOutline(
-                mouseX - 3.0, (mouseY - (FontUtil.getHeight() / 2.0)) - 2.0, FontUtil.getStringWidth(module.description) + 6.0, FontUtil.getHeight() + 4.0, 5.0, 5.0, 5.0, 5.0, 1F, GuiDiscord.categoryBarBackground.rgb
+                mouseX - 3f, (mouseY - (FontUtil.getHeight() / 2f)) - 2f, FontUtil.getStringWidth(module.description) + 6f, FontUtil.getHeight() + 4f, 5f, 1f, GuiDiscord.categoryBarBackground
             )
 
             FontUtil.drawStringWithShadow(
-                module.description, mouseX.toFloat(), mouseY - (FontUtil.getHeight() / 2F), -1
+                module.description, mouseX.toFloat(), mouseY - (FontUtil.getHeight() / 2F), Color.WHITE
             )
         }
     }

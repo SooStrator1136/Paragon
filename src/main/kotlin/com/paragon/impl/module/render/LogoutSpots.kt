@@ -132,12 +132,12 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
 
             // Render name nametag
             if (renderNametag.value) {
-                RenderUtil.drawNametagText(player.name, vec.add(Vec3d(0.0, nametagYOffset.value, 0.0)), -1)
+                RenderUtil.drawNametagText(player.name, vec.add(Vec3d(0.0, nametagYOffset.value, 0.0)), Color.WHITE)
             }
 
             // Render time nametag
             if (timeNametag.value) {
-                RenderUtil.drawNametagText(date, vec.add(Vec3d(0.0, timeNametagYOffset.value, 0.0)), -1)
+                RenderUtil.drawNametagText(date, vec.add(Vec3d(0.0, timeNametagYOffset.value, 0.0)), Color.WHITE)
             }
         }
     }

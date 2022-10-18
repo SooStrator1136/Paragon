@@ -4,7 +4,7 @@ import com.paragon.impl.module.Module
 import com.paragon.util.render.font.FontUtil
 import com.paragon.util.render.font.FontUtil.drawStringWithShadow
 import com.paragon.util.render.font.FontUtil.getStringWidth
-import com.paragon.util.render.font.FontUtil.renderCenteredString
+import com.paragon.util.render.font.FontUtil.drawCenteredString
 import com.paragon.impl.ui.configuration.discord.GuiDiscord
 import com.paragon.impl.ui.configuration.discord.IRenderable
 import com.paragon.impl.ui.configuration.discord.category.CategoryBar
@@ -71,14 +71,14 @@ object ModuleBar : IRenderable {
             }
 
             RenderUtil.drawRect(
-                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), GuiDiscord.channelBarBackground.rgb
+                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), GuiDiscord.channelBarBackground
             )
 
             RenderUtil.pushScissor(
-                rect.x.toDouble(),
-                rect.y + 1.0,
-                rect.width.toDouble(),
-                rect.height.toDouble(),
+                rect.x.toFloat(),
+                rect.y + 1f,
+                rect.width.toFloat(),
+                rect.height.toFloat(),
             )
 
             shownModules.forEach {
@@ -91,7 +91,7 @@ object ModuleBar : IRenderable {
         //Render the user info
         run {
             RenderUtil.drawRect(
-                userRect.x.toFloat(), userRect.y.toFloat(), userRect.width.toFloat(), userRect.height.toFloat(), GuiDiscord.userFieldBackground.rgb
+                userRect.x.toFloat(), userRect.y.toFloat(), userRect.width.toFloat(), userRect.height.toFloat(), GuiDiscord.userFieldBackground
             )
             renderHead(userRect.x + 3, userRect.y + 2, 20)
 
@@ -100,20 +100,20 @@ object ModuleBar : IRenderable {
             }
 
             RenderUtil.pushScissor(
-                userRect.x + 30.0, userRect.y.toDouble(), userRect.width - 30.0, userRect.height.toDouble()
+                userRect.x + 30f, userRect.y.toFloat(), userRect.width - 30f, userRect.height.toFloat()
             )
             drawStringWithShadow(
-                mc.player.name, (((userRect.x + 30F) - ((getStringWidth(mc.player.name) - (userRect.width - 30F)) * nameAnimation.getAnimationFactor())).toFloat()), (userRect.y + (userRect.height / 2F)) - (FontUtil.getHeight() / 2), Color.WHITE.rgb
+                mc.player.name, (((userRect.x + 30F) - ((getStringWidth(mc.player.name) - (userRect.width - 30F)) * nameAnimation.getAnimationFactor())).toFloat()), (userRect.y + (userRect.height / 2F)) - (FontUtil.getHeight() / 2), Color.WHITE
             )
             RenderUtil.popScissor()
 
             //Render the "copied" thing after the name was copied
             if (lastCopyTime != 0L) {
                 RenderUtil.drawRoundedRect(
-                    (userRect.x + ((userRect.width - getStringWidth("Copied!")) / 2.0)) - 2.0, (userRect.y - (FontUtil.getHeight() / 2.0)) - 1.5, getStringWidth("Copied!") + 4.0, FontUtil.getHeight() + 3.0, 5.0, 5.0, 5.0, 5.0, GuiDiscord.userCopiedColor.rgb
+                    (userRect.x + ((userRect.width - getStringWidth("Copied!")) / 2f)) - 2f, (userRect.y - (FontUtil.getHeight() / 2f)) - 1.5f, getStringWidth("Copied!") + 4f, FontUtil.getHeight() + 3f, 5f, GuiDiscord.userCopiedColor
                 )
-                renderCenteredString(
-                    "Copied!", (userRect.x + (userRect.width / 2)).toFloat(), userRect.y.toFloat(), Color.WHITE.rgb, true
+                drawCenteredString(
+                    "Copied!", (userRect.x + (userRect.width / 2)).toFloat(), userRect.y.toFloat(), Color.WHITE, true
                 )
 
                 if (System.currentTimeMillis() - 1500L > lastCopyTime) {

@@ -20,6 +20,7 @@ import com.paragon.util.plus
 import com.paragon.util.render.RenderUtil
 import net.minecraft.util.math.MathHelper
 import org.lwjgl.util.Rectangle
+import java.awt.Color
 import java.math.BigDecimal
 import kotlin.math.max
 import kotlin.random.Random
@@ -61,28 +62,28 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
         //Render basic media background
         run {
             RenderUtil.drawRoundedRect(
-                mediaRect.x.toDouble(), mediaRect.y.toDouble(), mediaRect.width.toDouble(), mediaRect.height.toDouble(), 2.5, 2.5, 2.5, 2.5, GuiDiscord.mediaBackground.rgb
+                mediaRect.x.toFloat(), mediaRect.y.toFloat(), mediaRect.width.toFloat(), mediaRect.height.toFloat(), 2.5f, GuiDiscord.mediaBackground
             )
             RenderUtil.drawRoundedOutline(
-                mediaRect.x.toDouble(), mediaRect.y.toDouble(), mediaRect.width.toDouble(), mediaRect.height.toDouble(), 2.5, 2.5, 2.5, 2.5, 2F, GuiDiscord.mediaBackgroundBorder.rgb
+                mediaRect.x.toFloat(), mediaRect.y.toFloat(), mediaRect.width.toFloat(), mediaRect.height.toFloat(), 2.5f, 2f, GuiDiscord.mediaBackgroundBorder
             )
 
             drawStringWithShadow(
-                "${setting.name}.mp3", mediaRect.x + 5F, mediaRect.y + FontUtil.getHeight(), GuiDiscord.mediaTitle.rgb
+                "${setting.name}.mp3", mediaRect.x + 5F, mediaRect.y + FontUtil.getHeight(), GuiDiscord.mediaTitle
             )
             drawStringWithShadow(
-                size, mediaRect.x + 5F, mediaRect.y + (FontUtil.getHeight() * 2F), GuiDiscord.mediaSize.rgb
+                size, mediaRect.x + 5F, mediaRect.y + (FontUtil.getHeight() * 2F), GuiDiscord.mediaSize
             )
         }
 
         //Render basic slider background
         run {
             RenderUtil.drawRoundedRect(
-                lowerMediaRect.x.toDouble(), lowerMediaRect.y.toDouble(), lowerMediaRect.width.toDouble(), lowerMediaRect.height.toDouble(), 2.5, 2.5, 2.5, 2.5, GuiDiscord.mediaProgressBackground.rgb
+                lowerMediaRect.x.toFloat(), lowerMediaRect.y.toFloat(), lowerMediaRect.width.toFloat(), lowerMediaRect.height.toFloat(), 2.5f, GuiDiscord.mediaProgressBackground
             )
 
             drawStringWithShadow(
-                "${setting.value}/${setting.max}", lowerMediaRect.x + 5F, lowerMediaRect.y + (FontUtil.getHeight() / 2F), -1
+                "${setting.value}/${setting.max}", lowerMediaRect.x + 5F, lowerMediaRect.y + (FontUtil.getHeight() / 2F), Color.WHITE
             )
 
             sliderBounds.setBounds(
@@ -90,23 +91,19 @@ class DiscordNumber(private val setting: Setting<Number>) : DiscordSetting(setti
             )
 
             RenderUtil.drawRoundedRect(
-                sliderBounds.x.toDouble(), sliderBounds.y.toDouble(), sliderBounds.width - 1.0, sliderBounds.height.toDouble(), 2.0, 2.0, 2.0, 2.0, GuiDiscord.mediaProgressbarBackground.rgb
+                sliderBounds.x.toFloat(), sliderBounds.y.toFloat(), sliderBounds.width - 1f, sliderBounds.height.toFloat(), 2f, GuiDiscord.mediaProgressbarBackground
             )
         }
 
         //Render the progress/value
         run {
             RenderUtil.drawRoundedRect(
-                sliderBounds.x.toDouble(), sliderBounds.y.toDouble(),
+                sliderBounds.x.toFloat(), sliderBounds.y.toFloat(),
 
                 // prevent funky rounded rect
                 MathHelper.clamp(
-                    getPercentOf(
-                        getPercent(
-                            (setting.value - setting.min).toDouble(), (setting.max - setting.min).toDouble()
-                        ), sliderBounds.width - 1.0
-                    ), 2.0, sliderBounds.width.toDouble() - 1.0
-                ), sliderBounds.height.toDouble(), 2.0, 2.0, 2.0, 2.0, GuiDiscord.mediaProgress.rgb
+                    getPercentOf(getPercent((setting.value - setting.min).toDouble(), (setting.max - setting.min).toDouble()), sliderBounds.width - 1.0), 2.0, sliderBounds.width.toDouble() - 1f
+                ).toFloat(), sliderBounds.height.toFloat(), 2f, GuiDiscord.mediaProgress
             )
         }
 

@@ -50,15 +50,15 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
             parent.tooltipContent = module.description
         }
 
-        RenderUtil.drawRect(x + 3, y + 3, width - 4, getTotalHeight() - 4, Color(100, 100, 100).rgb)
-        RenderUtil.drawRect(x + 2, y + 2, width - 4, getTotalHeight() - 4, Color(120 - (10 * hover.getAnimationFactor()).toInt(), 120 - (10 * hover.getAnimationFactor()).toInt(), 120 - (10 * hover.getAnimationFactor()).toInt()).rgb)
+        RenderUtil.drawRect(x + 3, y + 3, width - 4, getTotalHeight() - 4, Color(100, 100, 100))
+        RenderUtil.drawRect(x + 2, y + 2, width - 4, getTotalHeight() - 4, Color(120 - (10 * hover.getAnimationFactor()).toInt(), 120 - (10 * hover.getAnimationFactor()).toInt(), 120 - (10 * hover.getAnimationFactor()).toInt()))
 
-        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb)
+        RenderUtil.drawHorizontalGradientRect(x + 2, y + 2, ((width - 4) * enabled.getAnimationFactor()).toFloat(), height - 4, Colours.mainColour.value, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter() else Colours.mainColour.value)
 
         glScalef(0.9f, 0.9f, 0.9f)
 
         val scaleFactor = 1 / 0.9f
-        FontUtil.drawStringWithShadow(module.name, (x + 5) * scaleFactor, (y + 4.5f) * scaleFactor, -1)
+        FontUtil.drawStringWithShadow(module.name, (x + 5) * scaleFactor, (y + 4.5f) * scaleFactor, Color.WHITE)
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
 
@@ -67,7 +67,7 @@ class ModuleElement(val parent: CategoryWindow, val module: Module, x: Float, y:
 
             val scissorY = MathHelper.clamp(y, parent.y + parent.height, (parent.y + parent.height + parent.scissorHeight) - getTotalHeight())
 
-            RenderUtil.pushScissor(x.toDouble(), scissorY.toDouble(), width.toDouble(), getTotalHeight().toDouble())
+            RenderUtil.pushScissor(x, scissorY, width, getTotalHeight())
 
             settings.forEach {
                 if (it.setting.isVisible()) {

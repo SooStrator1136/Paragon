@@ -81,13 +81,9 @@ object ESP : Module("ESP", Category.RENDER, "Highlights entities in the world") 
     ) describedBy "How thick to render the outlines" visibleWhen { mode.value == Mode.BOX && (boxMode.value == BoxRenderMode.OUTLINE || boxMode.value == BoxRenderMode.BOTH) || mode.value != Mode.BOX }
 
     // Outline shader
-    private val outline = Setting(
-        "Outline", true
-    ) describedBy "Outline the fill" subOf mode visibleWhen { mode.value == Mode.SHADER }
+    private val outline = Setting("Outline", true) describedBy "Outline the fill" subOf mode //visibleWhen { mode.value == Mode.SHADER }
 
-    private val fill = Setting(
-        "Fill", true
-    ) describedBy "Fill the outline" subOf mode visibleWhen { mode.value == Mode.SHADER }
+    private val fill = Setting("Fill", true) describedBy "Fill the outline" subOf mode //visibleWhen { mode.value == Mode.SHADER }
 
     private val colour = Setting(
         "Colour", Color(185, 17, 255)

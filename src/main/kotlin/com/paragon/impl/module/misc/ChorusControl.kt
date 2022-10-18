@@ -13,6 +13,7 @@ import net.minecraft.network.play.client.CPacketPlayerTryUseItem
 import net.minecraft.network.play.server.SPacketPlayerPosLook
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.Vec3d
+import java.awt.Color
 
 /**
  * @author GentlemanMC, SooStrator1136
@@ -46,7 +47,7 @@ object ChorusControl : Module("ChorusControl", Category.MISC, "Cancels packets t
             return
         }
 
-        drawNametagText("Player Chorus", renderPos, -1)
+        drawNametagText("Player Chorus", renderPos, Color.WHITE)
     }
 
     @Listener

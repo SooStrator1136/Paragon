@@ -5,6 +5,7 @@ import com.paragon.impl.module.client.ClientFont
 import com.paragon.util.Wrapper
 import org.apache.commons.io.FileUtils
 import org.json.JSONObject
+import java.awt.Color
 import java.awt.Font
 import java.io.*
 import java.net.URL
@@ -35,7 +36,7 @@ object FontUtil : Wrapper {
     }
 
     @JvmStatic
-    fun drawStringWithShadow(text: String, x: Float, y: Float, colour: Int) {
+    fun drawStringWithShadow(text: String, x: Float, y: Float, colour: Color) {
         if (ClientFont.isEnabled) {
             font.drawStringWithShadow(text, x, y - 3f + yIncrease, colour)
             return
@@ -47,23 +48,23 @@ object FontUtil : Wrapper {
             var newY = 0.0f
 
             for (s in parts) {
-                minecraft.fontRenderer.drawStringWithShadow(s, x, y + newY, colour)
+                minecraft.fontRenderer.drawStringWithShadow(s, x, y + newY, colour.rgb)
                 newY += minecraft.fontRenderer.FONT_HEIGHT.toFloat()
             }
 
             return
         }
 
-        minecraft.fontRenderer.drawStringWithShadow(text, x, y, colour)
+        minecraft.fontRenderer.drawStringWithShadow(text, x, y, colour.rgb)
     }
 
     @JvmStatic
-    fun renderCenteredString(text: String, x: Float, y: Float, colour: Int, centeredY: Boolean) {
-        var y = y
+    fun drawCenteredString(text: String, x: Float, y: Float, colour: Color, centeredY: Boolean) {
+        /* var yOffset = y
 
         if (ClientFont.isEnabled) {
             if (centeredY) {
-                y -= font.height / 2f
+                yOffset = y - (font.height / 2f)
             }
 
             if (text.contains("\n")) {
@@ -71,9 +72,7 @@ object FontUtil : Wrapper {
                 var newY = 0.0f
 
                 for (s in parts) {
-                    font.drawStringWithShadow(
-                        s, x - font.getStringWidth(s) / 2f, y - 3.5f + yIncrease + newY, colour
-                    )
+                    font.drawStringWithShadow(s, x - font.getStringWidth(s) / 2f, yOffset + yIncrease + newY, colour)
 
                     newY += font.height
                 }
@@ -81,21 +80,38 @@ object FontUtil : Wrapper {
                 return
             }
 
-            font.drawStringWithShadow(text, x - getStringWidth(text) / 2f, y - 3f + yIncrease, colour)
+            font.drawStringWithShadow(text, x - getStringWidth(text) / 2f, yOffset + yIncrease, colour)
             return
         }
 
         if (centeredY) {
-            y -= minecraft.fontRenderer.FONT_HEIGHT / 2f
+            yOffset = y - (minecraft.fontRenderer.FONT_HEIGHT / 2f)
         }
 
-        minecraft.fontRenderer.drawStringWithShadow(
-            text, x - minecraft.fontRenderer.getStringWidth(text) / 2f, y, colour
-        )
+        minecraft.fontRenderer.drawStringWithShadow(text, x - minecraft.fontRenderer.getStringWidth(text) / 2f, yOffset, colour.rgb) */
+
+        if (ClientFont.isEnabled) {
+            font.drawStringWithShadow(text, x - (font.getStringWidth(text) / 2f), y - 3f + yIncrease, colour)
+        } else {
+            if (text.contains(System.lineSeparator())) {
+                val parts = text.split(System.lineSeparator().toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+
+                var newY = 0.0f
+
+                for (s in parts) {
+                    minecraft.fontRenderer.drawStringWithShadow(s, x - minecraft.fontRenderer.getStringWidth(s) / 2f, y + newY, colour.rgb)
+                    newY += minecraft.fontRenderer.FONT_HEIGHT.toFloat()
+                }
+
+                return
+            }
+
+            minecraft.fontRenderer.drawStringWithShadow(text, x - minecraft.fontRenderer.getStringWidth(text) / 2f, y, colour.rgb)
+        }
     }
 
     @JvmStatic
-    fun drawIcon(icon: Icon, x: Float, y: Float, colour: Int) {
+    fun drawIcon(icon: Icon, x: Float, y: Float, colour: Color) {
         icons.drawString(icon.char.toString(), x, y, colour, false)
     }
 
@@ -121,7 +137,7 @@ object FontUtil : Wrapper {
     }
 
     @JvmStatic
-    fun getHeight() = if (ClientFont.isEnabled) font.height else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
+    fun getHeight() = if (ClientFont.isEnabled) font.height + 1 else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
 
     private fun getFont(name: String): Font {
         val fontDir = File("paragon/font/")

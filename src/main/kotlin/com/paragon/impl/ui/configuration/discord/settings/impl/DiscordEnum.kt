@@ -10,6 +10,7 @@ import com.paragon.impl.ui.configuration.discord.settings.DiscordSetting
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.string.StringUtil
 import org.lwjgl.util.Rectangle
+import java.awt.Color
 
 /**
  * @author SooStrator1136
@@ -45,7 +46,7 @@ class DiscordEnum(private val setting: Setting<Enum<*>>) : DiscordSetting(settin
             currX += (rect.width + FontUtil.getStringWidth(", ")).toInt()
 
             FontUtil.drawStringWithShadow(
-                getFormattedName(options[i]) + if (i != options.size - 1) "," else "", rect.x.toFloat(), rect.y.toFloat(), if (rect.contains(mouseX, mouseY)) Colours.mainColour.value.rgb else -1
+                getFormattedName(options[i]) + if (i != options.size - 1) "," else "", rect.x.toFloat(), rect.y.toFloat(), if (rect.contains(mouseX, mouseY)) Colours.mainColour.value else Color.WHITE
             )
         }
 

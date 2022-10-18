@@ -17,13 +17,13 @@ class StartElement(
         val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
 
         RenderUtil.drawRect(
-            x + 2, y + 2, width - 2, height - 2, Color(100, 100, 100).rgb
+            x + 2, y + 2, width - 2, height - 2, Color(100, 100, 100)
         )
         RenderUtil.drawRect(
-            x + 1, y + 1, width - 2, height - 2, Color(120 - (if (hovered) 10 else 0), 120 - (if (hovered) 10 else 0), 120 - (if (hovered) 10 else 0)).rgb
+            x + 1, y + 1, width - 2, height - 2, Color(120 - (if (hovered) 10 else 0), 120 - (if (hovered) 10 else 0), 120 - (if (hovered) 10 else 0))
         )
 
-        FontUtil.drawStringWithShadow(name, x + 3, y + 4, -1)
+        FontUtil.drawStringWithShadow(name, x + 3, y + 4, Color.WHITE)
     }
 
     fun clicked() {

@@ -31,12 +31,12 @@ class FontRenderer(font: Font) : Wrapper {
     val size: Int
         get() = defaultFont.font.size
 
-    fun drawStringWithShadow(text: String, x: Float, y: Float, color: Int): Int {
-        return drawString(text, x, y, color, true)
+    fun drawStringWithShadow(text: String, x: Float, y: Float, colour: Color): Int {
+        return drawString(text, x, y, colour, true)
     }
 
-    fun drawString(text: String, x: Float, y: Float, color: Int, dropShadow: Boolean): Int {
-        val alpha = Color(color).alpha
+    fun drawString(text: String, x: Float, y: Float, colour: Color, dropShadow: Boolean): Int {
+        val alpha = colour.alpha.coerceAtLeast(5)
 
         if (text.contains("\n")) {
             val parts = text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -44,10 +44,10 @@ class FontRenderer(font: Font) : Wrapper {
 
             for (s in parts) {
                 if (dropShadow) {
-                    drawText(s, x + 0.6f, y + newY + 0.6f, Color(0, 0, 0, min(alpha, 150)).rgb, true)
+                    drawText(s, x + 0.6f, y + newY + 0.6f, Color(0, 0, 0, min(alpha, 150)), true)
                 }
 
-                drawText(s, x, y + newY, color, dropShadow)
+                drawText(s, x, y + newY, colour, dropShadow)
                 newY += height
             }
 
@@ -55,13 +55,13 @@ class FontRenderer(font: Font) : Wrapper {
         }
 
         if (dropShadow) {
-            drawText(text, x + 0.6f, y + 0.6f, Color(0, 0, 0, min(alpha, 150)).rgb, true)
+            drawText(text, x + 0.6f, y + 0.6f, Color(0, 0, 0, min(alpha, 150)), true)
         }
 
-        return drawText(text, x, y, color, false)
+        return drawText(text, x, y, colour, false)
     }
 
-    private fun drawText(text: String?, x: Float, y: Float, color: Int, ignoreColor: Boolean): Int {
+    private fun drawText(text: String?, x: Float, y: Float, colour: Color, ignoreColor: Boolean): Int {
         if (text == null) {
             return 0
         }
@@ -78,12 +78,12 @@ class FontRenderer(font: Font) : Wrapper {
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
-        var currentColor = color
+        var currentColor = colour.rgb
         if (currentColor and -0x4000000 == 0) {
             currentColor = currentColor or -0x1000000
         }
 
-        val alpha = currentColor shr 24 and 0xFF
+        val alpha = (currentColor shr 24 and 0xFF).coerceAtLeast(5)
 
         if (text.contains("§")) {
             val parts = text.split("§".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -116,7 +116,7 @@ class FontRenderer(font: Font) : Wrapper {
                     16 -> randomCase = true
                     18 -> {}
                     21 -> {
-                        currentColor = color
+                        currentColor = colour.rgb
 
                         if (currentColor and -0x4000000 == 0) {
                             currentColor = currentColor or -0x1000000

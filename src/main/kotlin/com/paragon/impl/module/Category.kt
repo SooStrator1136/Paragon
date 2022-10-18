@@ -6,33 +6,33 @@ import net.minecraft.item.Item
 /**
  * @author Surge, SooStrator1136
  */
-enum class Category(val Name: String, val indicator: Item) { //Uppercase "Name" because kotlin is special?
+enum class Category(val indicator: Item) {
 
-    COMBAT("Combat", Items.END_CRYSTAL),
+    COMBAT(Items.END_CRYSTAL),
 
     /**
      * Movement related modules, e.g. Step, ElytraFlight
      */
-    MOVEMENT("Movement", Items.DIAMOND_BOOTS),
+    MOVEMENT(Items.DIAMOND_BOOTS),
 
     /**
      * Render related modules, e.g. Tracers, ESP
      */
-    RENDER("Render", Items.ENDER_EYE),
+    RENDER(Items.ENDER_EYE),
 
     /**
      * Modules that don't belong to a particular category, e.g. ChatModifications, FakePlayer
      */
-    MISC("Misc", Items.LAVA_BUCKET),
+    MISC(Items.LAVA_BUCKET),
 
     /**
      * Client related modules, e.g. GUI, Colours
      */
-    CLIENT("Client", Items.WRITABLE_BOOK),
+    CLIENT(Items.WRITABLE_BOOK),
 
     /**
      * HUD modules
      */
-    HUD("HUD", Items.COMPASS)
+    HUD(Items.COMPASS)
 
 }

@@ -31,7 +31,7 @@ object SoundHighlight : Module("SoundHighlight", Category.RENDER, "Highlights th
         // Iterate through sounds
         soundMap.forEach { (vec, pair) ->
             // Draw nametag at sound position
-            drawNametagText(pair.left, vec, Color(255, 255, 255, MathHelper.clamp(pair.right.toInt(), 4, 255)).rgb)
+            drawNametagText(pair.left, vec, Color(255, 255, 255, MathHelper.clamp(pair.right.toInt(), 4, 255)))
 
             // Decrement alpha
             soundMap[vec] = Pair.of(pair.left, pair.right - 1)

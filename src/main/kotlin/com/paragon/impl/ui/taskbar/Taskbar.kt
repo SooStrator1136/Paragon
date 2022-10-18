@@ -6,6 +6,7 @@ import com.paragon.impl.ui.taskbar.start.StartMenu
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.Wrapper
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.toColour
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
@@ -35,7 +36,7 @@ object Taskbar : Wrapper {
         expandAnimation.state = state
 
         RenderUtil.drawRect(
-            0f, scaledResolution.scaledHeight - (26f * expandAnimation.getAnimationFactor().toFloat()), scaledResolution.scaledWidth.toFloat(), 26f, Color(148, 148, 148).rgb
+            0f, scaledResolution.scaledHeight - (26f * expandAnimation.getAnimationFactor().toFloat()), scaledResolution.scaledWidth.toFloat(), 26f, Color(148, 148, 148)
         )
 
         StartMenu.x = 2f
@@ -43,17 +44,17 @@ object Taskbar : Wrapper {
         StartMenu.draw(mouseX, mouseY)
 
         RenderUtil.drawRect(
-            150f, scaledResolution.scaledHeight - (26f * expandAnimation.getAnimationFactor().toFloat()) - 2, scaledResolution.scaledWidth.toFloat() - 150f, 2f, Colours.mainColour.value.rgb
+            150f, scaledResolution.scaledHeight - (26f * expandAnimation.getAnimationFactor().toFloat()) - 2, scaledResolution.scaledWidth.toFloat() - 150f, 2f, Colours.mainColour.value
         )
 
         if (tooltip != "") {
             RenderUtil.drawRect(
                 (scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 4) + ((FontUtil.getStringWidth(
                     tooltip
-                ) + 4) * expandAnimation.getAnimationFactor()).toFloat(), scaledResolution.scaledHeight - 16f, FontUtil.getStringWidth(tooltip) + 4, 13f, 0x90000000.toInt()
+                ) + 4) * expandAnimation.getAnimationFactor()).toFloat(), scaledResolution.scaledHeight - 16f, FontUtil.getStringWidth(tooltip) + 4, 13f, 0x90000000.toInt().toColour()
             )
             FontUtil.drawStringWithShadow(
-                tooltip, scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 2, scaledResolution.scaledHeight - 14f, Color.WHITE.rgb
+                tooltip, scaledResolution.scaledWidth - FontUtil.getStringWidth(tooltip) - 2, scaledResolution.scaledHeight - 14f, Color.WHITE
             )
         }
     }

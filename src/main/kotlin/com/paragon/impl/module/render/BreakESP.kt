@@ -95,7 +95,7 @@ object BreakESP : Module("BreakESP", Category.RENDER, "Highlights blocks that ar
                 drawNametagText(
                     (damage * 100 / 8).toString() + "%", Vec3d(
                         (blockPos.x + 0.5f).toDouble(), (blockPos.y + 0.5f).toDouble(), (blockPos.z + 0.5f).toDouble()
-                    ), -1
+                    ), Color.WHITE
                 )
             }
         }

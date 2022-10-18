@@ -1,21 +1,14 @@
 package com.paragon.util.render
 
-import com.paragon.util.render.font.FontUtil.font
-import com.paragon.impl.module.client.ClientFont
-import com.paragon.impl.module.render.Nametags
 import com.paragon.util.Wrapper
-import com.paragon.util.entity.EntityUtil
-import com.paragon.util.render.ColourUtil.setColour
+import com.paragon.util.glColour
 import com.paragon.util.render.font.FontUtil
-import com.sun.org.apache.xpath.internal.operations.Bool
-import net.minecraft.client.Minecraft
+import com.paragon.util.render.shader.Shader
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.client.renderer.BufferBuilder
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.MathHelper
@@ -24,8 +17,8 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.ARBMultisample.*
 import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL20.*
 import java.awt.Color
-import java.awt.Toolkit
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -37,216 +30,323 @@ object RenderUtil : Wrapper {
     private val tessellator = Tessellator.getInstance()
     private val bufferBuilder = tessellator.buffer
 
+    private val roundedRectangleShader = object : Shader("/assets/paragon/glsl/shaders/rounded_rectangle.frag") {
+        var width = 0f
+        var height = 0f
+        var radius = 0f
+        var colour = -1
+
+        var alpha = 1f
+
+        fun setColour(colour: Int, alpha: Int) {
+            this.colour = colour
+            this.alpha = alpha / 255f
+        }
+
+        override fun setupUniforms() {
+            setupUniform("size")
+            setupUniform("colour")
+            setupUniform("alpha")
+            setupUniform("radius")
+        }
+
+        override fun updateUniforms() {
+            val colour = Color(this.colour)
+
+            glUniform2f(getUniform("size"), width, height)
+            glUniform4f(getUniform("colour"), colour.red / 255f, colour.green / 255f, colour.blue / 255f, this.alpha)
+            glUniform1f(getUniform("alpha"), this.alpha)
+            glUniform1f(getUniform("radius"), radius)
+        }
+    }
+
     /**
      * Draws a rectangle at the given coordinates
-     *
-     * @param x      The X (left) coord
-     * @param y      The Y (top) coord
+     * @param x The X (left) coordinate
+     * @param y The Y (top) coordinate
      * @param width  The width of the rectangle
      * @param height The height of the rectangle
      * @param colour The colour of the rectangle
      */
     @JvmStatic
-    fun drawRect(x: Float, y: Float, width: Float, height: Float, colour: Int) {
-        val c = (colour shr 24 and 255).toFloat() / 255.0f
-        val c1 = (colour shr 16 and 255).toFloat() / 255.0f
-        val c2 = (colour shr 8 and 255).toFloat() / 255.0f
-        val c3 = (colour and 255).toFloat() / 255.0f
+    fun drawRect(x: Float, y: Float, width: Float, height: Float, colour: Color) {
+        glPushMatrix()
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_ALPHA_TEST)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glShadeModel(GL_SMOOTH)
 
+        colour.glColour()
+
+        glBegin(GL_QUADS)
+
+        glVertex2f(x, y)
+        glVertex2f(x, y + height)
+        glVertex2f(x + width, y + height)
+        glVertex2f(x + width, y)
+
+        glEnd()
+
+        glShadeModel(GL_FLAT)
+        glEnable(GL_ALPHA_TEST)
+        glDisable(GL_BLEND)
+        glEnable(GL_TEXTURE_2D)
+        glPopMatrix()
+    }
+
+    /**
+     * Draws a rectangle at the given coordinates, with a gradient going from left to right
+     * @param x The X coordinate of the rectangle
+     * @param y The Y coordinate of the rectangle
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @param leftColour The left colour
+     * @param rightColour The colour on the right (what we transition to)
+     */
+    fun drawHorizontalGradientRect(x: Float, y: Float, width: Float, height: Float, leftColour: Color, rightColour: Color) {
+        glPushMatrix()
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_ALPHA_TEST)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glShadeModel(GL_SMOOTH)
+
+        glBegin(GL_QUADS)
+
+        leftColour.glColour()
+
+        glVertex2f(x, y)
+        glVertex2f(x, y + height)
+
+        rightColour.glColour()
+
+        glVertex2f(x + width, y + height)
+        glVertex2f(x + width, y)
+
+        glEnd()
+
+        glShadeModel(GL_FLAT)
+        glEnable(GL_ALPHA_TEST)
+        glDisable(GL_BLEND)
+        glEnable(GL_TEXTURE_2D)
+        glPopMatrix()
+    }
+
+    /**
+     * Draws a rectangle at the given coordinates, with a gradient going from top to bottom
+     * @param x The X coordinate of the rectangle
+     * @param y The Y coordinate of the rectangle
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @param topColour The top colour
+     * @param bottomColour The colour on the bottom (what we transition to)
+     */
+    fun drawVerticalGradientRect(x: Float, y: Float, width: Float, height: Float, topColour: Color, bottomColour: Color) {
+        glPushMatrix()
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_ALPHA_TEST)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glShadeModel(GL_SMOOTH)
+
+        glBegin(GL_QUADS)
+
+        topColour.glColour()
+
+        glVertex2f(x, y)
+
+        bottomColour.glColour()
+
+        glVertex2f(x, y + height)
+        glVertex2f(x + width, y + height)
+
+        topColour.glColour()
+
+        glVertex2f(x + width, y)
+
+        glEnd()
+
+        glShadeModel(GL_FLAT)
+        glEnable(GL_ALPHA_TEST)
+        glDisable(GL_BLEND)
+        glEnable(GL_TEXTURE_2D)
+        glPopMatrix()
+    }
+
+    /**
+     * Draws a triangle at the center of the given coordinates
+     * @param x The center X of the triangle
+     * @param y The center Y of the triangle
+     * @param size The size of the triangle
+     * @param colour The colour of the triangle
+     */
+    fun drawTriangle(x: Float, y: Float, width: Float, height: Float, colour: Color) {
+        glDisable(GL_DEPTH_TEST)
+        glDisable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDepthMask(true)
+
+        glEnable(GL_LINE_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
+        glEnable(GL_POLYGON_SMOOTH)
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+
+        colour.glColour()
+
+        glTranslatef(-(width / 2f), -(height / 2f), 0f)
+
+        glBegin(GL_TRIANGLES)
+
+        glVertex2f(x, y)
+        glVertex2f(x, y + height)
+        glVertex2f(x + width, y + height / 2)
+
+        glEnd()
+
+        glTranslatef(width / 2f, height / 2f, 0f)
+
+        glDisable(GL_LINE_SMOOTH)
+        glDisable(GL_POLYGON_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE)
+
+        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_DEPTH_TEST)
+        glColor4f(1f, 1f, 1f, 1f)
+    }
+
+    /**
+     * Draws a rounded rectangle at the given coordinates
+     * @param x The X coordinate of the rectangle
+     * @param y The Y coordinate of the rectangle
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @param radius The radius (corner size) of the rectangle
+     * @param colour The colour of the rectangle
+     */
+    fun drawRoundedRect(x: Float, y: Float, width: Float, height: Float, radius: Float, colour: Color) {
         GlStateManager.pushMatrix()
         GlStateManager.disableTexture2D()
-        GlStateManager.disableAlpha()
         GlStateManager.enableBlend()
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
-        GlStateManager.shadeModel(GL_SMOOTH)
 
-        val tessellator = Tessellator.getInstance()
-        val bufferbuilder = tessellator.buffer
-        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
-        bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        tessellator.draw()
+        roundedRectangleShader.setColour(colour.rgb, colour.alpha)
+        roundedRectangleShader.radius = radius
+        roundedRectangleShader.width = width
+        roundedRectangleShader.height = height
 
-        GlStateManager.shadeModel(GL_FLAT)
+        roundedRectangleShader.startShader()
+
+        glBegin(GL_QUADS)
+
+        glTexCoord2f(0f, 0f)
+        glVertex2f(x, y)
+        glTexCoord2f(0f, 1f)
+        glVertex2f(x, y + height)
+        glTexCoord2f(1f, 1f)
+        glVertex2f(x + width, y + height)
+        glTexCoord2f(1f, 0f)
+        glVertex2f(x + width, y)
+
+        glEnd();
+
+        glUseProgram(0)
+
         GlStateManager.enableAlpha()
         GlStateManager.disableBlend()
         GlStateManager.enableTexture2D()
         GlStateManager.popMatrix()
     }
 
-    fun drawHorizontalGradientRect(x: Float, y: Float, width: Float, height: Float, leftColour: Int, rightColour: Int) {
-        glEnable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glShadeModel(GL_SMOOTH)
-        glBegin(GL_POLYGON)
-
-        glColor4f(
-            (leftColour shr 16 and 0xFF) / 255.0f, (leftColour shr 8 and 0xFF) / 255.0f, (leftColour and 0xFF) / 255.0f, (leftColour shr 24 and 0xFF) / 255.0f
-        )
-
-        glVertex2f(x, y)
-        glVertex2f(x, y + height)
-
-        glColor4f(
-            (rightColour shr 16 and 0xFF) / 255.0f, (rightColour shr 8 and 0xFF) / 255.0f, (rightColour and 0xFF) / 255.0f, (rightColour shr 24 and 0xFF) / 255.0f
-        )
-
-        glVertex2f(x + width, y + height)
-        glVertex2f(x + width, y)
-        glEnd()
-        glShadeModel(GL_FLAT)
-        glEnable(GL_TEXTURE_2D)
-        glDisable(GL_BLEND)
-    }
-
-    fun drawVerticalGradientRect(x: Float, y: Float, width: Float, height: Float, topColour: Int, bottomColour: Int) {
-        val top = Color(topColour)
-        val bottom = Color(bottomColour)
-        GlStateManager.pushMatrix()
-        GlStateManager.disableTexture2D()
-        GlStateManager.enableBlend()
-        GlStateManager.enableAlpha()
-        GlStateManager.tryBlendFuncSeparate(
-            GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO
-        )
-
-        GlStateManager.shadeModel(7425)
-        val tessellator = Tessellator.getInstance()
-        val bufferbuilder = tessellator.buffer
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
-        bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).color(top.red / 255f, top.green / 255f, top.blue / 255f, top.alpha / 255f).endVertex()
-        bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).color(top.red / 255f, top.green / 255f, top.blue / 255f, top.alpha / 255f).endVertex()
-        bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(bottom.red / 255f, bottom.green / 255f, bottom.blue / 255f, bottom.alpha / 255f).endVertex()
-        bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(bottom.red / 255f, bottom.green / 255f, bottom.blue / 255f, bottom.alpha / 255f).endVertex()
-        tessellator.draw()
-        GlStateManager.shadeModel(7424)
-        GlStateManager.enableAlpha()
-        GlStateManager.enableTexture2D()
-        GlStateManager.popMatrix()
-    }
-
-    @JvmStatic
-    fun drawRoundedRect(x: Double, y: Double, width: Double, height: Double, tLeft: Double, tRight: Double, bLeft: Double, bRight: Double, colour: Int) {
+    /**
+     * Draws a rounded outline at the given coordinates
+     * @param x The X coordinate of the outline
+     * @param y The Y coordinate of the outline
+     * @param width The width of the outline
+     * @param height The height of the outline
+     * @param radius The radius (corner size) of the outline
+     * @param colour The colour of the outline
+     */
+    fun drawRoundedOutline(x: Float, y: Float, width: Float, height: Float, radius: Float, lineWidth: Float, colour: Color) {
         glDisable(GL_DEPTH_TEST)
-        glDisable(GL_TEXTURE_2D)
         glEnable(GL_BLEND)
+        glDisable(GL_TEXTURE_2D)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDepthMask(true)
-        setColour(colour)
 
-        glBegin(GL_POLYGON)
+        glEnable(GL_LINE_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
-        for (i in 0..90) {
-            glVertex2d(x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0, y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0)
+        glLineWidth(lineWidth)
+
+        colour.glColour()
+
+        glBegin(GL_LINE_STRIP)
+
+        var i = 0
+        while (i <= 90) {
+            glVertex2d(x + radius + sin(i * Math.PI / 180.0) * radius * -1.0, y + radius + cos(i * Math.PI / 180.0) * radius * -1.0)
+            i += 3
         }
 
-        for (i in 90..180) {
-            glVertex2d(x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0, y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0)
+        i = 90
+        while (i <= 180) {
+            glVertex2d(x + radius + sin(i * Math.PI / 180.0) * radius * -1.0, y + height - radius + cos(i * Math.PI / 180.0) * radius * -1.0)
+            i += 3
         }
 
-        for (i in 0..90) {
-            glVertex2d(x + width - bRight + sin(i * Math.PI / 180.0) * bRight, y + height - bRight + cos(i * Math.PI / 180.0) * bRight)
+        i = 0
+        while (i <= 90) {
+            glVertex2d(x + width - radius + sin(i * Math.PI / 180.0) * radius, y + height - radius + cos(i * Math.PI / 180.0) * radius)
+            i += 3
         }
 
-        for (i in 90..180) {
-            glVertex2d(x + width - tRight + sin(i * Math.PI / 180.0) * tRight, y + tRight + cos(i * Math.PI / 180.0) * tRight)
+        i = 90
+        while (i <= 180) {
+            glVertex2d(x + width - radius + sin(i * Math.PI / 180.0) * radius, y + radius + cos(i * Math.PI / 180.0) * radius)
+            i += 3
+        }
+
+        i = 0
+        while (i <= 90) {
+            glVertex2d(x + radius + sin(i * Math.PI / 180.0) * radius * -1.0, y + radius + cos(i * Math.PI / 180.0) * radius * -1.0)
+            i += 3
         }
 
         glEnd()
+
+        glDisable(GL_LINE_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
+
         glEnable(GL_TEXTURE_2D)
         glEnable(GL_DEPTH_TEST)
         glColor4f(1f, 1f, 1f, 1f)
     }
 
-    fun drawRoundedOutline(x: Double, y: Double, width: Double, height: Double, tLeft: Double, tRight: Double, bLeft: Double, bRight: Double, lineWidth: Float, colour: Int) {
-        var x = x
-        var y = y
-        var width = width
-        var height = height
-        glPushAttrib(0)
-        glScaled(0.5, 0.5, 0.5)
-        x *= 2.0
-        y *= 2.0
-        width *= 2.0
-        height *= 2.0
-        glDisable(GL_DEPTH_TEST)
-        glEnable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDepthMask(true)
-        glEnable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-        glLineWidth(lineWidth)
-        glBegin(GL_LINE_STRIP)
-        setColour(colour)
-        var i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0, y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
-            )
-            i += 3
-        }
-        i = 90
-        while (i <= 180) {
-            glVertex2d(
-                x + bLeft + sin(i * Math.PI / 180.0) * bLeft * -1.0, y + height - bLeft + cos(i * Math.PI / 180.0) * bLeft * -1.0
-            )
-            i += 3
-        }
-        i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + width - bRight + sin(i * Math.PI / 180.0) * bRight, y + height - bRight + cos(i * Math.PI / 180.0) * bRight
-            )
-            i += 3
-        }
-        i = 90
-        while (i <= 180) {
-            glVertex2d(
-                x + width - tRight + sin(i * Math.PI / 180.0) * tRight, y + tRight + cos(i * Math.PI / 180.0) * tRight
-            )
-            i += 3
-        }
-        i = 0
-        while (i <= 90) {
-            glVertex2d(
-                x + tLeft + sin(i * Math.PI / 180.0) * tLeft * -1.0, y + tLeft + cos(i * Math.PI / 180.0) * tLeft * -1.0
-            )
-            i += 3
-        }
-        glEnd()
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
-        glDisable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE)
-        glScaled(2.0, 2.0, 2.0)
-        glPopAttrib()
-        glLineWidth(1f)
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f)
-    }
-
-    @JvmStatic
-    fun drawCircle(x: Double, y: Double, radius: Double, color: Int) { //Probably not the best but does the job
+    /**
+     * Draws a circle at the given coordinates
+     * @param x The center X of the circle
+     * @param y The center Y of the circle
+     * @param radius The radius (corner size) of the circle
+     * @param colour The colour of the circle
+     */
+    fun drawCircle(x: Double, y: Double, radius: Double, colour: Color) {
         GlStateManager.alphaFunc(GL_GREATER, 0.001f)
         GlStateManager.enableAlpha()
         GlStateManager.enableBlend()
         GlStateManager.disableTexture2D()
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0)
 
-        setColour(color)
+        colour.glColour()
 
         for (i in 0..359) {
             val cs = -i * Math.PI / 180.0
             val ps = (-i - 1) * Math.PI / 180.0
 
-            val outer = doubleArrayOf(
-                cos(cs) * radius, -sin(cs) * radius, cos(ps) * radius, -sin(ps) * radius
-            )
+            val outer = doubleArrayOf(cos(cs) * radius, -sin(cs) * radius, cos(ps) * radius, -sin(ps) * radius)
 
             glBegin(GL_QUADS)
             glVertex2d(x, y)
@@ -264,20 +364,16 @@ object RenderUtil : Wrapper {
     }
 
     /**
-     * In java usage will look like this:
-     * ```
-     * public void exampleScaleTo(float x, float y, float z, double scaleFacX, double scaleFacY, double scaleFacZ) {
-     *    scaleTo(x, y, z, scaleFacX, scaleFacY, scaleFacZ, () -> {
-     *       methodThatWillBeScaled();
-     *       return Unit.INSTANCE;
-     *    });
-     * }
-     * ```
+     * Scales whatever is currently being drawn
+     * @param x The X to scale from
+     * @param y The Y to scale from
+     * @param z The Z to scale from
+     * @param scaleFacX How much to scale by on the X axis
+     * @param scaleFacY How much to scale by on the Y axis
+     * @param scaleFacZ How much to scale by on the Z axis
+     * @param block The code to run during scaling
      */
-    @JvmStatic
-    inline fun scaleTo(
-        x: Float, y: Float, z: Float, scaleFacX: Double, scaleFacY: Double, scaleFacZ: Double, block: () -> Unit
-    ) {
+    inline fun scaleTo(x: Float, y: Float, z: Float, scaleFacX: Double, scaleFacY: Double, scaleFacZ: Double, block: () -> Unit) {
         glPushMatrix()
         glTranslatef(x, y, z)
         glScaled(scaleFacX, scaleFacY, scaleFacZ)
@@ -286,69 +382,70 @@ object RenderUtil : Wrapper {
         glPopMatrix()
     }
 
-    @JvmStatic
+    /**
+     * Rotates whatever is currently being drawn
+     * @param angle The angle to rotate by
+     * @param x The X coordinate of the pivot
+     * @param y The Y coordinate of the pivot
+     * @param z The Z coordinate of the pivot
+     * @param block The code to run during rotation
+     */
     inline fun rotate(angle: Float, x: Float, y: Float, z: Float, block: () -> Unit) {
         glPushMatrix()
         glTranslatef(x, y, z)
         glRotated(angle.toDouble(), 0.0, 0.0, 1.0)
-        //glTranslatef(-x, -y, -z)
+        glTranslatef(-x, -y, -z)
         block.invoke()
         glPopMatrix()
     }
 
-    @JvmStatic
-    fun drawBorder(x: Float, y: Float, width: Float, height: Float, border: Float, colour: Int) {
-        val c = (colour shr 24 and 255).toFloat() / 255.0f
-        val c1 = (colour shr 16 and 255).toFloat() / 255.0f
-        val c2 = (colour shr 8 and 255).toFloat() / 255.0f
-        val c3 = (colour and 255).toFloat() / 255.0f
-
-        GlStateManager.pushMatrix()
-        GlStateManager.disableTexture2D()
-        GlStateManager.disableAlpha()
-        GlStateManager.enableBlend()
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
-        GlStateManager.shadeModel(GL_SMOOTH)
+    fun drawBorder(x: Float, y: Float, width: Float, height: Float, border: Float, colour: Color) {
+        glPushMatrix()
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_ALPHA_TEST)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glShadeModel(GL_SMOOTH)
 
         glLineWidth(border)
 
-        val tessellator = Tessellator.getInstance()
+        colour.glColour()
 
-        glEnable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+        glBegin(GL_LINE_LOOP)
 
-        tessellator.buffer.begin(GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR)
+        glVertex2f(x, y)
+        glVertex2f(x, y + height)
+        glVertex2f(x + width, y + height)
+        glVertex2f(x + width, y)
 
-        tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        tessellator.buffer.pos(x.toDouble(), y.toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        tessellator.buffer.pos(x.toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
-        tessellator.buffer.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).color(c1, c2, c3, c).endVertex()
+        glEnd()
 
-        tessellator.draw()
-
-        glDisable(GL_LINE_SMOOTH)
-
-        GlStateManager.shadeModel(GL_FLAT)
-        GlStateManager.enableAlpha()
-        GlStateManager.disableBlend()
-        GlStateManager.enableTexture2D()
-        GlStateManager.popMatrix()
+        glShadeModel(GL_FLAT)
+        glEnable(GL_ALPHA_TEST)
+        glDisable(GL_BLEND)
+        glEnable(GL_TEXTURE_2D)
+        glPopMatrix()
     }
 
     /**
      * Starts scissoring a rect
-     *
-     * @param x      X coord
-     * @param y      Y coord
-     * @param width  Width of scissor
-     * @param height Height of scissor
+     * @param x The X coordinate of the scissored rect
+     * @param y The Y coordinate of the scissored rect
+     * @param width The width of the scissored rect
+     * @param height The height of the scissored rect
      */
-    @JvmStatic
-    fun pushScissor(x: Double, y: Double, width: Double, height: Double) {
-        var x = x
-        var y = y
-        var width = width
-        var height = height
+    fun pushScissor(x: Float, y: Float, width: Float, height: Float) {
+        /* glPushAttrib(GL_SCISSOR_BIT)
+
+        val scale = ScaledResolution(minecraft).scaleFactor
+
+        glScissor(x.toInt() * scale, ((ScaledResolution(minecraft).scaledHeight - y) - height).toInt() * scale, width.toInt() * scale, height.toInt() * scale)
+        glEnable(GL_SCISSOR_TEST) */
+
+        var x = x.toDouble()
+        var y = y.toDouble()
+        var width = width.toDouble()
+        var height = height.toDouble()
 
         width = MathHelper.clamp(width, 0.0, width)
         height = MathHelper.clamp(height, 0.0, height)
@@ -370,66 +467,64 @@ object RenderUtil : Wrapper {
     }
 
     /**
-     * Disables scissor
+     * Stops scissoring a rect
      */
-    @JvmStatic
     fun popScissor() {
         glDisable(GL_SCISSOR_TEST)
         glPopAttrib()
     }
 
+    /**
+     * Draws a gradient box at the given AABB
+     * @param axisAlignedBB The AABB to draw the box at
+     * @param top The top colour
+     * @param bottom The bottom colour
+     */
     fun drawGradientBox(axisAlignedBB: AxisAlignedBB, top: Color, bottom: Color) {
-        glBlendFunc(770, 771)
-        glEnable(GL_BLEND)
-        glLineWidth(1f)
-        glColor4d(0.0, 1.0, 0.0, 0.15)
-        glDisable(GL_TEXTURE_2D)
-        glDisable(GL_DEPTH_TEST)
-        glDepthMask(false)
-        glColor4d(0.0, 0.0, 1.0, 0.5)
         glPushMatrix()
-
-        GlStateManager.enableBlend()
-        GlStateManager.enableDepth()
-        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE)
-        GlStateManager.disableTexture2D()
-        GlStateManager.depthMask(false)
+        glDisable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
+        glEnable(GL_DEPTH_TEST)
+        glDepthMask(false)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glLineWidth(1f)
 
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
-        GlStateManager.disableCull()
-        GlStateManager.disableAlpha()
-        GlStateManager.shadeModel(GL_SMOOTH)
+        glDisable(GL_CULL_FACE)
+        glDisable(GL_ALPHA_TEST)
+        glShadeModel(GL_SMOOTH)
 
         bufferBuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
-        addGradientBoxVertices(bufferBuilder, axisAlignedBB, bottom, top)
+        addGradientBoxVertices(axisAlignedBB, bottom, top)
         tessellator.draw()
 
-        GlStateManager.enableCull()
-        GlStateManager.enableAlpha()
-        GlStateManager.shadeModel(GL_FLAT)
+        glShadeModel(GL_FLAT)
+        glEnable(GL_ALPHA_TEST)
+        glEnable(GL_CULL_FACE)
 
         glDisable(GL_LINE_SMOOTH)
-        GlStateManager.depthMask(true)
-        GlStateManager.enableDepth()
-        GlStateManager.enableTexture2D()
-        GlStateManager.disableBlend()
-        GlStateManager.popMatrix()
-
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
         glDepthMask(true)
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_TEXTURE_2D)
         glDisable(GL_BLEND)
+        glPopMatrix()
     }
 
-    private fun addGradientBoxVertices(builder: BufferBuilder, bb: AxisAlignedBB, topColour: Color, bottomColour: Color) {
-        val minX = bb.minX
-        val minY = bb.minY
-        val minZ = bb.minZ
-        val maxX = bb.maxX
-        val maxY = bb.maxY
-        val maxZ = bb.maxZ
+    /**
+     * Adds the vertices to the buffer builder
+     * @param boundingBox The AABB to add the vertices around
+     * @param topColour The top colour
+     * @param bottomColour The bottom colour
+     */
+    private fun addGradientBoxVertices(boundingBox: AxisAlignedBB, topColour: Color, bottomColour: Color) {
+        val minX = boundingBox.minX
+        val minY = boundingBox.minY
+        val minZ = boundingBox.minZ
+        val maxX = boundingBox.maxX
+        val maxY = boundingBox.maxY
+        val maxZ = boundingBox.maxZ
         val red = topColour.red / 255f
         val green = topColour.green / 255f
         val blue = topColour.blue / 255f
@@ -438,40 +533,47 @@ object RenderUtil : Wrapper {
         val green1 = bottomColour.green / 255f
         val blue1 = bottomColour.blue / 255f
         val alpha1 = bottomColour.alpha / 255f
-        builder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
-        builder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
-        builder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+
+        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
     }
 
+    /**
+     * Draws a nametag at a given Vec3d
+     * @param text The text to draw
+     * @param location Where to draw the text
+     * @param textColour The colour of the text
+     */
     @JvmStatic
-    fun drawNametagText(text: String, location: Vec3d, textColour: Int) {
+    fun drawNametagText(text: String, location: Vec3d, textColour: Color) {
         GlStateManager.pushMatrix()
+
         // Translate
         val scale = 0.02666667f
-        GlStateManager.translate(
-            location.x - minecraft.renderManager.viewerPosX, location.y - minecraft.renderManager.viewerPosY, location.z - minecraft.renderManager.viewerPosZ
-        )
+
+        GlStateManager.translate(location.x - minecraft.renderManager.viewerPosX, location.y - minecraft.renderManager.viewerPosY, location.z - minecraft.renderManager.viewerPosZ)
         GlStateManager.rotate(-minecraft.player.rotationYaw, 0f, 1f, 0f)
 
         // Rotate based on the view
@@ -486,6 +588,13 @@ object RenderUtil : Wrapper {
         GlStateManager.popMatrix()
     }
 
+    /**
+     * Translates, scales, and rotates around a location
+     * @param location The location of the nametag
+     * @param scaled Whether the nametag is scaled by distance
+     * @param defaultScale The minimum scale of the nametag
+     * @param block The code to run when drawing the nametag
+     */
     @JvmStatic
     fun drawNametag(location: Vec3d, scaled: Boolean, defaultScale: Double = 0.2, block: () -> Unit) {
         val distance = minecraft.player.getDistance(location.x, location.y, location.z)
@@ -521,6 +630,13 @@ object RenderUtil : Wrapper {
         glPopMatrix()
     }
 
+    /**
+     * Renders an item stack at the given coordinates
+     * @param itemStack The item stack to draw
+     * @param x The X coordinate
+     * @param y The Y coordinate
+     * @param overlay Whether to draw the overlay or not
+     */
     @JvmStatic
     fun renderItemStack(itemStack: ItemStack?, x: Float, y: Float, overlay: Boolean) {
         if (itemStack == null) {
@@ -542,18 +658,28 @@ object RenderUtil : Wrapper {
         GlStateManager.enableDepth()
     }
 
+    /**
+     * Draws a rectangular texture
+     * @param x The X coordinate
+     * @param y The Y coordinate
+     * @param u The X offset in the texture (for sprite sheets)
+     * @param v The Y offset in the texture (for sprite sheets)
+     * @param width The width to draw
+     * @param height The height to draw
+     * @param textureWidth The width of the texture in the sprite sheet
+     * @param textureHeight The height of the texture in the sprite sheet
+     */
     @JvmStatic
     fun drawModalRectWithCustomSizedTexture(x: Float, y: Float, u: Float, v: Float, width: Float, height: Float, textureWidth: Float, textureHeight: Float) {
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f)
         val f = 1.0f / textureWidth
         val f1 = 1.0f / textureHeight
-        val tessellator = Tessellator.getInstance()
-        val bufferbuilder = tessellator.buffer
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX)
-        bufferbuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).tex((u * f).toDouble(), ((v + height) * f1).toDouble()).endVertex()
-        bufferbuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).tex(((u + width) * f).toDouble(), ((v + height) * f1).toDouble()).endVertex()
-        bufferbuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).tex(((u + width) * f).toDouble(), (v * f1).toDouble()).endVertex()
-        bufferbuilder.pos(x.toDouble(), y.toDouble(), 0.0).tex((u * f).toDouble(), (v * f1).toDouble()).endVertex()
+
+        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX)
+        bufferBuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0).tex((u * f).toDouble(), ((v + height) * f1).toDouble()).endVertex()
+        bufferBuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0).tex(((u + width) * f).toDouble(), ((v + height) * f1).toDouble()).endVertex()
+        bufferBuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).tex(((u + width) * f).toDouble(), (v * f1).toDouble()).endVertex()
+        bufferBuilder.pos(x.toDouble(), y.toDouble(), 0.0).tex((u * f).toDouble(), (v * f1).toDouble()).endVertex()
         tessellator.draw()
     }
 

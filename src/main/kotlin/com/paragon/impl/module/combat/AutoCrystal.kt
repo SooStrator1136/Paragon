@@ -222,7 +222,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
             // Render damage nametag
             if (renderDamageNametag.value) {
-                drawNametagText("[" + currentPlacement!!.targetDamage.toInt() + ", " + currentPlacement!!.selfDamage.toInt() + "]", Vec3d(currentPlacement!!.position.x + 0.5, currentPlacement!!.position.y + 0.5, currentPlacement!!.position.z + 0.5), -1)
+                drawNametagText("[" + currentPlacement!!.targetDamage.toInt() + ", " + currentPlacement!!.selfDamage.toInt() + "]", Vec3d(currentPlacement!!.position.x + 0.5, currentPlacement!!.position.y + 0.5, currentPlacement!!.position.z + 0.5), Color.WHITE)
             }
         }
     }

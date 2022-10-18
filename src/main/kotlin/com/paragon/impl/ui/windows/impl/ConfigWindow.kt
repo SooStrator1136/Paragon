@@ -8,6 +8,7 @@ import com.paragon.impl.module.client.Colours
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.ui.windows.Window
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.toColour
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.util.ChatAllowedCharacters
@@ -64,22 +65,48 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
     override fun draw(mouseX: Int, mouseY: Int, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
 
-        RenderUtil.pushScissor(x.toDouble(), y.toDouble(), width.toDouble() * openAnimation.getAnimationFactor(), (height.toDouble() + 1) * openAnimation.getAnimationFactor())
-
-        RenderUtil.drawRect(x, y, width, height, 0x90000000.toInt())
+        RenderUtil.drawRect(
+            x,
+            y + grabbableHeight,
+            (width * openAnimation.getAnimationFactor()).toFloat(),
+            ((height - grabbableHeight) * openAnimation.getAnimationFactor()).toFloat(),
+            Color(0, 0, 0, 120)
+        )
 
         if (ClickGUI.blur.value) {
-            BlurUtil.blur(x.toInt(), y.toInt(), (width * openAnimation.getAnimationFactor()).toInt(), (height * openAnimation.getAnimationFactor()).toInt(), ClickGUI.intensity.value)
+            BlurUtil.blur(
+                x,
+                y + grabbableHeight,
+                (width * openAnimation.getAnimationFactor()).toFloat(),
+                ((height - grabbableHeight) * openAnimation.getAnimationFactor()).toFloat(),
+                ClickGUI.intensity.value
+            )
         }
 
-        RenderUtil.drawRect(x, y, width * openAnimation.getAnimationFactor().toFloat(), grabbableHeight, Colours.mainColour.value.rgb)
+        RenderUtil.drawRect(
+            x,
+            y,
+            width * openAnimation.getAnimationFactor().toFloat(),
+            grabbableHeight,
+            Colours.mainColour.value
+        )
 
-        FontUtil.drawStringWithShadow("Configs", x + 3, y + 4, -1)
+        RenderUtil.pushScissor(
+            x,
+            y,
+            width * openAnimation.getAnimationFactor().toFloat(),
+            16 * openAnimation.getAnimationFactor().toFloat()
+        )
 
-        RenderUtil.drawBorder(x + 0.5f, y + 0.5f, ((width - 1) * openAnimation.getAnimationFactor()).toFloat(), ((height - 1) * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value.rgb)
+        FontUtil.drawStringWithShadow("Changelog", x + 3, y + 4, Color.WHITE)
 
-        RenderUtil.drawRect(x + width - 16f, y, 16f, grabbableHeight, 0x90000000.toInt())
-        FontUtil.font.drawStringWithShadow("X", (x + width - 9f) - (FontUtil.font.getStringWidth("X") / 2f), y + 1.5f, -1)
+        RenderUtil.scaleTo((x + width - 7f) - FontUtil.font.getStringWidth("X"), y + 1, 0f, 0.7, 0.7, 0.7) {
+            FontUtil.drawIcon(FontUtil.Icon.CLOSE, (x + width - 7f) - FontUtil.font.getStringWidth("X"), y + 1, Color.WHITE)
+        }
+
+        RenderUtil.popScissor()
+
+        RenderUtil.drawBorder(x, y, (width * openAnimation.getAnimationFactor()).toFloat(), (height * openAnimation.getAnimationFactor()).toFloat(), 0.5f, Colours.mainColour.value)
 
         if (scroll > 0) {
             scroll = 0f
@@ -111,7 +138,7 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
         configsList.removeIf { it.remove || !configDirectory.list()?.contains(it.name)!! }
 
-        RenderUtil.pushScissor(x.toDouble(), y.toDouble() + grabbableHeight + 1, width.toDouble() * openAnimation.getAnimationFactor(), (height.toDouble() - (grabbableHeight * 2) - 3) * openAnimation.getAnimationFactor())
+        RenderUtil.pushScissor(x, y + grabbableHeight + 1, width * openAnimation.getAnimationFactor().toFloat(), (height - (grabbableHeight * 2) - 3) * openAnimation.getAnimationFactor().toFloat())
 
         if (configsList.isNotEmpty()) {
             val last = configsList[configsList.size - 1]
@@ -173,11 +200,21 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         fun draw(mouseX: Int, mouseY: Int) {
             val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
 
-            RenderUtil.drawRect(x, y, width, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            FontUtil.drawStringWithShadow(name, x + 3, y + 4, -1)
+            RenderUtil.drawRect(x, y, width, height, if (hovered) Color(0, 0, 0, 120) else Color(0, 0, 0, 150))
+            FontUtil.drawStringWithShadow(name, x + 3, y + 4, Color.WHITE)
 
-            RenderUtil.drawRect(x + width - 16f, y, 16f, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            FontUtil.font.drawStringWithShadow("D", x + width - 12.5f, y + 1.5f, if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED.rgb else -1)
+            RenderUtil.drawRect(x + width - 16f, y, 16f, height, if (hovered) Color(0, 0, 0, 120) else Color(0, 0, 0, 150))
+
+            RenderUtil.scaleTo(x + width - 12.5f, y + 2f, 0f, 0.6, 0.6, 0.6) {
+                FontUtil.drawIcon(
+                    FontUtil.Icon.BIN,
+                    x + width - 12.5f,
+                    y + 2f,
+                    if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED else Color.WHITE
+                )
+            }
+
+            // FontUtil.font.drawStringWithShadow("D", x + width - 12.5f, y + 1.5f, if (mouseX.toFloat() in x + width - 9f..x + width && mouseY.toFloat() in y..y + height) Color.RED else Color.WHITE)
         }
 
         fun clicked(mouseX: Int, mouseY: Int, click: Click): Boolean {
@@ -217,12 +254,12 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
 
             val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
 
-            RenderUtil.drawRect(x, y, width, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            RenderUtil.drawBorder(x, y, width, height, 0.5f, Color.BLACK.rgb)
+            RenderUtil.drawRect(x, y, width, height, if (hovered) Color(0, 0, 0, 120) else Color(0, 0, 0, 150))
+            RenderUtil.drawBorder(x, y, width, height, 0.5f, Color.BLACK)
 
-            RenderUtil.drawRect(x, y, width, height, Color(255, 0, 0, (255 * flashAnimation.getAnimationFactor()).toInt()).rgb)
+            RenderUtil.drawRect(x, y, width, height, Color(255, 0, 0, (255 * flashAnimation.getAnimationFactor()).toInt()))
 
-            FontUtil.drawStringWithShadow(input + if (listening) "_" else "", x + 3, y + 4, -1)
+            FontUtil.drawStringWithShadow(input + if (listening) "_" else "", x + 3, y + 4, Color.WHITE)
         }
 
         fun clicked(mouseX: Int, mouseY: Int) {
@@ -254,10 +291,10 @@ class ConfigWindow(x: Float, y: Float, width: Float, height: Float, grabbableHei
         fun draw(mouseX: Int, mouseY: Int) {
             val hovered = mouseX.toFloat() in x..x + width && mouseY.toFloat() in y..y + height
 
-            RenderUtil.drawRect(x, y, width, height, if (hovered) 0x60000000 else 0x90000000.toInt())
-            RenderUtil.drawBorder(x, y, width, height, 0.5f, Color.BLACK.rgb)
+            RenderUtil.drawRect(x, y, width, height, if (hovered) Color(0, 0, 0, 120) else Color(0, 0, 0, 150))
+            RenderUtil.drawBorder(x, y, width, height, 0.5f, Color.BLACK)
 
-            FontUtil.drawStringWithShadow(name, x + 3, y + 4, -1)
+            FontUtil.drawStringWithShadow(name, x + 3, y + 4, Color.WHITE)
         }
 
         fun clicked(mouseX: Int, mouseY: Int, click: Click): Boolean {

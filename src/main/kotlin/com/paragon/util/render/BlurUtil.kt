@@ -43,13 +43,13 @@ object BlurUtil : Wrapper {
         lastScaleHeight = heightFactor
     }
 
-    fun blur(x: Int, y: Int, width: Int, height: Int, intensity: Float) {
+    fun blur(x: Float, y: Float, width: Float, height: Float, intensity: Float) {
         val resolution = ScaledResolution(minecraft)
         val currentScale = resolution.scaleFactor
         checkScale(currentScale, resolution.scaledWidth, resolution.scaledHeight)
 
         if (OpenGlHelper.isFramebufferEnabled()) {
-            RenderUtil.pushScissor(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+            RenderUtil.pushScissor(x, y, width, height)
 
             (blurShader as IShaderGroup?)!!.hookGetListShaders()[0]?.shaderManager?.getShaderUniform("Radius")!!.set(
                 intensity

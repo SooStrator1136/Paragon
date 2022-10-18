@@ -5,6 +5,7 @@ import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.RenderUtil.drawBorder
 import com.paragon.util.render.RenderUtil.drawRect
 import com.paragon.util.render.RenderUtil.renderItemStack
+import com.paragon.util.toColour
 import net.minecraft.item.ItemStack
 
 /**
@@ -13,8 +14,8 @@ import net.minecraft.item.ItemStack
 object Inventory : HUDModule("Inventory", "Displays the contents of your inventory") {
 
     override fun render() {
-        drawRect(x, y, width, height - 4, -0x70000000)
-        drawBorder(x, y, width, height - 4, 1f, Colours.mainColour.value.rgb)
+        drawRect(x, y, width, height - 4, 0x70000000.toColour())
+        drawBorder(x, y, width, height - 4, 1f, Colours.mainColour.value)
 
         var x = 0f
         var y = 0f

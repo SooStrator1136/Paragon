@@ -74,9 +74,9 @@ object StartMenu : Wrapper {
         var startY = scaledResolution.scaledHeight - (226 * expandAnimation.getAnimationFactor())
 
         if (expandAnimation.getAnimationFactor() > 0) {
-            RenderUtil.pushScissor(0.0, scaledResolution.scaledHeight - 226.0, 152.0, 201.0)
+            RenderUtil.pushScissor(0f, scaledResolution.scaledHeight - 226f, 152f, 201f)
 
-            RenderUtil.drawRect(0f, startY.toFloat(), 150f, 200f, Color(148, 148, 148).rgb)
+            RenderUtil.drawRect(0f, startY.toFloat(), 150f, 200f, Color(148, 148, 148))
 
             startY += 3f
 
@@ -95,16 +95,16 @@ object StartMenu : Wrapper {
         RenderUtil.drawRect(
             0f, scaledResolution.scaledHeight - MathHelper.clamp(
                 228f * expandAnimation.getAnimationFactor().toFloat(), (26f * Paragon.INSTANCE.taskbar.expandAnimation.getAnimationFactor().toFloat()) + 2, 228f
-            ), 150f, 2f, Colours.mainColour.value.rgb
+            ), 150f, 2f, Colours.mainColour.value
         )
 
-        RenderUtil.drawRect(x + 1, y + 1, width, height, Color(100, 100, 100).rgb)
+        RenderUtil.drawRect(x + 1, y + 1, width, height, Color(100, 100, 100))
         RenderUtil.drawRect(
             x, y, width, height, Color(
                 120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0), 120 - (if (isHovered(mouseX, mouseY)) 10 else 0)
-            ).rgb
+            )
         )
-        FontUtil.drawStringWithShadow("Start", x + 22, y + 6, -1)
+        FontUtil.drawStringWithShadow("Start", x + 22, y + 6, Color.WHITE)
 
         minecraft.textureManager.bindTexture(ResourceLocation("paragon", "textures/logo.png"))
         RenderUtil.drawModalRectWithCustomSizedTexture(x + 1, y + 1, 0f, 0f, 18f, 18f, 18f, 18f)

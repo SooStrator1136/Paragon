@@ -31,8 +31,8 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
 
-        RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100).rgb)
-        RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130).rgb)
+        RenderUtil.drawRect(x + 3, y + 3, width - 4, height - 4, Color(100, 100, 100))
+        RenderUtil.drawRect(x + 2, y + 2, width - 4, height - 4, Color(130, 130, 130))
 
         val maxWidth = width - 4
 
@@ -118,18 +118,18 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
         }
 
         RenderUtil.drawHorizontalGradientRect(
-            x + 2, y + 2, renderWidth, height - 4, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb
+            x + 2, y + 2, renderWidth, height - 4, Colours.mainColour.value, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter() else Colours.mainColour.value
         )
 
         glScalef(0.8f, 0.8f, 0.8f)
 
         val scaleFactor = 1 / 0.8f
-        FontUtil.drawStringWithShadow(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, -1)
+        FontUtil.drawStringWithShadow(setting.name, (x + 5) * scaleFactor, (y + 5f) * scaleFactor, Color.WHITE)
 
         val valueX: Float = (x + width - FontUtil.getStringWidth(setting.value.toString()) * 0.8f - 5) * scaleFactor
 
         FontUtil.drawStringWithShadow(
-            setting.value.toString(), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190).rgb
+            setting.value.toString(), valueX, (y + 5f) * scaleFactor, Color(190, 190, 190)
         )
 
         glScalef(scaleFactor, scaleFactor, scaleFactor)
@@ -145,7 +145,7 @@ class SliderElement(parent: ModuleElement, setting: Setting<Number>, x: Float, y
                 getSubSettingHeight().toDouble() * expanded.getAnimationFactor(), 0.0, parent.parent.scissorHeight.toDouble()
             )
 
-            RenderUtil.pushScissor(x.toDouble(), scissorY, width.toDouble(), scissorHeight)
+            RenderUtil.pushScissor(x, scissorY.toFloat(), width, scissorHeight.toFloat())
 
             subSettings.forEach {
                 it.x = x + 2

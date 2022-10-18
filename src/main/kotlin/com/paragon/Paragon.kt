@@ -5,6 +5,7 @@ import com.paragon.impl.event.EventFactory
 import com.paragon.impl.managers.*
 import com.paragon.impl.ui.configuration.ConfigurationGUI
 import com.paragon.impl.ui.configuration.GuiImplementation
+import com.paragon.impl.ui.configuration.panel.PanelGUI
 import com.paragon.impl.ui.configuration.retrowindows.Windows98
 import com.paragon.impl.ui.console.Console
 import com.paragon.impl.ui.taskbar.Taskbar
@@ -22,6 +23,7 @@ import org.lwjgl.opengl.Display
 import java.awt.Desktop
 import java.net.URI
 import javax.swing.JOptionPane
+import kotlin.math.log
 
 @Mod(name = com.paragon.Paragon.Companion.modName, modid = com.paragon.Paragon.Companion.modID, version = com.paragon.Paragon.Companion.modVersion)
 class Paragon {
@@ -107,6 +109,9 @@ class Paragon {
 
         taskbar = Taskbar
         logger.info("Taskbar Initialised")
+
+        panelGUI = PanelGUI()
+        logger.info("PanelGUI Initialised")
 
         windows98GUI = Windows98()
         logger.info("Windows98 GUI Initialised")
@@ -195,6 +200,9 @@ class Paragon {
     // GUIs
     lateinit var taskbar: Taskbar
         private set
+
+    lateinit var panelGUI: PanelGUI
+        //private set
 
     lateinit var windows98GUI: Windows98
         private set

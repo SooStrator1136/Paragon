@@ -1,5 +1,7 @@
 package com.paragon.impl.setting
 
+import com.paragon.Paragon
+import com.paragon.impl.event.client.SettingUpdateEvent
 import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
@@ -79,6 +81,10 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param value the value of the setting.
      */
     fun setValue(value: T) {
+        if (value != this.value) {
+            Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(this))
+        }
+
         if (value is Enum<*>) {
             index = nextIndex
         }

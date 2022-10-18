@@ -1,6 +1,8 @@
 package com.paragon.util
 
 import net.minecraft.client.Minecraft
+import org.lwjgl.opengl.GL11.glColor4f
+import java.awt.Color
 
 inline val mc: Minecraft get() = Minecraft.getMinecraft()
 
@@ -58,4 +60,12 @@ operator fun Number.plus(toAdd: Number): Number {
 
 fun Boolean.toBinary(): Int {
     return if (this) 1 else 0
+}
+
+fun Color.glColour() {
+    glColor4f(this.red / 255f, this.green / 255f, this.blue / 255f, this.alpha / 255f)
+}
+
+fun Int.toColour(): Color {
+    return Color(this)
 }

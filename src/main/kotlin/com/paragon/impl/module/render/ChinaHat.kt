@@ -7,6 +7,7 @@ import com.paragon.util.render.ColourUtil
 import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
 import com.paragon.util.entity.EntityUtil
+import com.paragon.util.glColour
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.Vec3d
@@ -81,13 +82,13 @@ object ChinaHat : Module("ChinaHat", Category.RENDER, "-69420 social credit :(("
             i += Math.PI * 4 / 128 // There is no classic for loop in kt
 
             // Set bottom colour
-            ColourUtil.setColour(bottomColour.value.rgb)
+            bottomColour.value.glColour()
 
             // Add bottom point
             glVertex3d(vec.x + 0.65 * cos(i), vec.y - 0.25, vec.z + 0.65 * sin(i))
 
             // Set top colour
-            ColourUtil.setColour(topColour.value.rgb)
+            topColour.value.glColour()
 
             // Add top point
             glVertex3d(vec.x, vec.y, vec.z)

@@ -9,6 +9,7 @@ import com.paragon.impl.ui.configuration.shared.Panel
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.module.Category
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.string.StringUtil
 import me.surge.animation.Animation
 import net.minecraft.util.math.MathHelper
 import java.awt.Color
@@ -29,7 +30,7 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
     private val maxHeight = 320f
 
     init {
-        title = category.Name
+        title = StringUtil.getFormattedText(category)
 
         Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.category == category }.forEach {
             moduleElements.add(ModuleElement(this, it, x, y + height, width - 1, height))
@@ -52,24 +53,20 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
         scissorHeight = (MathHelper.clamp(moduleHeight, 0f, maxHeight) * animation.getAnimationFactor()).toFloat()
 
         // Background
-        RenderUtil.drawRect(
-            x, y, width, (height + scissorHeight + 1 * animation.getAnimationFactor()).toFloat(), Color(148, 148, 148).rgb
-        )
-        RenderUtil.drawHorizontalGradientRect(
-            x + 1, y + 1, width - 2, height - 2, Colours.mainColour.value.rgb, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter().rgb else Colours.mainColour.value.rgb
-        )
+        RenderUtil.drawRect(x, y, width, (height + scissorHeight + 1 * animation.getAnimationFactor()).toFloat(), Color(148, 148, 148))
+        RenderUtil.drawHorizontalGradientRect(x + 1, y + 1, width - 2, height - 2, Colours.mainColour.value, if (ClickGUI.gradient.value) Colours.mainColour.value.brighter().brighter() else Colours.mainColour.value)
 
         // Minimise button
-        RenderUtil.drawRect(x + width - 12.5f, y + 3.5f, 10f, 10f, Color(70, 70, 70).rgb)
-        RenderUtil.drawRect(x + width - 13.5f, y + 2.5f, 10f, 10f, Color(148, 148, 148).rgb)
+        RenderUtil.drawRect(x + width - 12.5f, y + 3.5f, 10f, 10f, Color(70, 70, 70))
+        RenderUtil.drawRect(x + width - 13.5f, y + 2.5f, 10f, 10f, Color(148, 148, 148))
 
-        RenderUtil.drawRect(x + width - 11.5f, y + 7f, 6f, 1f, Color(50, 50, 50).rgb)
+        RenderUtil.drawRect(x + width - 11.5f, y + 7f, 6f, 1f, Color(50, 50, 50))
 
         if (!animation.state) {
-            RenderUtil.drawRect(x + width - 9f, y + 4.5f, 1f, 6f, Color(50, 50, 50).rgb)
+            RenderUtil.drawRect(x + width - 9f, y + 4.5f, 1f, 6f, Color(50, 50, 50))
         }
 
-        FontUtil.drawStringWithShadow(title, x + 5, y + 4, -1)
+        FontUtil.drawStringWithShadow(title, x + 5, y + 4, Color.WHITE)
 
         if (animation.getAnimationFactor() > 0) {
             if (mouseX in x..x + width && mouseY in y + height..y + height + scissorHeight) {
@@ -99,7 +96,7 @@ class CategoryWindow(category: Category, x: Float, y: Float, width: Float, heigh
                 moduleElements[0].y = y + height
             }
 
-            RenderUtil.pushScissor(x.toDouble(), (y + height).toDouble(), width.toDouble(), scissorHeight.toDouble())
+            RenderUtil.pushScissor(x, (y + height), width, scissorHeight)
 
             var yOffset = moduleElements[0].y
             moduleElements.forEach {

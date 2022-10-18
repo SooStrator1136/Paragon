@@ -5,11 +5,11 @@ import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.setting.Setting
-import com.paragon.util.render.BlurUtil
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
+import com.paragon.util.toColour
 import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.math.MathHelper
@@ -63,22 +63,22 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
 
                     if (factor != 1.0) {
                         RenderUtil.pushScissor(
-                            (x * if (scissorSlide.value) factor else 1.0) - 3,
-                            y.toDouble() - 1,
-                            FontUtil.getStringWidth(info) + 12.0,
-                            ((moduleHeight.value + 1) * factor) + 3
+                            (x * if (scissorSlide.value) factor.toFloat() else 1f) - 3,
+                            y - 1,
+                            FontUtil.getStringWidth(info) + 12f,
+                            ((moduleHeight.value + 1) * factor).toFloat() + 3f
                         )
                     }
 
-                    val colourRGB: Int = when (colour.value) {
-                        Colour.VALUE -> colourValue.value.rgb
+                    val colour: Color = when (colour.value) {
+                        Colour.VALUE -> colourValue.value
 
                         Colour.GRADIENT -> {
                             val indexHue = index.toFloat() / modules.size.toFloat()
-                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100).toColour()
                         }
 
-                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50).toColour()
                     }
 
                     RenderUtil.drawRect(
@@ -88,9 +88,9 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                            colour.integrateAlpha(background.alpha)
                         } else {
-                            background.value.rgb
+                            background.value
                         }
                     )
 
@@ -98,7 +98,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         info,
                         x + 1,
                         y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
-                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                        colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
                     if (index == 0 && topBar.value) {
@@ -107,7 +107,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y - 1,
                             FontUtil.getStringWidth(info) + (if (moduleBar.value) 8 else 7) + if (sideBar.value) 2 else 0,
                             1f,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -117,7 +117,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y,
                             1f,
                             moduleHeight.value,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -132,11 +132,11 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
                         }
 
-                        RenderUtil.drawRect(x + FontUtil.getStringWidth(info) + 6 - width + if (sideBar.value) 0f else 1f, y + moduleHeight.value - 1, width, 1f, colourRGB)
+                        RenderUtil.drawRect(x + FontUtil.getStringWidth(info) + 6 - width + if (sideBar.value) 0f else 1f, y + moduleHeight.value - 1, width, 1f, colour)
                     }
 
                     if (sideBar.value) {
-                        RenderUtil.drawRect(x - 3f, y, 1f, moduleHeight.value, colourRGB)
+                        RenderUtil.drawRect(x - 3f, y, 1f, moduleHeight.value, colour)
                     }
 
                     if (factor != 1.0) {
@@ -159,22 +159,26 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
 
                     if (factor != 1.0) {
                         RenderUtil.pushScissor(
-                            (x - FontUtil.getStringWidth(info) * if (scissorSlide.value) factor else 1.0) - 3,
-                            y.toDouble() - 1,
-                            FontUtil.getStringWidth(info) + 7.0,
-                            ((moduleHeight.value + 1) * factor) + 3
+                            (x - FontUtil.getStringWidth(info) * if (scissorSlide.value) factor.toFloat() else 1f) - 3,
+                            y - 1,
+                            FontUtil.getStringWidth(info) + 7f,
+                            ((moduleHeight.value + 1) * factor).toFloat() + 3f
                         )
                     }
 
-                    val colourRGB: Int = when (colour.value) {
-                        Colour.VALUE -> colourValue.value.rgb
+                    val colour: Color = when (colour.value) {
+                        Colour.VALUE -> colourValue.value
 
                         Colour.GRADIENT -> {
                             val indexHue = index / modules.size.toFloat()
-                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                            Color.HSBtoRGB(
+                                (startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f,
+                                saturation.value / 100,
+                                brightness.value / 100
+                            ).toColour()
                         }
 
-                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50).toColour()
                     }
 
                     RenderUtil.drawRect(
@@ -184,9 +188,9 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                            colour.integrateAlpha(background.alpha)
                         } else {
-                            background.value.rgb
+                            background.value
                         }
                     )
 
@@ -194,7 +198,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         info,
                         x - FontUtil.getStringWidth(info),
                         y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
-                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                        colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
                     if (index == 0 && topBar.value) {
@@ -203,7 +207,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y - 1,
                             FontUtil.getStringWidth(info) + (if (moduleBar.value) 5 else 4) + if (sideBar.value) 2 else 0,
                             1f,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -212,8 +216,8 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             x - FontUtil.getStringWidth(info) - 3,
                             y,
                             1f,
-                            moduleHeight.value,
-                            colourRGB
+                            moduleHeight.value * module.animation.getAnimationFactor().toFloat(),
+                            colour
                         )
                     }
 
@@ -228,11 +232,11 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
                         }
 
-                        RenderUtil.drawRect(x - FontUtil.getStringWidth(info) - 2, y + moduleHeight.value - 1, width, 1f, colourRGB)
+                        RenderUtil.drawRect(x - FontUtil.getStringWidth(info) - 2, y + moduleHeight.value - 1, width, 1f, colour)
                     }
 
                     if (sideBar.value) {
-                        RenderUtil.drawRect(x + 3f, y, 1f, moduleHeight.value, colourRGB)
+                        RenderUtil.drawRect(x + 3f, y, 1f, moduleHeight.value * module.animation.getAnimationFactor().toFloat(), colour)
                     }
 
                     if (factor != 1.0) {
@@ -255,22 +259,26 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
 
                     if (factor != 1.0) {
                         RenderUtil.pushScissor(
-                            (x - FontUtil.getStringWidth(info) * if (scissorSlide.value) factor else 1.0) - 3,
-                            y.toDouble() - 1,
-                            FontUtil.getStringWidth(info) + 7.0,
-                            ((moduleHeight.value + 1) * factor) + 3
+                            (x - FontUtil.getStringWidth(info) * if (scissorSlide.value) factor.toFloat() else 1f) - 3f,
+                            y - 1,
+                            FontUtil.getStringWidth(info) + 7f,
+                            ((moduleHeight.value + 1) * factor).toFloat() + 3
                         )
                     }
 
-                    val colourRGB: Int = when (colour.value) {
-                        Colour.VALUE -> colourValue.value.rgb
+                    val colour: Color = when (colour.value) {
+                        Colour.VALUE -> colourValue.value
 
                         Colour.GRADIENT -> {
                             val indexHue = index.toFloat() / modules.size.toFloat()
-                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                            Color.HSBtoRGB(
+                                (startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f,
+                                saturation.value / 100,
+                                brightness.value / 100
+                            ).toColour()
                         }
 
-                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50).toColour()
                     }
 
                     RenderUtil.drawRect(
@@ -280,9 +288,9 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                            colour.integrateAlpha(background.alpha)
                         } else {
-                            background.value.rgb
+                            background.value
                         }
                     )
 
@@ -290,7 +298,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         info,
                         x - FontUtil.getStringWidth(info),
                         y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
-                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                        colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
                     if (index == 0 && topBar.value) {
@@ -299,7 +307,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y + moduleHeight.value,
                             FontUtil.getStringWidth(info) + (if (moduleBar.value) 5 else 4) + if (sideBar.value) 2 else 0,
                             1f,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -309,7 +317,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y,
                             1f,
                             moduleHeight.value,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -324,11 +332,11 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
                         }
 
-                        RenderUtil.drawRect(x - FontUtil.getStringWidth(info) - 2, y, width, 1f, colourRGB)
+                        RenderUtil.drawRect(x - FontUtil.getStringWidth(info) - 2, y, width, 1f, colour)
                     }
 
                     if (sideBar.value) {
-                        RenderUtil.drawRect(x + 3f, y, 1f, moduleHeight.value, colourRGB)
+                        RenderUtil.drawRect(x + 3f, y, 1f, moduleHeight.value, colour)
                     }
 
                     if (factor != 1.0) {
@@ -351,22 +359,26 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
 
                     if (factor != 1.0) {
                         RenderUtil.pushScissor(
-                            x + 3.0,
-                            y.toDouble() - 1,
-                            FontUtil.getStringWidth(info) + 7.0,
-                            ((moduleHeight.value + 1) * factor) + 3
+                            x + 3f,
+                            y - 1f,
+                            FontUtil.getStringWidth(info) + 7f,
+                            ((moduleHeight.value + 1) * factor).toFloat() + 3f
                         )
                     }
 
-                    val colourRGB: Int = when (colour.value) {
-                        Colour.VALUE -> colourValue.value.rgb
+                    val colour: Color = when (colour.value) {
+                        Colour.VALUE -> colourValue.value
 
                         Colour.GRADIENT -> {
                             val indexHue = index.toFloat() / modules.size.toFloat()
-                            Color.HSBtoRGB((startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f, saturation.value / 100, brightness.value / 100)
+                            Color.HSBtoRGB(
+                                (startHue.value + ((endHue.value - startHue.value) * indexHue).coerceAtLeast(startHue.value)).coerceIn(0f, 360f) / 360f,
+                                saturation.value / 100,
+                                brightness.value / 100
+                            ).toColour()
                         }
 
-                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50)
+                        Colour.WAVE -> ColourUtil.getRainbow(speed.value, saturation.value / 100, index * 50).toColour()
                     }
 
                     RenderUtil.drawRect(
@@ -376,9 +388,9 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            Color(colourRGB).integrateAlpha(background.alpha).rgb
+                            colour.integrateAlpha(background.alpha)
                         } else {
-                            background.value.rgb
+                            background.value
                         }
                     )
 
@@ -386,7 +398,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         info,
                         x + 4,
                         y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
-                        Color(colourRGB).integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f)).rgb
+                        colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
                     if (index == 0 && topBar.value) {
@@ -395,7 +407,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y + moduleHeight.value,
                             FontUtil.getStringWidth(info) + (if (moduleBar.value) 5 else 4) + if (sideBar.value) 1 else 1,
                             1f,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -405,7 +417,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             y,
                             1f,
                             moduleHeight.value,
-                            colourRGB
+                            colour
                         )
                     }
 
@@ -420,11 +432,11 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                             (FontUtil.getStringWidth(info) + 4) - (FontUtil.getStringWidth(nextInfo) + 4)
                         }
 
-                        RenderUtil.drawRect(x + FontUtil.getStringWidth(info) + 6 - width + if (sideBar.value) 0f else 1f, y, width, 1f, colourRGB)
+                        RenderUtil.drawRect(x + FontUtil.getStringWidth(info) + 6 - width + if (sideBar.value) 0f else 1f, y, width, 1f, colour)
                     }
 
                     if (sideBar.value) {
-                        RenderUtil.drawRect(x + 1, y, 1f, moduleHeight.value, colourRGB)
+                        RenderUtil.drawRect(x + 1, y, 1f, moduleHeight.value, colour)
                     }
 
                     if (factor != 1.0) {

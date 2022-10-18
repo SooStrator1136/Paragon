@@ -9,6 +9,7 @@ import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.mixins.accessor.IRenderManager
 import com.paragon.util.anyNull
 import com.paragon.util.entity.EntityUtil
+import com.paragon.util.glColour
 import com.paragon.util.render.builder.BoxRenderMode
 import com.paragon.util.render.builder.RenderBuilder
 import net.minecraft.item.*
@@ -132,7 +133,9 @@ object Trajectories : Module("Trajectories", Category.RENDER, "Shows where proje
 
                 // Set line width
                 glLineWidth(lineWidth.value)
-                setColour(lineColour.value.rgb)
+
+                lineColour.value.glColour()
+
                 glBegin(GL_LINE_STRIP)
 
                 // Add vertices to the line whilst we haven't hit a target
