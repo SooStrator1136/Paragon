@@ -24,6 +24,15 @@ open class Module(val name: String, val category: Category, val description: Str
     // Whether the module is ignored by notifications
     val isIgnored = javaClass.isAnnotationPresent(IgnoredByNotifications::class.java)
 
+    // List of search aliases
+    val aliases = run {
+        if (javaClass.isAnnotationPresent(Aliases::class.java)) {
+            javaClass.getAnnotation(Aliases::class.java).aliases
+        } else {
+            arrayOf()
+        }
+    }
+
     // Module Settings
     val settings: MutableList<Setting<*>> = ArrayList()
 
@@ -106,6 +115,14 @@ open class Module(val name: String, val category: Category, val description: Str
             // Call onDisable
             onDisable()
         }
+    }
+
+    /**
+     * Checks if a given [search] term should show this module
+     * @param search The given search string
+     */
+    fun isValidSearch(search: String): Boolean {
+        return name.contains(search, true) || aliases.any { it.contains(search, true) }
     }
 
     /**

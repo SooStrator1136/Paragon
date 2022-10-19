@@ -3,6 +3,7 @@ package com.paragon.impl.module.render
 import com.paragon.impl.event.render.world.*
 import com.paragon.impl.module.Module
 import com.paragon.bus.listener.Listener
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
 import com.paragon.util.world.BlockUtil.getBlockAtPos
@@ -11,6 +12,7 @@ import net.minecraft.init.Blocks
 /**
  * @author Surge
  */
+@Aliases(["Wallhack"])
 object Xray : Module("Xray", Category.RENDER, "Lets you see ores and liquids through blocks") {
 
     private val visibleBlocks = arrayOf(

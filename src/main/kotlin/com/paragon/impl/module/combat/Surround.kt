@@ -11,6 +11,7 @@ import com.paragon.impl.managers.notifications.NotificationType
 import com.paragon.impl.managers.rotation.Rotate
 import com.paragon.impl.managers.rotation.Rotation
 import com.paragon.impl.managers.rotation.RotationPriority
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.mixins.accessor.IPlayerControllerMP
 import com.paragon.util.anyNull
@@ -33,6 +34,7 @@ import kotlin.math.floor
  * @author Surge
  * @since 23/08/2022
  */
+@Aliases(["AutoObsidian", "FeetTrap"])
 object Surround : Module("Surround", Category.COMBAT, "Automatically surrounds you with obsidian") {
 
     private val performOn = Setting("PerformOn", PerformOn.PACKET) describedBy "When to perform"

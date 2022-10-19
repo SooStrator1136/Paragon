@@ -1,6 +1,7 @@
 package com.paragon.impl.module.misc
 
 import com.paragon.Paragon
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.module.Category
@@ -18,6 +19,7 @@ import org.lwjgl.input.Mouse
 /**
  * @author Surge
  */
+@Aliases(["MiddleClickFriend", "MCF", "MiddleClickPearl", "MCP"])
 object MiddleClick : Module("MiddleClick", Category.MISC, "Allows you to perform actions when you middle click") {
 
     private val friend = Setting(

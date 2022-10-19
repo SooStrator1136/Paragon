@@ -16,7 +16,7 @@ import java.awt.Color
 /**
  * @author Surge
  */
-object AntiVoidinq : Module("AntiVoidinq", Category.MOVEMENT, "Avoids void holes for you") {
+object AntiVoid : Module("AntiVoid", Category.MOVEMENT, "Avoids void holes for you") {
 
     private val mode = Setting(
         "Mode", Mode.MOTION

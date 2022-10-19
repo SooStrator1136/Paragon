@@ -1,5 +1,6 @@
 package com.paragon.impl.module.render
 
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.util.player.PlayerUtil
@@ -15,6 +16,7 @@ import java.util.*
 /**
  * @author Surge
  */
+@Aliases(["Trails"])
 object Breadcrumbs : Module("Breadcrumbs", Category.RENDER, "Draws a trail behind you") {
 
     private val infinite = Setting(

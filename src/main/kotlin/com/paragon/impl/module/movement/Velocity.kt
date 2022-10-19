@@ -5,6 +5,7 @@ import com.paragon.impl.event.world.entity.EntityPushEvent
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.bus.listener.Listener
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.mixins.accessor.ISPacketEntityVelocity
 import com.paragon.mixins.accessor.ISPacketExplosion
@@ -14,6 +15,7 @@ import net.minecraft.network.play.server.SPacketExplosion
 /**
  * @author Surge
  */
+@Aliases(["AntiKnockback"])
 object Velocity : Module("Velocity", Category.MOVEMENT, "Stops crystals and mobs from causing you knockback") {
 
     private val velocityPacket = Setting("VelocityPacket", true) describedBy "Cancels or modifies the velocity packet"

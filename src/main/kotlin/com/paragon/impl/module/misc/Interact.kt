@@ -7,6 +7,7 @@ import com.paragon.impl.event.world.LiquidInteractEvent
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.bus.listener.Listener
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
 import net.minecraft.init.Items
 import net.minecraft.item.ItemBlock
@@ -20,6 +21,7 @@ import net.minecraft.util.EnumFacing
  * @author Surge
  * @since 06/08/2022
  */
+@Aliases(["LiquidInteract", "BuildHeight", "NoTrace", "NoEntityTrace", "NoSwing"])
 object Interact : Module("Interact", Category.MISC, "Changes the way you interact") {
 
     private val liquids = Setting(

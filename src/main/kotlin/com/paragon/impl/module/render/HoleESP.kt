@@ -116,9 +116,7 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
 
                     getSphere(range.value, false).forEach {
                         // Hide it if it's the hole we are standing in
-                        if (holes.any { hole -> hole.holePosition == it } || (hideCurrent.value && it == BlockPos(
-                                minecraft.player.posX.toInt(), minecraft.player.posY.toInt(), minecraft.player.posZ.toInt()
-                            ))) {
+                        if (holes.any { hole -> hole.holePosition == it } || (hideCurrent.value && it == BlockPos(minecraft.player.posX.toInt(), minecraft.player.posY.toInt(), minecraft.player.posZ.toInt()))) {
                             return@forEach
                         }
 
@@ -141,38 +139,32 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
             val blockBB = getBlockBox(it.holePosition)
 
             if (fill.value) {
-                RenderBuilder().boundingBox(
-                        AxisAlignedBB(
-                            blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + fillHeight.value, blockBB.maxZ
-                        )
-                    ).inner(it.holeColour).type(BoxRenderMode.FILL)
-
+                RenderBuilder()
+                    .boundingBox(AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + fillHeight.value, blockBB.maxZ))
+                    .inner(it.holeColour)
+                    .type(BoxRenderMode.FILL)
                     .start()
-
-                    .blend(true).depth(true).texture(true)
-
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
                     .build(false)
             }
 
             if (outline.value) {
-                RenderBuilder().boundingBox(
-                        AxisAlignedBB(
-                            blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + outlineHeight.value, blockBB.maxZ
-                        )
-                    ).outer(it.holeColour.integrateAlpha(255f)).type(BoxRenderMode.OUTLINE)
-
+                RenderBuilder()
+                    .boundingBox(AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + outlineHeight.value, blockBB.maxZ))
+                    .outer(it.holeColour.integrateAlpha(255f))
+                    .type(BoxRenderMode.OUTLINE)
                     .start()
-
                     .blend(true).depth(true).texture(true).lineWidth(outlineWidth.value)
-
                     .build(false)
             }
 
             if (glow.value) {
                 RenderUtil.drawGradientBox(
-                    AxisAlignedBB(
-                        blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + glowHeight.value, blockBB.maxZ
-                    ), Color(0, 0, 0, 0), it.holeColour
+                    AxisAlignedBB(blockBB.minX, blockBB.minY, blockBB.minZ, blockBB.maxX, blockBB.minY + glowHeight.value, blockBB.maxZ),
+                    Color(0, 0, 0, 0),
+                    it.holeColour
                 )
             }
         }

@@ -66,14 +66,14 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         }
 
         scroll += scrollFactor
-        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (elements.filter { it.module.name.contains(gui.search, true) }.sumOf { it.getAbsoluteHeight().toDouble() } - maxHeight)), 0.0).toFloat() *
+        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (getFilteredModules().sumOf { it.getAbsoluteHeight().toDouble() } - maxHeight)), 0.0).toFloat() *
                 expanded.getAnimationFactor().toFloat() // hacky fix lol
 
         RenderUtil.scaleTo(x + 5, y + 5.5f, 0f, 1.25, 1.25, 1.25) {
             FontUtil.drawStringWithShadow(StringUtil.getFormattedText(category), x + 5, y + 5.5f, Color.WHITE)
         }
 
-        moduleHeight = MathHelper.clamp(elements.filter { it.module.name.contains(gui.search, true) }.sumOf { it.getAbsoluteHeight().toDouble() }, 0.0, maxHeight) * expanded.getAnimationFactor()
+        moduleHeight = MathHelper.clamp(getFilteredModules().sumOf { it.getAbsoluteHeight().toDouble() }, 0.0, maxHeight) * expanded.getAnimationFactor()
 
         if (moduleHeight < maxHeight) {
             topGradient.state = false
@@ -83,7 +83,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         RenderUtil.pushScissor(x, y + height, width, moduleHeight.toFloat())
 
         var offset = y + height + scroll
-        elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+        getFilteredModules().forEach {
             it.x = x
             it.y = offset
 
@@ -135,7 +135,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         }
 
         if (expanded.getAnimationFactor() > 0 && mouseX in x..x + width && mouseY in y + height..y + height + moduleHeight.toFloat()) {
-            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+            getFilteredModules().forEach {
                 it.mouseClicked(mouseX, mouseY, click)
             }
         }
@@ -145,7 +145,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         super.mouseReleased(mouseX, mouseY, click)
 
         if (expanded.getAnimationFactor() > 0) {
-            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+            getFilteredModules().forEach {
                 it.mouseReleased(mouseX, mouseY, click)
             }
         }
@@ -155,10 +155,14 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         super.keyTyped(character, keyCode)
 
         if (expanded.getAnimationFactor() > 0) {
-            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+            getFilteredModules().forEach {
                 it.keyTyped(character, keyCode)
             }
         }
+    }
+    
+    private fun getFilteredModules(): List<ModuleElement> {
+        return elements.filter { it.module.isValidSearch(gui.search) }
     }
 
 }

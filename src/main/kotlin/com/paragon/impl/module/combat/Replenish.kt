@@ -1,5 +1,6 @@
 package com.paragon.impl.module.combat
 
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.module.Category
@@ -13,6 +14,7 @@ import net.minecraft.network.play.client.CPacketEntityAction
 /**
  * @author Surge
  */
+@Aliases(["HotbarRefill", "Refill"])
 object Replenish : Module("Replenish", Category.COMBAT, "Automatically refills items in your hotbar") {
 
     private val inventorySpoof = Setting(

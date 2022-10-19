@@ -1,5 +1,6 @@
 package com.paragon.impl.module.misc
 
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.module.Category
@@ -14,6 +15,7 @@ import kotlin.random.Random
  * @author Surge
  * @since 08/07/22
  */
+@Aliases(["Encrypt"])
 object Cryptic : Module("Cryptic", Category.MISC, "Encrypts and decrypts messages that can only be seen by other Paragon users") {
 
     private val requirePrefix = Setting(

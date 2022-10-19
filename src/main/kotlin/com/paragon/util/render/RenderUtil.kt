@@ -435,13 +435,6 @@ object RenderUtil : Wrapper {
      * @param height The height of the scissored rect
      */
     fun pushScissor(x: Float, y: Float, width: Float, height: Float) {
-        /* glPushAttrib(GL_SCISSOR_BIT)
-
-        val scale = ScaledResolution(minecraft).scaleFactor
-
-        glScissor(x.toInt() * scale, ((ScaledResolution(minecraft).scaledHeight - y) - height).toInt() * scale, width.toInt() * scale, height.toInt() * scale)
-        glEnable(GL_SCISSOR_TEST) */
-
         var x = x.toDouble()
         var y = y.toDouble()
         var width = width.toDouble()
@@ -484,8 +477,8 @@ object RenderUtil : Wrapper {
         glPushMatrix()
         glDisable(GL_TEXTURE_2D)
         glEnable(GL_BLEND)
-        glEnable(GL_DEPTH_TEST)
-        glDepthMask(false)
+        glDisable(GL_DEPTH_TEST)
+        glDepthMask(true)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glLineWidth(1f)
 

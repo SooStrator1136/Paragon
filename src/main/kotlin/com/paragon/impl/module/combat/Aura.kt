@@ -6,6 +6,7 @@ import com.paragon.impl.setting.Setting
 import com.paragon.impl.managers.rotation.Rotate
 import com.paragon.impl.managers.rotation.Rotation
 import com.paragon.impl.managers.rotation.RotationPriority
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
 import com.paragon.util.calculations.Timer
@@ -32,6 +33,7 @@ import java.util.stream.Collectors
  * @author Surge
  */
 @SideOnly(Side.CLIENT)
+@Aliases(["KillAura", "Forcefield"])
 object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") {
 
     // How to sort the targets

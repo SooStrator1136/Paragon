@@ -7,6 +7,7 @@ import com.paragon.impl.setting.Setting
 import com.paragon.util.player.PlayerUtil
 import com.paragon.bus.listener.Listener
 import com.paragon.impl.managers.rotation.Rotate
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.misc.AutoEZ
 import com.paragon.impl.setting.Bind
@@ -56,6 +57,7 @@ import kotlin.math.roundToInt
  * @author Surge
  * @since 28/08/2022
  */
+@Aliases(["CrystalAura"])
 object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically places and explodes crystals") {
 
     /******************************* MISC *******************************/

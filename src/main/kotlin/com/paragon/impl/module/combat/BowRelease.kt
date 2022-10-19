@@ -1,5 +1,6 @@
 package com.paragon.impl.module.combat
 
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.module.Category
@@ -12,6 +13,7 @@ import net.minecraft.util.math.BlockPos
 /**
  * @author Surge
  */
+@Aliases(["AutoBowRelease"])
 object BowRelease : Module("BowRelease", Category.COMBAT, "Automatically releases your bow when at max charge") {
 
     private val release = Setting("Release", Release.TICKS) describedBy "When to release the bow"

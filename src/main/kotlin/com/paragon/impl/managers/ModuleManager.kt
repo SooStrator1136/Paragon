@@ -27,10 +27,10 @@ class ModuleManager {
             Aura, AutoCrystal, BowBomb, BowRelease, Criticals, Offhand, Replenish, Surround, WebAura,
 
             // Movement
-            AntiVoidinq, ElytraFlight, EntitySpeed, Flight, InventoryWalk, NoFall, NoSlow, ReverseStep, Sprint, Step, Strafe, Velocity,
+            AntiVoid, ElytraFlight, EntitySpeed, Flight, InventoryWalk, NoFall, NoSlow, ReverseStep, Sprint, Step, Strafe, Velocity,
 
             // Render
-            AspectRatio, BlockHighlight, Breadcrumbs, BreakESP, Chams, ChinaHat, ClearChat, ESP, Fullbright, HandChams, HitColour, HoleESP, LogoutSpots, MobOwner, Nametags, NoRender, PhaseESP, PopChams, Shader, ShulkerViewer, SoundHighlight, SourceESP, StorageESP, Tracers, Trajectories, ViewClip, ViewModel, VoidinqESP, Xray,
+            AspectRatio, BlockHighlight, Breadcrumbs, BreakESP, Chams, ChinaHat, ClearChat, ESP, Fullbright, HandChams, HitColour, HoleESP, LogoutSpots, MobOwner, Nametags, NoRender, PhaseESP, PopChams, Shader, ShulkerViewer, SoundHighlight, SourceESP, StorageESP, Tracers, Trajectories, ViewClip, ViewModel, VoidESP, Xray,
 
             // Misc
             Alert, Announcer, AntiGhast, AntiHunger, AutoEZ, AutoLog, AutoTranslate, BookBot,

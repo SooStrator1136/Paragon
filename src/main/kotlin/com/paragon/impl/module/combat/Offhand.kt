@@ -1,5 +1,6 @@
 package com.paragon.impl.module.combat
 
+import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.module.Category
@@ -26,6 +27,7 @@ import kotlin.math.floor
 /**
  * @author Surge
  */
+@Aliases(["AutoTotem"])
 object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your offhand") {
 
     private val item = Setting(

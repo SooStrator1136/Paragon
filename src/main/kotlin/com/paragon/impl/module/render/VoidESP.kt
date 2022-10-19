@@ -20,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * @author Surge
  */
-object VoidinqESP : Module("VoidinqESP", Category.RENDER, "Highlights void holes in the world") {
+object VoidESP : Module("VoidESP", Category.RENDER, "Highlights void holes in the world") {
 
     private val range = Setting(
         "Range", 5f, 0f, 50f, 1f
