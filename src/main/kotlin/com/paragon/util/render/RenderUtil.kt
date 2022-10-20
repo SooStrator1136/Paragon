@@ -506,11 +506,43 @@ object RenderUtil : Wrapper {
     }
 
     /**
-     * Adds the vertices to the buffer builder
-     * @param boundingBox The AABB to add the vertices around
-     * @param topColour The top colour
-     * @param bottomColour The bottom colour
+     * Draws an outline of a gradient box at the given AABB
+     * @param axisAlignedBB The AABB to draw the box at
+     * @param top The top colour
+     * @param bottom The bottom colour
      */
+    fun drawOutlineGradientBox(axisAlignedBB: AxisAlignedBB, top: Color, bottom: Color) {
+        glPushMatrix()
+        glDisable(GL_TEXTURE_2D)
+        glEnable(GL_BLEND)
+        glDisable(GL_DEPTH_TEST)
+        glDepthMask(true)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glLineWidth(1f)
+
+        glEnable(GL_LINE_SMOOTH)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
+        glDisable(GL_CULL_FACE)
+        glDisable(GL_ALPHA_TEST)
+        glShadeModel(GL_SMOOTH)
+
+        bufferBuilder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR)
+        addOutlineVertices(axisAlignedBB, bottom, top)
+        tessellator.draw()
+
+        glShadeModel(GL_FLAT)
+        glEnable(GL_ALPHA_TEST)
+        glEnable(GL_CULL_FACE)
+
+        glDisable(GL_LINE_SMOOTH)
+        glDepthMask(true)
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_TEXTURE_2D)
+        glDisable(GL_BLEND)
+        glPopMatrix()
+    }
+
     private fun addGradientBoxVertices(boundingBox: AxisAlignedBB, topColour: Color, bottomColour: Color) {
         val minX = boundingBox.minX
         val minY = boundingBox.minY
@@ -531,26 +563,73 @@ object RenderUtil : Wrapper {
         bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+
         bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+
         bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
+
         bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+
         bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+
         bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
         bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
         bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+    }
+
+    /**
+     * Adds the gradient outline vertices to the buffer builder
+     * @param boundingBox The AABB to add the vertices around
+     * @param topColour The top colour
+     * @param bottomColour The bottom colour
+     */
+    private fun addOutlineVertices(boundingBox: AxisAlignedBB, topColour: Color, bottomColour: Color) {
+        val minX = boundingBox.minX
+        val minY = boundingBox.minY
+        val minZ = boundingBox.minZ
+        val maxX = boundingBox.maxX
+        val maxY = boundingBox.maxY
+        val maxZ = boundingBox.maxZ
+        val red = topColour.red / 255f
+        val green = topColour.green / 255f
+        val blue = topColour.blue / 255f
+        val alpha = topColour.alpha / 255f
+        val red1 = bottomColour.red / 255f
+        val green1 = bottomColour.green / 255f
+        val blue1 = bottomColour.blue / 255f
+        val alpha1 = bottomColour.alpha / 255f
+
+        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, minY, maxZ).color(0, 0, 0, 0).endVertex()
+
+        bufferBuilder.pos(maxX, minY, maxZ).color(0, 0, 0, 0).endVertex()
+        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, maxY, maxZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, minY, maxZ).color(0, 0, 0, 0).endVertex()
+
+        bufferBuilder.pos(maxX, minY, minZ).color(0, 0, 0, 0).endVertex()
+        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(maxX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(maxX, minY, minZ).color(0, 0, 0, 0).endVertex()
+
+        bufferBuilder.pos(minX, minY, minZ).color(0, 0, 0, 0).endVertex()
+        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(minX, maxY, minZ).color(red1, green1, blue1, alpha1).endVertex()
+        bufferBuilder.pos(minX, minY, minZ).color(0, 0, 0, 0).endVertex()
     }
 
     /**

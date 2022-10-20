@@ -28,18 +28,19 @@ class CapeManager {
             runBlocking {
                 String(
                     ResourceUtil.client.get("https://ParagonBot.wolfsurge.repl.co/capes").readBytes()
-                ).split(System.lineSeparator()).forEach {
+                ).split(',').forEach {
                     val data = it.split(":")
                     capedPlayers[data[0]] = Cape.valueOf(data[1].uppercase(Locale.getDefault()))
                 }
             }
-        }.onFailure {
-            Paragon.INSTANCE.logger.error("Couldn't fetch capes! Looks like the host is down.")
         }.onSuccess {
             Paragon.INSTANCE.logger.info("Loaded capes!")
+        }.onFailure {
+            Paragon.INSTANCE.logger.error("Couldn't fetch capes! Looks like the host is down.")
+            it.printStackTrace()
         }
 
-        //Give a cape to the player if we are in a dev env
+        // Give a cape to the player if we are in a dev env
         if (FMLLaunchHandler.isDeobfuscatedEnvironment()) {
             capedPlayers[mc.session.username] = Cape.BASED
         }

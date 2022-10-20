@@ -6,7 +6,7 @@ import com.paragon.impl.ui.util.Click
 /**
  * @author Surge
  */
-abstract class RawElement(var x: Float, var y: Float, var width: Float, var height: Float) {
+abstract class RawElement(var x: Float, var y: Float, open var width: Float, var height: Float) {
 
     abstract fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int)
 

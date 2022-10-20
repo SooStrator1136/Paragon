@@ -37,6 +37,10 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
 
     var moduleHeight = 0.0
 
+    override var width: Float = width
+        get() =  (field * expanded.getAnimationFactor()).coerceAtLeast(FontUtil.getStringWidth(StringUtil.getFormattedText(category)) * 1.25 + 10).toFloat()
+        set(value) {}
+
     init {
         Paragon.INSTANCE.moduleManager.getModulesThroughPredicate {  it.category == category }.forEach {
             elements.add(ModuleElement(this, it, x, y, width, 16f))
@@ -97,13 +101,13 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         RenderUtil.popScissor()
 
         val leftGradient = if (Colours.mainColour.isRainbow) {
-            ColourUtil.getRainbow(Colours.mainColour.rainbowSpeed, Colours.mainColour.rainbowSaturation / 100f, Paragon.INSTANCE.panelGUI.panels.indexOf(this) * 250).toColour()
+            ColourUtil.getRainbow(Colours.mainColour.rainbowSpeed, Colours.mainColour.rainbowSaturation / 100f, Paragon.INSTANCE.panelGUI.panels.indexOf(this) * 150).toColour()
         } else {
             Colours.mainColour.value
         }
 
         val rightGradient = if (Colours.mainColour.isRainbow) {
-            ColourUtil.getRainbow(Colours.mainColour.rainbowSpeed, Colours.mainColour.rainbowSaturation / 100f, (Paragon.INSTANCE.panelGUI.panels.indexOf(this) + 1) * 250).toColour()
+            ColourUtil.getRainbow(Colours.mainColour.rainbowSpeed, Colours.mainColour.rainbowSaturation / 100f, (Paragon.INSTANCE.panelGUI.panels.indexOf(this) + 1) * 150).toColour()
         } else {
             Colours.mainColour.value
         }
@@ -113,7 +117,8 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
 
         if (ClickGUI.outline.value) {
             RenderUtil.drawRect(x, y, 0.5f, height + moduleHeight.toFloat(), leftGradient)
-            RenderUtil.drawRect(x + width - 0.5f, y + height, 0.5f, moduleHeight.toFloat(), rightGradient)
+            RenderUtil.drawRect(x + width - 0.5f, y, 0.5f, height + moduleHeight.toFloat(), rightGradient)
+            RenderUtil.drawRect(x, y - 0.5f, width, 0.5f, leftGradient)
 
             RenderUtil.drawHorizontalGradientRect(
                 x,

@@ -59,14 +59,14 @@ class ModuleElement(val parent: CategoryPanel, val module: Module, x: Float, y: 
         hover.state = isHovered(mouseX, mouseY)
         enabled.state = module.isEnabled
 
-        RenderUtil.drawRect(x, y, width, height, hover.getColour())
+        RenderUtil.drawRect(x, y, parent.width, height, hover.getColour())
 
         val parentTotalHeight = parent.y + parent.height + parent.moduleHeight
 
         RenderUtil.pushScissor(
             x,
             MathHelper.clamp(y, parent.y + parent.height, 100000f),
-            if (module.settings.size > 2) width - 15f else width - 12f,
+            if (module.settings.size > 2) parent.width - 15f else parent.width - 12f,
             parentTotalHeight.toFloat() - y
         )
 
@@ -82,8 +82,8 @@ class ModuleElement(val parent: CategoryPanel, val module: Module, x: Float, y: 
         RenderUtil.popScissor()
 
         if (module.settings.size > 2) {
-            RenderUtil.rotate((90 * expanded.getAnimationFactor()).toFloat(), x + width - 9f, y + 8.5f, 0f) {
-                RenderUtil.drawTriangle(x + width - 9, y + 8.5f, 6f, 8f, hover.getColour().brighter())
+            RenderUtil.rotate((90 * expanded.getAnimationFactor()).toFloat(), x + parent.width - 9f, y + 8.5f, 0f) {
+                RenderUtil.drawTriangle(x + parent.width - 9, y + 8.5f, 6f, 8f, hover.getColour().brighter())
             }
         }
 

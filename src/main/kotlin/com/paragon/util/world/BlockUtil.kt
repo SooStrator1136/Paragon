@@ -16,41 +16,65 @@ import kotlin.math.sqrt
  */
 object BlockUtil : Wrapper {
 
+    /**
+     * Gets a sphere of blocks around the player
+     * @param radius The radius of the sphere
+     * @param ignoreAir Whether to ignore air blocks or not
+     * @return A list of block positions
+     */
     @JvmStatic
     fun getSphere(radius: Float, ignoreAir: Boolean): List<BlockPos> {
         val sphere = ArrayList<BlockPos>()
+
         val pos = BlockPos(minecraft.player.positionVector)
+
         val posX = pos.x
         val posY = pos.y
         val posZ = pos.z
+
         var x = posX - radius.toInt()
+
         while (x.toFloat() <= posX.toFloat() + radius) {
             var z = posZ - radius.toInt()
+
             while (z.toFloat() <= posZ.toFloat() + radius) {
                 var y = posY - radius.toInt()
+
                 while (y.toFloat() < posY.toFloat() + radius) {
                     if (((posX - x) * (posX - x) + (posZ - z) * (posZ - z) + (posY - y) * (posY - y)).toDouble() < (radius * radius).toDouble()) {
                         val position = BlockPos(x, y, z)
+
                         if (minecraft.world.getBlockState(position).block != Blocks.AIR || !ignoreAir) {
                             sphere.add(position)
                         }
                     }
-                    ++y
+
+                    y++
                 }
-                ++z
+
+                z++
             }
-            ++x
+
+            x++
         }
+
         return sphere
     }
 
     /**
      * Gets the block at a position
-     *
      * @return The block
      */
     @JvmStatic
     fun BlockPos.getBlockAtPos(): Block = minecraft.world.getBlockState(this).block
+
+    /**
+     * Gets the surrounding blocks of a position
+     * Ordered by North, East, South, West
+     * @return The blocks surrounding blocks
+     */
+    @JvmStatic
+    fun BlockPos.getSurroundingBlocks(): Array<Block> = arrayOf(this.north().getBlockAtPos(), this.east().getBlockAtPos(), this.west().getBlockAtPos(), this.south().getBlockAtPos())
 
     /**
      * Gets the bounding box of a block
@@ -65,6 +89,11 @@ object BlockUtil : Wrapper {
         -minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ
     )
 
+    /**
+     * Checks if the player can see a position
+     * @param pos The position to check
+     * @return Whether the player can see the position
+     */
     @JvmStatic
     fun canSeePos(pos: BlockPos): Boolean {
         for (facing in EnumFacing.values()) {
@@ -96,7 +125,7 @@ object BlockUtil : Wrapper {
      */
     @JvmStatic
     fun isSafeHole(pos: BlockPos, obbyBedrock: Boolean): Boolean {
-        if (pos.getBlockAtPos().isReplaceable(minecraft.world, pos)?.not() == true) { //This is chinese on another level and not tested 📈
+        if (pos.getBlockAtPos().isReplaceable(minecraft.world, pos).not()) { //This is chinese on another level and not tested 📈
             return false
         }
 
@@ -111,9 +140,15 @@ object BlockUtil : Wrapper {
                 return false
             }
         }
+
         return true
     }
 
+    /**
+     * Gets the first side we can see on a block position
+     * @param pos The position to check
+     * @return The side we can see (or null, if we can't see any)
+     */
     @JvmStatic
     fun getFacing(pos: BlockPos): EnumFacing? {
         for (facing in EnumFacing.values()) {
@@ -121,9 +156,15 @@ object BlockUtil : Wrapper {
                 return facing
             }
         }
+
         return null
     }
 
+    /**
+     * Checks if a position is a hole
+     * @param pos The position to check
+     * @return Whether the position is a hole or not
+     */
     @JvmStatic
     fun isHole(pos: BlockPos) = !arrayOf(
         pos.down(), pos.north(), pos.east(), pos.south(), pos.west()

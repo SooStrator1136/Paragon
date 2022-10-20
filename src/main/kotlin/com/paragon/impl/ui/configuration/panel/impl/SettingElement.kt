@@ -110,7 +110,7 @@ open class SettingElement<T>(val parent: ModuleElement, val setting: Setting<T>,
     }
 
     fun getRenderableWidth(): Float {
-        return if (setting.subsettings.any { it.isVisible() }) width - 15f else width
+        return if (setting.subsettings.any { it.isVisible() }) parent.parent.width - 15f else parent.parent.width
     }
 
     open fun getAbsoluteHeight(): Float {
