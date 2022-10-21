@@ -38,7 +38,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
     var moduleHeight = 0.0
 
     override var width: Float = width
-        get() =  (field * expanded.getAnimationFactor()).coerceAtLeast(FontUtil.getStringWidth(StringUtil.getFormattedText(category)) * 1.25 + 10).toFloat()
+        get() = (field * expanded.getAnimationFactor()).coerceAtLeast(FontUtil.getStringWidth(StringUtil.getFormattedText(category)) * 1.25 + 11).toFloat()
         set(value) {}
 
     init {
@@ -73,9 +73,13 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (getFilteredModules().sumOf { it.getAbsoluteHeight().toDouble() } - maxHeight)), 0.0).toFloat() *
                 expanded.getAnimationFactor().toFloat() // hacky fix lol
 
+        RenderUtil.pushScissor(x, y, width, height)
+
         RenderUtil.scaleTo(x + 5, y + 5.5f, 0f, 1.25, 1.25, 1.25) {
             FontUtil.drawStringWithShadow(StringUtil.getFormattedText(category), x + 5, y + 5.5f, Color.WHITE)
         }
+
+        RenderUtil.popScissor()
 
         moduleHeight = MathHelper.clamp(getFilteredModules().sumOf { it.getAbsoluteHeight().toDouble() }, 0.0, maxHeight) * expanded.getAnimationFactor()
 

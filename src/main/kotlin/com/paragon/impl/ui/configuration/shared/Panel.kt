@@ -34,7 +34,9 @@ abstract class Panel(x: Float, y: Float, width: Float, height: Float) : RawEleme
     override fun mouseReleased(mouseX: Float, mouseY: Float, click: Click) {
         super.mouseReleased(mouseX, mouseY, click)
 
-        dragging = false
+        if (click == Click.LEFT) {
+            dragging = false
+        }
     }
 
 }
