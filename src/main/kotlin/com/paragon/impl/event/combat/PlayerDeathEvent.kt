@@ -6,4 +6,4 @@ import net.minecraft.entity.player.EntityPlayer
 /**
  * @author Surge
  */
-class PlayerDeathEvent(val entityPlayer: EntityPlayer, val pops: Int) : Event()
+class PlayerDeathEvent(val player: EntityPlayer, val pops: Int) : Event()

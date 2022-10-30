@@ -32,8 +32,8 @@ object Notifications : HUDModule("Notifications", "Where the notifications will 
                     notification.render(y)
 
                     when (direction.value) {
-                        Direction.UP -> y += (-35 * notification.animation.getAnimationFactor()).toFloat()
-                        Direction.DOWN -> y += (35 * notification.animation.getAnimationFactor()).toFloat()
+                        Direction.UP -> y += (-17 * notification.animation.getAnimationFactor()).toFloat()
+                        Direction.DOWN -> y += (17 * notification.animation.getAnimationFactor()).toFloat()
                         else -> {}
                     }
                 }
@@ -60,7 +60,7 @@ object Notifications : HUDModule("Notifications", "Where the notifications will 
 
     override var width: Float = 300f
 
-    override var height: Float = 30f
+    override var height: Float = 15f
 
     enum class RenderType {
         /**

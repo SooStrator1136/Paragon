@@ -16,7 +16,7 @@ class CapeManager {
     /**
      * Checks if a player has a cape using the players username
      */
-    fun isCaped(username: String) = capedPlayers.containsKey(username) || FMLLaunchHandler.isDeobfuscatedEnvironment()
+    fun isCaped(username: String) = capedPlayers.containsKey(username)
 
     /**
      * Gets the cape for a given [username]

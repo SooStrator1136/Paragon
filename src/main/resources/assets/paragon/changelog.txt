@@ -10,7 +10,9 @@ Added LogoutSpots
 Updated Nametags
 Added MainMenu module
 Rewrote ArrayList
-Added tooltips to Paragon GUI style
 Added IgnoreActive to ViewModel
 Slightly updated ShulkerViewer
 Remade default GUI
+Rewrote HoleESP
+Merged Notifier and DonkeyAlert into Alert
+Moved AutoWalk to Movement

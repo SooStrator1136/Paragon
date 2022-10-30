@@ -142,7 +142,8 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                     RenderUtil.renderItemStack(it, itemX, -18f, true)
 
                     RenderHelper.disableStandardItemLighting()
-                    GlStateManager.disableDepth()
+                    GlStateManager.enableDepth()
+
                     glPopMatrix()
 
                     val itemInfo = arrayListOf<String>()

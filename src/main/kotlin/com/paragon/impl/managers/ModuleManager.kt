@@ -36,6 +36,7 @@ class ModuleManager {
 
             // Movement
             AntiVoid,
+            AutoWalk,
             ElytraFlight,
             EntitySpeed,
             Flight,
@@ -88,15 +89,11 @@ class ModuleManager {
             AutoLog,
             AutoTranslate,
             BookBot,
-
-            // Movement
-            AutoWalk,
             Blink,
             ChatModifications,
             ChorusControl,
             Cryptic,
             CustomWorld,
-            DonkeyAlert,
             ExtraTab,
             FakePlayer,
             FastUse,
@@ -105,7 +102,6 @@ class ModuleManager {
             MiddleClick,
             NoGlobalSounds,
             NoRotate,
-            Notifier,
             OnDeath,
             RotationLock,
             Spammer,

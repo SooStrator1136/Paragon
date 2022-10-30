@@ -110,10 +110,11 @@ object ModuleBar : IRenderable {
             //Render the "copied" thing after the name was copied
             if (lastCopyTime != 0L) {
                 RenderUtil.drawRoundedRect(
-                    (userRect.x + ((userRect.width - getStringWidth("Copied!")) / 2f)) - 2f, (userRect.y - (FontUtil.getHeight() / 2f)) - 1.5f, getStringWidth("Copied!") + 4f, FontUtil.getHeight() + 3f, 5f, GuiDiscord.userCopiedColor
+                    (userRect.x + ((userRect.width - getStringWidth("Copied!")) / 2f)) - 5f, (userRect.y - (FontUtil.getHeight() / 2f)) - 1.5f, getStringWidth("Copied!") + 10f, FontUtil.getHeight() + 5f, 2f, GuiDiscord.userCopiedColor
                 )
+
                 drawCenteredString(
-                    "Copied!", (userRect.x + (userRect.width / 2)).toFloat(), userRect.y.toFloat(), Color.WHITE, true
+                    "Copied!", (userRect.x + (userRect.width / 2)).toFloat(), userRect.y.toFloat() - 3f, Color.WHITE, true
                 )
 
                 if (System.currentTimeMillis() - 1500L > lastCopyTime) {

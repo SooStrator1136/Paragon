@@ -19,7 +19,7 @@ class DiscordModule(val module: Module) : IRenderable {
         val isHovered = ModuleBar.rect.contains(mouseX, mouseY) && rect.contains(mouseX, mouseY)
         if (isHovered || module == ModuleBar.focusedModule) {
             RenderUtil.drawRoundedRect(
-                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 10f, GuiDiscord.channelHoveredColor
+                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 2f, GuiDiscord.channelHoveredColor
             )
         }
 

@@ -3,6 +3,7 @@ package com.paragon.util.render.font
 import com.paragon.Paragon
 import com.paragon.impl.module.client.ClientFont
 import com.paragon.util.Wrapper
+import net.minecraft.client.renderer.GlStateManager
 import org.apache.commons.io.FileUtils
 import org.json.JSONObject
 import java.awt.Color
@@ -74,9 +75,12 @@ object FontUtil : Wrapper {
                     newY += minecraft.fontRenderer.FONT_HEIGHT.toFloat()
                 }
 
+                GlStateManager.disableBlend()
+
                 return
             }
 
+            GlStateManager.disableBlend()
             minecraft.fontRenderer.drawStringWithShadow(text, x - minecraft.fontRenderer.getStringWidth(text) / 2f, y, colour.rgb)
         }
     }

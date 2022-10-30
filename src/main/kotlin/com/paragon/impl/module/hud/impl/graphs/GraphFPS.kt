@@ -30,10 +30,10 @@ object GraphFPS : HUDModule("FPSGraph", "Graph showing your Ping") {
         "Graph color", Colours.mainColour.value.darker()
     ) describedBy "Color of the graph"
 
-    private var graph = Graph("Fps", backgroundColor::value, borderColor::value, graphColor::value, background::value)
+    private var graph = Graph("FPS", backgroundColor::value, borderColor::value, graphColor::value, background::value)
 
     override fun onEnable() {
-        graph = Graph("Fps", backgroundColor::value, borderColor::value, graphColor::value, background::value)
+        graph = Graph("FPS", backgroundColor::value, borderColor::value, graphColor::value, background::value)
     }
 
     override fun onTick() {

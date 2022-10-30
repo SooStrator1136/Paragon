@@ -716,6 +716,8 @@ object RenderUtil : Wrapper {
         }
 
         GlStateManager.enableDepth()
+        GlStateManager.disableBlend() // ok???
+
         minecraft.renderItem.zLevel = 200f
 
         minecraft.renderItem.renderItemAndEffectIntoGUI(itemStack, x.toInt(), y.toInt())
@@ -725,9 +727,10 @@ object RenderUtil : Wrapper {
         }
 
         minecraft.renderItem.zLevel = 0f
+
         GlStateManager.enableTexture2D()
         GlStateManager.disableLighting()
-        GlStateManager.enableDepth()
+        GlStateManager.disableDepth()
     }
 
     /**

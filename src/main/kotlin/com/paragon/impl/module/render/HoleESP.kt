@@ -40,17 +40,17 @@ object HoleESP : Module("HoleESP", Category.RENDER, "Highlights holes to stand i
 
     // Render settings
     private val fill = Setting("Fill", true) describedBy "Fill the holes ;)"
-    private val fillHeight = Setting("Height", 0f, 0f, 2f, 0.01f) describedBy "How tall the fill is" subOf fill
+    private val fillHeight = Setting("Height", 0f, 0f, 1.5f, 0.01f) describedBy "How tall the fill is" subOf fill
 
     private val outline = Setting("Outline", true) describedBy "Outline the hole"
-    private val outlineWidth = Setting("Width", 1f, 1f, 3f, 1f) describedBy "The width of the outlines" subOf outline
-    private val outlineHeight = Setting("Height", 0f, 0f, 2f, 0.01f) describedBy "How tall the outline is" subOf outline
+    private val outlineWidth = Setting("Width", 1f, 1f, 3f, 0.01f) describedBy "The width of the outlines" subOf outline
+    private val outlineHeight = Setting("Height", 0f, 0f, 1.5f, 0.01f) describedBy "How tall the outline is" subOf outline
 
     private val glow = Setting("Glow", true) describedBy "Renders a glow effect in the box"
-    private val glowHeight = Setting("Height", 1f, 0f, 2f, 0.01f) describedBy "How tall the glow is" subOf glow
+    private val glowHeight = Setting("Height", 1f, 0f, 1.5f, 0.01f) describedBy "How tall the glow is" subOf glow
 
     private val gradientOutline = Setting("GradientOutline", true) describedBy "Renders a gradient outline effect above the box"
-    private val gradientOutlineHeight = Setting("Height", 1f, 0f, 2f, 0.01f) describedBy "How tall the gradient outline is" subOf gradientOutline
+    private val gradientOutlineHeight = Setting("Height", 1f, 0f, 1.5f, 0.01f) describedBy "How tall the gradient outline is" subOf gradientOutline
 
     private val hideCurrent = Setting("Hide Current", false) describedBy "Doesn't render the hole if you are standing in it"
 

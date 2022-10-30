@@ -1,4 +1,4 @@
-package com.paragon.impl.module.misc
+package com.paragon.impl.module.movement
 
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
@@ -11,7 +11,7 @@ import net.minecraft.client.settings.KeyBinding
  * @author Surge
  * @since 14/05/22
  */
-object AutoWalk : Module("AutoWalk", Category.MISC, "Makes you constantly walk") {
+object AutoWalk : Module("AutoWalk", Category.MOVEMENT, "Makes you constantly walk") {
 
     private val direction = Setting(
         "Direction", Direction.FORWARD

@@ -38,10 +38,10 @@ object GraphCPS : HUDModule("CPSGraph", "Graph showing your Crystals per second"
         "Graph color", Colours.mainColour.value.darker()
     ) describedBy "Color of the graph"
 
-    private var graph = Graph("Cps", backgroundColor::value, borderColor::value, graphColor::value, background::value)
+    private var graph = Graph("CPS", backgroundColor::value, borderColor::value, graphColor::value, background::value)
 
     override fun onEnable() {
-        graph = Graph("Cps", backgroundColor::value, borderColor::value, graphColor::value, background::value)
+        graph = Graph("CPS", backgroundColor::value, borderColor::value, graphColor::value, background::value)
     }
 
     private var attackedCrystals = 0.0

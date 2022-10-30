@@ -25,7 +25,7 @@ import java.net.URI
 import javax.swing.JOptionPane
 import kotlin.math.log
 
-@Mod(name = com.paragon.Paragon.Companion.modName, modid = com.paragon.Paragon.Companion.modID, version = com.paragon.Paragon.Companion.modVersion)
+@Mod(name = Paragon.modName, modid = Paragon.modID, version = Paragon.modVersion)
 class Paragon {
 
     @EventHandler
@@ -136,7 +136,7 @@ class Paragon {
         storageManager.loadOther()
         logger.info("Other Loaded")
 
-        logger.info("Paragon ${com.paragon.Paragon.Companion.modVersion} Initialised Successfully")
+        logger.info("Paragon $modVersion Initialised Successfully")
     }
 
     @EventHandler

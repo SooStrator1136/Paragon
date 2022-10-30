@@ -95,12 +95,12 @@ open class Module(val name: String, val category: Category, val description: Str
 
         isEnabled = !isEnabled
 
-        com.paragon.Paragon.INSTANCE.eventBus.post(ModuleToggleEvent(this))
+        Paragon.INSTANCE.eventBus.post(ModuleToggleEvent(this))
 
         if (isEnabled) {
             // Register events
             MinecraftForge.EVENT_BUS.register(this)
-            com.paragon.Paragon.INSTANCE.eventBus.register(this)
+            Paragon.INSTANCE.eventBus.register(this)
             animation.state = true
 
             // Call onEnable
@@ -109,7 +109,7 @@ open class Module(val name: String, val category: Category, val description: Str
         else {
             // Unregister events
             MinecraftForge.EVENT_BUS.unregister(this)
-            com.paragon.Paragon.INSTANCE.eventBus.unregister(this)
+            Paragon.INSTANCE.eventBus.unregister(this)
             animation.state = false
 
             // Call onDisable

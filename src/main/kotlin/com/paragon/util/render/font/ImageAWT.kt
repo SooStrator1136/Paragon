@@ -80,7 +80,11 @@ class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
                 return@forEach
             }
 
-            val fontChar = charLocations[it.code]
+            val fontChar = try {
+                charLocations[it.code]
+            } catch (throwable: Throwable) {
+                charLocations[0]
+            }
 
             if (charLocations.size <= it.code || fontChar == null) {
                 return@forEach

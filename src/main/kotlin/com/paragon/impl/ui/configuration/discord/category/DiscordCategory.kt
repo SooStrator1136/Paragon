@@ -33,13 +33,14 @@ class DiscordCategory(val category: Category) : IRenderable {
 
         //Render the basic icon with its background
         run {
-            @Suppress("IncorrectFormatting") RenderUtil.drawRoundedRect(
-                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 15f, if (isHovered) GuiDiscord.channelBarBackground.brighter() else GuiDiscord.channelBarBackground
+            @Suppress("IncorrectFormatting")
+            RenderUtil.drawRoundedRect(
+                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 2f, if (isHovered) GuiDiscord.channelBarBackground.brighter() else GuiDiscord.channelBarBackground
             )
 
-            val scaleFac = rect.width / 18.0
-            scaleTo(rect.x.toFloat() - 2 + if (category == Category.RENDER) 0.5f else 0f, rect.y.toFloat() - 2, 0F, scaleFac, scaleFac, 1.0) {
-                RenderUtil.renderItemStack(indicator, rect.x.toFloat(), rect.y.toFloat(), false)
+            val scaleFac = rect.width / 20.0
+            scaleTo(rect.x.toFloat() + 3f + if (category == Category.RENDER) 0.5f else 0f, rect.y.toFloat() + 3, 0F, scaleFac, scaleFac, 1.0) {
+                RenderUtil.renderItemStack(indicator, rect.x.toFloat() + 3f + if (category == Category.RENDER || category == Category.COMBAT) 0.5f else 0f, rect.y.toFloat() + 3, false)
             }
         }
 
@@ -52,7 +53,7 @@ class DiscordCategory(val category: Category) : IRenderable {
             )
 
             RenderUtil.drawRoundedRect(
-                (rect.x + rect.width) - 2f, (rect.centerY - (FontUtil.getHeight() / 2f)).toFloat(), getStringWidth(StringUtil.getFormattedText(category)) + 6f, FontUtil.getHeight(), 5f, GuiDiscord.categoryTextBackground
+                (rect.x + rect.width) - 2f, (rect.centerY - (FontUtil.getHeight() / 2f)).toFloat(), getStringWidth(StringUtil.getFormattedText(category)) + 6f, FontUtil.getHeight(), 1f, GuiDiscord.categoryTextBackground
             )
 
             drawStringWithShadow(

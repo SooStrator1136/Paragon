@@ -1,5 +1,6 @@
 package com.paragon.impl.module.hud.impl.graphs
 
+import com.paragon.impl.module.client.ClientFont
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.font.FontUtil
 import com.paragon.util.calculations.MathsUtil
@@ -9,6 +10,9 @@ import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.geom.Rectangle2D
+import java.lang.Math.round
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * @author SooStrator1136
@@ -21,6 +25,7 @@ class Graph(
     val bounds = Rectangle2D.Float()
 
     private var highestVal = 0.1
+    private var currentVal = highestVal
 
     private val points = Array(75) { 0.0 }
 
@@ -43,7 +48,13 @@ class Graph(
             }
 
             FontUtil.drawStringWithShadow(
-                name, bounds.x + 1F, bounds.y + bounds.height - (FontUtil.getHeight() + 1F), Color.WHITE
+                name, bounds.x + 1F, bounds.y + bounds.height - (FontUtil.getHeight() + if (ClientFont.isEnabled) -1f else 1f), Color.WHITE
+            )
+
+            val value = BigDecimal(currentVal).setScale(2, RoundingMode.HALF_EVEN).toString()
+
+            FontUtil.drawStringWithShadow(
+                value, bounds.x + bounds.width - FontUtil.getStringWidth(value) - 3, bounds.y + bounds.height - (FontUtil.getHeight() + if (ClientFont.isEnabled) -1f else 1f), Color.WHITE
             )
 
             if (background == Background.ALL) {
@@ -82,6 +93,8 @@ class Graph(
     }
 
     fun update(value: Double) {
+        currentVal = value
+
         for (i in points.indices) { //Shifting all values -> Making space for the new val
             if (i != points.size - 1) {
                 points[i] = points[i + 1]

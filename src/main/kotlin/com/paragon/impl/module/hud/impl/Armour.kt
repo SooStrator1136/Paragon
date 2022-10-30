@@ -34,7 +34,7 @@ object Armour : HUDModule("Armour", "Displays your armour on screen") {
             renderItemStack(itemStack, x + xSpacing, y + 4, true)
 
             // Get the item's damage percentage
-            val itemDamage = (100 - (1 - (itemStack.maxDamage.toFloat() - itemStack.itemDamage.toFloat())) / itemStack.maxDamage.toFloat() * 100).toInt()
+            val itemDamage = ((1 - itemStack.itemDamage.toFloat() / itemStack.maxDamage.toFloat()) * 100).toInt()
 
             // Scale
             glScalef(0.75f, 0.75f, 0.75f)

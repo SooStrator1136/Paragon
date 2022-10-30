@@ -26,7 +26,7 @@ public abstract class MixinAbstractClientPlayer extends EntityPlayer {
         }
     }
 
-    @Inject(method = "getLocationSkin", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getLocationSkin*", at = @At("HEAD"), cancellable = true)
     public void hookGetLocationSkin(CallbackInfoReturnable<ResourceLocation> cir) {
         if (CopySkinCommand.INSTANCE.getSkin() != null) {
             cir.setReturnValue(CopySkinCommand.INSTANCE.getSkin());

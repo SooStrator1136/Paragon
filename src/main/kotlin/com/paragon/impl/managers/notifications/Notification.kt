@@ -12,7 +12,7 @@ import java.awt.Color
  */
 class Notification(val message: String, val type: NotificationType) {
 
-    val animation: Animation = Animation({ 500f }, false, { Easing.EXPO_IN_OUT })
+    val animation: Animation = Animation({ 700f }, false, { Easing.LINEAR })
     private var started = false
     private var reachedFirst = false
     private var renderTicks = 0
@@ -26,10 +26,10 @@ class Notification(val message: String, val type: NotificationType) {
         val width = FontUtil.getStringWidth(message) + 10
         val x = Notifications.x
 
-        RenderUtil.pushScissor(Notifications.x, y, 300 * animation.getAnimationFactor().toFloat(), 45f)
-        RenderUtil.drawRect(x + 150 - width / 2f, y, width, 30f, Color(0, 0, 0, 150))
+        RenderUtil.pushScissor(Notifications.x, y, 300 * animation.getAnimationFactor().toFloat(), 15f)
+        RenderUtil.drawRect(x + 150 - width / 2f, y, width, 15f, Color(40, 40, 40))
 
-        FontUtil.drawCenteredString(message, x + 150, y + 15f, Color.WHITE, true)
+        FontUtil.drawCenteredString(message, x + 150, y + 4.5f, Color.WHITE, true)
 
         RenderUtil.drawRect(x + 150 - width / 2f, y, width, 1f, type.colour)
         RenderUtil.popScissor()
@@ -37,10 +37,12 @@ class Notification(val message: String, val type: NotificationType) {
         if (animation.getAnimationFactor() == 1.0 && !reachedFirst) {
             reachedFirst = true
         }
+
         if (reachedFirst) {
             renderTicks++
         }
-        if (renderTicks == 300) {
+
+        if (renderTicks == 100) {
             animation.state = false
         }
     }

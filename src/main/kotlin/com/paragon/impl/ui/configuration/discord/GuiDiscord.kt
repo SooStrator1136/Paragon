@@ -7,6 +7,9 @@ import com.paragon.impl.ui.configuration.discord.category.CategoryBar
 import com.paragon.impl.ui.configuration.discord.module.ModuleBar
 import com.paragon.impl.ui.configuration.discord.settings.SettingsBar
 import com.paragon.util.Wrapper
+import net.minecraft.client.renderer.GlStateManager
+import org.lwjgl.opengl.GL11.GL_BLEND
+import org.lwjgl.opengl.GL11.glEnable
 import org.lwjgl.util.Rectangle
 import java.awt.Color
 

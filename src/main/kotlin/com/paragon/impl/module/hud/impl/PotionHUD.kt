@@ -1,6 +1,7 @@
 package com.paragon.impl.module.hud.impl
 
 import com.google.common.collect.Ordering
+import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.setting.Setting
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
@@ -22,20 +23,22 @@ import java.awt.Color
 /**
  * @author SooStrator1136
  */
-object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
+object PotionHUD : HUDModule("Potions", "Shows active potion effects") {
 
     private val scale = Setting(
         "Size", 1.0, 0.5, 5.0, 0.1
-    ) describedBy "The size of the PotionHUD"
+    ) describedBy "The size of the Potions"
 
     private val mode = Setting("Mode", Mode.INVENTORY)
 
     private val rainbowSpeed = Setting(
         "Rainbow speed", 20F, 5F, 50F, 2.5F
     ) visibleWhen { mode.value == Mode.PYRO }
+
     private val showBg = Setting(
         "Background", true
     ) visibleWhen { mode.value == Mode.PYRO }
+
     private val syncTextColor = Setting(
         "Sync text", false
     ) visibleWhen { mode.value == Mode.PYRO }
@@ -107,6 +110,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
 
                 Mode.PYRO -> {
                     var effectY = y
+
                     val maxWidth = activeEffects.maxWith(Comparator.comparingDouble {
                         FontUtil.getStringWidth(
                             I18n.format(it.potion.name) + " " + I18n.format("enchantment.level.${it.amplifier + 1}") + " ${Potion.getPotionDurationString(it, 1F)}"
@@ -115,7 +119,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                         FontUtil.getStringWidth(
                             I18n.format(it.potion.name) + " " + I18n.format("enchantment.level.${it.amplifier + 1}") + " ${Potion.getPotionDurationString(it, 1F)}"
                         ) + FontUtil.getHeight() + 1F
-                    } //💀
+                    } + 2 //💀
 
                     for (effect in activeEffects) {
                         val color = Color(
@@ -151,7 +155,7 @@ object PotionHUD : HUDModule("PotionHUD", "Shows active potion effects") {
                         FontUtil.drawStringWithShadow(
                             I18n.format(effect.potion.name) + " " + I18n.format(
                                 "enchantment.level.${effect.amplifier + 1}"
-                            ) + " ${Potion.getPotionDurationString(effect, 1F)}", x + FontUtil.getHeight() + 1F, effectY + 1F, if (syncTextColor.value) color else Color.WHITE
+                            ) + " ${Potion.getPotionDurationString(effect, 1F)}", x + FontUtil.getHeight() + 1F, effectY + 1F + if (ClientFont.isEnabled) 1.5f else 0f, if (syncTextColor.value) color else Color.WHITE
                         )
 
                         effectY += FontUtil.getHeight() + offset.value + 2F
