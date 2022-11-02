@@ -1,16 +1,14 @@
 package com.paragon.impl.module.hud.impl.graphs
 
 import com.paragon.impl.module.client.ClientFont
-import com.paragon.util.render.ColourUtil
-import com.paragon.util.render.font.FontUtil
 import com.paragon.util.calculations.MathsUtil
-import com.paragon.util.glColour
+import com.paragon.util.render.ColourUtil.glColour
 import com.paragon.util.render.RenderUtil
+import com.paragon.util.render.font.FontUtil
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.geom.Rectangle2D
-import java.lang.Math.round
 import java.math.BigDecimal
 import java.math.RoundingMode
 

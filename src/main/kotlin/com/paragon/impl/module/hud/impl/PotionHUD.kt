@@ -2,16 +2,16 @@ package com.paragon.impl.module.hud.impl
 
 import com.google.common.collect.Ordering
 import com.paragon.impl.module.client.ClientFont
+import com.paragon.impl.module.client.Colours
+import com.paragon.impl.module.hud.HUDEditorGUI
+import com.paragon.impl.module.hud.HUDModule
 import com.paragon.impl.setting.Setting
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
-import com.paragon.util.render.font.FontUtil
-import com.paragon.impl.module.hud.HUDEditorGUI
-import com.paragon.impl.module.hud.HUDModule
-import com.paragon.impl.module.client.Colours
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.RenderUtil.scaleTo
-import com.paragon.util.toColour
+import com.paragon.util.render.font.FontUtil
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator

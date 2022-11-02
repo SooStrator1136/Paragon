@@ -63,4 +63,20 @@ object ColourUtil {
         return Color(newRed, newGreen, newBlue, newAlpha)
     }
 
+    fun Color.glColour() {
+        glColor4f(this.red / 255f, this.green / 255f, this.blue / 255f, this.alpha / 255f)
+    }
+
+    fun Int.toColour(): Color {
+        return Color(this)
+    }
+
+    val Int.rgba: FloatArray
+        get() = floatArrayOf(
+            (this shr 16 and 0xFF) / 255F, // Red
+            (this shr 8 and 0xFF) / 255F,  // Green
+            (this shr 0 and 0xFF) / 255F,  // Blue
+            (this shr 24 and 0xff) / 255F  // Alpha
+        )
+
 }

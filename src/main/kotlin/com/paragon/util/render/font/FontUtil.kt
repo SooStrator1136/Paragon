@@ -3,6 +3,7 @@ package com.paragon.util.render.font
 import com.paragon.Paragon
 import com.paragon.impl.module.client.ClientFont
 import com.paragon.util.Wrapper
+import com.paragon.util.mc
 import net.minecraft.client.renderer.GlStateManager
 import org.apache.commons.io.FileUtils
 import org.json.JSONObject
@@ -34,7 +35,20 @@ object FontUtil : Wrapper {
         Paragon.INSTANCE.logger.info("Initialising fonts")
         font = FontRenderer(getFont("font"))
         fontLarge = FontRenderer(getFont("font", 80f))
-        icons = FontRenderer(Font.createFont(0, javaClass.getResourceAsStream("/assets/paragon/font/icons.ttf")).deriveFont(Font.PLAIN, 80f))
+        icons = FontRenderer(
+            Font.createFont(
+                0,
+                javaClass.getResourceAsStream("/assets/paragon/font/icons.ttf")
+            ).deriveFont(Font.PLAIN, 80f)
+        )
+    }
+
+    fun drawString(text: String, x: Float, y: Float, color: Color) {
+        if (ClientFont.isEnabled) {
+            font.drawString(text, x, y, color, false)
+        } else {
+            mc.fontRenderer.drawString(text, x, y, color.rgb, false)
+        }
     }
 
     @JvmStatic
@@ -60,6 +74,14 @@ object FontUtil : Wrapper {
         minecraft.fontRenderer.drawStringWithShadow(text, x, y, colour.rgb)
     }
 
+    fun drawCenteredY(text: String, x: Float, y: Float, color: Color, dropShadow: Boolean) {
+        if (dropShadow) {
+            drawStringWithShadow(text, x, y - (getHeight() / 2), color)
+        } else {
+            drawString(text, x, y - (getHeight() / 2), color)
+        }
+    }
+
     @JvmStatic
     fun drawCenteredString(text: String, x: Float, y: Float, colour: Color, centeredY: Boolean) {
         if (ClientFont.isEnabled) {
@@ -71,7 +93,12 @@ object FontUtil : Wrapper {
                 var newY = 0.0f
 
                 for (s in parts) {
-                    minecraft.fontRenderer.drawStringWithShadow(s, x - minecraft.fontRenderer.getStringWidth(s) / 2f, y + newY, colour.rgb)
+                    minecraft.fontRenderer.drawStringWithShadow(
+                        s,
+                        x - minecraft.fontRenderer.getStringWidth(s) / 2f,
+                        y + newY,
+                        colour.rgb
+                    )
                     newY += minecraft.fontRenderer.FONT_HEIGHT.toFloat()
                 }
 
@@ -81,7 +108,37 @@ object FontUtil : Wrapper {
             }
 
             GlStateManager.disableBlend()
-            minecraft.fontRenderer.drawStringWithShadow(text, x - minecraft.fontRenderer.getStringWidth(text) / 2f, y, colour.rgb)
+            minecraft.fontRenderer.drawStringWithShadow(
+                text,
+                x - minecraft.fontRenderer.getStringWidth(text) / 2f,
+                y,
+                colour.rgb
+            )
+        }
+    }
+
+    fun drawStringInBounds(text: String, x: Float, y: Float, maxWidth: Float, color: Color) {
+        var currY = y
+
+        fun drawLine(str: String, lineX: Float, lineY: Float): String? {
+            var currStr = str
+            val strBuilder = StringBuilder()
+
+            while (getStringWidth(currStr) > maxWidth) {
+                strBuilder.append(currStr[currStr.length - 1])
+                currStr = currStr.substring(0, currStr.length - 1)
+            }
+
+            drawString(currStr, lineX, lineY, color)
+
+            currY += getHeight() + 1
+            return strBuilder.reverse().toString().ifEmpty { null }
+        }
+
+        var currText: String? = text
+
+        while (currText != null) {
+            currText = drawLine(currText, x, currY)
         }
     }
 
@@ -105,8 +162,7 @@ object FontUtil : Wrapper {
 
         return if (ClientFont.isEnabled) {
             font.getStringWidth(text).toFloat()
-        }
-        else {
+        } else {
             minecraft.fontRenderer.getStringWidth(text).toFloat()
         }
     }

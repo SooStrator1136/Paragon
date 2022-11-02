@@ -2,7 +2,7 @@ package com.paragon.impl.managers
 
 import com.paragon.Paragon
 import com.paragon.util.mc
-import com.paragon.util.system.ResourceUtil
+import com.paragon.util.system.TextureUtil
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
@@ -27,7 +27,7 @@ class CapeManager {
         runCatching {
             runBlocking {
                 String(
-                    ResourceUtil.client.get("https://ParagonBot.wolfsurge.repl.co/capes").readBytes()
+                    TextureUtil.client.get("https://ParagonBot.wolfsurge.repl.co/capes").readBytes()
                 ).split(',').forEach {
                     val data = it.split(":")
                     capedPlayers[data[0]] = Cape.valueOf(data[1].uppercase(Locale.getDefault()))

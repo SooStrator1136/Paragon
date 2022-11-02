@@ -1,13 +1,12 @@
 package com.paragon.impl.ui.windows.impl
 
-import com.paragon.util.render.BlurUtil
-import com.paragon.util.render.font.FontUtil
 import com.paragon.impl.module.client.ClickGUI
 import com.paragon.impl.module.client.Colours
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.ui.windows.Window
+import com.paragon.util.render.BlurUtil
 import com.paragon.util.render.RenderUtil
-import com.paragon.util.toColour
+import com.paragon.util.render.font.FontUtil
 import net.minecraft.util.math.MathHelper
 import org.apache.commons.io.IOUtils
 import java.awt.Color

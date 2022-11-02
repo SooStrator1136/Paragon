@@ -1,11 +1,11 @@
 package com.paragon.impl.module.hud.impl
 
-import com.paragon.impl.module.hud.HUDModule
 import com.paragon.impl.module.client.Colours
+import com.paragon.impl.module.hud.HUDModule
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil.drawBorder
 import com.paragon.util.render.RenderUtil.drawRect
 import com.paragon.util.render.RenderUtil.renderItemStack
-import com.paragon.util.toColour
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 

@@ -1,13 +1,12 @@
 package com.paragon.impl.module.render
 
+import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
-import com.paragon.util.player.PlayerUtil
-import com.paragon.util.render.ColourUtil
-import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
 import com.paragon.util.entity.EntityUtil
-import com.paragon.util.glColour
+import com.paragon.util.player.PlayerUtil
+import com.paragon.util.render.ColourUtil.glColour
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.Vec3d

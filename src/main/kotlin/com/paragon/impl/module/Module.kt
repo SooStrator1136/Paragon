@@ -59,16 +59,16 @@ open class Module(val name: String, val category: Category, val description: Str
     // TEMPORARY
     fun reflectSettings() {
         Arrays.stream(javaClass.declaredFields).filter { Setting::class.java.isAssignableFrom(it.type) }.forEach {
-                it.isAccessible = true
-                try {
-                    val setting = it[this] as Setting<*>
-                    if (setting.parentSetting == null) {
-                        settings.add(setting)
-                    }
-                } catch (e: Throwable) {
-                    e.printStackTrace()
+            it.isAccessible = true
+            try {
+                val setting = it[this] as Setting<*>
+                if (setting.parentSetting == null) {
+                    settings.add(setting)
                 }
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
+        }
 
         settings.add(visible)
         settings.add(bind)
@@ -100,16 +100,15 @@ open class Module(val name: String, val category: Category, val description: Str
         if (isEnabled) {
             // Register events
             MinecraftForge.EVENT_BUS.register(this)
-            Paragon.INSTANCE.eventBus.register(this)
+            com.paragon.Paragon.INSTANCE.eventBus.register(this)
             animation.state = true
 
             // Call onEnable
             onEnable()
-        }
-        else {
+        } else {
             // Unregister events
             MinecraftForge.EVENT_BUS.unregister(this)
-            Paragon.INSTANCE.eventBus.unregister(this)
+            com.paragon.Paragon.INSTANCE.eventBus.unregister(this)
             animation.state = false
 
             // Call onDisable

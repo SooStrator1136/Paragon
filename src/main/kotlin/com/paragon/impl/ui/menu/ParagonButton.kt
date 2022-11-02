@@ -1,9 +1,9 @@
 package com.paragon.impl.ui.menu
 
-import com.paragon.util.render.font.FontUtil
 import com.paragon.impl.module.client.Colours
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil
-import com.paragon.util.toColour
+import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.client.Minecraft

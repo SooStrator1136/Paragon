@@ -1,32 +1,10 @@
 package com.paragon.util
 
 import net.minecraft.client.Minecraft
-import org.lwjgl.opengl.GL11.glColor4f
-import java.awt.Color
 
 inline val mc: Minecraft get() = Minecraft.getMinecraft()
 
 val Minecraft.anyNull get() = player == null || world == null
-
-inline fun <E> Collection<E>.anyIndexed(predicate: (E) -> Boolean): Int {
-    if (isEmpty()) return -1
-    forEachIndexed { index, element ->
-        if (predicate(element)) {
-            return index
-        }
-    }
-    return -1
-}
-
-inline fun <T> Array<T>.anyIndexed(predicate: (T) -> Boolean): Int {
-    if (isEmpty()) return -1
-    forEachIndexed { index, element ->
-        if (predicate(element)) {
-            return index
-        }
-    }
-    return -1
-}
 
 /**
  * Assumes that the both given numbers are the same primitive type, if that isn't the case inaccuracies will appear
@@ -60,12 +38,4 @@ operator fun Number.plus(toAdd: Number): Number {
 
 fun Boolean.toBinary(): Int {
     return if (this) 1 else 0
-}
-
-fun Color.glColour() {
-    glColor4f(this.red / 255f, this.green / 255f, this.blue / 255f, this.alpha / 255f)
-}
-
-fun Int.toColour(): Color {
-    return Color(this)
 }

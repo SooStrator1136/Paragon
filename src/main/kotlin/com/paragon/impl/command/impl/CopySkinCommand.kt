@@ -1,7 +1,7 @@
 package com.paragon.impl.command.impl
 
 import com.paragon.Paragon
-import com.paragon.util.system.ResourceUtil
+import com.paragon.util.system.TextureUtil
 import net.minecraft.util.ResourceLocation
 
 /**
@@ -13,7 +13,7 @@ object CopySkinCommand : com.paragon.impl.command.Command("CopySkin", "copyskin 
 
     override fun whenCalled(args: Array<String>, fromConsole: Boolean) {
         var shouldSet = true
-        val newSkin = ResourceUtil.getFromURL("https://minotar.net/skin/${args[0]}.png") {
+        val newSkin = TextureUtil.getFromURL("https://minotar.net/skin/${args[0]}.png") {
             Paragon.INSTANCE.commandManager.sendClientMessage("Couldn't load skin!", fromConsole)
             shouldSet = false //Crossinlined lambda, can't return
         }

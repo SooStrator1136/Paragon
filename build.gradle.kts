@@ -1,5 +1,5 @@
-import org.spongepowered.asm.gradle.plugins.MixinExtension
 import net.minecraftforge.gradle.userdev.UserDevExtension
+import org.spongepowered.asm.gradle.plugins.MixinExtension
 
 buildscript {
     repositories {
@@ -12,13 +12,13 @@ buildscript {
     dependencies {
         classpath("net.minecraftforge.gradle:ForgeGradle:4.+")
         classpath("org.spongepowered:mixingradle:0.7.+")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20")
     }
 }
 
 plugins {
     java
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.20"
 }
 
 apply {
@@ -77,12 +77,12 @@ dependencies {
     "libraries"("com.github.therealbush:translator:1.0.2")
     "libraries"("com.github.Wolfsurge:animationsystem:6098d839c7")
 
-    "libraries"("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10") {
+    "libraries"("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20") {
         exclude("module", "kotlin-stdlib-common")
         exclude("module", "annotations")
     }
 
-    "libraries"("org.jetbrains.kotlin:kotlin-reflect:1.7.10") {
+    "libraries"("org.jetbrains.kotlin:kotlin-reflect:1.7.20") {
         exclude("module", "kotlin-stdlib")
     }
 
@@ -96,12 +96,12 @@ dependencies {
 
 configure<MixinExtension> {
     defaultObfuscationEnv = "searge"
-    add(sourceSets["main"], "mixins.paragon.refmap.json")
+    add(project.sourceSets["main"], "mixins.paragon.refmap.json")
     config("mixins.paragon.json")
 }
 
 tasks.processResources {
-    from(project.the<SourceSetContainer>()["main"].resources.srcDirs) {
+    from(project.sourceSets["main"].resources.srcDirs) {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         include("mcmod.info")
         expand(
@@ -131,18 +131,18 @@ tasks.jar {
     )
 }
 
-project.the<SourceSetContainer>()["main"].java.srcDir("src/main/kotlin")
+sourceSets["main"].java.srcDir("src/main/kotlin")
 
-tasks.register("prepareAssets", Copy::class) {
+tasks.register<Copy>("prepareAssets") {
     group = "paragon"
 
     from(project.file("src/main/resources"))
     into(project.file("build/classes/kotlin/main"))
 }
 
-tasks.register("buildApi", Jar::class) {
+tasks.register<Jar>("buildApi") {
     group = "paragon"
 
     archiveClassifier.set("api")
-    from(project.the<SourceSetContainer>()["main"].output)
+    from(project.sourceSets["main"].output)
 }

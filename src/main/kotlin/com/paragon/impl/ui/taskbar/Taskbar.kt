@@ -1,12 +1,12 @@
 package com.paragon.impl.ui.taskbar
 
-import com.paragon.util.render.font.FontUtil
 import com.paragon.impl.module.client.Colours
 import com.paragon.impl.ui.taskbar.start.StartMenu
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.Wrapper
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil
-import com.paragon.util.toColour
+import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution

@@ -1,14 +1,14 @@
 package com.paragon.impl.ui.configuration.discord.category
 
-import com.paragon.util.render.font.FontUtil
-import com.paragon.util.render.font.FontUtil.drawStringWithShadow
-import com.paragon.util.render.font.FontUtil.getStringWidth
+import com.paragon.impl.module.Category
 import com.paragon.impl.module.client.ClickGUI
 import com.paragon.impl.ui.configuration.discord.GuiDiscord
 import com.paragon.impl.ui.configuration.discord.IRenderable
-import com.paragon.impl.module.Category
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.RenderUtil.scaleTo
+import com.paragon.util.render.font.FontUtil
+import com.paragon.util.render.font.FontUtil.drawStringWithShadow
+import com.paragon.util.render.font.FontUtil.getStringWidth
 import com.paragon.util.string.StringUtil
 import me.surge.animation.Animation
 import net.minecraft.item.ItemStack
@@ -33,9 +33,8 @@ class DiscordCategory(val category: Category) : IRenderable {
 
         //Render the basic icon with its background
         run {
-            @Suppress("IncorrectFormatting")
-            RenderUtil.drawRoundedRect(
-                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 2f, if (isHovered) GuiDiscord.channelBarBackground.brighter() else GuiDiscord.channelBarBackground
+            @Suppress("IncorrectFormatting") RenderUtil.drawRoundedRect(
+                rect.x.toFloat(), rect.y.toFloat(), rect.width.toFloat(), rect.height.toFloat(), 15f, if (isHovered) GuiDiscord.channelBarBackground.brighter() else GuiDiscord.channelBarBackground
             )
 
             val scaleFac = rect.width / 20.0

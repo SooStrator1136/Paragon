@@ -1,15 +1,14 @@
 package com.paragon.impl.module.render
 
+import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
-import com.paragon.util.render.ColourUtil.integrateAlpha
-import com.paragon.impl.module.Category
 import com.paragon.util.entity.EntityUtil
 import com.paragon.util.entity.EntityUtil.isEntityAllowed
 import com.paragon.util.entity.EntityUtil.isMonster
 import com.paragon.util.entity.EntityUtil.isPassive
-import com.paragon.util.glColour
-import com.paragon.util.render.ColourUtil
+import com.paragon.util.render.ColourUtil.glColour
+import com.paragon.util.render.ColourUtil.integrateAlpha
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.player.EntityPlayer

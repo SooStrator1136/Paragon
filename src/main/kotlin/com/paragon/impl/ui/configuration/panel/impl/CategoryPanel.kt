@@ -3,16 +3,15 @@ package com.paragon.impl.ui.configuration.panel.impl
 import com.paragon.Paragon
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.client.ClickGUI
-import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.module.client.Colours
 import com.paragon.impl.ui.configuration.panel.PanelGUI
 import com.paragon.impl.ui.configuration.shared.Panel
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.render.ColourUtil
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
 import com.paragon.util.string.StringUtil
-import com.paragon.util.toColour
 import me.surge.animation.Animation
 import me.surge.animation.ColourAnimation
 import me.surge.animation.Easing
@@ -24,11 +23,11 @@ import java.lang.Double.max
 class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Float, width: Float, height: Float) : Panel(x, y, width, height) {
 
     val maxHeight = 320.0
-    
+
     private val hover = ColourAnimation(Color(30, 30, 30), Color(40, 40, 40), { 200f }, false, { Easing.LINEAR })
     private val topGradient = ColourAnimation(Color(0, 0, 0, 0), Color(0, 0, 0, 100), { 500f }, false, { Easing.LINEAR })
     private val bottomGradient = ColourAnimation(Color(0, 0, 0, 0), Color(0, 0, 0, 100), { 500f }, false, { Easing.LINEAR })
-    
+
     val expanded = Animation({ ClickGUI.animationSpeed.value }, true, { ClickGUI.easing.value })
     val elements = arrayListOf<ModuleElement>()
 
@@ -70,7 +69,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         }
 
         scroll += scrollFactor
-        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (getFilteredModules().sumOf { it.getAbsoluteHeight().toDouble() } - maxHeight)), 0.0).toFloat() *
+        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (elements.filter { it.module.name.contains(gui.search, true) }.sumOf { it.getAbsoluteHeight().toDouble() } - maxHeight)), 0.0).toFloat() *
                 expanded.getAnimationFactor().toFloat() // hacky fix lol
 
         RenderUtil.pushScissor(x, y, width, height)
@@ -87,11 +86,11 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
             topGradient.state = false
             bottomGradient.state = false
         }
-        
+
         RenderUtil.pushScissor(x, y + height, width, moduleHeight.toFloat())
 
         var offset = y + height + scroll
-        getFilteredModules().forEach {
+        elements.filter { it.module.name.contains(gui.search, true) }.forEach {
             it.x = x
             it.y = offset
 
@@ -121,8 +120,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
 
         if (ClickGUI.outline.value) {
             RenderUtil.drawRect(x, y, 0.5f, height + moduleHeight.toFloat(), leftGradient)
-            RenderUtil.drawRect(x + width - 0.5f, y, 0.5f, height + moduleHeight.toFloat(), rightGradient)
-            RenderUtil.drawRect(x, y - 0.5f, width, 0.5f, leftGradient)
+            RenderUtil.drawRect(x + width - 0.5f, y + height, 0.5f, moduleHeight.toFloat(), rightGradient)
 
             RenderUtil.drawHorizontalGradientRect(
                 x,
@@ -144,7 +142,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         }
 
         if (expanded.getAnimationFactor() > 0 && mouseX in x..x + width && mouseY in y + height..y + height + moduleHeight.toFloat()) {
-            getFilteredModules().forEach {
+            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
                 it.mouseClicked(mouseX, mouseY, click)
             }
         }
@@ -154,7 +152,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         super.mouseReleased(mouseX, mouseY, click)
 
         if (expanded.getAnimationFactor() > 0) {
-            getFilteredModules().forEach {
+            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
                 it.mouseReleased(mouseX, mouseY, click)
             }
         }
@@ -164,12 +162,12 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         super.keyTyped(character, keyCode)
 
         if (expanded.getAnimationFactor() > 0) {
-            getFilteredModules().forEach {
+            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
                 it.keyTyped(character, keyCode)
             }
         }
     }
-    
+
     private fun getFilteredModules(): List<ModuleElement> {
         return elements.filter { it.module.isValidSearch(gui.search) }
     }

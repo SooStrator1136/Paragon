@@ -13,12 +13,13 @@ import net.minecraft.client.renderer.texture.ITextureObject
 import net.minecraft.client.renderer.texture.TextureUtil
 import net.minecraft.util.ResourceLocation
 import org.apache.commons.io.FilenameUtils
+import org.lwjgl.opengl.GL11.*
 import javax.imageio.ImageIO
 
 /**
  * @author SooStrator1136
  */
-object ResourceUtil {
+object TextureUtil {
 
     val client = HttpClient(CIO)
 
@@ -39,6 +40,14 @@ object ResourceUtil {
         }
 
         return resourceLoc
+    }
+
+    fun getTextureBounds(texture: ResourceLocation): Pair<Int, Int> {
+        mc.textureManager.bindTexture(texture)
+        return Pair(
+            glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH),
+            glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT)
+        )
     }
 
 }

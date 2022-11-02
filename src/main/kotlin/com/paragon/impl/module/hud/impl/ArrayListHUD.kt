@@ -7,9 +7,9 @@ import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.setting.Setting
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
-import com.paragon.util.toColour
 import me.surge.animation.Easing
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.math.MathHelper
@@ -47,8 +47,8 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
         val scaledResolution = ScaledResolution(minecraft)
 
         val modules = Paragon.INSTANCE.moduleManager.getModulesThroughPredicate { it.animation.getAnimationFactor() > 0 && it.isVisible() }
-            .sortedBy { FontUtil.getStringWidth(it.name + if (dataMode.value != Data.OFF) "" + if (it.getData().isNotEmpty()) " " + dataMode.value.first + it.getData() + dataMode.value.second else "" else "") }
-            .reversed()
+                .sortedBy { FontUtil.getStringWidth(it.name + if (dataMode.value != Data.OFF) "" + if (it.getData().isNotEmpty()) " " + dataMode.value.first + it.getData() + dataMode.value.second else "" else "") }
+                .reversed()
 
         when (anchor.value) {
             Anchor.TOP_LEFT -> {

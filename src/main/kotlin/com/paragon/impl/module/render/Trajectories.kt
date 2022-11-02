@@ -1,15 +1,14 @@
 package com.paragon.impl.module.render
 
+import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
-import com.paragon.util.render.ColourUtil.integrateAlpha
-import com.paragon.util.render.ColourUtil.setColour
-import com.paragon.impl.module.Category
 import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.mixins.accessor.IRenderManager
 import com.paragon.util.anyNull
 import com.paragon.util.entity.EntityUtil
-import com.paragon.util.glColour
+import com.paragon.util.render.ColourUtil.glColour
+import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.builder.BoxRenderMode
 import com.paragon.util.render.builder.RenderBuilder
 import net.minecraft.item.*

@@ -1,7 +1,7 @@
 package com.paragon.util.render
 
 import com.paragon.util.Wrapper
-import com.paragon.util.glColour
+import com.paragon.util.render.ColourUtil.glColour
 import com.paragon.util.render.font.FontUtil
 import com.paragon.util.render.shader.Shader
 import net.minecraft.client.gui.ScaledResolution
@@ -22,7 +22,6 @@ import java.awt.Color
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
-
 
 @SideOnly(Side.CLIENT)
 object RenderUtil : Wrapper {
@@ -231,7 +230,12 @@ object RenderUtil : Wrapper {
         GlStateManager.pushMatrix()
         GlStateManager.disableTexture2D()
         GlStateManager.enableBlend()
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO
+        )
 
         roundedRectangleShader.setColour(colour.rgb, colour.alpha)
         roundedRectangleShader.radius = radius
@@ -373,12 +377,20 @@ object RenderUtil : Wrapper {
      * @param scaleFacZ How much to scale by on the Z axis
      * @param block The code to run during scaling
      */
-    inline fun scaleTo(x: Float, y: Float, z: Float, scaleFacX: Double, scaleFacY: Double, scaleFacZ: Double, block: () -> Unit) {
+    inline fun scaleTo(
+        x: Float,
+        y: Float,
+        z: Float,
+        scaleFacX: Double,
+        scaleFacY: Double,
+        scaleFacZ: Double,
+        block: () -> Unit
+    ) {
         glPushMatrix()
         glTranslatef(x, y, z)
         glScaled(scaleFacX, scaleFacY, scaleFacZ)
         glTranslatef(-x, -y, -z)
-        block.invoke()
+        block()
         glPopMatrix()
     }
 

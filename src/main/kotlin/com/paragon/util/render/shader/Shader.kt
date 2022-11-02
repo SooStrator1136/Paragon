@@ -5,15 +5,15 @@ import com.paragon.util.Wrapper
 import org.apache.commons.io.IOUtils
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20.*
-import java.io.File
 import java.nio.charset.Charset
 
 /**
  * @author Surge, Cosmos
  */
-open class Shader(path: String?) : Wrapper {
-    var program = 0
-    var uniforms: MutableMap<String, Int>? = null
+open class Shader(path: String) : Wrapper {
+
+    private var program = 0
+    private var uniforms: MutableMap<String, Int>? = null
     var time = 0.0
 
     init {
@@ -77,11 +77,15 @@ open class Shader(path: String?) : Wrapper {
                 ARBShaderObjects.glCompileShaderARB(shader)
 
                 if (ARBShaderObjects.glGetObjectParameteriARB(shader, 35713) == 0) {
-                    throw RuntimeException("Error creating shader: " + ARBShaderObjects.glGetInfoLogARB(shader, ARBShaderObjects.glGetObjectParameteriARB(shader, 35716)))
+                    throw RuntimeException(
+                        "Error creating shader: " + ARBShaderObjects.glGetInfoLogARB(
+                            shader,
+                            ARBShaderObjects.glGetObjectParameteriARB(shader, 35716)
+                        )
+                    )
                 }
                 shader
-            }
-            else {
+            } else {
                 0
             }
         } catch (e: Exception) {
@@ -92,7 +96,7 @@ open class Shader(path: String?) : Wrapper {
     }
 
     fun setupUniform(name: String) {
-        uniforms!![name] = glGetUniformLocation(program, name)
+        (uniforms ?: return)[name] = glGetUniformLocation(program, name)
     }
 
     fun getUniform(name: String): Int {

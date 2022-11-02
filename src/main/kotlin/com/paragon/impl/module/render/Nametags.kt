@@ -1,21 +1,16 @@
 package com.paragon.impl.module.render
 
 import com.paragon.Paragon
+import com.paragon.bus.listener.Listener
 import com.paragon.impl.event.render.entity.RenderNametagEvent
+import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
-import com.paragon.bus.listener.Listener
-import com.paragon.impl.module.Category
-import com.paragon.impl.module.client.ClientFont
-import com.paragon.mixins.accessor.IRenderManager
 import com.paragon.util.anyNull
 import com.paragon.util.entity.EntityUtil
 import com.paragon.util.player.EntityFakePlayer
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
-import com.paragon.util.toColour
-import me.surge.animation.Animation
-import me.surge.animation.Easing
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.enchantment.Enchantment
@@ -27,8 +22,6 @@ import net.minecraft.item.ItemTool
 import net.minecraft.util.text.TextFormatting
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
-import java.lang.StringBuilder
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**

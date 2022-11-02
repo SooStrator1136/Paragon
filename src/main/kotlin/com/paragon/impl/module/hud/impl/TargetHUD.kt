@@ -6,13 +6,12 @@ import com.paragon.impl.module.combat.Aura
 import com.paragon.impl.module.hud.HUDEditorGUI
 import com.paragon.impl.module.hud.HUDModule
 import com.paragon.impl.setting.Setting
-import com.paragon.util.render.font.FontUtil
-import com.paragon.util.anyIndexed
 import com.paragon.util.anyNull
 import com.paragon.util.calculations.Timer
 import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.RenderUtil.scaleTo
+import com.paragon.util.render.font.FontUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.entity.Entity
@@ -48,11 +47,10 @@ object TargetHUD : HUDModule("TargetHUD", "") {
                 //if (AutoCrystal.isEnabled) AutoCrystal.lastTarget else null
             )
 
-            val newTarget = possibleTargets.anyIndexed { it != null }
+            val newTarget = possibleTargets.indexOfFirst { it != null }
             if (newTarget == -1) {
                 target = null
-            }
-            else {
+            } else {
                 target = possibleTargets[newTarget]
                 clearTimer.reset()
             }

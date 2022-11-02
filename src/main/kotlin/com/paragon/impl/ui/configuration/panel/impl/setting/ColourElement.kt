@@ -6,17 +6,19 @@ import com.paragon.impl.ui.configuration.panel.impl.ModuleElement
 import com.paragon.impl.ui.configuration.panel.impl.SettingElement
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.calculations.MathsUtil
-import com.paragon.util.glColour
+import com.paragon.util.render.ColourUtil.glColour
 import com.paragon.util.render.ColourUtil.integrateAlpha
+import com.paragon.util.render.ColourUtil.toColour
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
-import com.paragon.util.toColour
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.math.BigDecimal
 import java.util.function.Supplier
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
 
 class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y: Float, width: Float, height: Float) : SettingElement<Color>(parent, setting, x, y, width, height) {
 
