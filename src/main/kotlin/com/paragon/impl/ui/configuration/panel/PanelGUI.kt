@@ -1,13 +1,11 @@
 package com.paragon.impl.ui.configuration.panel
 
 import com.paragon.impl.module.Category
-import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.ui.configuration.GuiImplementation
 import com.paragon.impl.ui.configuration.panel.impl.CategoryPanel
 import com.paragon.impl.ui.configuration.panel.impl.setting.BindElement
 import com.paragon.impl.ui.configuration.panel.impl.setting.StringElement
 import com.paragon.impl.ui.util.Click
-import com.paragon.util.calculations.Timer
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Animation
@@ -46,7 +44,7 @@ class PanelGUI : GuiImplementation() {
 
         val rectWidth = max(12 + FontUtil.getStringWidth("Search") * 1.5, FontUtil.getStringWidth(search).toDouble() + 12).toFloat()
 
-        RenderUtil.drawRoundedRect((width / 2f) - (rectWidth / 2), ScaledResolution(Minecraft.getMinecraft()).scaledHeight - (73 * searchAnimation.getAnimationFactor()).toFloat(), rectWidth, 37f, 2f, Color(50, 50, 50, (150 * searchAnimation.getAnimationFactor()).toInt()))
+        RenderUtil.drawRoundedRect((width / 2f) - (rectWidth / 2), ScaledResolution(Minecraft.getMinecraft()).scaledHeight - (73 * searchAnimation.getAnimationFactor()).toFloat(), rectWidth, 37f, 10f, Color(50, 50, 50, (150 * searchAnimation.getAnimationFactor()).toInt()))
         FontUtil.drawCenteredString(search, width / 2f, ScaledResolution(Minecraft.getMinecraft()).scaledHeight - (50 * searchAnimation.getAnimationFactor()).toFloat(), Color.WHITE, true)
 
         RenderUtil.scaleTo(width / 2f, ScaledResolution(Minecraft.getMinecraft()).scaledHeight - (75 * searchAnimation.getAnimationFactor()).toFloat(), 0f, 1.5, 1.5, 0.0) {

@@ -76,7 +76,6 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         }
 
         var colour = setting.value
-        var alpha = setting.alpha
 
         if (expanded.getAnimationFactor() > 0) {
             RenderUtil.drawRect(x, y + height, width, getAbsoluteHeight() - height, Color(15, 15, 15))
@@ -107,9 +106,9 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             xOffset += sync.width
 
             // draw elements
-            hueSlider.draw(mouseX, mouseY)
+            hueSlider.draw(mouseX)
 
-            alphaSlider.draw(colour, mouseX, mouseY)
+            alphaSlider.draw(colour, mouseX)
 
             val hue = hueSlider.hue / 360f
 
@@ -120,11 +119,11 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
 
             colour = Color(Color.HSBtoRGB(hue, saturation, brightness))
 
-            rainbow.draw(mouseX, mouseY)
-            sync.draw(mouseX, mouseY)
+            rainbow.draw()
+            sync.draw()
         }
 
-        alpha = alphaSlider.alpha
+        val alpha: Float = alphaSlider.alpha
 
         setting.rainbowSaturation = picker.saturation * 100f
         setting.setValue(colour)
@@ -156,9 +155,9 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         super.mouseReleased(mouseX, mouseY, click)
 
         if (expanded.getAnimationFactor() == 1.0) {
-            picker.mouseReleased(mouseX, mouseY)
-            hueSlider.mouseReleased(mouseX, mouseY)
-            alphaSlider.mouseReleased(mouseX, mouseY)
+            picker.mouseReleased()
+            hueSlider.mouseReleased()
+            alphaSlider.mouseReleased()
         }
     }
 
@@ -224,14 +223,14 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             val posX = x + (saturation * width) - 4f
             val posY = y + ((1 - brightness) * height) - 4f
 
-            RenderUtil.drawRoundedRect(posX - 0.5f, posY - 0.5f, 8f, 8f, 1f, Color.WHITE)
+            RenderUtil.drawRoundedRect(posX - 0.5f, posY - 0.5f, 8f, 8f, 5f, Color.WHITE)
 
             RenderUtil.drawRoundedRect(
                 posX,
                 posY,
                 7f,
                 7f,
-                1f,
+                5f,
                 Color.HSBtoRGB(
                     Color.RGBtoHSB(colour.red, colour.green, colour.blue, null)[0],
                     saturation,
@@ -248,7 +247,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             }
         }
 
-        fun mouseReleased(mouseX: Float, mouseY: Float) {
+        fun mouseReleased() {
             dragging = false
         }
     }
@@ -257,7 +256,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         var dragging = false
         var hue = 0f
 
-        fun draw(mouseX: Float, mouseY: Float) {
+        fun draw(mouseX: Float) {
             var step = 0
 
             for (colorIndex in 0..5) {
@@ -296,7 +295,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             }
         }
 
-        fun mouseReleased(mouseX: Float, mouseY: Float) {
+        fun mouseReleased() {
             dragging = false
         }
     }
@@ -305,7 +304,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         var dragging = false
         var alpha = 0f
 
-        fun draw(colour: Color, mouseX: Float, mouseY: Float) {
+        fun draw(colour: Color, mouseX: Float) {
             RenderUtil.drawHorizontalGradientRect(x, y, width, height, colour.integrateAlpha(255f), Color(0, 0, 0, 0))
 
             // Set values
@@ -338,15 +337,15 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             }
         }
 
-        fun mouseReleased(mouseX: Float, mouseY: Float) {
+        fun mouseReleased() {
             dragging = false
         }
     }
 
     private class Button(val name: String, val block: Runnable, val enabledState: Supplier<Boolean>, var x: Float, var y: Float, var width: Float) {
 
-        fun draw(mouseX: Float, mouseY: Float) {
-            RenderUtil.drawRoundedRect((x + width / 2f) - 8f, y - 1f, 16f, 16f, 2.5f, if (enabledState.get()) Colours.mainColour.value.integrateAlpha(255f) else Color(40, 40, 40))
+        fun draw() {
+            RenderUtil.drawRoundedRect((x + width / 2f) - 6f, y, 12f, 12f, 5f, if (enabledState.get()) Colours.mainColour.value.integrateAlpha(255f) else Color(40, 40, 40))
 
             RenderUtil.scaleTo(x + (width / 2), y + 15f, 0f, 0.6, 0.6, 0.6) {
                 FontUtil.drawCenteredString(name, x + (width / 2), y + 15f, Color.WHITE, false)

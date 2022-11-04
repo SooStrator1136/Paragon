@@ -3,10 +3,8 @@ package com.paragon.impl.ui.menu
 import com.paragon.Paragon
 import com.paragon.impl.module.client.Colours
 import com.paragon.impl.module.client.MainMenu
-import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.font.FontUtil
 import com.paragon.util.render.RenderUtil
-import com.paragon.util.render.shader.Shader
 import me.surge.animation.Animation
 import me.surge.animation.ColourAnimation
 import me.surge.animation.Easing
@@ -14,7 +12,6 @@ import net.minecraft.client.gui.*
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.shader.Framebuffer
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL20.*
 import java.awt.Color
 import java.awt.Desktop
@@ -146,8 +143,8 @@ class ParagonMenu : GuiScreen() {
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        singleplayerButton.mouseClicked(mouseX, mouseY)
-        multiplayerButton.mouseClicked(mouseX, mouseY)
+        singleplayerButton.mouseClicked()
+        multiplayerButton.mouseClicked()
 
         if (settingHover.state) {
             mc.displayGuiScreen(GuiOptions(this, mc.gameSettings))
@@ -170,7 +167,7 @@ class ParagonMenu : GuiScreen() {
         fun render(mouseX: Int, mouseY: Int) {
             hover.state = mouseX.toFloat() in x..x + 64 && mouseY.toFloat() in y..y + 64
 
-            RenderUtil.drawRoundedRect(x, y - (16 * hover.getAnimationFactor()).toFloat(), 64f, 64f, 3f, Color(0, 0, 0, 150))
+            RenderUtil.drawRoundedRect(x, y - (16 * hover.getAnimationFactor()).toFloat(), 64f, 64f, 13f, Color(0, 0, 0, 150))
 
             RenderUtil.scaleTo(x + 10 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), 0f, 2.0, 2.0, 0.0) {
                 FontUtil.drawIcon(icon, x + 11 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), Color.WHITE)
@@ -179,7 +176,7 @@ class ParagonMenu : GuiScreen() {
             FontUtil.font.drawString(name, (x + 32) - (FontUtil.font.getStringWidth(name) / 2), y + 64 - (16 * hover.getAnimationFactor()).toFloat(), Color(255, 255, 255, (255 * hover.getAnimationFactor()).toInt().coerceAtLeast(5)), false)
         }
 
-        fun mouseClicked(mouseX: Int, mouseY: Int) {
+        fun mouseClicked() {
             if (hover.state) {
                 onClick.run()
             }

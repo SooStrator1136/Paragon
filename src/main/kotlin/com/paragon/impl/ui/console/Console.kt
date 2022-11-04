@@ -33,13 +33,13 @@ class Console(private val title: String, val width: Float, val height: Float) : 
         )
     }
 
-    fun draw(mouseX: Int, mouseY: Int) {
+    fun draw() {
         val scaledResolution = ScaledResolution(minecraft)
 
         val x = (scaledResolution.scaledWidth / 2f) - (width / 2f)
         val y = (scaledResolution.scaledHeight / 2f) - (height / 2f)
 
-        RenderUtil.drawRoundedRect(x - 2, y - 2, width + 4, height + 4, 1.5f, Color(20, 20, 25))
+        RenderUtil.drawRoundedRect(x - 2, y - 2, width + 4, height + 4, 10f, Color(20, 20, 25))
         RenderUtil.drawRoundedOutline(x, y, width, height, 2f, 2f, Colours.mainColour.value)
 
         FontUtil.drawStringWithShadow(title, x + 5f, y + 5f, Color.WHITE)
