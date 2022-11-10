@@ -6,12 +6,10 @@ import com.paragon.impl.setting.Setting
 import com.paragon.impl.ui.configuration.panel.impl.ModuleElement
 import com.paragon.impl.ui.configuration.panel.impl.SettingElement
 import com.paragon.impl.ui.util.Click
-import com.paragon.util.render.ColourUtil.fade
 import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Animation
-import me.surge.animation.ColourAnimation
 import net.minecraft.util.math.MathHelper
 import java.awt.Color
 
@@ -30,8 +28,8 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
             FontUtil.drawStringWithShadow(setting.name, x + 3, y + 5.5f, Color.WHITE)
         }
 
-        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 16f, y + 0.5f, 16f, 16f, 3f, Color(50, 50, 50))
-        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 16f, y + 0.5f, 16f, 16f, 3f, Colours.mainColour.value.integrateAlpha(255f * enabled.getAnimationFactor().toFloat()))
+        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 12.5f, y + 4f, 9f, 9f, 6f, Color(50, 50, 50))
+        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 12.5f, y + 4f, 9f, 9f, 6f, Colours.mainColour.value.integrateAlpha(255f * enabled.getAnimationFactor().toFloat()))
         RenderUtil.drawRoundedOutline(x + getRenderableWidth() - 12.5f, y + 4f, 9f, 9f, 4f, 2f, Color(70, 70, 70))
 
         val parentTotalHeight = parent.parent.y + parent.parent.height + parent.parent.moduleHeight

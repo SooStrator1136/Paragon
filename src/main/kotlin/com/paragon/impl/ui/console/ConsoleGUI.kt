@@ -22,7 +22,7 @@ class ConsoleGUI : GuiScreen() {
             drawDefaultBackground()
         }
 
-        Paragon.INSTANCE.console.draw(mouseX, mouseY)
+        Paragon.INSTANCE.console.draw()
         Paragon.INSTANCE.taskbar.draw(mouseX, mouseY)
 
         super.drawScreen(mouseX, mouseY, partialTicks)

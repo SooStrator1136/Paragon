@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.AxisAlignedBB
-import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -33,14 +32,7 @@ object RenderUtil : Wrapper {
         var width = 0f
         var height = 0f
         var radius = 0f
-        var colour = -1
-
-        var alpha = 1f
-
-        fun setColour(colour: Int, alpha: Int) {
-            this.colour = colour
-            this.alpha = alpha / 255f
-        }
+        var colour = Color(0, 0, 0, 0)
 
         override fun setupUniforms() {
             setupUniform("size")
@@ -50,11 +42,8 @@ object RenderUtil : Wrapper {
         }
 
         override fun updateUniforms() {
-            val colour = Color(this.colour)
-
             glUniform2f(getUniform("size"), width, height)
-            glUniform4f(getUniform("colour"), colour.red / 255f, colour.green / 255f, colour.blue / 255f, this.alpha)
-            glUniform1f(getUniform("alpha"), this.alpha)
+            glUniform4f(getUniform("colour"), colour.red / 255f, colour.green / 255f, colour.blue / 255f, colour.alpha / 255f)
             glUniform1f(getUniform("radius"), radius)
         }
     }
@@ -177,7 +166,6 @@ object RenderUtil : Wrapper {
      * Draws a triangle at the center of the given coordinates
      * @param x The center X of the triangle
      * @param y The center Y of the triangle
-     * @param size The size of the triangle
      * @param colour The colour of the triangle
      */
     fun drawTriangle(x: Float, y: Float, width: Float, height: Float, colour: Color) {
@@ -237,7 +225,7 @@ object RenderUtil : Wrapper {
             GlStateManager.DestFactor.ZERO
         )
 
-        roundedRectangleShader.setColour(colour.rgb, colour.alpha)
+        roundedRectangleShader.colour = colour
         roundedRectangleShader.radius = radius
         roundedRectangleShader.width = width
         roundedRectangleShader.height = height
@@ -255,7 +243,7 @@ object RenderUtil : Wrapper {
         glTexCoord2f(1f, 0f)
         glVertex2f(x + width + radius, y - radius)
 
-        glEnd();
+        glEnd()
 
         glUseProgram(0)
 
@@ -447,26 +435,26 @@ object RenderUtil : Wrapper {
      * @param height The height of the scissored rect
      */
     fun pushScissor(x: Float, y: Float, width: Float, height: Float) {
-        var x = x.toDouble()
-        var y = y.toDouble()
-        var width = width.toDouble()
-        var height = height.toDouble()
+        var shadowX = x.toInt()
+        var shadowY = y.toInt()
+        var shadowWidth = width.toInt()
+        var shadowHeight = height.toInt()
 
-        width = MathHelper.clamp(width, 0.0, width)
-        height = MathHelper.clamp(height, 0.0, height)
+        shadowWidth = shadowWidth.coerceAtLeast(0)
+        shadowHeight = shadowHeight.coerceAtLeast(0)
 
         glPushAttrib(GL_SCISSOR_BIT)
         run {
             val sr = ScaledResolution(minecraft)
-            val scale = sr.scaleFactor.toDouble()
+            val scale = sr.scaleFactor
 
-            y = sr.scaledHeight - y
-            x *= scale
-            y *= scale
-            width *= scale
-            height *= scale
+            shadowY = sr.scaledHeight - shadowY
+            shadowX *= scale
+            shadowY *= scale
+            shadowWidth *= scale
+            shadowHeight *= scale
 
-            glScissor(x.toInt(), (y - height).toInt(), width.toInt(), height.toInt())
+            glScissor(shadowX, (shadowY - shadowHeight), shadowWidth, shadowHeight)
             glEnable(GL_SCISSOR_TEST)
         }
     }

@@ -6,7 +6,7 @@ import com.paragon.util.render.ColourUtil.glColour
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
 import net.minecraft.client.renderer.GlStateManager
-import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
 import java.awt.Color
 import java.awt.geom.Rectangle2D
 import java.math.BigDecimal
@@ -63,27 +63,34 @@ class Graph(
         }
 
         run {
-            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.001f)
+            GlStateManager.alphaFunc(GL_GREATER, 0.001f)
             GlStateManager.enableAlpha()
             GlStateManager.enableBlend()
             GlStateManager.disableTexture2D()
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0)
-            GL11.glLineWidth(1f)
+            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0)
+            glLineWidth(1f)
 
-            GL11.glBegin(GL11.GL_LINE_STRIP)
+            glEnable(GL_LINE_SMOOTH)
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+
+            glBegin(GL_LINE_STRIP)
 
             graphColor.invoke().glColour()
 
             points.forEachIndexed { i, percentage ->
-                GL11.glVertex2f(
-                    graphRect.x + i, (graphRect.y + (graphRect.height - MathsUtil.getPercentOf(
-                        percentage, graphRect.height.toDouble()
-                    ))).toFloat()
+                glVertex2f(
+                    graphRect.x + i,
+                    (graphRect.y + (graphRect.height -
+                            MathsUtil.getPercentOf(
+                                percentage, graphRect.height.toDouble()
+                            )
+                    )).toFloat()
                 )
             }
-            GL11.glEnd()
 
-            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f)
+            glEnd()
+
+            GlStateManager.alphaFunc(GL_GREATER, 0.1f)
             GlStateManager.color(1f, 1f, 1f, 1f)
             GlStateManager.disableBlend()
             GlStateManager.enableTexture2D()
@@ -114,7 +121,8 @@ class Graph(
     }
 
     enum class Background {
-        NONE, ALL, SIMPLE
+        NONE,
+        ALL
     }
 
 }

@@ -29,11 +29,11 @@ class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y
         }
 
         RenderUtil.drawRoundedRect(
-            x + getRenderableWidth() - FontUtil.getStringWidth(setting.value) * 0.7f - 6,
+            x + getRenderableWidth() - FontUtil.getStringWidth(setting.value) * 0.7f - 8,
             y + 2f,
             FontUtil.getStringWidth(setting.value) * 0.7f + 6,
             height - 4f,
-            1f,
+            5f,
             Color(50 + (10 * listening.getAnimationFactor()).toInt(), 50 + (10 * listening.getAnimationFactor()).toInt(), 50 + (10 * listening.getAnimationFactor()).toInt())
         )
 
@@ -42,7 +42,7 @@ class StringElement(parent: ModuleElement, setting: Setting<String>, x: Float, y
 
             val scaleFactor = 1 / 0.7f
 
-            val valueX: Float = (x + getRenderableWidth() - FontUtil.getStringWidth(setting.value) * 0.7f - 3) * scaleFactor
+            val valueX: Float = (x + getRenderableWidth() - FontUtil.getStringWidth(setting.value) * 0.7f - 5) * scaleFactor
 
             FontUtil.drawStringWithShadow(setting.value, valueX, (y + 5f) * scaleFactor, Color.GRAY)
 
