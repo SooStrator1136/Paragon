@@ -247,13 +247,13 @@ object RenderUtil : Wrapper {
         glBegin(GL_QUADS)
 
         glTexCoord2f(0f, 0f)
-        glVertex2f(x, y)
+        glVertex2f(x - radius, y - radius)
         glTexCoord2f(0f, 1f)
-        glVertex2f(x, y + height)
+        glVertex2f(x - radius, y + height + radius)
         glTexCoord2f(1f, 1f)
-        glVertex2f(x + width, y + height)
+        glVertex2f(x + width + radius, y + height + radius)
         glTexCoord2f(1f, 0f)
-        glVertex2f(x + width, y)
+        glVertex2f(x + width + radius, y - radius)
 
         glEnd();
 
