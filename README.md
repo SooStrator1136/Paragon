@@ -19,6 +19,12 @@ commit [here](https://nightly.link/Wolfsurge/Paragon/workflows/build/master/Pack
 </details>
 
 <details>
+  <summary> What does the GUI look like? </summary>
+  
+  ![image](https://user-images.githubusercontent.com/73380591/201485882-ae80c44d-8035-40de-985f-2de214630e35.png)
+</details>
+
+<details>
   <summary> How do I use commands? </summary>
 
 > The command prefix is `$`, and you can run `$help` to get a list of all commands
@@ -27,7 +33,7 @@ commit [here](https://nightly.link/Wolfsurge/Paragon/workflows/build/master/Pack
 <details>
   <summary> How do I request help, or suggest a feature? </summary>
 
-> You can join the discord server (linked above) and use the appropriate channels
+> You can join the discord server (click on the badge with the online members in the discord) and use the appropriate channels
 </details>
 
 # Contributors
