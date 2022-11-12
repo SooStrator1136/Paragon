@@ -48,6 +48,29 @@ object RenderUtil : Wrapper {
         }
     }
 
+    private val roundedOutlineShader = object : Shader("/assets/paragon/glsl/shaders/rounded_outline.frag") {
+        var width = 0f
+        var height = 0f
+        var radius = 0f
+        var thickness = 0f
+        var colour = Color(0, 0, 0, 0)
+
+        override fun setupUniforms() {
+            setupUniform("size")
+            setupUniform("colour")
+            setupUniform("alpha")
+            setupUniform("radius")
+            setupUniform("thickness")
+        }
+
+        override fun updateUniforms() {
+            glUniform2f(getUniform("size"), width, height)
+            glUniform4f(getUniform("colour"), colour.red / 255f, colour.green / 255f, colour.blue / 255f, colour.alpha / 255f)
+            glUniform1f(getUniform("radius"), radius)
+            glUniform1f(getUniform("thickness"), thickness)
+        }
+    }
+
     /**
      * Draws a rectangle at the given coordinates
      * @param x The X (left) coordinate
@@ -235,13 +258,13 @@ object RenderUtil : Wrapper {
         glBegin(GL_QUADS)
 
         glTexCoord2f(0f, 0f)
-        glVertex2f(x - radius, y - radius)
+        glVertex2f(x, y)
         glTexCoord2f(0f, 1f)
-        glVertex2f(x - radius, y + height + radius)
+        glVertex2f(x, y + height)
         glTexCoord2f(1f, 1f)
-        glVertex2f(x + width + radius, y + height + radius)
+        glVertex2f(x + width, y + height)
         glTexCoord2f(1f, 0f)
-        glVertex2f(x + width + radius, y - radius)
+        glVertex2f(x + width, y)
 
         glEnd()
 
@@ -255,67 +278,52 @@ object RenderUtil : Wrapper {
 
     /**
      * Draws a rounded outline at the given coordinates
-     * @param x The X coordinate of the outline
-     * @param y The Y coordinate of the outline
-     * @param width The width of the outline
-     * @param height The height of the outline
-     * @param radius The radius (corner size) of the outline
-     * @param colour The colour of the outline
+     * @param x The X coordinate of the rectangle
+     * @param y The Y coordinate of the rectangle
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @param radius The radius (corner size) of the rectangle
+     * @param thickness How thick the outline is
+     * @param colour The colour of the rectangle
      */
-    fun drawRoundedOutline(x: Float, y: Float, width: Float, height: Float, radius: Float, lineWidth: Float, colour: Color) {
-        glDisable(GL_DEPTH_TEST)
-        glEnable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDepthMask(true)
+    fun drawRoundedOutline(x: Float, y: Float, width: Float, height: Float, radius: Float, thickness: Float, colour: Color) {
+        GlStateManager.pushMatrix()
+        GlStateManager.disableTexture2D()
+        GlStateManager.enableBlend()
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO
+        )
 
-        glEnable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+        roundedOutlineShader.colour = colour
+        roundedOutlineShader.radius = radius
+        roundedOutlineShader.width = width
+        roundedOutlineShader.height = height
+        roundedOutlineShader.thickness = thickness
 
-        glLineWidth(lineWidth)
+        roundedOutlineShader.startShader()
 
-        colour.glColour()
+        glBegin(GL_QUADS)
 
-        glBegin(GL_LINE_STRIP)
-
-        var i = 0
-        while (i <= 90) {
-            glVertex2d(x + radius + sin(i * Math.PI / 180.0) * radius * -1.0, y + radius + cos(i * Math.PI / 180.0) * radius * -1.0)
-            i += 3
-        }
-
-        i = 90
-        while (i <= 180) {
-            glVertex2d(x + radius + sin(i * Math.PI / 180.0) * radius * -1.0, y + height - radius + cos(i * Math.PI / 180.0) * radius * -1.0)
-            i += 3
-        }
-
-        i = 0
-        while (i <= 90) {
-            glVertex2d(x + width - radius + sin(i * Math.PI / 180.0) * radius, y + height - radius + cos(i * Math.PI / 180.0) * radius)
-            i += 3
-        }
-
-        i = 90
-        while (i <= 180) {
-            glVertex2d(x + width - radius + sin(i * Math.PI / 180.0) * radius, y + radius + cos(i * Math.PI / 180.0) * radius)
-            i += 3
-        }
-
-        i = 0
-        while (i <= 90) {
-            glVertex2d(x + radius + sin(i * Math.PI / 180.0) * radius * -1.0, y + radius + cos(i * Math.PI / 180.0) * radius * -1.0)
-            i += 3
-        }
+        glTexCoord2f(0f, 0f)
+        glVertex2f(x, y)
+        glTexCoord2f(0f, 1f)
+        glVertex2f(x, y + height)
+        glTexCoord2f(1f, 1f)
+        glVertex2f(x + width, y + height)
+        glTexCoord2f(1f, 0f)
+        glVertex2f(x + width, y)
 
         glEnd()
 
-        glDisable(GL_LINE_SMOOTH)
-        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE)
+        glUseProgram(0)
 
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_DEPTH_TEST)
-        glColor4f(1f, 1f, 1f, 1f)
+        GlStateManager.enableAlpha()
+        GlStateManager.disableBlend()
+        GlStateManager.enableTexture2D()
+        GlStateManager.popMatrix()
     }
 
     /**

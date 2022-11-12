@@ -167,10 +167,10 @@ class ParagonMenu : GuiScreen() {
         fun render(mouseX: Int, mouseY: Int) {
             hover.state = mouseX.toFloat() in x..x + 64 && mouseY.toFloat() in y..y + 64
 
-            RenderUtil.drawRoundedRect(x, y - (16 * hover.getAnimationFactor()).toFloat(), 64f, 64f, 13f, Color(0, 0, 0, 150))
+            RenderUtil.drawRoundedRect(x, y - (16 * hover.getAnimationFactor()).toFloat(), 64f, 64f, 9f, Color(0, 0, 0, 150))
 
-            RenderUtil.scaleTo(x + 10 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), 0f, 2.0, 2.0, 0.0) {
-                FontUtil.drawIcon(icon, x + 11 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), Color.WHITE)
+            RenderUtil.scaleTo(x + 11 + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), 0f, 2.0, 2.0, 0.0) {
+                FontUtil.drawIcon(icon, x + 11f + if (icon == FontUtil.Icon.PERSON) 7f else 0f, y + 10 - (16 * hover.getAnimationFactor()).toFloat(), Color.WHITE)
             }
 
             FontUtil.font.drawString(name, (x + 32) - (FontUtil.font.getStringWidth(name) / 2), y + 64 - (16 * hover.getAnimationFactor()).toFloat(), Color(255, 255, 255, (255 * hover.getAnimationFactor()).toInt().coerceAtLeast(5)), false)

@@ -28,9 +28,9 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
             FontUtil.drawStringWithShadow(setting.name, x + 3, y + 5.5f, Color.WHITE)
         }
 
-        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 12.5f, y + 4f, 9f, 9f, 6f, Color(50, 50, 50))
-        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 12.5f, y + 4f, 9f, 9f, 6f, Colours.mainColour.value.integrateAlpha(255f * enabled.getAnimationFactor().toFloat()))
-        RenderUtil.drawRoundedOutline(x + getRenderableWidth() - 12.5f, y + 4f, 9f, 9f, 4f, 2f, Color(70, 70, 70))
+        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 13.5f, y + 2.5f, 11f, 11f, 5f, Color(50, 50, 50))
+        RenderUtil.drawRoundedRect(x + getRenderableWidth() - 13.5f, y + 2.5f, 11f, 11f, 5f, Colours.mainColour.value.integrateAlpha(255f * enabled.getAnimationFactor().toFloat()))
+        RenderUtil.drawRoundedOutline(x + getRenderableWidth() - 13.5f, y + 2.5f, 11f, 11f, 5f, 1f, Color(70, 70, 70))
 
         val parentTotalHeight = parent.parent.y + parent.parent.height + parent.parent.moduleHeight
 
@@ -41,11 +41,11 @@ class BooleanElement(parent: ModuleElement, setting: Setting<Boolean>, x: Float,
             MathHelper.clamp(height - 8f, 0f, parentTotalHeight.toFloat() - (y + 4f))
         )
 
-        RenderUtil.scaleTo(x + getRenderableWidth() - 11.5f, y + 5f, 0f, 0.35, 0.35, 0.35) {
+        RenderUtil.scaleTo(x + getRenderableWidth() - 11.5f, y + 4.5f, 0f, 0.35, 0.35, 0.35) {
             FontUtil.drawIcon(
                 FontUtil.Icon.TICK,
                 x + getRenderableWidth() - 11.5f,
-                y + 5f,
+                y + 4.5f,
                 Color.WHITE
             )
         }
