@@ -37,7 +37,8 @@ object GraphSpeed : HUDModule("SpeedGraph", "Graph showing your speed") {
     }
 
     override fun onTick() {
-        if (minecraft.anyNull) {
+        if (minecraft.anyNull || minecraft.player.ticksExisted < 10) {
+            this.graph.points = Array(75) { 0.0 }
             return
         }
 

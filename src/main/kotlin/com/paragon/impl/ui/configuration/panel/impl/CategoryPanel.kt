@@ -15,10 +15,10 @@ import com.paragon.util.string.StringUtil
 import me.surge.animation.Animation
 import me.surge.animation.ColourAnimation
 import me.surge.animation.Easing
-import net.minecraft.client.Minecraft
 import net.minecraft.util.math.MathHelper
 import java.awt.Color
 import java.lang.Double.max
+
 
 class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Float, width: Float, height: Float) : Panel(x, y, width, height) {
 
@@ -31,8 +31,9 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
     val expanded = Animation({ ClickGUI.animationSpeed.value }, true, { ClickGUI.easing.value })
     val elements = arrayListOf<ModuleElement>()
 
-    var scroll = 0f
-    var scrollFactor = 0f
+    private var scroll = 0f
+    private var real = 0f
+    private val scrollAnimation = Animation({ 800f }, false) { Easing.LINEAR }
 
     var moduleHeight = 0.0
 
@@ -49,28 +50,32 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
 
+        val totalHeight = getFilteredModules().sumOf { it.getAbsoluteHeight().toDouble() }.toFloat()
+
         hover.state = isHovered(mouseX, mouseY)
         topGradient.state = scroll < 0
         bottomGradient.state = elements.last().y + elements.last().height > y + height + moduleHeight
         
         RenderUtil.drawRect(x, y, width, height, hover.getColour())
 
-        if (mouseDelta != 0 && mouseX in x..x + width && mouseY in y + height..y + height + 320f) {
-            scrollFactor = if (mouseDelta > 0) (240f / Minecraft.getDebugFPS()) else -((240f / Minecraft.getDebugFPS()))
-            scrollFactor *= 3
-        } else {
-            if (scrollFactor != 0f) {
-                scrollFactor *= 0.9f
-
-                if (scrollFactor < 0.1 && scrollFactor > -0.1) {
-                    scrollFactor = 0f
-                }
-            }
+        if (mouseX in x..x + width && mouseY in y + height..y + height + totalHeight) {
+            real += mouseDelta * 0.2f
         }
 
-        scroll += scrollFactor
-        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, (elements.filter { it.module.name.contains(gui.search, true) }.sumOf { it.getAbsoluteHeight().toDouble() } - maxHeight)), 0.0).toFloat() *
-                expanded.getAnimationFactor().toFloat() // hacky fix lol
+        scrollAnimation.state = scroll != real
+
+        if (scroll > real) {
+            val scrollDiff = scroll - real
+            scroll -= scrollDiff / 2 * scrollAnimation.getAnimationFactor().toFloat()
+        }
+
+        if (scroll < real) {
+            val scrollDiff = real - scroll
+            scroll += scrollDiff / 2 * scrollAnimation.getAnimationFactor().toFloat()
+        }
+
+        scroll = MathHelper.clamp(scroll.toDouble(), -max(0.0, totalHeight - moduleHeight), 0.0).toFloat() * expanded.getAnimationFactor().toFloat()
+        real = MathHelper.clamp(real.toDouble(), -max(0.0, totalHeight - moduleHeight), 0.0).toFloat() * expanded.getAnimationFactor().toFloat()
 
         RenderUtil.pushScissor(x, y, width, height)
 

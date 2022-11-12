@@ -2,7 +2,7 @@ package com.paragon.impl.managers
 
 import com.paragon.Paragon
 import com.paragon.impl.command.impl.*
-import com.paragon.impl.module.misc.Cryptic
+import com.paragon.impl.module.misc.ChatModifications
 import com.paragon.util.Wrapper
 import net.minecraft.util.text.TextComponentString
 import net.minecraft.util.text.TextFormatting.*
@@ -68,6 +68,6 @@ class CommandManager : Wrapper {
 
     fun startsWithPrefix(message: String) = message.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0].lowercase(Locale.getDefault()).startsWith(prefix.lowercase()) || commonPrefixes.contains(
         message.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0].lowercase(Locale.getDefault())
-    ) || message.startsWith("crypt") && Cryptic.isEnabled // WTF
+    )
 
 }

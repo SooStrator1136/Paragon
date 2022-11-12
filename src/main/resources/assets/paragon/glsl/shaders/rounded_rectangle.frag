@@ -4,6 +4,15 @@ uniform vec2 size;
 uniform vec4 colour;
 uniform float radius;
 
+float round(vec2 center, vec2 size, float radius) {
+    return length(max(abs(center) - size + radius, 0.0)) - radius;
+}
+
 void main() {
-    gl_FragColor = vec4(colour.rgb, (1.0f - smoothstep(0.0f, 1.0f, length(max(abs((gl_TexCoord[0].xy * size).xy - (size / 2.0f)) - (size / 2.0f) + radius, 0.0)) - radius)) * colour.a);
+    float rounded = round((gl_TexCoord[0].xy * size) - (size / 2.0), size / 2.0, radius);
+    float smoothed = (1.0 - smoothstep(-1.0, 0.0, rounded)) * colour.a;
+
+    vec4 quadColor = mix(vec4(0.0, 0.0, 0.0, 0.0), vec4(colour.rgb, smoothed), smoothed);
+
+    gl_FragColor = quadColor;
 }

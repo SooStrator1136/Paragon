@@ -25,7 +25,7 @@ class Graph(
     private var highestVal = 0.1
     private var currentVal = highestVal
 
-    private val points = Array(75) { 0.0 }
+    var points = Array(75) { 0.0 }
 
     fun render() {
         graphRect.setRect(bounds.x, bounds.y, bounds.width, bounds.height - FontUtil.getHeight() - 3F)

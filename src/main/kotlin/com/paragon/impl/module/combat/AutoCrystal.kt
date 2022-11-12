@@ -9,7 +9,6 @@ import com.paragon.bus.listener.Listener
 import com.paragon.impl.managers.rotation.Rotate
 import com.paragon.impl.module.Aliases
 import com.paragon.impl.module.Category
-import com.paragon.impl.module.misc.AutoEZ
 import com.paragon.impl.setting.Bind
 import com.paragon.mixins.accessor.IPlayerControllerMP
 import com.paragon.util.anyNull
@@ -186,9 +185,6 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         // Get overriding state
         // Called once because otherwise we do the same logic several times
         overriding = isOverriding(currentTarget!!)
-
-        // Add target to AutoEZ list
-        AutoEZ.addTarget(currentTarget!!.name)
 
         if (timing.value == Timing.LINEAR) {
             currentCrystal = findBestCrystal(overriding)

@@ -21,6 +21,8 @@ public abstract class MixinEntity {
     @Shadow
     private AxisAlignedBB boundingBox;
 
+    @Shadow public abstract boolean isNonBoss();
+
     @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
     public void hookApplyEntityCollision(Entity entity, double x, double y, double z) {
         EntityPushEvent event = new EntityPushEvent(entity);

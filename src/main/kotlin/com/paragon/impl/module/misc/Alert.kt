@@ -209,9 +209,9 @@ object Alert : Module("Alert", Category.MISC, "Alerts you about certain events")
                                 "${it.name}'s health is low!",
                                 NotificationType.WARNING
                             ))
-                        } else {
-                            othersWarnedHealth[it] = false
                         }
+                    } else {
+                        othersWarnedHealth[it] = false
                     }
                 }
             }
