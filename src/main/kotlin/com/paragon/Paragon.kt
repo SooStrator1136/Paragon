@@ -105,6 +105,20 @@ class Paragon {
         rotationManager = RotationManager()
         logger.info("RotationManager initialised")
 
+        // Load
+
+        storageManager.loadModules("current")
+        logger.info("Modules Loaded")
+
+        storageManager.loadSocial()
+        logger.info("Social Loaded")
+
+        storageManager.loadAlts()
+        logger.info("Alts Loaded")
+
+        storageManager.loadOther()
+        logger.info("Other Loaded")
+
         // GUIs
 
         taskbar = Taskbar
@@ -121,20 +135,6 @@ class Paragon {
 
         configurationGUI = ConfigurationGUI()
         logger.info("Configuration GUI Initialised")
-
-        // Load
-
-        storageManager.loadModules("current")
-        logger.info("Modules Loaded")
-
-        storageManager.loadSocial()
-        logger.info("Social Loaded")
-
-        storageManager.loadAlts()
-        logger.info("Alts Loaded")
-
-        storageManager.loadOther()
-        logger.info("Other Loaded")
 
         logger.info("Paragon $modVersion Initialised Successfully")
     }
