@@ -59,7 +59,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
 
     private val bounce = Setting(
         "Bounce", false
-    ) describedBy "Make the crystals bounce like they do in vanilla"
+    ) describedBy "Make the crystals bounce like they do in vanilla" subOf crystals
 
     private val scaleSetting = Setting(
         "Scale", 0.6f, 0.0f, 1f, 0.01f
