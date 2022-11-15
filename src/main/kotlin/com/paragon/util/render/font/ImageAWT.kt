@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage
  * @since 27/08/2022
  */
 @SideOnly(Side.CLIENT)
-class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
+class ImageAWT(val font: Font, startChar: Int, stopChar: Int) {
 
     constructor(font: Font) : this(font, 0, 255)
 
@@ -37,6 +37,8 @@ class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
     }
 
     fun drawString(text: String, x: Double, y: Double, colour: Int) {
+        gcTick()
+
         glPushMatrix()
         glEnable(GL_BLEND)
         glScaled(0.25, 0.25, 0.25)
@@ -56,8 +58,6 @@ class ImageAWT(val font: Font, val startChar: Int, val stopChar: Int) {
             glPopMatrix()
             return
         }
-
-        var list = -1
 
         glBegin(GL_QUADS)
         text.toCharArray().forEach {

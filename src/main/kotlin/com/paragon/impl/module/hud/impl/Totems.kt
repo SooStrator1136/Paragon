@@ -8,6 +8,7 @@ import com.paragon.util.render.RenderUtil.drawRect
 import com.paragon.util.render.RenderUtil.renderItemStack
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
+import java.awt.Color
 
 /**
  * @author Surge, SooStrator1136
@@ -15,7 +16,7 @@ import net.minecraft.item.ItemStack
 object Totems : HUDModule("Totems", "Displays the amount of totems in your inventory") {
 
     override fun render() {
-        drawRect(x, y, width, height, 0x70000000.toColour())
+        drawRect(x, y, width, height, Color(0, 0, 0, 180))
         drawBorder(x, y, width, height, 1f, Colours.mainColour.value)
         renderItemStack(ItemStack(Items.TOTEM_OF_UNDYING, getTotemAmount()), x + 1, y + 2, true)
     }

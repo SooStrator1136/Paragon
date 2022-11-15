@@ -53,7 +53,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         picker.saturation = hsb[1]
         picker.brightness = hsb[2]
 
-        alphaSlider.alpha = 255 - setting.alpha
+        alphaSlider.alpha = (255 - setting.value.alpha).toFloat()
     }
 
     override fun draw(mouseX: Float, mouseY: Float, mouseDelta: Int) {
@@ -63,10 +63,6 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
 
         if (hsbValues[0] * 360f != hueSlider.hue) {
             hueSlider.hue = hsbValues[0] * 360
-        }
-
-        if (setting.alpha != 255 - alphaSlider.alpha) {
-            alphaSlider.alpha = setting.alpha
         }
 
         RenderUtil.drawRect(x, y, width, height, hover.getColour())
@@ -117,7 +113,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             val saturation = picker.saturation
             val brightness = picker.brightness
 
-            colour = Color(Color.HSBtoRGB(hue, saturation, brightness))
+            colour = Color(Color.HSBtoRGB(hue, saturation, brightness)).integrateAlpha(255 - alphaSlider.alpha)
 
             rainbow.draw()
             sync.draw()
@@ -127,7 +123,6 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
 
         setting.rainbowSaturation = picker.saturation * 100f
         setting.setValue(colour)
-        setting.alpha = 255 - alpha
 
         RenderUtil.rotate((90 * expanded.getAnimationFactor()).toFloat(), x + width - 9f, y + 8.5f, 0f) {
             RenderUtil.drawTriangle(x + width - 9, y + 8.5f, 6f, 8f, hover.getColour().brighter())

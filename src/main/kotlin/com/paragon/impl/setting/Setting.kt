@@ -2,6 +2,7 @@ package com.paragon.impl.setting
 
 import com.paragon.Paragon
 import com.paragon.impl.event.client.SettingUpdateEvent
+import com.paragon.impl.module.Constant
 import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
@@ -10,6 +11,8 @@ import java.awt.Color
 class Setting<T>(val name: String, value: T, val min: T = value, val max: T = value, val incrementation: T = value) {
 
     val subsettings = ArrayList<Setting<*>>()
+
+    private val constant = this.javaClass.isAnnotationPresent(Constant::class.java)
 
     var description = ""
         private set
@@ -20,7 +23,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
         get() {
             if (field is Color) {
                 if (isSync && this !== Colours.mainColour) {
-                    return Colours.mainColour.value.integrateAlpha(alpha) as T
+                    return Colours.mainColour.value as T
                 }
 
                 if (isRainbow) {
@@ -28,10 +31,10 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
                         ColourUtil.getRainbow(
                             rainbowSpeed, rainbowSaturation / 100, 0
                         )
-                    ).integrateAlpha(alpha) as T
+                    ) as T
                 }
 
-                return (field as Color).integrateAlpha(alpha) as T
+                return (field as Color) as T
             }
 
             return field
@@ -41,14 +44,9 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
     var index = -1
 
     // For colour settings
-    var alpha = 0f
-
     var isRainbow = false
-
     var rainbowSpeed = 4f
-
     var rainbowSaturation = 100f
-
     var isSync = false
 
     // Subsettings
@@ -57,12 +55,6 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
 
     // GUI Visibility
     private var isVisible = { true }
-
-    init {
-        if (value is Color) {
-            alpha = (value as Color).alpha.toFloat()
-        }
-    }
 
     /**
      * Sets the description of the setting.
@@ -81,6 +73,10 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param value the value of the setting.
      */
     fun setValue(value: T) {
+        if (constant) {
+            return
+        }
+
         if (value != this.value) {
             Paragon.INSTANCE.eventBus.post(SettingUpdateEvent(this))
         }
@@ -98,6 +94,10 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
      * @param value the value of the setting.
      */
     fun setValueRaw(value: T) {
+        if (constant) {
+            return
+        }
+
         this.value = value
     }
 

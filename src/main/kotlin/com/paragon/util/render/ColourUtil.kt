@@ -50,17 +50,12 @@ object ColourUtil {
      */
     @JvmStatic
     fun Color.fade(secondary: Color, factor: Double): Color {
-        val redDiff = secondary.red - this.red
-        val greenDiff = secondary.green - this.green
-        val blueDiff = secondary.blue - this.blue
-        val alphaDiff = secondary.alpha - this.alpha
-
-        val newRed = (this.red + redDiff * factor.coerceIn(0.0, 1.0)).toInt()
-        val newGreen = (this.green + greenDiff * factor.coerceIn(0.0, 1.0)).toInt()
-        val newBlue = (this.blue + blueDiff * factor.coerceIn(0.0, 1.0)).toInt()
-        val newAlpha = (this.alpha + alphaDiff * factor.coerceIn(0.0, 1.0)).toInt()
-
-        return Color(newRed, newGreen, newBlue, newAlpha)
+        return Color(
+            (this.red + (secondary.red - this.red) * factor).toInt(),
+            (this.green + (secondary.green - this.green) * factor).toInt(),
+            (this.blue + (secondary.blue - this.blue) * factor).toInt(),
+            (this.alpha + (secondary.alpha - this.alpha) * factor).toInt()
+        )
     }
 
     fun Color.glColour() {

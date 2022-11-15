@@ -22,14 +22,14 @@ class Console(private val title: String, val width: Float, val height: Float) : 
     init {
         val scaledResolution = ScaledResolution(minecraft)
         guiTextField = GuiTextField(
-            0, minecraft.fontRenderer, (scaledResolution.scaledWidth / 2 - width / 2).toInt() + 2, (scaledResolution.scaledHeight / 2 - height / 2 + height - 11).toInt(), width.toInt(), 11
+            0, minecraft.fontRenderer, (scaledResolution.scaledWidth / 2 - width / 2).toInt() + 7, (scaledResolution.scaledHeight / 2 - height / 2 + height - 17).toInt(), width.toInt() - 14, 11
         )
     }
 
     fun init() {
         val scaledResolution = ScaledResolution(minecraft)
         guiTextField = GuiTextField(
-            0, minecraft.fontRenderer, (scaledResolution.scaledWidth / 2 - width / 2).toInt() + 3, (scaledResolution.scaledHeight / 2 - height / 2 + height - 13).toInt(), width.toInt() - 6, 11
+            0, minecraft.fontRenderer, (scaledResolution.scaledWidth / 2 - width / 2).toInt() + 7, (scaledResolution.scaledHeight / 2 - height / 2 + height - 17).toInt(), width.toInt() - 14, 11
         )
     }
 
@@ -39,20 +39,19 @@ class Console(private val title: String, val width: Float, val height: Float) : 
         val x = (scaledResolution.scaledWidth / 2f) - (width / 2f)
         val y = (scaledResolution.scaledHeight / 2f) - (height / 2f)
 
-        RenderUtil.drawRoundedRect(x - 2, y - 2, width + 4, height + 4, 10f, Color(20, 20, 25))
-        RenderUtil.drawRoundedOutline(x, y, width, height, 2f, 2f, Colours.mainColour.value)
+        RenderUtil.drawRoundedRect(x, y, width, height, 10f, Color(20, 20, 25))
+        RenderUtil.drawRoundedRect(x, y + 17.5f, width, 2f, 1f, Colours.mainColour.value)
+        RenderUtil.drawRoundedOutline(x, y, width, height, 10f, 2f, Colours.mainColour.value)
 
-        FontUtil.drawStringWithShadow(title, x + 5f, y + 5f, Color.WHITE)
+        FontUtil.drawStringWithShadow(title, x + 7f, y + 7f, Color.WHITE)
 
         lines.reverse()
-
-        RenderUtil.drawRect(x, y + 17.5f, width, 1f, Colours.mainColour.value)
 
         RenderUtil.pushScissor(
             (scaledResolution.scaledWidth / 2f) - (width / 2f), (scaledResolution.scaledHeight / 2f) - (height / 2f) + 20f, width, (height - 26.5f)
         )
 
-        var lineY = (scaledResolution.scaledHeight / 2f) - (height / 2f) + height - 26
+        var lineY = (scaledResolution.scaledHeight / 2f) - (height / 2f) + height - 30
 
         for (string in lines) {
             FontUtil.drawStringWithShadow(string, (scaledResolution.scaledWidth / 2f) - (width / 2f) + 5, lineY, Color.WHITE)

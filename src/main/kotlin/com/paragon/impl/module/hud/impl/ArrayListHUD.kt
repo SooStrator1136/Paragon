@@ -88,7 +88,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            colour.integrateAlpha(background.alpha)
+                            colour.integrateAlpha(background.value.alpha.toFloat())
                         } else {
                             background.value
                         }
@@ -97,7 +97,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                     FontUtil.drawStringWithShadow(
                         info,
                         x + 1,
-                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 2 else 1) / 2)),
                         colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
@@ -188,7 +188,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            colour.integrateAlpha(background.alpha)
+                            colour.integrateAlpha(background.value.alpha.toFloat())
                         } else {
                             background.value
                         }
@@ -197,7 +197,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                     FontUtil.drawStringWithShadow(
                         info,
                         x - FontUtil.getStringWidth(info),
-                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 4 else 1) / 2)),
                         colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
@@ -288,7 +288,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            colour.integrateAlpha(background.alpha)
+                            colour.integrateAlpha(background.value.alpha.toFloat())
                         } else {
                             background.value
                         }
@@ -388,7 +388,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                         (moduleHeight.value * module.animation.getAnimationFactor()).toFloat(),
 
                         if (backgroundSync.value) {
-                            colour.integrateAlpha(background.alpha)
+                            colour.integrateAlpha(background.value.alpha.toFloat())
                         } else {
                             background.value
                         }

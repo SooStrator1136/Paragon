@@ -9,11 +9,12 @@ import com.paragon.util.render.RenderUtil.renderItemStack
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.MathHelper
+import java.awt.Color
 
 object Crystals : HUDModule("Crystals", "Displays the amount of crystals in your inventory") {
 
     override fun render() {
-        drawRect(x, y, width, height, 0x70000000.toColour())
+        drawRect(x, y, width, height, Color(0, 0, 0, 180))
         drawBorder(x, y, width, height, 1f, Colours.mainColour.value)
         val itemStack = ItemStack(Items.END_CRYSTAL, crystals)
         renderItemStack(itemStack, x + width - 18, y + 2, true)

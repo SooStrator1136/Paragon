@@ -119,7 +119,7 @@ object PopChams : Module("PopChams", Category.RENDER, "PopChams duh") {
                     1.0 - animFac.coerceIn(0.0, 1.0)
                 }
                 else {
-                    outlineColor.alpha / 255.0
+                    outlineColor.value.alpha / 255.0
                 }.toFloat()
             )
 

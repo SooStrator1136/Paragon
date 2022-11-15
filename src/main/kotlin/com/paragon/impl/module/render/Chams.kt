@@ -172,7 +172,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
 
         // Set colour
         glColor4f(
-            colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f
+            colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f
         )
 
         // Render model
@@ -188,7 +188,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         }
         glColor4f(
-            colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, if (mode.value == Mode.MODEL) colour.alpha / 255f else 1f
+            colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, if (mode.value == Mode.MODEL) colour.value.alpha / 255f else 1f
         )
 
         // Render model
@@ -279,7 +279,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
 
             // Set colour
             glColor4f(
-                colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f
+                colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f
             )
 
             // Render crystal
@@ -296,7 +296,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
             }
 
             glColor4f(
-                colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, if (mode.value == Mode.MODEL) colour.alpha / 255f else 1f
+                colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, if (mode.value == Mode.MODEL) colour.value.alpha / 255f else 1f
             )
 
             if (mode.value == Mode.WIRE_MODEL) {
