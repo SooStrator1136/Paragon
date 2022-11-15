@@ -51,10 +51,10 @@ object ColourUtil {
     @JvmStatic
     fun Color.fade(secondary: Color, factor: Double): Color {
         return Color(
-            (this.red + (secondary.red - this.red) * factor).toInt(),
-            (this.green + (secondary.green - this.green) * factor).toInt(),
-            (this.blue + (secondary.blue - this.blue) * factor).toInt(),
-            (this.alpha + (secondary.alpha - this.alpha) * factor).toInt()
+            (this.red + (secondary.red - this.red) * factor.coerceIn(0.0, 1.0)).toInt(),
+            (this.green + (secondary.green - this.green) * factor.coerceIn(0.0, 1.0)).toInt(),
+            (this.blue + (secondary.blue - this.blue) * factor.coerceIn(0.0, 1.0)).toInt(),
+            (this.alpha + (secondary.alpha - this.alpha) * factor.coerceIn(0.0, 1.0)).toInt()
         )
     }
 

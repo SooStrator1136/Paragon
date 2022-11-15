@@ -119,8 +119,6 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             sync.draw()
         }
 
-        val alpha: Float = alphaSlider.alpha
-
         setting.rainbowSaturation = picker.saturation * 100f
         setting.setValue(colour)
 
@@ -348,7 +346,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
         }
 
         fun mouseClicked(mouseX: Float, mouseY: Float) {
-            if (mouseX in x..x + width && mouseY in y..y + width) {
+            if (mouseX in x..x + width && mouseY in y..y + 20f) {
                 block.run()
             }
         }

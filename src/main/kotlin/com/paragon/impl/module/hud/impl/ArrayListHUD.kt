@@ -41,7 +41,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
     private val connect = Setting("Connect", false) describedBy "Connect each module with a bar"
 
     val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1500f, 5f) describedBy "The speed of the module animations"
-    val easing = Setting("Easing", Easing.LINEAR) describedBy "The easing type of the animation"
+    val easing = Setting("Easing", Easing.LINEAR) describedBy "The easing type of the animation" excludes Easing.BACK_IN
 
     override fun onRender2D() {
         val scaledResolution = ScaledResolution(minecraft)

@@ -34,7 +34,7 @@ object ClickGUI : Module("ClickGUI", Category.CLIENT, "The ClickGUI of the clien
     val animationSpeed = Setting("AnimationSpeed", 200f, 0f, 1000f, 10f) describedBy "How fast animations are"
 
     @JvmStatic
-    val easing = Setting("Easing", Easing.EXPO_IN_OUT) describedBy "The easing of the animations"
+    val easing = Setting("Easing", Easing.EXPO_IN_OUT) describedBy "The easing of the animations" excludes Easing.BACK_IN
 
     @JvmStatic
     val darkenBackground = Setting("DarkenBackground", true) describedBy "Whether or not to darken the background"

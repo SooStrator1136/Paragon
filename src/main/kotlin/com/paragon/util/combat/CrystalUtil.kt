@@ -39,6 +39,10 @@ object CrystalUtil : Wrapper {
      */
     @JvmStatic
     fun calculateDamage(vec: Vec3d, entity: EntityLivingBase): Float {
+        if (entity.isDead) {
+            return 0f
+        }
+
         val doubleExplosionSize = 12.0f
         val distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / doubleExplosionSize.toDouble()
         val blockDensity = entity.world.getBlockDensity(Vec3d(vec.x, vec.y, vec.z), entity.entityBoundingBox).toDouble()

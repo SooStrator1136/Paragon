@@ -13,6 +13,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
     val subsettings = ArrayList<Setting<*>>()
 
     private val constant = this.javaClass.isAnnotationPresent(Constant::class.java)
+    private val exclusions = arrayListOf<T>()
 
     var description = ""
         private set
@@ -86,6 +87,10 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
         }
 
         this.value = value
+
+        if (value is Enum<*> && exclusions.contains(value)) {
+            setValue(nextMode)
+        }
     }
 
     /**
@@ -131,6 +136,11 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
         return this
     }
 
+    private fun addExclusion(exclusion: T): Setting<T> {
+        this.exclusions.add(exclusion)
+        return this
+    }
+
     /**
      * Gets the next mode of the setting.
      *
@@ -156,5 +166,6 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
     infix fun describedBy(description: String) = setDescription(description)
     infix fun visibleWhen(isVisible: () -> Boolean) = setVisibility(isVisible)
     infix fun subOf(parent: Setting<*>?) = setParentSetting(parent)
+    infix fun excludes(exclusion: T) = addExclusion(exclusion)
 
 }

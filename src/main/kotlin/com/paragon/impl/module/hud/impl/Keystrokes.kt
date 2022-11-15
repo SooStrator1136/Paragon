@@ -29,7 +29,8 @@ object Keystrokes : HUDModule("Keystrokes", "Keystrokes duh?") {
     private val animationSpeed = Setting(
         "Animation Speed", 300F, 100F, 2000F, 50F
     ) describedBy "The time to fill the rect with a circle"
-    private val animationEasing = Setting("Easing", Easing.LINEAR)
+
+    private val animationEasing = Setting("Easing", Easing.LINEAR) excludes Easing.BACK_IN
 
     //Coloring
     private val backgroundColor = Setting(

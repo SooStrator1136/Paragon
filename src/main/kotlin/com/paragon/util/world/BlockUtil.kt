@@ -194,6 +194,10 @@ object BlockUtil : Wrapper {
      * @return The damage done to the target
      */
     fun calculateExplosionDamage(vec: Vec3d, entity: EntityLivingBase): Float {
+        if (entity.isDead) {
+            return 0f
+        }
+
         var finalDamage = 0.0f
 
         try {
