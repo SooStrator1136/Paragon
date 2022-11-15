@@ -18,6 +18,7 @@ object Watermark : HUDModule("Watermark", "Renders the client's name on screen")
     private val display = Setting(
         "Display", Display.TEXT
     ) describedBy "The type of watermark to display"
+
     private val scaleFac = Setting(
         "Size", 1.0, 0.1, 2.0, 0.05
     ) describedBy "The scale of the image watermark" visibleWhen { display.value == Display.IMAGE }
@@ -25,7 +26,7 @@ object Watermark : HUDModule("Watermark", "Renders the client's name on screen")
     override fun render() {
         when (display.value) {
             Display.TEXT -> drawStringWithShadow(
-                "Paragon " + TextFormatting.GRAY + Paragon.modVersion, x, y, Colours.mainColour.value
+                "Paragon ${"" + TextFormatting.WHITE + Paragon.modVersion}", x, y, Colours.mainColour.value
             )
 
             Display.IMAGE -> {

@@ -7,6 +7,7 @@ import com.paragon.impl.ui.configuration.retrowindows.element.module.ModuleEleme
 import com.paragon.impl.ui.configuration.retrowindows.element.setting.SettingElement
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.calculations.MathsUtil
+import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.RenderUtil
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
@@ -103,7 +104,7 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
                     MathsUtil.roundDouble((brightDiff / pickerWidth * 100).toDouble(), 0).toFloat()
                 }
 
-                finalColour = Color(Color.HSBtoRGB(hueSetting.value.toFloat() / 360, saturation / 100, brightness / 100))
+                finalColour = Color(Color.HSBtoRGB(hueSetting.value.toFloat() / 360, saturation / 100, brightness / 100)).integrateAlpha(alphaSetting.value.toFloat())
             }
 
             subSettings.forEach {
@@ -138,11 +139,11 @@ class ColourElement(parent: ModuleElement, setting: Setting<Color>, x: Float, y:
             RenderUtil.popScissor()
         }
 
-        setting.alpha = alphaSetting.value.toFloat()
         setting.isSync = syncSetting.value
         setting.isRainbow = rainbowSetting.value
         setting.rainbowSpeed = rainbowSpeedSetting.value.toFloat()
         setting.rainbowSaturation = rainbowSaturationSetting.value.toFloat()
+
         setting.setValue(finalColour)
     }
 

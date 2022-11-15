@@ -7,6 +7,7 @@ import com.paragon.util.render.RenderUtil.drawBorder
 import com.paragon.util.render.RenderUtil.drawRect
 import com.paragon.util.render.RenderUtil.renderItemStack
 import net.minecraft.item.ItemStack
+import java.awt.Color
 
 /**
  * @author Surge
@@ -14,7 +15,7 @@ import net.minecraft.item.ItemStack
 object Inventory : HUDModule("Inventory", "Displays the contents of your inventory") {
 
     override fun render() {
-        drawRect(x, y, width, height - 4, 0x70000000.toColour())
+        drawRect(x, y, width, height - 4, Color(0, 0, 0, 180))
         drawBorder(x, y, width, height - 4, 1f, Colours.mainColour.value)
 
         var x = 0f

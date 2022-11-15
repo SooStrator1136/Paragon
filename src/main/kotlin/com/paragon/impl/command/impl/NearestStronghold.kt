@@ -12,14 +12,16 @@ object NearestStronghold : com.paragon.impl.command.Command("Nearest", "nearest"
     )
 
     override fun whenCalled(args: Array<String>, fromConsole: Boolean) {
-        //check if server is 2b2t.org using  Minecraft.getCurrentServerData()
+        //check if server is 2b2t.org using Minecraft.getCurrentServerData()
         if ((minecraft.currentServerData ?: return).serverIP == "connect.2b2t.org") {
+
             //get stronghold location nearest to player on 2b2t.org
             if (minecraft.player.dimension == 1) {
                 Paragon.INSTANCE.commandManager.sendClientMessage(
                     "don't you feel stupid... don't you feel a little ashamed...", false
                 )
             }
+
             var closestX = endPortalCoords[0][0]
             var closestZ = endPortalCoords[0][1]
             var shortestDistance = minecraft.player.getDistanceSq(

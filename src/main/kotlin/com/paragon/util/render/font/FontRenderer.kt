@@ -74,11 +74,11 @@ class FontRenderer(font: Font) : Wrapper {
         GlStateManager.enableAlpha()
         GlStateManager.enableBlend()
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
-        GlStateManager.enableTexture2D()
         glEnable(GL_LINE_SMOOTH)
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
         var currentColor = colour.rgb
+
         if (currentColor and -0x4000000 == 0) {
             currentColor = currentColor or -0x1000000
         }
@@ -135,8 +135,7 @@ class FontRenderer(font: Font) : Wrapper {
 
                 width += currentFont.getStringWidth(words).toDouble()
             }
-        }
-        else {
+        } else {
             defaultFont.drawString(text, 0.0, 0.0, currentColor)
         }
 
@@ -144,7 +143,7 @@ class FontRenderer(font: Font) : Wrapper {
         GlStateManager.disableBlend()
         GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
 
-        return (x + getStringWidth(text).toFloat()).toInt()
+        return x.toInt()
     }
 
     fun getStringWidth(text: String): Int {

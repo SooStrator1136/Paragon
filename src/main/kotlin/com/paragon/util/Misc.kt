@@ -36,6 +36,9 @@ operator fun Number.plus(toAdd: Number): Number {
     }
 }
 
+/**
+ * Converts a boolean to binary
+ */
 fun Boolean.toBinary(): Int {
     return if (this) 1 else 0
 }

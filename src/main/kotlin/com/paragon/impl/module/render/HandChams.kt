@@ -82,7 +82,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
 
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f)
 
-            glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f)
+            glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f)
 
             // Change polygon rendering mode
             when (mode.value) {
@@ -92,7 +92,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
 
             if (mode.value == Mode.WIRE_MODEL) {
                 glColor4f(
-                    colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f
+                    colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f
                 )
 
                 glLineWidth(width.value)
@@ -165,7 +165,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
 
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f)
 
-            glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f)
+            glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f)
 
             // Change polygon rendering mode
             when (mode.value) {
@@ -175,7 +175,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
 
             if (mode.value == Mode.WIRE_MODEL) {
                 glColor4f(
-                    colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f
+                    colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f
                 )
 
                 renderRightArm(event.player, event.useSmallArms)
@@ -214,7 +214,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
     }
 
     private fun renderRightArm(clientPlayer: EntityPlayer?, useSmallArms: Boolean) {
-        glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f)
+        glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f)
 
         val modelPlayer = ModelPlayer(0.0f, useSmallArms)
 
@@ -238,7 +238,7 @@ object HandChams : Module("HandChams", Category.RENDER, "Changes the hand colour
     }
 
     private fun renderLeftArm(clientPlayer: EntityPlayer?, useSmallArms: Boolean) {
-        glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.alpha / 255f)
+        glColor4f(colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, colour.value.alpha / 255f)
 
         val modelPlayer = ModelPlayer(0.0f, useSmallArms)
 

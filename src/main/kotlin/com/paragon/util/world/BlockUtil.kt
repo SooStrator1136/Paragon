@@ -3,11 +3,20 @@ package com.paragon.util.world
 import com.paragon.util.Wrapper
 import net.minecraft.block.Block
 import net.minecraft.block.BlockLiquid
+import net.minecraft.enchantment.EnchantmentHelper
+import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.SharedMonsterAttributes
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
+import net.minecraft.init.MobEffects
+import net.minecraft.util.CombatRules
+import net.minecraft.util.DamageSource
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.Explosion
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -177,5 +186,64 @@ object BlockUtil : Wrapper {
         get() = sqrt(
             (x - minecraft.player.posX).pow(2) + (y - (minecraft.player.posY + minecraft.player.getEyeHeight())).pow(2) + (z - minecraft.player.posZ).pow(2)
         )
+
+    /**
+     * Calculates the explosion damage based on a Vec3D
+     * @param vec The vector to calculate damage from
+     * @param entity The target
+     * @return The damage done to the target
+     */
+    fun calculateExplosionDamage(vec: Vec3d, entity: EntityLivingBase): Float {
+        var finalDamage = 0.0f
+
+        try {
+            val doubleExplosionSize = 12.0f
+            val distancedSize = entity.getDistance(vec.x, vec.y, vec.z) / doubleExplosionSize.toDouble()
+            val blockDensity = entity.world.getBlockDensity(Vec3d(vec.x, vec.y, vec.z), entity.entityBoundingBox).toDouble()
+            val v = (1.0 - distancedSize) * blockDensity
+            val damage = ((v * v + v) / 2.0 * 7.0 * doubleExplosionSize.toDouble() + 1.0).toInt().toFloat()
+            val diff = minecraft.world.difficulty.difficultyId
+
+            finalDamage = getBlastReduction(entity, damage * if (diff == 0) 0f else if (diff == 2) 1f else if (diff == 1) 0.5f else 1.5f, Explosion(minecraft.world, null, vec.x, vec.y, vec.z, 6f, false, true))
+        } catch (ignored: NullPointerException) {
+
+        }
+
+        return finalDamage
+    }
+
+    /**
+     * Gets the blast reduction
+     *
+     * @param entity The entity to calculate damage for
+     * @param damage The original damage
+     * @param explosion The explosion
+     * @return The blast reduction
+     */
+    private fun getBlastReduction(entity: EntityLivingBase, damage: Float, explosion: Explosion?): Float {
+        var reductedDamage = damage
+
+        if (entity is EntityPlayer) {
+            val ds = DamageSource.causeExplosionDamage(explosion)
+            reductedDamage = CombatRules.getDamageAfterAbsorb(reductedDamage, entity.totalArmorValue.toFloat(), entity.getEntityAttribute(
+                SharedMonsterAttributes.ARMOR_TOUGHNESS).attributeValue.toFloat())
+
+            val k = EnchantmentHelper.getEnchantmentModifierDamage(entity.armorInventoryList, ds)
+            val f = MathHelper.clamp(k.toFloat(), 0.0f, 20.0f)
+            reductedDamage *= 1.0f - f / 25.0f
+
+            if (entity.isPotionActive(MobEffects.WEAKNESS)) {
+                reductedDamage -= reductedDamage / 4
+            }
+
+            reductedDamage = reductedDamage.coerceAtLeast(0.0f)
+            return reductedDamage
+        }
+
+        reductedDamage = CombatRules.getDamageAfterAbsorb(
+            reductedDamage, entity.totalArmorValue.toFloat(), entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).attributeValue.toFloat()
+        )
+        return reductedDamage
+    }
 
 }
