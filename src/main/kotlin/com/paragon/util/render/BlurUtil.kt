@@ -64,7 +64,7 @@ object BlurUtil : Wrapper {
             )
 
             (blurShader as IShaderGroup?)!!.hookGetListShaders()[1]?.shaderManager?.getShaderUniform("BlurDir")!!.set(
-                0f, 1f
+                1f, 1f
             )
 
             framebuffer!!.bindFramebuffer(true)
