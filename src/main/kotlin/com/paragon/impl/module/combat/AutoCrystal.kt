@@ -139,7 +139,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
 
     // Attacked and placed crystals
     private val attackedCrystals: HashMap<Crystal, Int> = hashMapOf()
-    private val placedCrystals = arrayListOf<Int>()
+    private val placedCrystals = arrayListOf<BlockPos>()
 
     // The current state
     private var state = State.PLACING
@@ -257,7 +257,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         attackedCrystals.entries.removeIf { it.key.crystal == event.entity }
 
         // And the same for [placedCrystals]
-        placedCrystals.removeIf { it == event.entity.entityId }
+        placedCrystals.removeIf { it == event.entity.position }
     }
 
     @Listener
@@ -392,8 +392,8 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         }
 
         // Add entity id to placed crystals
-        if (!placedCrystals.contains(crystal!!.crystal.entityId)) {
-            placedCrystals.add(crystal!!.crystal.entityId)
+        if (!placedCrystals.contains(placement!!.position)) {
+            placedCrystals.add(placement!!.position)
         }
 
         // Reset and change state
@@ -652,7 +652,7 @@ object AutoCrystal : Module("AutoCrystal", Category.COMBAT, "Automatically place
         }
 
         // Ignore if we only want to explode our crystals
-        if (explodeSelf.value && !placedCrystals.contains(crystal.entityId)) {
+        if (explodeSelf.value && !placedCrystals.contains(crystal.position)) {
             return Pair(false, null)
         }
 

@@ -1,10 +1,12 @@
 package com.paragon.mixins.entity;
 
 import com.paragon.Paragon;
+import com.paragon.impl.event.combat.EntityAttackedEvent;
 import com.paragon.impl.event.player.StepEvent;
 import com.paragon.impl.event.world.entity.EntityPushEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
@@ -20,8 +23,6 @@ public abstract class MixinEntity {
 
     @Shadow
     private AxisAlignedBB boundingBox;
-
-    @Shadow public abstract boolean isNonBoss();
 
     @Redirect(method = "applyEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;addVelocity(DDD)V"))
     public void hookApplyEntityCollision(Entity entity, double x, double y, double z) {

@@ -199,7 +199,7 @@ object FontUtil : Wrapper {
         return Font("default", Font.PLAIN, size.toInt())
     }
 
-    private fun getFont(stream: InputStream, size: Float): Font {
+    fun getFont(stream: InputStream, size: Float): Font {
         val font = Font.createFont(Font.TRUETYPE_FONT, stream)
         stream.close()
         return font.deriveFont(Font.PLAIN, size)

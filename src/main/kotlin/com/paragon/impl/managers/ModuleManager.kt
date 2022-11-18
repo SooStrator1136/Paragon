@@ -73,6 +73,7 @@ class ModuleManager {
             SoundHighlight,
             SourceESP,
             StorageESP,
+            SuperheroFX,
             Tracers,
             Trajectories,
             ViewClip,
