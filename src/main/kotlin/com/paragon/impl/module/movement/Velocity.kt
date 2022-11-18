@@ -5,7 +5,7 @@ import com.paragon.impl.event.world.entity.EntityPushEvent
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.bus.listener.Listener
-import com.paragon.impl.module.Aliases
+import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.mixins.accessor.ISPacketEntityVelocity
 import com.paragon.mixins.accessor.ISPacketExplosion

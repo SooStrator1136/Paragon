@@ -3,7 +3,7 @@ package com.paragon.impl.module.hud.impl
 import com.paragon.impl.module.Module
 import com.paragon.impl.module.hud.HUDEditorGUI
 import com.paragon.impl.module.Category
-import com.paragon.impl.module.IgnoredByNotifications
+import com.paragon.impl.module.annotation.IgnoredByNotifications
 import com.paragon.impl.setting.Bind
 import org.lwjgl.input.Keyboard
 

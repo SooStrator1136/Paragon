@@ -3,7 +3,7 @@ package com.paragon.impl.module.render
 import com.paragon.impl.event.render.world.*
 import com.paragon.impl.module.Module
 import com.paragon.bus.listener.Listener
-import com.paragon.impl.module.Aliases
+import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
 import com.paragon.util.world.BlockUtil.getBlockAtPos

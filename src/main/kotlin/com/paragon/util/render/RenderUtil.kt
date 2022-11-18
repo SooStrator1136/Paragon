@@ -695,10 +695,12 @@ object RenderUtil : Wrapper {
             location.z - minecraft.renderManager.viewerPosZ
         )
 
-        GlStateManager.rotate(-minecraft.player.rotationYaw, 0f, 1f, 0f)
+        GlStateManager.glNormal3f(0.0f, 1.0f, 0.0f)
+
+        GlStateManager.rotate(-minecraft.renderManager.playerViewY, 0f, 1f, 0f)
 
         // Rotate based on the view
-        GlStateManager.rotate(minecraft.player.rotationPitch, if (minecraft.gameSettings.thirdPersonView == 2) -1f else 1.toFloat(), 0f, 0f)
+        GlStateManager.rotate((if (minecraft.gameSettings.thirdPersonView == 2) -1 else 1).toFloat() * minecraft.player.rotationPitch, 1f, 0f, 0f)
         GlStateManager.scale(-scale, -scale, scale)
 
         glDisable(GL_DEPTH_TEST)

@@ -80,9 +80,7 @@ object CrystalUtil : Wrapper {
                 damage -= damage / 4
             }
 
-        } catch (exception: NullPointerException) {
-            exception.printStackTrace()
-        }
+        } catch (_: NullPointerException) {}
 
         return max(damage, 0.0f)
     }

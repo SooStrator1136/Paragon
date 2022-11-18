@@ -1,4 +1,4 @@
-package com.paragon.impl.module
+package com.paragon.impl.module.annotation
 
 /**
  * @author Surge

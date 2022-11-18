@@ -10,4 +10,7 @@ public interface ICPacketUseEntity {
     @Accessor("action")
     void hookSetAction(CPacketUseEntity.Action action);
 
+    @Accessor("entityId")
+    void hookSetEntityID(int id);
+
 }

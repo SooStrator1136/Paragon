@@ -54,30 +54,37 @@ object InventoryUtil : Wrapper {
      * Switches to an item in the player's hotbar
      *
      * @param itemIn The item to switch to
-     * @param silent Switch silently - use packets instead
+     * @param packet Switch silently - use packets instead
      * @return Whether the switch was successful
      */
-    fun switchToItem(itemIn: Item, silent: Boolean): Boolean {
-        if (getItemInHotbar(itemIn) == -1) {
+    fun switchToItem(itemIn: Item, packet: Boolean): Boolean {
+        if (isHolding(itemIn) || getItemInHotbar(itemIn) == -1) {
             return false
         }
-        if (silent) {
+
+        if (packet) {
             minecraft.connection!!.sendPacket(CPacketHeldItemChange(getItemInHotbar(itemIn)))
         }
+
         else {
             minecraft.player.inventory.currentItem = getItemInHotbar(itemIn)
         }
+
         return true
     }
 
     @JvmStatic
-    fun switchToSlot(slot: Int, silent: Boolean) {
-        if (silent) {
-            minecraft.player.connection.sendPacket(CPacketHeldItemChange(slot))
-            // Sync item
-            (minecraft.playerController as IPlayerControllerMP).hookSyncCurrentPlayItem()
+    fun switchToSlot(slot: Int, packet: Boolean) {
+        if (slot == minecraft.player.inventory.currentItem) {
+            return
         }
+
+        if (packet) {
+            minecraft.player.connection.sendPacket(CPacketHeldItemChange(slot))
+        }
+
         else {
+            minecraft.player.connection.sendPacket(CPacketHeldItemChange(slot))
             minecraft.player.inventory.currentItem = slot
         }
     }

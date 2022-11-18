@@ -7,7 +7,7 @@ import com.paragon.impl.event.combat.PlayerDeathEvent
 import com.paragon.impl.event.combat.TotemPopEvent
 import com.paragon.impl.managers.notifications.Notification
 import com.paragon.impl.managers.notifications.NotificationType
-import com.paragon.impl.module.Aliases
+import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.module.hud.HUDModule
@@ -306,7 +306,7 @@ object Alert : Module("Alert", Category.MISC, "Alerts you about certain events")
 
     @Listener
     fun onPlayerDeath(event: PlayerDeathEvent) {
-        if (!death.value) {
+        if (!death.value || event.player == minecraft.player) {
             return
         }
 

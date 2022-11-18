@@ -137,6 +137,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         if (!texture.value) {
             glDisable(GL_TEXTURE_2D)
         }
+
         val originalBlend = glIsEnabled(GL_BLEND)
 
         // Enable blend
@@ -158,6 +159,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         if (walls.value) {
             glDisable(GL_DEPTH_TEST)
         }
+
         when (mode.value) {
             Mode.WIRE -> glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             Mode.WIRE_MODEL, Mode.MODEL -> glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
@@ -187,6 +189,7 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
         if (mode.value == Mode.WIRE_MODEL) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         }
+
         glColor4f(
             colour.value.red / 255f, colour.value.green / 255f, colour.value.blue / 255f, if (mode.value == Mode.MODEL) colour.value.alpha / 255f else 1f
         )
@@ -221,9 +224,12 @@ object Chams : Module("Chams", Category.RENDER, "Shows entities through walls") 
 
         // Reset colour
         GlStateManager.color(1f, 1f, 1f, 1f)
+
         if (transparent.value) {
             GlStateManager.disableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL)
+            GlStateManager.enableBlendProfile(GlStateManager.Profile.DEFAULT)
         }
+
         glPopAttrib()
         glPopMatrix()
     }

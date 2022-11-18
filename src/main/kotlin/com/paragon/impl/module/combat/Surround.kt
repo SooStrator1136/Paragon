@@ -11,7 +11,7 @@ import com.paragon.impl.managers.notifications.NotificationType
 import com.paragon.impl.managers.rotation.Rotate
 import com.paragon.impl.managers.rotation.Rotation
 import com.paragon.impl.managers.rotation.RotationPriority
-import com.paragon.impl.module.Aliases
+import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.mixins.accessor.IPlayerControllerMP
 import com.paragon.util.anyNull

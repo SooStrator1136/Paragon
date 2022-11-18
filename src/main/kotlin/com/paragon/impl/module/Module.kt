@@ -2,6 +2,9 @@ package com.paragon.impl.module
 
 import com.paragon.Paragon
 import com.paragon.impl.event.client.ModuleToggleEvent
+import com.paragon.impl.module.annotation.Aliases
+import com.paragon.impl.module.annotation.Constant
+import com.paragon.impl.module.annotation.IgnoredByNotifications
 import com.paragon.impl.module.hud.impl.ArrayListHUD
 import com.paragon.impl.setting.Bind
 import com.paragon.impl.setting.Setting

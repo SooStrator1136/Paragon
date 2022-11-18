@@ -1,14 +1,14 @@
 package com.paragon.impl.managers
 
 import com.paragon.Paragon
-import com.paragon.impl.event.network.PacketEvent.PreSend
 import com.paragon.bus.listener.Listener
+import com.paragon.impl.event.network.PacketEvent.PreSend
 import com.paragon.impl.managers.rotation.Rotate
 import com.paragon.impl.managers.rotation.Rotation
 import com.paragon.mixins.accessor.ICPacketPlayer
 import com.paragon.util.Wrapper
 import com.paragon.util.anyNull
-import com.paragon.util.player.RotationUtil
+import com.paragon.util.player.RotationUtil.normalizeAngle
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.math.Vec2f
 import net.minecraftforge.common.MinecraftForge
@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
+
 
 /**
  * @author Surge
@@ -49,9 +50,14 @@ class RotationManager : Wrapper {
 
             val rotation = rotationsQueue[0]
 
+            if (rotation.yaw == serverRotation.x && rotation.pitch == serverRotation.y) {
+                rotationsQueue.clear()
+                return
+            }
+
             // We use server rotation because it will be updated whether the mode is packet or not
-            packetYaw = calculateAngle(serverRotation.x, rotation.yaw)
-            packetPitch = calculateAngle(serverRotation.y, rotation.pitch)
+            packetYaw = calculateAngle(serverRotation.x, rotation.yaw, rotation.threshold)
+            packetPitch = calculateAngle(serverRotation.y, rotation.pitch, 180f)
 
             if (rotation.rotate == Rotate.LEGIT) {
                 minecraft.player.rotationYaw = packetYaw
@@ -59,7 +65,7 @@ class RotationManager : Wrapper {
                 minecraft.player.rotationPitch = packetPitch
             }
 
-            minecraft.player.connection.sendPacket(CPacketPlayer())
+            minecraft.player.connection.sendPacket(CPacketPlayer.Rotation(packetYaw, packetPitch, minecraft.player.onGround))
 
             rotationsQueue.clear()
         }
@@ -67,17 +73,7 @@ class RotationManager : Wrapper {
 
     @Listener
     fun onPacketSend(event: PreSend) {
-        if (event.packet is CPacketPlayer) {
-            if (packetYaw != -1f && packetPitch != -1f) {
-                event.cancel()
-
-                (event.packet as ICPacketPlayer).hookSetYaw(packetYaw)
-                (event.packet as ICPacketPlayer).hookSetPitch(packetPitch)
-
-                packetYaw = -1f
-                packetPitch = -1f
-            }
-
+        if (event.packet is CPacketPlayer.Rotation) {
             serverRotation = Vec2f((event.packet as ICPacketPlayer).hookGetYaw(), (event.packet as ICPacketPlayer).hookGetPitch())
         }
     }
@@ -86,22 +82,18 @@ class RotationManager : Wrapper {
         rotationsQueue.add(rotation)
     }
 
-    private fun calculateAngle(playerAngle: Float, wantedAngle: Float): Float {
-        var calculatedAngle = wantedAngle - playerAngle
+    private fun calculateAngle(playerAngle: Float, wantedAngle: Float, threshold: Float): Float {
+        var distance = wantedAngle - playerAngle
 
-        if (abs(calculatedAngle) > 180) {
-            calculatedAngle = RotationUtil.normalizeAngle(calculatedAngle)
+        if (abs(distance) > 180) {
+            distance = normalizeAngle(distance)
         }
 
-        // 55 is half max FOV, should work
-        calculatedAngle = if (abs(calculatedAngle) > 55) {
-            RotationUtil.normalizeAngle(playerAngle + 55 * if (wantedAngle > 0) 1 else -1)
-        }
-        else {
+        return if (abs(distance) > threshold) {
+            normalizeAngle(playerAngle + threshold * if (distance > 0) 1 else -1)
+        } else {
             wantedAngle
         }
-
-        return calculatedAngle
     }
 
 }

@@ -20,10 +20,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.lwjgl.opengl.Display
+import org.lwjgl.opengl.PixelFormat
 import java.awt.Desktop
 import java.net.URI
 import javax.swing.JOptionPane
-import kotlin.math.log
 
 @Mod(name = Paragon.modName, modid = Paragon.modID, version = Paragon.modVersion)
 class Paragon {
@@ -53,7 +53,7 @@ class Paragon {
 
     @EventHandler
     fun init(event: FMLInitializationEvent?) {
-        logger.info("Starting Paragon ${modVersion} initialisation")
+        logger.info("Starting Paragon $modVersion initialisation")
 
         //  ________  ________  ________  ________  ________  ________  ________            _____      ________      ________
         // |\   __  \|\   __  \|\   __  \|\   __  \|\   ____\|\   __  \|\   ___  \         / __  \    |\   __  \    |\   __  \
@@ -70,7 +70,7 @@ class Paragon {
         storageManager = StorageManager()
         logger.info("StorageManager initialised")
 
-        // Module /  Commands
+        // Module / Commands
 
         moduleManager = ModuleManager()
         logger.info("ModuleManager initialised")

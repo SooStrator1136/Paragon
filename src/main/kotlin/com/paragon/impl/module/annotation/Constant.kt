@@ -1,4 +1,4 @@
-package com.paragon.impl.module
+package com.paragon.impl.module.annotation
 
 /**
  * Used to declare constantly enabled modules

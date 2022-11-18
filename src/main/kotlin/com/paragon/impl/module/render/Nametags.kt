@@ -5,6 +5,7 @@ import com.paragon.bus.listener.Listener
 import com.paragon.impl.event.render.entity.RenderNametagEvent
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
+import com.paragon.impl.module.client.ClientFont
 import com.paragon.impl.setting.Setting
 import com.paragon.util.anyNull
 import com.paragon.util.entity.EntityUtil
@@ -89,13 +90,13 @@ object Nametags : Module("Nametags", Category.RENDER, "Draws nametags above play
                 val string = builder.toString()
 
                 val width = FontUtil.getStringWidth(string) + 4
-                val height = FontUtil.getHeight() + if (healthBar.value) 2 else 0
+                val height = FontUtil.getHeight() + if (ClientFont.isEnabled) 0f else 0.5f + if (healthBar.value) 2 else 0
 
                 glTranslated(-(width / 2.0), 0.0, 0.0)
 
                 RenderUtil.drawRect(0f, 0f, width, height, Color(0, 0, 0, 130))
                 RenderUtil.drawBorder(0f, 0f, width, height, 1f, Color.BLACK)
-                FontUtil.drawStringWithShadow(string, 1f, 1f, Color.WHITE)
+                FontUtil.drawStringWithShadow(string, 1f, 1f + if (ClientFont.isEnabled) 2 else 0, Color.WHITE)
 
                 if (healthBar.value) {
                     // 3/4 will be normal health, 1/4 will be gapple

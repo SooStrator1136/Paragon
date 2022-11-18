@@ -2,7 +2,7 @@ package com.paragon.impl.module.client
 
 import com.paragon.Paragon
 import com.paragon.impl.module.Category
-import com.paragon.impl.module.IgnoredByNotifications
+import com.paragon.impl.module.annotation.IgnoredByNotifications
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Bind
 import com.paragon.impl.setting.Setting

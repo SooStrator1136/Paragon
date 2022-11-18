@@ -5,7 +5,7 @@ import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.util.player.PlayerUtil
 import com.paragon.bus.listener.Listener
-import com.paragon.impl.module.Aliases
+import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.mixins.accessor.IMinecraft
 import com.paragon.mixins.accessor.ITimer

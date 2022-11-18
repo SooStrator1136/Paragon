@@ -10,6 +10,7 @@
     "accessor.ICPacketUseEntity",
     "accessor.IEntity",
     "accessor.IEntityPlayer",
+    "accessor.IEntityPlayerSP",
     "accessor.IEntityRenderer",
     "accessor.IKeyBinding",
     "accessor.IMapItemRenderer",

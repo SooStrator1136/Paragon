@@ -16,7 +16,7 @@ public class MixinGuiNewChat {
         RenderChatEvent chatEvent = new RenderChatEvent(colour);
         Paragon.INSTANCE.getEventBus().post(chatEvent);
 
-        if (! chatEvent.isCancelled()) {
+        if (!chatEvent.isCancelled()) {
             Gui.drawRect(x, y, x2, y2, chatEvent.getColour());
         }
     }

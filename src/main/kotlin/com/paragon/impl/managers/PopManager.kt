@@ -34,7 +34,7 @@ class PopManager : Wrapper {
 
     @Listener
     fun onEntityRemove(event: EntityRemoveFromWorldEvent) {
-        if (event.entity is EntityPlayer) {
+        if (event.entity is EntityPlayer && event.entity != minecraft.player) {
             if (pops.containsKey(event.entity)) {
                 val playerDeathEvent = PlayerDeathEvent(event.entity, getPops(event.entity))
                 Paragon.INSTANCE.eventBus.post(playerDeathEvent)

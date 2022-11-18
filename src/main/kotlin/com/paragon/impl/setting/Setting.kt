@@ -2,7 +2,7 @@ package com.paragon.impl.setting
 
 import com.paragon.Paragon
 import com.paragon.impl.event.client.SettingUpdateEvent
-import com.paragon.impl.module.Constant
+import com.paragon.impl.module.annotation.Constant
 import com.paragon.impl.module.client.Colours
 import com.paragon.util.render.ColourUtil
 import com.paragon.util.render.ColourUtil.integrateAlpha
@@ -32,7 +32,7 @@ class Setting<T>(val name: String, value: T, val min: T = value, val max: T = va
                         ColourUtil.getRainbow(
                             rainbowSpeed, rainbowSaturation / 100, 0
                         )
-                    ) as T
+                    ).integrateAlpha((field as Color).alpha.toFloat()) as T
                 }
 
                 return (field as Color) as T

@@ -4,7 +4,7 @@ import com.paragon.impl.event.input.KeybindingPressedEvent
 import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.bus.listener.Listener
-import com.paragon.impl.module.Aliases
+import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.Category
 import com.paragon.util.anyNull
 import net.minecraft.client.gui.GuiChat

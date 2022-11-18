@@ -42,3 +42,33 @@ operator fun Number.plus(toAdd: Number): Number {
 fun Boolean.toBinary(): Int {
     return if (this) 1 else 0
 }
+
+/**
+ * Assumes that the both given numbers are the same primitive type, if that isn't the case inaccuracies will appear
+ */
+fun Number.isBetween(a: Number, b: Number): Boolean {
+    return when (this) {
+        is Double -> this > a.toDouble() && this < b.toDouble()
+        is Float -> this > a.toFloat() && this < b.toFloat()
+        is Long -> this > a.toLong() && this < b.toLong()
+        is Int -> this > a.toInt() && this < b.toInt()
+        is Short -> this > a.toShort() && this < b.toShort()
+        is Byte -> this > a.toByte() && this < b.toByte()
+        else -> false // Shouldn't be reached
+    }
+}
+
+/**
+ * Assumes that the both given numbers are the same primitive type, if that isn't the case inaccuracies will appear
+ */
+fun Number.difference(a: Number): Number {
+    return when (this) {
+        is Double -> if (this > a.toDouble()) this - a else a - this
+        is Float -> if (this > a.toFloat()) this - a else a - this
+        is Long -> if (this > a.toLong()) this - a else a - this
+        is Int -> if (this > a.toInt()) this - a else a - this
+        is Short -> if (this > a.toShort()) this - a else a - this
+        is Byte -> if (this > a.toByte()) this - a else a - this
+        else -> 0.0 // Shouldn't be reached
+    }
+}

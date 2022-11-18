@@ -77,6 +77,7 @@ object RotationUtil : Wrapper {
         if (normalizedAngle < -180.0f) {
             normalizedAngle += 360.0f
         }
+
         return normalizedAngle
     }
 }

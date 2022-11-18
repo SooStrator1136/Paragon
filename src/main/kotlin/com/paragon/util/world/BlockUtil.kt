@@ -209,9 +209,7 @@ object BlockUtil : Wrapper {
             val diff = minecraft.world.difficulty.difficultyId
 
             finalDamage = getBlastReduction(entity, damage * if (diff == 0) 0f else if (diff == 2) 1f else if (diff == 1) 0.5f else 1.5f, Explosion(minecraft.world, null, vec.x, vec.y, vec.z, 6f, false, true))
-        } catch (ignored: NullPointerException) {
-
-        }
+        } catch (ignored: NullPointerException) {}
 
         return finalDamage
     }

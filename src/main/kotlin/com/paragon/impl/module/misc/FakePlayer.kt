@@ -48,7 +48,12 @@ object FakePlayer : Module("FakePlayer", Category.MISC, "Spawns a fake client si
                     return@forEach
                 }
 
+                if (fakePlayer == null) {
+                    return
+                }
+
                 val damage = CrystalUtil.calculateDamage(entity.positionVector, fakePlayer ?: return@forEach)
+
                 if (damage > 0) {
                     if ((fakePlayer ?: return@forEach).health - damage > 0) {
                         (fakePlayer ?: return@forEach).health -= damage
