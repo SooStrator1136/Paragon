@@ -45,7 +45,7 @@ object FontUtil : Wrapper {
 
     fun drawString(text: String, x: Float, y: Float, color: Color) {
         if (ClientFont.isEnabled) {
-            font.drawString(text, x, y, color, false)
+            font.drawString(text, x, y - 2.5f, color, false)
         } else {
             mc.fontRenderer.drawString(text, x, y, color.rgb, false)
         }
@@ -53,8 +53,10 @@ object FontUtil : Wrapper {
 
     @JvmStatic
     fun drawStringWithShadow(text: String, x: Float, y: Float, colour: Color) {
+        // font = FontRenderer(getFont("font"))
+
         if (ClientFont.isEnabled) {
-            font.drawStringWithShadow(text, x, y - 3f + yIncrease, colour)
+            font.drawStringWithShadow(text, x, y - 2.5f, colour)
             return
         }
 
@@ -168,7 +170,7 @@ object FontUtil : Wrapper {
     }
 
     @JvmStatic
-    fun getHeight() = if (ClientFont.isEnabled) font.height + 1 else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
+    fun getHeight() = if (ClientFont.isEnabled) font.height - 2f else minecraft.fontRenderer.FONT_HEIGHT.toFloat()
 
     private fun getFont(name: String): Font {
         checkDownload()

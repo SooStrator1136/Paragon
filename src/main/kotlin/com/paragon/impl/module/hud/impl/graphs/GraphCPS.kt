@@ -31,9 +31,11 @@ object GraphCPS : HUDModule("CPSGraph", "Graph showing your Crystals per second"
     private val backgroundColor = Setting(
         "BackgroundColor", Color.BLACK.integrateAlpha(100F)
     ) describedBy "Color of the background"
+
     private val borderColor = Setting(
         "Border", Colours.mainColour.value
     ) describedBy "Color of the surrounding"
+
     private val graphColor = Setting(
         "Graph color", Colours.mainColour.value.darker()
     ) describedBy "Color of the graph"

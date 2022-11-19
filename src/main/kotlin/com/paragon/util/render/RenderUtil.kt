@@ -48,6 +48,27 @@ object RenderUtil : Wrapper {
         }
     }
 
+    private val roundedTextureShader = object : Shader("/assets/paragon/glsl/shaders/rounded_texture.frag") {
+        var width = 0f
+        var height = 0f
+        var radius = 0f
+        var alpha = 0f
+
+        override fun setupUniforms() {
+            setupUniform("texture")
+            setupUniform("size")
+            setupUniform("alpha")
+            setupUniform("radius")
+        }
+
+        override fun updateUniforms() {
+            glUniform1i(getUniform("texture"), 0)
+            glUniform2f(getUniform("size"), width, height)
+            glUniform1f(getUniform("alpha"), alpha / 255f)
+            glUniform1f(getUniform("radius"), radius)
+        }
+    }
+
     private val roundedOutlineShader = object : Shader("/assets/paragon/glsl/shaders/rounded_outline.frag") {
         var width = 0f
         var height = 0f
@@ -373,15 +394,7 @@ object RenderUtil : Wrapper {
      * @param scaleFacZ How much to scale by on the Z axis
      * @param block The code to run during scaling
      */
-    inline fun scaleTo(
-        x: Float,
-        y: Float,
-        z: Float,
-        scaleFacX: Double,
-        scaleFacY: Double,
-        scaleFacZ: Double,
-        block: () -> Unit
-    ) {
+    inline fun scaleTo(x: Float, y: Float, z: Float, scaleFacX: Double, scaleFacY: Double, scaleFacZ: Double, block: () -> Unit) {
         glPushMatrix()
         glTranslatef(x, y, z)
         glScaled(scaleFacX, scaleFacY, scaleFacZ)
@@ -766,6 +779,59 @@ object RenderUtil : Wrapper {
         bufferBuilder.pos((x + width).toDouble(), y.toDouble(), 0.0).tex(((u + width) * f).toDouble(), (v * f1).toDouble()).endVertex()
         bufferBuilder.pos(x.toDouble(), y.toDouble(), 0.0).tex((u * f).toDouble(), (v * f1).toDouble()).endVertex()
         tessellator.draw()
+    }
+
+    /**
+     * Draws a rounded texture
+     * @param x The X coordinate
+     * @param y The Y coordinate
+     * @param u The X offset in the texture (for sprite sheets)
+     * @param v The Y offset in the texture (for sprite sheets)
+     * @param width The width to draw
+     * @param height The height to draw
+     * @param textureWidth The width of the texture in the sprite sheet
+     * @param textureHeight The height of the texture in the sprite sheet
+     */
+    @JvmStatic
+    fun drawRoundedTexture(x: Float, y: Float, u: Float, v: Float, width: Float, height: Float, textureWidth: Float, textureHeight: Float, radius: Float, alpha: Int) {
+        glColor4f(1.0f, 1.0f, 1.0f, 0.0f)
+
+        GlStateManager.pushMatrix()
+        GlStateManager.enableBlend()
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO
+        )
+
+        roundedTextureShader.alpha = alpha.toFloat()
+        roundedTextureShader.radius = radius
+        roundedTextureShader.width = width
+        roundedTextureShader.height = height
+
+        roundedTextureShader.startShader()
+
+        glBegin(GL_QUADS)
+
+        glTexCoord2f(0f, 0f)
+        glVertex2f(x, y)
+        glTexCoord2f(0f, 1f)
+        glVertex2f(x, y + height)
+        glTexCoord2f(1f, 1f)
+        glVertex2f(x + width, y + height)
+        glTexCoord2f(1f, 0f)
+        glVertex2f(x + width, y)
+
+        glEnd()
+
+        glUseProgram(0)
+
+        GlStateManager.enableAlpha()
+        GlStateManager.disableBlend()
+        GlStateManager.popMatrix()
+
+        bufferBuilder
     }
 
 }

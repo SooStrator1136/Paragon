@@ -2,6 +2,7 @@
 
 package com.paragon.impl.module.hud.impl
 
+import com.paragon.impl.module.client.Colours
 import com.paragon.impl.module.combat.Aura
 import com.paragon.impl.module.hud.HUDEditorGUI
 import com.paragon.impl.module.hud.HUDModule
@@ -40,8 +41,8 @@ object TargetHUD : HUDModule("TargetHUD", "") {
     private val clearTimer = Timer()
 
     override fun render() {
-        //Target selection
-        if (target == null || clearTimer.hasMSPassed(clearDelay.value)) {
+        // Target selection
+        if (target == null) {
             val possibleTargets = arrayOf(
                 if (Aura.isEnabled) Aura.lastTarget else null,
                 //if (AutoCrystal.isEnabled) AutoCrystal.lastTarget else null
@@ -70,6 +71,10 @@ object TargetHUD : HUDModule("TargetHUD", "") {
                 x, y, 38f + FontUtil.getStringWidth(target!!.name) + 5f, 38f, 5f, color.value
             )
 
+            RenderUtil.drawRoundedOutline(
+                x, y, 38 + FontUtil.getStringWidth(target!!.name) + 5f, 38f, 5f, 1f, Colours.mainColour.value
+            )
+
             FontUtil.drawStringWithShadow(
                 target!!.name, x + 38, y + 5, Color.WHITE
             )
@@ -93,7 +98,7 @@ object TargetHUD : HUDModule("TargetHUD", "") {
     }
 
     override var width = 43F
-        get() = 43F + if (target != null) FontUtil.getStringWidth(target!!.name) else 0F
+        get() = 53F + if (target != null) FontUtil.getStringWidth(target!!.name) else 0F
 
     override var height = 38F
 

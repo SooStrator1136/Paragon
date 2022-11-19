@@ -51,7 +51,7 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
         "Delay", 700.0, 0.0, 2000.0, 1.0
     ) describedBy "The delay between attacking in milliseconds"
 
-    private val performWhen = Setting("When", com.paragon.impl.module.combat.Aura.When.HOLDING) describedBy "When to attack"
+    private val performWhen = Setting("When", When.HOLDING) describedBy "When to attack"
 
     private val rotate = Setting("Rotate", Rotate.PACKET) describedBy "How to rotate to the target"
 
@@ -73,10 +73,10 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
             return
         }
 
-        com.paragon.impl.module.combat.Aura.target = null
+        target = null
 
         // Check the delay has passed
-        if (com.paragon.impl.module.combat.Aura.attackTimer.hasMSPassed(com.paragon.impl.module.combat.Aura.delay.value)) {
+        if (attackTimer.hasMSPassed(delay.value)) {
             // Filter entities
             var entities = minecraft.world.loadedEntityList.stream().filter {
                 EntityLivingBase::class.java.isInstance(it)
@@ -84,7 +84,7 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
 
             // Filter entities based on settings
             entities = entities.stream().filter {
-                it.getDistance(minecraft.player) <= com.paragon.impl.module.combat.Aura.range.value && it !== minecraft.player && !it.isDead && (it.isEntityAllowed(
+                it.getDistance(minecraft.player) <= range.value && it !== minecraft.player && !it.isDead && (it.isEntityAllowed(
                     com.paragon.impl.module.combat.Aura.players.value, com.paragon.impl.module.combat.Aura.mobs.value, com.paragon.impl.module.combat.Aura.passives.value
                 ) || it is EntityFakePlayer) && (it !is EntityPlayer || !Paragon.INSTANCE.friendManager.isFriend(it.getName()))
             }.collect(Collectors.toList())
@@ -98,13 +98,13 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
             if (entities.isNotEmpty()) {
                 // Get the target
                 val entityLivingBase = entities[0] as EntityLivingBase
-                com.paragon.impl.module.combat.Aura.target = entityLivingBase
-                com.paragon.impl.module.combat.Aura.lastTarget = com.paragon.impl.module.combat.Aura.target
+                target = entityLivingBase
+                lastTarget = target
 
                 // Get our old slot
                 val oldSlot: Int = minecraft.player.inventory.currentItem
-                when (com.paragon.impl.module.combat.Aura.performWhen.value) {
-                    com.paragon.impl.module.combat.Aura.When.SILENT_SWITCH, com.paragon.impl.module.combat.Aura.When.SWITCH -> {
+                when (performWhen.value) {
+                    When.SILENT_SWITCH, When.SWITCH -> {
                         if (!isHoldingSword) {
                             val swordSlot = getItemSlot(Items.DIAMOND_SWORD)
 
@@ -112,19 +112,19 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
                                 switchToSlot(swordSlot, false)
                             }
                             else {
-                                com.paragon.impl.module.combat.Aura.lastTarget = null
+                                lastTarget = null
                                 return
                             }
                         }
 
                         if (!isHoldingSword) {
-                            com.paragon.impl.module.combat.Aura.lastTarget = null
+                            lastTarget = null
                             return
                         }
                     }
 
-                    com.paragon.impl.module.combat.Aura.When.HOLDING -> if (!isHoldingSword) {
-                        com.paragon.impl.module.combat.Aura.lastTarget = null
+                    When.HOLDING -> if (!isHoldingSword) {
+                        lastTarget = null
                         return
                     }
                 }
@@ -166,12 +166,12 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
                 }
 
                 // Switch back to the old slot
-                if (oldSlot != minecraft.player.inventory.currentItem && com.paragon.impl.module.combat.Aura.performWhen.value == com.paragon.impl.module.combat.Aura.When.SILENT_SWITCH) {
+                if (oldSlot != minecraft.player.inventory.currentItem && performWhen.value == When.SILENT_SWITCH) {
                     switchToSlot(oldSlot, false)
                 }
             }
             else {
-                com.paragon.impl.module.combat.Aura.lastTarget = null
+                lastTarget = null
             }
             com.paragon.impl.module.combat.Aura.attackTimer.reset()
         }
@@ -183,8 +183,8 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
                 return false
             }
 
-            when (com.paragon.impl.module.combat.Aura.performWhen.value) {
-                com.paragon.impl.module.combat.Aura.When.SILENT_SWITCH, com.paragon.impl.module.combat.Aura.When.SWITCH -> {
+            when (performWhen.value) {
+                When.SILENT_SWITCH, When.SWITCH -> {
                     if (!isHoldingSword) {
                         val swordSlot = getItemSlot(Items.DIAMOND_SWORD)
                         return swordSlot > -1
@@ -194,18 +194,18 @@ object Aura : Module("Aura", Category.COMBAT, "Automatically attacks entities") 
                     }
                 }
 
-                com.paragon.impl.module.combat.Aura.When.HOLDING -> if (isHoldingSword) return true
+                When.HOLDING -> if (isHoldingSword) return true
             }
 
             return false
         }
 
     override fun getData(): String {
-        return if (com.paragon.impl.module.combat.Aura.target == null) "No target" else com.paragon.impl.module.combat.Aura.target!!.name
+        return if (target == null) "No target" else target!!.name
     }
 
     override fun isActive(): Boolean {
-        return super.isActive() && com.paragon.impl.module.combat.Aura.target != null && com.paragon.impl.module.combat.Aura.isReady
+        return super.isActive() && target != null && com.paragon.impl.module.combat.Aura.isReady
     }
 
     @Suppress("unused")

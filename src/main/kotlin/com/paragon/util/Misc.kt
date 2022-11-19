@@ -1,6 +1,7 @@
 package com.paragon.util
 
 import net.minecraft.client.Minecraft
+import kotlin.math.roundToInt
 
 inline val mc: Minecraft get() = Minecraft.getMinecraft()
 
@@ -69,6 +70,18 @@ fun Number.difference(a: Number): Number {
         is Int -> if (this > a.toInt()) this - a else a - this
         is Short -> if (this > a.toShort()) this - a else a - this
         is Byte -> if (this > a.toByte()) this - a else a - this
+        else -> 0.0 // Shouldn't be reached
+    }
+}
+
+fun Number.roundToNearest(a: Number): Number {
+    return when (this) {
+        is Double -> a.toDouble() * ((this / a.toDouble()).roundToInt())
+        is Float -> a.toFloat() * ((this / a.toFloat()).roundToInt())
+        is Long -> a.toLong() * (this / a.toLong())
+        is Int -> a.toInt() * (this / a.toInt())
+        is Short -> a.toShort() * (this / a.toShort())
+        is Byte -> a.toByte() * (this / a.toByte())
         else -> 0.0 // Shouldn't be reached
     }
 }

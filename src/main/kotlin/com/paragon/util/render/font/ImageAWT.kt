@@ -66,7 +66,7 @@ class ImageAWT(val font: Font, startChar: Int, stopChar: Int) {
 
                 glScaled(4.0, 4.0, 4.0)
 
-                Minecraft.getMinecraft().fontRenderer.drawString(it.toString(), (currX * 0.25f).toFloat(), 2.0f, colour, false)
+                Minecraft.getMinecraft().fontRenderer.drawString(it.toString(), (currX * 0.25f).toFloat(), 0.0f, colour, false)
 
                 currX += Minecraft.getMinecraft().fontRenderer.getStringWidth(it.toString()) * 4.0
 
@@ -220,8 +220,6 @@ class ImageAWT(val font: Font, startChar: Int, stopChar: Int) {
     }
 
     private fun drawCharToImage(ch: Char): BufferedImage {
-        var charHeight = 0
-
         val graphics2D = BufferedImage(1, 1, 2).graphics as Graphics2D
         graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
         graphics2D.font = font
@@ -234,7 +232,7 @@ class ImageAWT(val font: Font, startChar: Int, stopChar: Int) {
             charWidth = 7
         }
 
-        charHeight = metrics.height + 3
+        var charHeight: Int = metrics.height + 3
 
         if (charHeight <= 0) {
             charHeight = font.size

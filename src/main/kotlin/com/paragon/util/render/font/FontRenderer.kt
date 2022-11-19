@@ -219,8 +219,8 @@ class FontRenderer(font: Font) : Wrapper {
         fun getColorIndex(type: Char): Int {
             return when (type) {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> type.code - 48
-                'a', 'b', 'c', 'd', 'e', 'f' -> type.code - 97 + 10 //Why the math?
-                'k', 'l', 'm', 'n', 'o' -> type.code - 107 + 16
+                'a', 'b', 'c', 'd', 'e', 'f' -> type.code - 107
+                'k', 'l', 'm', 'n', 'o' -> type.code - 123
                 'r' -> 21
                 else -> -1
             }

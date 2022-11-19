@@ -9,6 +9,7 @@ import com.paragon.impl.ui.configuration.panel.impl.setting.*
 import com.paragon.impl.ui.configuration.shared.RawElement
 import com.paragon.impl.ui.util.Click
 import com.paragon.util.render.ColourUtil.fade
+import com.paragon.util.render.ColourUtil.integrateAlpha
 import com.paragon.util.render.RenderUtil
 import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Animation

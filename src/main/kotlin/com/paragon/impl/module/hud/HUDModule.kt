@@ -3,6 +3,8 @@ package com.paragon.impl.module.hud
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
 import com.paragon.impl.module.annotation.NotVisibleByDefault
+import com.paragon.impl.module.hud.impl.HUDEditor
+import com.paragon.util.roundToNearest
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -46,6 +48,9 @@ abstract class HUDModule(name: String, description: String) : Module(name, Categ
             if (centerY > sr.scaledHeight / 2f - 5 && centerY < sr.scaledHeight / 2f + 5) {
                 y = sr.scaledHeight / 2f - height / 2f
             }
+
+            x = x.roundToNearest(HUDEditor.snap.value.toFloat()).toFloat()
+            y = y.roundToNearest(HUDEditor.snap.value.toFloat()).toFloat()
         }
     }
 

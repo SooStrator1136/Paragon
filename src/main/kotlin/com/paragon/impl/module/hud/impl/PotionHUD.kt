@@ -130,10 +130,10 @@ object PotionHUD : HUDModule("Potions", "Shows active potion effects") {
 
                         if (showBg.value) {
                             RenderUtil.drawRect(
-                                x, effectY, maxWidth, FontUtil.getHeight() + 1F, color.integrateAlpha(100F)
+                                x, effectY, maxWidth, FontUtil.getHeight() + 3F, color.integrateAlpha(100F)
                             )
                             RenderUtil.drawBorder(
-                                x, effectY, maxWidth, FontUtil.getHeight() + 1F, 1F, color.darker()
+                                x, effectY, maxWidth, FontUtil.getHeight() + 3F, 1F, color.darker()
                             )
                         }
 
@@ -146,8 +146,9 @@ object PotionHUD : HUDModule("Potions", "Shows active potion effects") {
 
                             if (effect.potion.hasStatusIcon()) {
                                 val iconIndex = effect.potion.statusIconIndex
+
                                 drawTexturedModalRect(
-                                    x.toInt(), effectY.toInt(), 0 + iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18
+                                    x.toInt(), effectY.toInt() + 2, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18
                                 )
                             }
                         }
@@ -155,13 +156,13 @@ object PotionHUD : HUDModule("Potions", "Shows active potion effects") {
                         FontUtil.drawStringWithShadow(
                             I18n.format(effect.potion.name) + " " + I18n.format(
                                 "enchantment.level.${effect.amplifier + 1}"
-                            ) + " ${Potion.getPotionDurationString(effect, 1F)}", x + FontUtil.getHeight() + 1F, effectY + 1F + if (ClientFont.isEnabled) 1.5f else 0f, if (syncTextColor.value) color else Color.WHITE
+                            ) + " ${Potion.getPotionDurationString(effect, 1F)}", x + FontUtil.getHeight() + 1F, effectY + 2F, if (syncTextColor.value) color else Color.WHITE
                         )
 
-                        effectY += FontUtil.getHeight() + offset.value + 2F
+                        effectY += FontUtil.getHeight() + offset.value + 3.5F
                     }
 
-                    height = (FontUtil.getHeight() + offset.value + 3F) * activeEffects.size
+                    height = (FontUtil.getHeight() + offset.value + 3.5F) * activeEffects.size
                 }
             }
         }

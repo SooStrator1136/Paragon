@@ -1,6 +1,6 @@
 package com.paragon.impl.module.hud.impl.graphs
 
-import com.paragon.impl.module.client.ClientFont
+import com.paragon.impl.module.client.Colours
 import com.paragon.util.calculations.MathsUtil
 import com.paragon.util.render.ColourUtil.glColour
 import com.paragon.util.render.RenderUtil
@@ -25,44 +25,40 @@ class Graph(
     private var highestVal = 0.1
     private var currentVal = highestVal
 
-    var points = Array(75) { 0.0 }
+    var points = Array(73) { 0.0 }
 
     fun render() {
-        graphRect.setRect(bounds.x, bounds.y, bounds.width, bounds.height - FontUtil.getHeight() - 3F)
+        graphRect.setRect(bounds.x + 1.5f, bounds.y + 5, bounds.width - 8f, bounds.height - FontUtil.getHeight() - 8)
 
         val background = backgroundMode()
 
         //Basic background & border
         run {
             if (background != Background.NONE) {
-                RenderUtil.drawRect(
-                    bounds.x, bounds.y, bounds.width, bounds.height, backgroundColor()
-                )
-            }
-            if (background == Background.ALL) {
-                RenderUtil.drawBorder(
-                    bounds.x, bounds.y, bounds.width, bounds.height, 1F, borderColor()
+                RenderUtil.drawRoundedRect(
+                    bounds.x,
+                    bounds.y,
+                    bounds.width,
+                    bounds.height,
+                    5f,
+                    Color(0, 0, 0, 180)
                 )
             }
 
             FontUtil.drawStringWithShadow(
-                name, bounds.x + 1F, bounds.y + bounds.height - (FontUtil.getHeight() + if (ClientFont.isEnabled) -1f else 1f), Color.WHITE
+                name, bounds.x + 2.5f, bounds.y + bounds.height - FontUtil.getHeight() - 1.5f, Color.WHITE
             )
 
             val value = BigDecimal(currentVal).setScale(2, RoundingMode.HALF_EVEN).toString()
 
             FontUtil.drawStringWithShadow(
-                value, bounds.x + bounds.width - FontUtil.getStringWidth(value) - 3, bounds.y + bounds.height - (FontUtil.getHeight() + if (ClientFont.isEnabled) -1f else 1f), Color.WHITE
+                value, bounds.x + bounds.width - FontUtil.getStringWidth(value) - 3, bounds.y + bounds.height - FontUtil.getHeight() - 1.5f, Color.WHITE
             )
-
-            if (background == Background.ALL) {
-                RenderUtil.drawRect(
-                    bounds.x, bounds.y + bounds.height - (FontUtil.getHeight() + 3F), bounds.width, 1F, borderColor()
-                )
-            }
         }
 
         run {
+            RenderUtil.pushScissor(bounds.x, bounds.y + 1, bounds.width - 0.5f, bounds.height - 2)
+
             GlStateManager.alphaFunc(GL_GREATER, 0.001f)
             GlStateManager.enableAlpha()
             GlStateManager.enableBlend()
@@ -75,15 +71,12 @@ class Graph(
 
             glBegin(GL_LINE_STRIP)
 
-            graphColor.invoke().glColour()
+            Colours.mainColour.value.glColour()
 
             points.forEachIndexed { i, percentage ->
                 glVertex2f(
                     graphRect.x + i,
-                    (graphRect.y + (graphRect.height -
-                            MathsUtil.getPercentOf(
-                                percentage, graphRect.height.toDouble()
-                            )
+                    (graphRect.y + (graphRect.height - MathsUtil.getPercentOf(percentage, graphRect.height.toDouble())
                     )).toFloat()
                 )
             }
@@ -94,6 +87,20 @@ class Graph(
             GlStateManager.color(1f, 1f, 1f, 1f)
             GlStateManager.disableBlend()
             GlStateManager.enableTexture2D()
+
+            RenderUtil.popScissor()
+        }
+
+        if (background == Background.ALL) {
+            RenderUtil.drawRoundedOutline(
+                bounds.x,
+                bounds.y,
+                bounds.width,
+                bounds.height,
+                5f,
+                1F,
+                Colours.mainColour.value
+            )
         }
     }
 
