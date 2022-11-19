@@ -1,18 +1,30 @@
 Changelog for 1.1.0
 
-Added Plugin System
-Added command to save maps ($saveMap)
-Added command to change skin client sided ($copySkin)
-Added AntiGhast
-Remade Main Menu
-Moved most GUIs to plugins
-Added LogoutSpots
-Updated Nametags
-Added MainMenu module
-Rewrote ArrayList
-Added IgnoreActive to ViewModel
-Slightly updated ShulkerViewer
-Remade default GUI
-Rewrote HoleESP
-Merged Notifier and DonkeyAlert into Alert
-Moved AutoWalk to Movement
+Added:
+  - Plugin System
+  - $saveMap command
+  - $copySkin command
+  - AntiGhast module
+  - LogoutSpots module
+  - MainMenu module
+  - IgnoreActive setting in ViewModel module
+  - More easings to the ClickGUI and ArrayList modules
+  - SuperheroFX module
+  - EnchantColour module
+
+Reworked:
+  - Main Menu
+  - Default ClickGUI
+  - ArrayList module
+  - HoleESP module
+  - AutoCrystal module
+  - The style of most HUD modules
+
+Changed:
+  - Updated the style of the ShulkerViewer module
+  - Merged the Notifier module and DonkeyAlert module into the Alert module
+  - Changed the AutoWalk module's category to Movement
+  - Updated Nametags
+
+Other Changes:
+  - Moved most GUIs to plugins
