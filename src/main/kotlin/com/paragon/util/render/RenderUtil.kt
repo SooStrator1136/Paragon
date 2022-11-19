@@ -720,6 +720,7 @@ object RenderUtil : Wrapper {
 
         block.invoke()
 
+        glEnable(GL_DEPTH_TEST)
         GlStateManager.enableDepth()
         GlStateManager.disableBlend()
         glPopMatrix()

@@ -42,21 +42,6 @@ object BlockHighlight : Module("BlockHighlight", Category.RENDER, "Highlights th
                     -minecraft.renderManager.viewerPosX, -minecraft.renderManager.viewerPosY, -minecraft.renderManager.viewerPosZ
                 )
 
-            /* RenderBuilder()
-                .boundingBox(bb)
-                .inner(colour.value)
-                .outer(colour.value.integrateAlpha(255f))
-                .type(renderMode.value)
-
-                .start()
-
-                .blend(true)
-                .depth(true)
-                .texture(true)
-                .lineWidth(lineWidth.value)
-
-                .build(true) */
-
             RenderBuilder().boundingBox(bb).inner(colour.value).outer(colour.value.integrateAlpha(255f)).type(renderMode.value)
 
                 .start()

@@ -57,6 +57,7 @@ class ModuleManager {
             Chams,
             ChinaHat,
             ClearChat,
+            EnchantColour,
             ESP,
             Fullbright,
             HandChams,

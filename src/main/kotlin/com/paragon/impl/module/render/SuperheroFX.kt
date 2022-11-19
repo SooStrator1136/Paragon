@@ -11,6 +11,8 @@ import com.paragon.util.render.font.FontUtil
 import me.surge.animation.Animation
 import me.surge.animation.Easing
 import net.minecraft.util.math.Vec3d
+import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
+import org.lwjgl.opengl.GL11.glEnable
 import java.awt.Color
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
