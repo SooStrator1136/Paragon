@@ -14,6 +14,7 @@ import com.paragon.util.player.InventoryUtil
 import com.paragon.util.world.BlockUtil
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.entity.item.EntityEnderCrystal
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraft.inventory.ClickType
 import net.minecraft.item.Item
@@ -101,7 +102,7 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
     private val swapTimer = Timer()
 
     override fun onTick() {
-        if (minecraft.anyNull || minecraft.player.isDead || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
+        if (minecraft.anyNull || isPlayerDead(minecraft.player) || minecraft.currentScreen is GuiContainer || !swapTimer.hasMSPassed(delay.value.toDouble())) {
             return
         }
 
@@ -128,6 +129,10 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
         swapTimer.reset()
     }
 
+    private fun isPlayerDead(entity: EntityPlayer): Boolean {
+        return entity.isDead || entity.health <= 0
+    }
+
     private fun getSwitchSlot(): Int {
         var swapItem: Item
 
@@ -142,14 +147,9 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
 
         // isPressed() doesn't work :(
         if (key.value.buttonCode != 0) {
-            when (key.value.device) {
-                Device.KEYBOARD -> if (Keyboard.isKeyDown(key.value.buttonCode)) {
-                    keyPressed = true
-                }
-
-                Device.MOUSE -> if (Mouse.isButtonDown(key.value.buttonCode)) {
-                    keyPressed = true
-                }
+            keyPressed = when (key.value.device) {
+                Device.KEYBOARD -> Keyboard.isKeyDown(key.value.buttonCode)
+                Device.MOUSE -> Mouse.isButtonDown(key.value.buttonCode)
             }
         }
 
@@ -224,15 +224,25 @@ object Offhand : Module("Offhand", Category.COMBAT, "Manages the item in your of
 
         var returnSlot = -1
 
-        for (i in 9..44) {
-            if (minecraft.player.inventory.getStackInSlot(i).isEmpty) {
+        for (i in 1 until minecraft.player.inventoryContainer.inventory.size) {
+            if (minecraft.player.inventoryContainer.inventory[i].isEmpty) {
                 returnSlot = i
                 break
             }
         }
 
+        // the slot should now be free since it is now in our offhand - Cubic
+        if(returnSlot == -1){
+            returnSlot = slot
+        }
+
+        // the slot got occupied in the meantime - Cubic
+        if(!minecraft.player.inventory.getStackInSlot(returnSlot).isEmpty){
+            returnSlot = -1
+        }
+
         if (returnSlot != -1) {
-            minecraft.playerController.windowClick(0, slot, 0, ClickType.PICKUP, minecraft.player)
+            minecraft.playerController.windowClick(window, slot, 0, ClickType.PICKUP, minecraft.player)
         }
 
         minecraft.playerController.updateController()
