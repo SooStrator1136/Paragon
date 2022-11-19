@@ -146,3 +146,5 @@ tasks.register<Jar>("buildApi") {
     archiveClassifier.set("api")
     from(project.sourceSets["main"].output)
 }
+
+tasks.getByName("classes").dependsOn("prepareAssets")

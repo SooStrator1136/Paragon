@@ -5,11 +5,13 @@ import com.paragon.impl.module.Module
 import com.paragon.impl.setting.Setting
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.annotation.IgnoredByNotifications
+import com.paragon.impl.module.annotation.NotVisibleByDefault
 
 /**
  * @author Surge
  */
 @IgnoredByNotifications
+@NotVisibleByDefault
 object DiscordRPC : Module("DiscordRPC", Category.CLIENT, "Changes your Discord presence to reflect the client's current state") {
 
     val showServer = Setting(

@@ -5,6 +5,7 @@ import com.paragon.impl.event.client.ModuleToggleEvent
 import com.paragon.impl.module.annotation.Aliases
 import com.paragon.impl.module.annotation.Constant
 import com.paragon.impl.module.annotation.IgnoredByNotifications
+import com.paragon.impl.module.annotation.NotVisibleByDefault
 import com.paragon.impl.module.hud.impl.ArrayListHUD
 import com.paragon.impl.setting.Bind
 import com.paragon.impl.setting.Setting
@@ -17,7 +18,7 @@ import java.util.*
 open class Module(val name: String, val category: Category, val description: String) : Wrapper {
 
     // Whether the module is visible in the Array List or not
-    private val visible = Setting("Visible", true) describedBy "Whether the module is visible in the array list or not"
+    private val visible = Setting("Visible", !javaClass.isAnnotationPresent(NotVisibleByDefault::class.java)) describedBy "Whether the module is visible in the array list or not"
 
     val bind = Setting("Bind", Bind(Keyboard.KEY_NONE, Bind.Device.KEYBOARD)) describedBy "The keybind of the module"
 

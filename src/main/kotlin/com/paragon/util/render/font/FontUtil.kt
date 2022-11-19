@@ -34,7 +34,7 @@ object FontUtil : Wrapper {
     fun init() {
         Paragon.INSTANCE.logger.info("Initialising fonts")
         font = FontRenderer(getFont("font"))
-        fontLarge = FontRenderer(getFont("font", 80f))
+        fontLarge = FontRenderer(getFont("font", 120f))
         icons = FontRenderer(
             Font.createFont(
                 0,
@@ -287,7 +287,8 @@ object FontUtil : Wrapper {
         RUNNING('D'),
         EXIT('E'),
         CLOSE('F'),
-        BLOCK('G')
+        BLOCK('G'),
+        CHAT('H')
     }
 
 }

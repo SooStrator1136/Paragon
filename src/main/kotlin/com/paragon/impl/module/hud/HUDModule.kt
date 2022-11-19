@@ -2,6 +2,7 @@ package com.paragon.impl.module.hud
 
 import com.paragon.impl.module.Category
 import com.paragon.impl.module.Module
+import com.paragon.impl.module.annotation.NotVisibleByDefault
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -10,6 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
  * @author Surge, SooStrator1136
  */
 @SideOnly(Side.CLIENT)
+@NotVisibleByDefault
 abstract class HUDModule(name: String, description: String) : Module(name, Category.HUD, description) {
 
     open var width = 50F
@@ -21,10 +23,6 @@ abstract class HUDModule(name: String, description: String) : Module(name, Categ
     private var lastY = 0F
     var isDragging = false
         private set
-
-    init {
-        setVisible(false)
-    }
 
     abstract fun render()
 

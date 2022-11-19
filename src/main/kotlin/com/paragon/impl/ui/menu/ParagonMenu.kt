@@ -24,45 +24,39 @@ import java.net.URI
  */
 class ParagonMenu : GuiScreen() {
 
-    private var frameBuffer: Framebuffer? = null
-    private var lastScaleFactor = 0f
-    private var lastScaleWidth = 0f
-    private var lastScaleHeight = 0f
-
-    private val singleplayerButton = Button(FontUtil.Icon.PERSON, "Singleplayer", (width / 2f) - 66, height - 70f) {
-        mc.displayGuiScreen(GuiWorldSelection(this))
-    }
-
-    private val multiplayerButton = Button(FontUtil.Icon.PEOPLE, "Multiplayer", (width / 2f) + 2, height - 70f) {
-        mc.displayGuiScreen(GuiMultiplayer(this))
-    }
-
-    private val optionsButton = Button(FontUtil.Icon.GEAR, "Options", (width / 2f) - 66, height - 70f) {
-        mc.displayGuiScreen(GuiOptions(this, mc.gameSettings))
-    }
-
-    private val exitButton = Button(FontUtil.Icon.CLOSE, "Exit", (width / 2f) + 2, height - 70f) {
-        mc.shutdown()
-    }
-
     private val buttons = arrayOf(
-        singleplayerButton,
-        multiplayerButton,
-        optionsButton,
-        exitButton
+        Button(FontUtil.Icon.PERSON, "Singleplayer", (width / 2f) - 66, height - 70f) {
+            mc.displayGuiScreen(GuiWorldSelection(this))
+        },
+        Button(FontUtil.Icon.PEOPLE, "Multiplayer", (width / 2f) + 2, height - 70f) {
+            mc.displayGuiScreen(GuiMultiplayer(this))
+        },
+        Button(FontUtil.Icon.GEAR, "Options", (width / 2f) - 66, height - 70f) {
+            mc.displayGuiScreen(GuiOptions(this, mc.gameSettings))
+        },
+        Button(FontUtil.Icon.GITHUB, "GitHub", (width / 2f) + 2, height - 70f) {
+            Desktop.getDesktop().browse(URI("https://github.com/Wolfsurge/Paragon"))
+        },
+        Button(FontUtil.Icon.CHAT, "Discord", (width / 2f) + 2, height - 70f) {
+            Desktop.getDesktop().browse(URI("https://discord.gg/28JNQsXUzb"))
+        },
+        Button(FontUtil.Icon.CLOSE, "Exit", (width / 2f) + 2, height - 70f) {
+            mc.shutdown()
+        }
     )
-
-    private val githubHover = ColourAnimation(Color.WHITE, Colours.mainColour.value, { 200f }, false, { Easing.LINEAR })
 
     private val whiteFade = ColourAnimation(Color.WHITE, Color(0, 0, 0, 0), { 1200f }, false, { Easing.LINEAR })
     private val buttonSlide = Animation({ 400f }, false, { Easing.CIRC_IN_OUT })
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        val xOffset = -1.0f * ((mouseX - width / 10.0f) / (width / 10.0f))
+        val yOffset = -1.0f * ((mouseY - height / 10.0f) / (height / 10.0f))
+
         mc.textureManager.bindTexture(ResourceLocation("paragon", "textures/background.png"))
-        RenderUtil.drawModalRectWithCustomSizedTexture(0f, 0f, 0f, 0f, width.toFloat(), height.toFloat(), width.toFloat(), height.toFloat())
+        RenderUtil.drawModalRectWithCustomSizedTexture(xOffset, yOffset, 0f, 0f, width.toFloat() + 20, height.toFloat() + 20, width.toFloat() + 20, height.toFloat() + 20)
         BlurUtil.blur(0f, 0f, width.toFloat(), height.toFloat(), 20f)
 
-        RenderUtil.scaleTo((width / 2f) - FontUtil.fontLarge.getStringWidth("Paragon"), 35f, 0f, buttonSlide.getAnimationFactor() * 2, buttonSlide.getAnimationFactor() * 2, 0.0) {
+        RenderUtil.scaleTo((width / 2f) - FontUtil.fontLarge.getStringWidth("Paragon"), 35f, 0f, 2.0, 2.0, 0.0) {
             FontUtil.fontLarge.drawString(
                 "Paragon",
                 (width / 2f) - FontUtil.fontLarge.getStringWidth("Paragon"),
@@ -72,12 +66,13 @@ class ParagonMenu : GuiScreen() {
             )
         }
 
-        FontUtil.font.drawString(Paragon.modVersion, (width / 2f) + 85, 35f, Color.WHITE, false)
-
-        githubHover.state = mouseX.toFloat() in 0f..34f && mouseY.toFloat() in height - FontUtil.icons.height - 20..height.toFloat()
-
-        RenderUtil.scaleTo((-25 + (40 * buttonSlide.getAnimationFactor())).toFloat() + 5f, height - FontUtil.icons.height - 15, 0f, 1.5, 1.5, 0.0) {
-            FontUtil.drawIcon(FontUtil.Icon.GITHUB, (-25 + (40 * buttonSlide.getAnimationFactor())).toFloat() - 5f, height - FontUtil.icons.height - 15, githubHover.getColour())
+        RenderUtil.scaleTo((width / 2f) - (FontUtil.getStringWidth(Paragon.modVersion) / 2f), 35f, 0f, 2.0, 2.0, 0.0) {
+            FontUtil.drawString(
+                Paragon.modVersion,
+                (width / 2f) + (FontUtil.fontLarge.getStringWidth("Paragon") / 2f) - FontUtil.getStringWidth(Paragon.modVersion) - 8,
+                65f,
+                Colours.mainColour.value
+            )
         }
 
         var x = (width / 2f) - ((buttons.size * 68f) / 2f)
@@ -108,10 +103,6 @@ class ParagonMenu : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         buttons.forEach { it.mouseClicked() }
 
-        if (githubHover.state) {
-            Desktop.getDesktop().browse(URI("https://github.com/Wolfsurge/Paragon"))
-        }
-
         super.mouseClicked(mouseX, mouseY, mouseButton)
     }
 
@@ -127,13 +118,13 @@ class ParagonMenu : GuiScreen() {
                     y - (16 * hover.getAnimationFactor()).toFloat(),
                     64f,
                     64f,
-                    31f,
+                    31f, // 32, despite being exactly half, just feels kinda off? not sure why, but 31 looks good enough
                     Color(0, 0, 0, 150)
                 )
 
                 RenderUtil.scaleTo(
-                    x + 11f + if (icon == FontUtil.Icon.PERSON) 7f else 0f + if (icon == FontUtil.Icon.GEAR) 4f else 0f + if (icon == FontUtil.Icon.CLOSE) 7f else 0f,
-                    y + 10 - (16 * hover.getAnimationFactor()).toFloat() + if (icon == FontUtil.Icon.GEAR) 2f else 0f + if (icon == FontUtil.Icon.CLOSE) 2f else 0f,
+                    x + 11f + if (icon == FontUtil.Icon.PERSON || icon == FontUtil.Icon.CLOSE) 7f else 0f + if (icon == FontUtil.Icon.GEAR) 4f else 0f + if (icon == FontUtil.Icon.GITHUB) 1f else 0f,
+                    y + 10 - (16 * hover.getAnimationFactor()).toFloat() + if (icon == FontUtil.Icon.GEAR || icon == FontUtil.Icon.CLOSE) 2f else 0f + if (icon == FontUtil.Icon.GITHUB) 1f else 0f,
                     0f,
                     2.0,
                     2.0,
@@ -141,8 +132,8 @@ class ParagonMenu : GuiScreen() {
                 ) {
                     FontUtil.drawIcon(
                         icon,
-                        x + 11f + if (icon == FontUtil.Icon.PERSON) 7f else 0f + if (icon == FontUtil.Icon.GEAR) 4f else 0f + if (icon == FontUtil.Icon.CLOSE) 7f else 0f,
-                        y + 10 - (16 * hover.getAnimationFactor()).toFloat() + if (icon == FontUtil.Icon.GEAR) 2f else 0f + if (icon == FontUtil.Icon.CLOSE) 2f else 0f,
+                        x + 11f + if (icon == FontUtil.Icon.PERSON || icon == FontUtil.Icon.CLOSE) 7f else 0f + if (icon == FontUtil.Icon.GEAR) 4f else 0f + if (icon == FontUtil.Icon.GITHUB) 1f else 0f,
+                        y + 10 - (16 * hover.getAnimationFactor()).toFloat() + if (icon == FontUtil.Icon.GEAR || icon == FontUtil.Icon.CLOSE) 2f else 0f + if (icon == FontUtil.Icon.GITHUB) 1f else 0f,
                         Color.WHITE
                     )
                 }
