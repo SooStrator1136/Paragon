@@ -66,14 +66,12 @@ class ParagonMenu : GuiScreen() {
             )
         }
 
-        RenderUtil.scaleTo((width / 2f) - (FontUtil.getStringWidth(Paragon.modVersion) / 2f), 35f, 0f, 2.0, 2.0, 0.0) {
-            FontUtil.drawString(
-                Paragon.modVersion,
-                (width / 2f) + (FontUtil.fontLarge.getStringWidth("Paragon") / 2f) - FontUtil.getStringWidth(Paragon.modVersion) - 8,
-                65f,
-                Colours.mainColour.value
-            )
-        }
+        FontUtil.drawString(
+            "Version ${ Paragon.modVersion }",
+            3f,
+            3f,
+            Color(180, 180, 180)
+        )
 
         var x = (width / 2f) - ((buttons.size * 68f) / 2f)
         var yIncrease = 0

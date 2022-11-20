@@ -11,6 +11,7 @@ Added:
   - More easings to the ClickGUI and ArrayList modules
   - SuperheroFX module
   - EnchantColour module
+  - LagNotifier HUD module
 
 Reworked:
   - Main Menu

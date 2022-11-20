@@ -40,7 +40,7 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
     override fun draw(mouseX: Int, mouseY: Int, mouseDelta: Int) {
         super.draw(mouseX, mouseY, mouseDelta)
 
-        val changelogHeight = changelog.size * FontUtil.getHeight();
+        val changelogHeight = changelog.size * FontUtil.getHeight() * 0.8
 
         scroll = MathHelper.clamp(
             scroll.toDouble(),
@@ -61,7 +61,7 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
                 x,
                 y + grabbableHeight,
                 (width * openAnimation.getAnimationFactor()).toFloat(),
-                ((height - grabbableHeight) * openAnimation.getAnimationFactor()).toFloat(),
+                ((height - grabbableHeight + 1) * openAnimation.getAnimationFactor()).toFloat(),
                 ClickGUI.intensity.value
             )
         }
@@ -96,9 +96,11 @@ class ChangelogWindow(x: Float, y: Float, width: Float, height: Float, grabbable
         var offset = grabbableHeight + 5f
 
         changelog.forEach {
-            FontUtil.drawStringWithShadow(it, x + 5, y + offset + scroll, Color.WHITE)
+            RenderUtil.scaleTo(x + 5, y + offset + scroll, 0f, 0.8, 0.8, 0.8) {
+                FontUtil.drawStringWithShadow(it, x + 5, y + offset + scroll, Color.WHITE)
+            }
 
-            offset += FontUtil.getHeight()
+            offset += FontUtil.getHeight() * 0.8f
         }
 
         RenderUtil.popScissor()

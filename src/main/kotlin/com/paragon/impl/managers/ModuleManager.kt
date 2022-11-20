@@ -131,6 +131,7 @@ class ModuleManager {
             HUDEditor,
             Inventory,
             Keystrokes,
+            LagNotifier,
             Notifications,
             Ping,
             PotionHUD,
