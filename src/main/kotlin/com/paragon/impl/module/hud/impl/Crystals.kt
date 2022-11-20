@@ -8,6 +8,7 @@ import com.paragon.util.render.RenderUtil.drawBorder
 import com.paragon.util.render.RenderUtil.drawRect
 import com.paragon.util.render.RenderUtil.renderItemStack
 import com.paragon.util.render.font.FontUtil
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.MathHelper

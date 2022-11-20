@@ -739,10 +739,15 @@ object RenderUtil : Wrapper {
             return
         }
 
+        GlStateManager.depthMask(true)
+        GlStateManager.clear(GL_DEPTH_BUFFER_BIT)
         GlStateManager.enableDepth()
-        GlStateManager.disableBlend() // ok???
+        GlStateManager.disableAlpha()
+        GlStateManager.pushMatrix()
 
-        minecraft.renderItem.zLevel = 200f
+        minecraft.renderItem.zLevel = -150f
+
+        RenderHelper.enableGUIStandardItemLighting()
 
         minecraft.renderItem.renderItemAndEffectIntoGUI(itemStack, x.toInt(), y.toInt())
 
@@ -750,11 +755,13 @@ object RenderUtil : Wrapper {
             minecraft.renderItem.renderItemOverlays(minecraft.fontRenderer, itemStack, x.toInt(), y.toInt())
         }
 
+        RenderHelper.disableStandardItemLighting()
+
         minecraft.renderItem.zLevel = 0f
 
-        GlStateManager.enableTexture2D()
-        GlStateManager.disableLighting()
+        GlStateManager.popMatrix()
         GlStateManager.disableDepth()
+        GlStateManager.depthMask(true)
     }
 
     /**

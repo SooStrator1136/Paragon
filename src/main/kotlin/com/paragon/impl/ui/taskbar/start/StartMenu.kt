@@ -3,6 +3,7 @@ package com.paragon.impl.ui.taskbar.start
 import com.paragon.Paragon
 import com.paragon.util.render.font.FontUtil
 import com.paragon.impl.module.client.Colours
+import com.paragon.impl.module.hud.impl.HUDEditor
 import com.paragon.impl.ui.console.ConsoleGUI
 import com.paragon.impl.ui.util.Click
 import com.paragon.impl.ui.windows.impl.ChangelogWindow
@@ -64,6 +65,11 @@ object StartMenu : Wrapper {
                 Paragon.INSTANCE.configurationGUI.windowsList.add(ConfigWindow(200f, 200f, 200f, 150f, 16f))
             }
 
+            expandAnimation.state = false
+        }, x + 3, y + 35f, 144f, 16f),
+
+        StartElement("HUD Editor", {
+            HUDEditor.toggle()
             expandAnimation.state = false
         }, x + 3, y + 35f, 144f, 16f)
     )

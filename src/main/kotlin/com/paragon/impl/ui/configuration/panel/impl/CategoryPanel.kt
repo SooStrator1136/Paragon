@@ -20,9 +20,7 @@ import java.awt.Color
 import java.lang.Double.max
 
 
-class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Float, width: Float, height: Float) : Panel(x, y, width, height) {
-
-    val maxHeight = 320.0
+class CategoryPanel(val gui: PanelGUI?, val category: Category, x: Float, y: Float, width: Float, height: Float, private val maxHeight: Double = 320.0) : Panel(x, y, width, height) {
 
     private val hover = ColourAnimation(Color(30, 30, 30), Color(40, 40, 40), { 200f }, false, { Easing.LINEAR })
     private val topGradient = ColourAnimation(Color(0, 0, 0, 0), Color(0, 0, 0, 100), { 500f }, false, { Easing.LINEAR })
@@ -95,7 +93,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         RenderUtil.pushScissor(x, y + height, width, moduleHeight.toFloat())
 
         var offset = y + height + scroll
-        elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+        getFilteredModules().forEach {
             it.x = x
             it.y = offset
 
@@ -147,7 +145,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         }
 
         if (expanded.getAnimationFactor() > 0 && mouseX in x..x + width && mouseY in y + height..y + height + moduleHeight.toFloat()) {
-            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+            getFilteredModules().forEach {
                 it.mouseClicked(mouseX, mouseY, click)
             }
         }
@@ -157,7 +155,7 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         super.mouseReleased(mouseX, mouseY, click)
 
         if (expanded.getAnimationFactor() > 0) {
-            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+            getFilteredModules().forEach {
                 it.mouseReleased(mouseX, mouseY, click)
             }
         }
@@ -167,13 +165,17 @@ class CategoryPanel(val gui: PanelGUI, val category: Category, x: Float, y: Floa
         super.keyTyped(character, keyCode)
 
         if (expanded.getAnimationFactor() > 0) {
-            elements.filter { it.module.name.contains(gui.search, true) }.forEach {
+            getFilteredModules().forEach {
                 it.keyTyped(character, keyCode)
             }
         }
     }
 
     private fun getFilteredModules(): List<ModuleElement> {
+        if (gui == null) {
+            return elements
+        }
+
         return elements.filter { it.module.isValidSearch(gui.search) }
     }
 

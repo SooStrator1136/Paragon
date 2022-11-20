@@ -32,7 +32,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
     private val speed = Setting("Speed", 4f, 0.1f, 10f, 0.1f) describedBy "The speed of the rainbow" visibleWhen { colour.value == Colour.WAVE }
     private val background = Setting("Background", Color(0, 0, 0, 150)) describedBy "The colour of the background"
     private val backgroundSync = Setting("BackgroundSync", false) describedBy "Sync the background colour to the text colour"
-    private val moduleHeight = Setting("ModuleHeight", 13f, 10f, 20f, 1f) describedBy "The height of each module"
+    private val moduleHeight = Setting("ModuleHeight", 13f, 12f, 20f, 1f) describedBy "The height of each module"
     private val dataMode = Setting("Data", Data.PLAIN) describedBy "How to render the module data"
     private val scissorSlide = Setting("ScissorSlide", false) describedBy "Whether the scissor will horizontally reveal the module"
     private val sideBar = Setting("SideBar", true) describedBy "Draw a bar at the side of the ArrayList"
@@ -97,7 +97,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                     FontUtil.drawStringWithShadow(
                         info,
                         x + 1,
-                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 2 else 1) / 2)),
+                        y + ((moduleHeight.value / 2) - (FontUtil.getHeight() / 2)),
                         colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
@@ -197,7 +197,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                     FontUtil.drawStringWithShadow(
                         info,
                         x - FontUtil.getStringWidth(info),
-                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 4 else 1) / 2)),
+                        y + ((moduleHeight.value / 2) - (FontUtil.getHeight() / 2)),
                         colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
@@ -297,7 +297,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                     FontUtil.drawStringWithShadow(
                         info,
                         x - FontUtil.getStringWidth(info),
-                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        y + ((moduleHeight.value / 2) - (FontUtil.getHeight() / 2)),
                         colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
@@ -397,7 +397,7 @@ object ArrayListHUD : Module("ArrayList", Category.HUD, "Renders the enabled mod
                     FontUtil.drawStringWithShadow(
                         info,
                         x + 4,
-                        y + ((moduleHeight.value / 2) - ((FontUtil.getHeight() - if (ClientFont.isEnabled) 3 else 1) / 2)),
+                        y + ((moduleHeight.value / 2) - (FontUtil.getHeight() / 2)),
                         colour.integrateAlpha(MathHelper.clamp((255 * module.animation.getAnimationFactor()).toFloat(), 5f, 255f))
                     )
 
