@@ -13,6 +13,7 @@ Added:
   - EnchantColour module
   - LagNotifier HUD module
   - A panel to the HUD editor
+  - Blur module
 
 Reworked:
   - Main Menu
@@ -27,7 +28,6 @@ Changed:
   - Merged the Notifier module and DonkeyAlert module into the Alert module
   - Changed the AutoWalk module's category to Movement
   - Updated Nametags
-  - Blurred the background of the HUD editor
 
 Other Changes:
   - Moved most GUIs to plugins

@@ -25,7 +25,6 @@ class HUDEditorGUI : GuiScreen() {
         val scaledResolution = ScaledResolution(mc)
 
         RenderUtil.drawRect(0f, 0f, scaledResolution.scaledWidth.toFloat(), scaledResolution.scaledHeight.toFloat(), Color(0, 0, 0, 180))
-        BlurUtil.blur(0f, 0f, scaledResolution.scaledWidth.toFloat(), scaledResolution.scaledHeight.toFloat(), 5f)
 
         RenderUtil.drawRect(scaledResolution.scaledWidth / 2f - 0.5f, 0f, 1f, scaledResolution.scaledHeight.toFloat(), Color(255, 255, 255, 100))
         RenderUtil.drawRect(0f, scaledResolution.scaledHeight / 2f - 0.5f, scaledResolution.scaledWidth.toFloat(), 1f, Color(255, 255, 255, 100))

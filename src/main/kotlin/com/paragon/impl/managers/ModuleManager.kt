@@ -52,6 +52,7 @@ class ModuleManager {
             // Render
             AspectRatio,
             BlockHighlight,
+            Blur,
             Breadcrumbs,
             BreakESP,
             Chams,
