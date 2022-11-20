@@ -124,8 +124,17 @@ object LogoutSpots : Module("LogoutSpots", Category.RENDER, "Shows where players
                 val boundingBox: AxisAlignedBB = originalBox.setMaxY(originalBox.minY + boxHeight.value)
 
                 // Render box
-                RenderBuilder().boundingBox(boundingBox).inner(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value).outer(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value).type(box.value)
-                    .start().lineWidth(width.value).blend(true).depth(true).texture(true).build(false)
+                RenderBuilder()
+                    .boundingBox(boundingBox)
+                    .inner(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderColour.value else enemyRenderColour.value)
+                    .outer(if (Paragon.INSTANCE.friendManager.isFriend(player.name)) friendRenderOutlineColour.value else enemyRenderOutlineColour.value)
+                    .type(box.value)
+                    .start()
+                    .lineWidth(width.value)
+                    .blend(true)
+                    .depth(true)
+                    .texture(true)
+                    .build(false)
             }
 
             val vec = if (renderMode.value == RenderMode.BOX) Vec3d(floor(player.posX) + 0.5, floor(player.posY), floor(player.posZ) + 0.5) else player.positionVector

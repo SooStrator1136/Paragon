@@ -67,6 +67,7 @@ class ModuleManager {
             LogoutSpots,
             MobOwner,
             Nametags,
+            NewChunks,
             NoRender,
             PhaseESP,
             PopChams,
